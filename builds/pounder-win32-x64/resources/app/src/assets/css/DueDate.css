@@ -1,0 +1,19 @@
+.DueDateContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+.DueDate {
+  border-Radius: 50%;
+  width: 10px;
+  height: 10px;
+  background: rgba(0,225,0,255);
+  color: #FFF;
+  padding: 4px;
+  text-Align: center;
+  font-Family: segoe UI;
+  font-Weight: bold;
+  flex-grow: 1;
+  margin-right: 5px;
+}

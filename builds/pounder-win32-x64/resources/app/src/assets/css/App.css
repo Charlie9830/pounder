@@ -1,0 +1,12 @@
+h1 {
+  font-family: helvetica;
+  font-weight: 200;
+}
+
+::-webkit-scrollbar {
+  background: rgba(51,51,51,255);
+}
+
+::-webkit-scrollbar-thumb {
+  border: 1px solid #FFF;
+}

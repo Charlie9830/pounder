@@ -1,0 +1,15 @@
+.TaskTextContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-grow: 2;
+}
+
+
+.TaskText {
+  font-Family: segoe UI;
+  color: #FFF;
+  font-Size: 14pt;
+  margin-left: 5px;
+
+}

@@ -1,0 +1,22 @@
+.IsNotFocused {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-color: #000;
+    border-width: 1px;
+    border-style: solid;
+    margin: 0px;
+    padding: 0px;
+}
+
+.IsFocused {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border-color: #FFF;
+    border-width: 1px;
+    border-style: solid;
+    margin: 0px;
+    padding: 0px;
+
+}

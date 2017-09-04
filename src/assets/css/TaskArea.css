@@ -1,0 +1,7 @@
+.TaskArea {
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+  background: rgba(37,37,38,255);
+  overflow: auto;
+}

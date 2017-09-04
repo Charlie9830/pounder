@@ -1,0 +1,58 @@
+
+
+.TaskInactiveStyle {
+  background: rgba(0,0,0,0);
+  color: #FFF;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.TaskInactiveStyle:hover {
+  background: rgba(52,55,56,255);
+}
+
+.TaskActiveStyle {
+  background: rgba(63,63,76,255);
+  color: #FFF;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.TaskMovingStyle {
+  background: rgba(63,63,100,255);
+  color: #FFF;
+  height: 40px;
+  width: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  animation: PingMovingTask 0.25s linear 1;
+}
+
+@keyframes PingMovingTask {
+  100% { background: rgba(63,63,200,255)}
+}
+
+.TaskClickContainer {
+  flex: 1;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  border: 1 solid #FFF;
+}
+
+

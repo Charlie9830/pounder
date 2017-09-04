@@ -1,0 +1,15 @@
+{
+    "Projects": {
+        "projectId": "0",
+        "projectName": "My First Project",
+        "TaskLists": {} // The Value here doesn't matter, just that the key exists.
+    },
+
+    "TaskLists": {
+        
+    },
+
+    "Tasks": {
+
+    }
+}

@@ -1,0 +1,58 @@
+{
+  "name": "pounder",
+  "author": "Charlie Hall",
+  "description": "Widget based ToDo app",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "main.js",
+  "scripts": {
+    "testDev": "electron .",
+    "testProd": "electron . --noDevServer",
+    "dev": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js",
+    "build": "webpack --config webpack.build.config.js",
+    "package": "webpack --config webpack.build.config.js",
+    "postpackage": "electron-packager ./ --out=./builds"
+  },
+  "build": {
+    "appId": "pounder.id",
+    "mac": {
+      "category": "project.management"
+    },
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-loader": "^6.4.0",
+    "babel-preset-react": "^6.24.1",
+    "babili-webpack-plugin": "^0.0.11",
+    "css-loader": "^0.28.1",
+    "electron": "^1.6.7",
+    "electron-builder": "^19.27.3",
+    "electron-devtools-installer": "^2.2.0",
+    "electron-packager": "^8.7.0",
+    "extract-text-webpack-plugin": "^2.1.0",
+    "file-loader": "^0.11.1",
+    "html-webpack-plugin": "^2.28.0",
+    "react": "^15.4.2",
+    "react-dom": "^15.4.2",
+    "style-loader": "^0.17.0",
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.4.5"
+  },
+  "dependencies": {
+    "7zip-bin-win": "^2.1.0",
+    "firebase": "^4.2.0",
+    "mousetrap": "^1.6.1",
+    "react-grid-layout": "^0.14.7",
+    "react-resizable": "^1.7.1"
+  }
+}
