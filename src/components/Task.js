@@ -14,6 +14,7 @@ class Task extends React.Component {
         this.forwardKeyPress = this.forwardKeyPress.bind(this);
         this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this);
         this.handleTaskTouchStart = this.handleTaskTouchStart.bind(this);
+        this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
     }
 
     render() {
@@ -34,7 +35,7 @@ class Task extends React.Component {
                 <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
                     <div className="TaskTextContainer">
                         <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen}
-                            onKeyPress={this.forwardKeyPress} />
+                            onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
                     </div>
                     <div className="DueDateContainer">
                         <DueDate dueDate={this.props.dueDate} />
@@ -44,6 +45,10 @@ class Task extends React.Component {
                 
             </div>
         )
+    }
+
+    handleInputUnmounting(data) {
+        this.props.onInputUnmounting(data, this.props.taskId);
     }
     
     handleTaskTouchStart(touchEvent) {

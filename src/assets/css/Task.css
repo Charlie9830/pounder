@@ -29,7 +29,7 @@
 }
 
 .TaskMovingStyle {
-  background: rgba(63,63,100,255);
+  background: rgba(63,63,180,255);
   color: #FFF;
   height: 40px;
   width: 100%;
@@ -42,7 +42,7 @@
 }
 
 @keyframes PingMovingTask {
-  100% { background: rgba(63,63,200,255)}
+  100% { background: rgba(63,63,220,255)}
 }
 
 .TaskClickContainer {

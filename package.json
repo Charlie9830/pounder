@@ -9,6 +9,7 @@
     "testDev": "electron .",
     "testProd": "electron . --noDevServer",
     "dev": "webpack-dev-server --hot --host 0.0.0.0 --config=./webpack.dev.config.js",
+    "devWeb": "webpack-dev-server --hot --host 0.0.0.0 --public 192.168.0.4:8080 --config=./webpack.dev.web.config.js",
     "build": "webpack --config webpack.build.config.js",
     "package": "webpack --config webpack.build.config.js",
     "postpackage": "electron-packager ./ --out=./builds"

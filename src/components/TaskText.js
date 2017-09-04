@@ -1,17 +1,22 @@
 import React from 'react';
+import TaskTextInput from "../components/TaskTextInput";
 import '../assets/css/TaskText.css';
 
-class TaskText extends React.Component{
+class TaskText extends React.Component {
     constructor(props){
         super(props);
 
         this.forwardKeyPress = this.forwardKeyPress.bind(this);
+        this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
     }
+
+
     render() {
         if (this.props.isInputOpen) {
             return (
                 <div className='TaskText'>
-                    <input id="taskTextInput" type='text' defaultValue={this.props.text} onKeyPress={this.forwardKeyPress}/>  
+                    <TaskTextInput defaultValue={this.props.text} onKeyPress={this.forwardKeyPress} 
+                    onComponentUnmounting={this.handleInputUnmounting}/>  
                 </div>
             )
         }
@@ -25,8 +30,11 @@ class TaskText extends React.Component{
         }    
     }
 
-    forwardKeyPress(e) {
-        var newData = document.getElementById("taskTextInput").value;
+    handleInputUnmounting(data) {
+        this.props.onInputUnmounting(data);
+    }
+
+    forwardKeyPress(e, newData) {
         this.props.onKeyPress(e, newData);
     }
 }
