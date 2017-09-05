@@ -1,0 +1,15 @@
+.TaskListMenuDropdown {
+    display: none;
+}
+
+.TaskListMenuDropdown:hover {
+    display: block;
+    width: 200px;
+    height: 200px;
+}
+
+.TaskListMenuContent {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12pt;
+    color: #FFF;
+}

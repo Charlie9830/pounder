@@ -1,4 +1,5 @@
 import React from 'react';
+import '../assets/css/TaskText.css'
 
 class TaskTextInput extends React.Component {
     constructor(props) {
@@ -17,7 +18,7 @@ class TaskTextInput extends React.Component {
 
     render() {
         return (
-            <input ref="input" type='text' defaultValue={this.props.defaultValue} onKeyPress={this.handleKeyPress}/>
+            <input className="TaskTextInput" ref="input" type='text' defaultValue={this.props.defaultValue} onKeyPress={this.handleKeyPress}/>
         )
     }
 

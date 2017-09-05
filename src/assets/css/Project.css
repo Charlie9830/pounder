@@ -16,4 +16,6 @@
     background: rgba(37,37,37,255);
     width: 100%;
     margin-top: 30px;
+    -webkit-user-select: none;
+    user-select: none;
 }

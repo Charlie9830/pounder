@@ -3,6 +3,8 @@
     font-Size: 16pt;
     color: #FFF;
     cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .Sidebar {
@@ -11,4 +13,6 @@
     height: 1130px;
     float: left;
     margin-top: 30px;
+    -webkit-user-select: none;
+    user-select: none;
 }

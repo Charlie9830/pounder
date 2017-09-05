@@ -21,7 +21,8 @@ class App extends React.Component {
       selectedProjectId: -1,
       isAwaitingFirebase: false,
       isConnectedToFirebase: false,
-      layouts: []
+      layouts: [],
+      currentErrorMessage: ""
     }; 
     
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
@@ -95,7 +96,7 @@ class App extends React.Component {
     // })
 
     // MouseTrap.
-    MouseTrap.bind(['ctrl+n', 'ctrl+shift+n'], this.handleKeyboardShortcut);
+    MouseTrap.bind(['mod+n', 'mod+shift+n'], this.handleKeyboardShortcut);
 
 
     // Collect Data from Firebase.
@@ -108,7 +109,6 @@ class App extends React.Component {
       else {
         this.setState({isConnectedToFirebase: false})
       }
-        
     })
 
     // Get Projects
@@ -118,6 +118,8 @@ class App extends React.Component {
       this.setState({
         projects: projects,
         isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
   }
 
@@ -168,6 +170,8 @@ class App extends React.Component {
     // Execute Updates (Deletes).
     Firebase.database().ref().update(updates).then( () => {
       this.setState({isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -194,6 +198,8 @@ class App extends React.Component {
     updates["tasks/" + taskId + "/taskList/"] = destinationTaskListId;
     Firebase.database().ref().update(updates).then( () => {
       this.setState({isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -244,6 +250,8 @@ class App extends React.Component {
 
     Firebase.database().ref().update(updates).then( () => {
       this.setState({isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -315,6 +323,8 @@ class App extends React.Component {
 
     Firebase.database().ref('taskLists/' + newTaskListKey).set(newFirebaseTaskList).then(result => {
       this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Add to React.
@@ -368,6 +378,8 @@ class App extends React.Component {
 
       Firebase.database().ref('tasks/' + newTaskKey).set(newFirebaseTask).then(() => {
         this.setState({ isAwaitingFirebase: false });
+      }).catch(error => {
+        this.postFirebaseError(error);
       })
 
       // Update React.
@@ -405,6 +417,8 @@ class App extends React.Component {
 
     Firebase.database().ref().update(updates).then( () => {
       this.setState({isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -460,6 +474,8 @@ class App extends React.Component {
           isAwaitingFirebase: false
         })
       })
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     this.setState({ selectedProjectId: projectSelectorId });
@@ -474,6 +490,8 @@ class App extends React.Component {
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -527,6 +545,8 @@ class App extends React.Component {
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -580,6 +600,8 @@ class App extends React.Component {
       layouts: []
     }).then(() => {
       this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -624,6 +646,8 @@ class App extends React.Component {
       // Execute Updates (Deletes).
       Firebase.database().ref().update(updates).then(() => {
         this.setState({ isAwaitingFirebase: false });
+      }).catch(error => {
+        this.postFirebaseError(error);
       })
 
       // Update React.
@@ -657,6 +681,8 @@ class App extends React.Component {
 
     Firebase.database().ref().update(updates).then( () => {
       this.setState({isAwaitingFirebase: false});
+    }).catch(error => {
+      this.postFirebaseError(error);
     })
 
     // Update React.
@@ -707,6 +733,8 @@ class App extends React.Component {
       // Execute Updates (Deletes).
       Firebase.database().ref().update(updates).then(() => {
         this.setState({ isAwaitingFirebase: false });
+      }).catch(error => {
+        this.postFirebaseError(error);
       })
 
       // Update React.
@@ -728,6 +756,12 @@ class App extends React.Component {
 
   taskSortHelper(a, b) {
     return a.isComplete - b.isComplete;
+  }
+
+  postFirebaseError(error) {
+    this.setState({
+      isAwaitingFirebase: false,
+      currentErrorMessage: error});
   }
 }
 

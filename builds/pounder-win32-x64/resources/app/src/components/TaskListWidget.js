@@ -17,6 +17,7 @@ class TaskListWidget extends React.Component {
         this.handleTaskCheckBoxClick = this.handleTaskCheckBoxClick.bind(this);
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
+        this.handleTaskInputUnmounting = this.handleTaskInputUnmounting.bind(this);
     }
 
     componentDidMount(){
@@ -37,7 +38,8 @@ class TaskListWidget extends React.Component {
                     <Task key={index} taskId={item.uid} text={item.taskName} daysRemaining={item.daysRemaining}
                     isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                     handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
-                    OnKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}/>
+                    OnKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
+                    onInputUnmounting={this.handleTaskInputUnmounting}/>
                 )
             })
         }
@@ -52,6 +54,12 @@ class TaskListWidget extends React.Component {
                 <TaskArea> {builtTasks} </TaskArea>
             </div>
         )
+    }
+
+    handleTaskInputUnmounting(data, taskId) {
+        // A TaskTextInput is Unmounting. Meaning that the Task has lost focus whilst text was still pending inside an open
+        // input. Handle Data Changes.
+        this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, data);
     }
 
     handleTaskTwoFingerTouch(taskId) {
@@ -70,10 +78,10 @@ class TaskListWidget extends React.Component {
         var _this = this;
 
         // Enter Key.
-        if (e.key == "Enter"){
+        if (e.key == "Enter") {
             // Handle Data Changes.
-            this.props.onTaskSubmit(this.props.taskListWidgetId,taskId, newData)
-            }   
+            this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newData)
+        }   
     }
 
     handleHeaderDoubleClick() {

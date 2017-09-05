@@ -3,8 +3,8 @@
 }
 .react-resizable-handle {
   position: absolute;
-  width: 15px;
-  height: 15px;
+  width: 25px;
+  height: 25px;
   bottom: 0px;
   right: 0px;
   margin: 5px;

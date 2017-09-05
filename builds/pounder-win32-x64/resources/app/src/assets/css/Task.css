@@ -1,9 +1,14 @@
-
+/* TODO: Clean up these Selectors, shift the Position and Sizing up to .TaskContainer */
+.TaskContainer {
+  height: auto;
+  overflow: hidden;
+  min-height: 40px;
+  max-height: 120px;
+}
 
 .TaskInactiveStyle {
   background: rgba(0,0,0,0);
   color: #FFF;
-  height: 40px;
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -19,7 +24,6 @@
 .TaskActiveStyle {
   background: rgba(63,63,76,255);
   color: #FFF;
-  height: 40px;
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -29,9 +33,8 @@
 }
 
 .TaskMovingStyle {
-  background: rgba(63,63,100,255);
+  background: rgba(63,63,180,255);
   color: #FFF;
-  height: 40px;
   width: 100%;
   display: flex;
   flex-wrap: nowrap;
@@ -42,7 +45,7 @@
 }
 
 @keyframes PingMovingTask {
-  100% { background: rgba(63,63,200,255)}
+  100% { background: rgba(63,63,220,255)}
 }
 
 .TaskClickContainer {
@@ -53,6 +56,7 @@
   justify-content: space-between;
   align-items: center;
   border: 1 solid #FFF;
+  
 }
 
 

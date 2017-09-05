@@ -41,8 +41,8 @@ class Project extends React.Component{
     }
     
     componentDidMount() {
-        MouseTrap.bind("ctrl", this.handleCtrlKeyDown, 'keydown');
-        MouseTrap.bind("ctrl", this.handleCtrlKeyUp, 'keyup');
+        MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
+        MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     }
 
     render(){

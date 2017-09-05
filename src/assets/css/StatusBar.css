@@ -5,6 +5,8 @@
     margin: 0px;
     padding: 0px;
     background: rgba(37,37,37,255);
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .AwaitingFirebase {

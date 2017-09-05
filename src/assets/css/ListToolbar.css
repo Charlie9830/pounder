@@ -4,16 +4,20 @@
     flex-grow: 1;
     text-align: left;
     margin-left: 5px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .ListToolbarHeader {
     color: #FFF;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 1vmax;
+    font-size: 14pt;
     overflow: hidden;
     text-align: center;
     flex-grow: 4;
     white-space: nowrap;
+    -webkit-user-select: none;
+    user-select: none;
     
 }
 
@@ -23,6 +27,8 @@
     flex-grow: 1;
     text-align: right;
     margin-right: 5px;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 .DeleteButton:hover {

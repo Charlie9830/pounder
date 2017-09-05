@@ -28,22 +28,23 @@ class Task extends React.Component {
         
 
         return (
-            <div className={currentClassName}>
-                <div className={"TaskCheckBox"} >
-                    <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}/>
-                </div>
-                <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
-                    <div className="TaskTextContainer">
-                        <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen}
-                            onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
+            <div className="TaskContainer">
+                <div className={currentClassName}>
+                    <div className={"TaskCheckBox"} >
+                        <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick} />
                     </div>
-                    <div className="DueDateContainer">
-                        <DueDate dueDate={this.props.dueDate} />
+                    <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
+                        <div className="TaskTextContainer">
+                            <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen}
+                                onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
+                        </div>
+                        <div className="DueDateContainer">
+                            <DueDate dueDate={this.props.dueDate} />
+                        </div>
                     </div>
                 </div>
-                
-                
             </div>
+            
         )
     }
 
