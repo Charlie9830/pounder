@@ -111,17 +111,6 @@ class App extends React.Component {
       }
     })
 
-    // // Get Projects
-    // this.setState({isAwaitingFirebase: true});
-    // Firebase.database().ref('projects/').once('value').then(snapshot => {
-    //   var projects = snapshot.val() == null ? [] : Object.values(snapshot.val())
-    //   this.setState({
-    //     projects: projects,
-    //     isAwaitingFirebase: false});
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
     // Get Projects and Attach Value Listener
     this.setState({ isAwaitingFirebase: true });
     Firebase.database().ref('projects/').on('value', snapshot => {
