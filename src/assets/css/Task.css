@@ -4,6 +4,8 @@
   overflow: hidden;
   min-height: 40px;
   max-height: 120px;
+  display: flex;
+  flex-direction: column;
 }
 
 .TaskInactiveStyle {
@@ -15,6 +17,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-grow: 1;
 }
 
 .TaskInactiveStyle:hover {
@@ -30,6 +33,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-grow: 1;
 }
 
 .TaskMovingStyle {

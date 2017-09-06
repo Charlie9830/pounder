@@ -51,27 +51,27 @@ class App extends React.Component {
   componentDidMount(){
     // Production DB
     // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-      authDomain: "pounder-production.firebaseapp.com",
-      databaseURL: "https://pounder-production.firebaseio.com",
-      projectId: "pounder-production",
-      storageBucket: "",
-      messagingSenderId: "759706234917"
-    };
-    Firebase.initializeApp(config);
+    // var config = {
+    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+    //   authDomain: "pounder-production.firebaseapp.com",
+    //   databaseURL: "https://pounder-production.firebaseio.com",
+    //   projectId: "pounder-production",
+    //   storageBucket: "",
+    //   messagingSenderId: "759706234917"
+    // };
+    // Firebase.initializeApp(config);
 
     // Testing DB.
     // Initialize Firebase
-    // var config = {
-    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    // authDomain: "halo-todo.firebaseapp.com",
-    // databaseURL: "https://halo-todo.firebaseio.com",
-    // projectId: "halo-todo",
-    // storageBucket: "halo-todo.appspot.com",
-    // messagingSenderId: "801359392837"
-    // };
-    // Firebase.initializeApp(config);
+    var config = {
+    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    authDomain: "halo-todo.firebaseapp.com",
+    databaseURL: "https://halo-todo.firebaseio.com",
+    projectId: "halo-todo",
+    storageBucket: "halo-todo.appspot.com",
+    messagingSenderId: "801359392837"
+    };
+    Firebase.initializeApp(config);
     
     // Firebase Seeding.
     // var newProjectKey = Firebase.database().ref('projects/').push().key;
@@ -111,18 +111,28 @@ class App extends React.Component {
       }
     })
 
-    // Get Projects
-    this.setState({isAwaitingFirebase: true});
-    Firebase.database().ref('projects/').once('value').then(snapshot => {
-      var projects = snapshot.val() == null ? [] : Object.values(snapshot.val())
+    // // Get Projects
+    // this.setState({isAwaitingFirebase: true});
+    // Firebase.database().ref('projects/').once('value').then(snapshot => {
+    //   var projects = snapshot.val() == null ? [] : Object.values(snapshot.val())
+    //   this.setState({
+    //     projects: projects,
+    //     isAwaitingFirebase: false});
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Get Projects and Attach Value Listener
+    this.setState({ isAwaitingFirebase: true });
+    Firebase.database().ref('projects/').on('value', snapshot => {
+      var projects = snapshot.val() == null ? [] : Object.values(snapshot.val());
       this.setState({
         projects: projects,
-        isAwaitingFirebase: false});
-    }).catch(error => {
-      this.postFirebaseError(error);
+        isAwaitingFirebase: false
+      });
     })
   }
-
+  
   componentWillUnmount(){
     MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n'], this.handleKeyboardShortcut);
   }

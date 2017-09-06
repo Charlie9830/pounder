@@ -15,8 +15,8 @@
 }
 
 @keyframes isDeChecking {
-  0% { background: rgba(150,150,150,255); }
-  100% { background: rgba(0,0,0,255); }
+  0% { background: #EEE; }
+  100% { background: #000; }
 }
 
 .TaskCheckBoxIsChecked {
@@ -24,13 +24,13 @@
   width: 12px;
   height: 12px;
   border: 1px solid #FFF;
-  background: rgba(150,150,150,255);
+  background: #EEE;
   margin-left: 5px;
   animation: isChecking 0.25s linear 1;
 }
 
 @keyframes isChecking {
   0% { background: rgba(255,255,255,255); }
-  100% { background: rgba(150,150,150,255); }
+  100% { background: #EEE }
 }
 
