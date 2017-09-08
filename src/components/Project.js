@@ -45,7 +45,7 @@ class Project extends React.Component{
         MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     }
 
-    render(){
+    render() {
         // Build a list of TaskListWidgets to Render out here.
         var taskListWidgets = this.props.taskLists.map((item, index) => {
             // Widget Layer.
@@ -53,6 +53,10 @@ class Project extends React.Component{
             var isHeaderOpen = this.state.openTaskListWidgetHeaderId === item.uid;           
             
             // Task Layer.
+            var tasks = this.props.tasks.filter(task => {
+                return task.taskList === item.uid;
+            })
+
             var selectedTaskId = -1;
             var openTaskInputId = -1;
             if (this.state.selectedTask.taskListWidgetId === item.uid) {
@@ -69,7 +73,7 @@ class Project extends React.Component{
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
                 <div key={item.uid}>
                     <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
-                     tasks={item.tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
+                     tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
                      onTaskSubmit={this.handleTaskSubmit} onWidgetClick={this.handleWidgetClick} movingTaskId = {movingTaskId}
                      onRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
                      onHeaderDoubleClick={this.handleWidgetHeaderDoubleClick} onHeaderSubmit={this.handleTaskListWidgetHeaderSubmit}
@@ -79,13 +83,15 @@ class Project extends React.Component{
             )
         });
 
+        var layouts = Array.isArray(this.props.layouts) ? this.props.layouts : [];
+
         return (
             <div className="ProjectContainer">
                 <div className="ProjectToolBar">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}/>
                 </div>
-                <ReactGridLayout className="Project" layout={this.props.layouts} autoSize={false} draggableCancel=".nonDraggable"
+                <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
                     onLayoutChange={this.handleLayoutChange} cols={12} rows={2} rowHeight={100} width={1600}>
                     {taskListWidgets}
                 </ReactGridLayout>
@@ -129,7 +135,7 @@ class Project extends React.Component{
         // Close Task Input.
         this.setState({selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false }});
 
-        this.props.onTaskChanged(taskListWidgetId, taskId, newData)
+        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newData)
     }
 
     handleWidgetClick(taskListWidgetId, isFocused) {

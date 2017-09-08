@@ -14,6 +14,10 @@
   margin-left: 5px;
 }
 
+.Fade {
+  opacity: 0.25;
+}
+
 .TaskTextInput {
   width: 300px;
 }

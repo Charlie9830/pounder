@@ -35,7 +35,7 @@ class Task extends React.Component {
                     </div>
                     <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
                         <div className="TaskTextContainer">
-                            <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen}
+                            <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
                                 onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
                         </div>
                         <div className="DueDateContainer">

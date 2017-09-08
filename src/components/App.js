@@ -8,6 +8,10 @@ import '../assets/css/TaskListWidget.css'
 import '../assets/css/Sidebar.css'
 import '../assets/css/Project.css'
 import Firebase from 'firebase';
+import TaskListStore from '../stores/TaskListStore';
+import TaskStore from '../stores/TaskStore';
+import ProjectLayoutStore from '../stores/ProjectLayoutStore';
+import ProjectStore from '../stores/ProjectStore';
 
 
 class App extends React.Component {
@@ -17,11 +21,12 @@ class App extends React.Component {
     this.state = {
       projects: [],
       taskLists: [],
+      tasks: [],
+      projectLayout: new ProjectLayoutStore({}, -1, -1),
       focusedTaskListId: -1,
       selectedProjectId: -1,
       isAwaitingFirebase: false,
       isConnectedToFirebase: false,
-      layouts: [],
       currentErrorMessage: ""
     }; 
     
@@ -46,9 +51,18 @@ class App extends React.Component {
     this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
     this.addNewTaskList = this.addNewTaskList.bind(this);
     this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
+    this.onIncomingTaskLists = this.onIncomingTaskLists.bind(this);
+    this.onIncomingTasks = this.onIncomingTasks.bind(this);
+    this.onIncomingLayouts = this.onIncomingLayouts.bind(this);
   }
 
   componentDidMount(){
+    // TODO: Tasks and probably TaskLists need to have their Firebase Value event listeners split up into Value Change
+    // listeners and Collection Changed Listeners. Right now, When making a new Task, it gets added to React Twice. Once on
+    // addNewTask and again on OnIncomingTasks. OnIncomingTasks can't reliably tell if a Task has already been Added if it also has
+    // to respond to Data changing Events. If you split up these Events then you can tell more reliably what is happening.
+
+
     // Production DB
     // Initialize Firebase
     // var config = {
@@ -73,32 +87,16 @@ class App extends React.Component {
     };
     Firebase.initializeApp(config);
     
-    // Firebase Seeding.
-    // var newProjectKey = Firebase.database().ref('projects/').push().key;
-    // Firebase.database().ref('projects/' + newProjectKey).set({
-    //   uid: newProjectKey,
-    //   projectName: "The Boobyguard",
-    // });
-
-    // var newTaskListKey = Firebase.database().ref('taskLists/').push().key;
-    // Firebase.database().ref('taskLists/' + newTaskListKey).set({
-    //   uid: newTaskListKey,
-    //   project: newProjectKey,
-    //   taskListName: "Main",
-    // });
-
-    // var newTaskKey = Firebase.database().ref('tasks/').push().key;
-    // Firebase.database().ref('tasks/' + newTaskKey).set({
-    //   uid: newTaskKey,
-    //   taskList: newTaskListKey,
-    //   taskName: "Finish Him!",
-    //   dueDate: "Today!"
-    // })
+    // TODO Database Migrations.
+    /*
+      1. Move Layouts from Underneath Projects to their own Node. Scaffold in uid and layouts nodes.
+      2. Scaffold a 'project' Id into Tasks.
+    */
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n'], this.handleKeyboardShortcut);
 
-
+    // TODO: Refactor Firebase ref() strings into Consts declared at the top of the document.
     // Collect Data from Firebase.
     // Setup Connection Monitoring.
     var connectionRef = Firebase.database().ref(".info/connected");
@@ -124,20 +122,31 @@ class App extends React.Component {
   
   componentWillUnmount(){
     MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n'], this.handleKeyboardShortcut);
+
+    // Firebase.
+    Firebase.database().ref('projects').off('value');
+    Firebase.database().ref('taskLists').off('value');
+    Firebase.database().ref('tasks').off('value');
+
+    if (this.state.selectedProjectId !== -1) {
+      Firebase.database().ref('projectLayouts/' + this.state.selectedProjectId).off('value');
+    }
   }
 
-  render() { 
+  render() {
+    var layouts = this.state.projectLayout.layouts;
+
     return (
       <div>
         <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}/>
         <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
          onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
          onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}/>
-        <Project className="Project" taskLists={this.state.taskLists} focusedTaskListId={this.state.focusedTaskListId}
+        <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} focusedTaskListId={this.state.focusedTaskListId}
          projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
          onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
          onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
-         layouts={this.state.layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
+         layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
          onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
          onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}/>
       </div>
@@ -174,20 +183,11 @@ class App extends React.Component {
     })
 
     // Update React.
-    var taskListIndex = this.state.taskLists.findIndex(item => {
-      return item.uid === taskListWidgetId;
-    });
+    // var newTasks = this.state.tasks.filter(item => {
+    //   return item.uid !== taskId;
+    // })
 
-    var taskList = this.state.taskLists[taskListIndex];
-    var taskIndex = taskList.tasks.findIndex(item => {
-      return item.uid === taskId;
-    })
-    
-    taskList.tasks.splice(taskIndex, 1);
-    var newTaskLists = this.state.taskLists;
-    newTaskLists[taskListIndex] = taskList;
-
-    this.setState({taskLists: newTaskLists});
+    // this.setState({tasks: newTasks});
   }
 
   handleTaskMoved(projectId, taskId, sourceTaskListId, destinationTaskListId) {
@@ -202,45 +202,27 @@ class App extends React.Component {
     })
 
     // Update React.
-    // Pull task from Source Task list into Temporory Storage then insert into Destination TaskList.
-    // Source Task List
-    var sourceTaskListIndex = this.state.taskLists.findIndex( item => {
-      return item.uid === sourceTaskListId;
-    })
+    // var taskIndex = this.state.tasks.findIndex(item => {
+    //   return item.uid === taskId;
+    // })
+    // var task = this.state.tasks[taskIndex];
 
-    var newSourceTaskList = this.state.taskLists[sourceTaskListIndex];
-    var taskIndex = newSourceTaskList.tasks.findIndex(item => {
-      return item.uid === taskId;
-    });
+    // // Fine Example of a New Task.
+    // var newTasks = this.state.tasks;
+    // newTasks[taskIndex] = new TaskStore(
+    //   task.taskName,
+    //   task.dueDate,
+    //   task.isComplete,
+    //   task.project,
+    //   destinationTaskListId,
+    //   task.uid
+    // );
 
-    var taskBuffer = newSourceTaskList.tasks[taskIndex];
-    newSourceTaskList.tasks.splice(taskIndex, 1);
-
-    // Destination Task List.
-    var newDestinationTaskListIndex = this.state.taskLists.findIndex( item => {
-      return item.uid === destinationTaskListId;
-    })
+    // this.setState({newTasks});
     
-    var newDestinationTaskList = this.state.taskLists[newDestinationTaskListIndex];
-    newDestinationTaskList.tasks.push(taskBuffer);
-
-    // Build both Tasklists into new TaskLists Array ready to be sent back to the State.
-    var newTaskLists = this.state.taskLists.map( (item, index) => {
-      if (item.uid === sourceTaskListId) {
-        return newSourceTaskList;
-      }
-
-      if (item.uid === destinationTaskListId) {
-        return newDestinationTaskList;
-      }
-
-      return item;
-    })
-
-    this.setState({taskLists: newTaskLists});
   }
 
-  handleTaskChanged(taskListWidgetId, taskId, newData) {
+  handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
     // Update Firebase.
     this.setState({isAwaitingFirebase: true});
     
@@ -254,45 +236,28 @@ class App extends React.Component {
     })
 
     // Update React.
-    // Get the TaskList in question.
-    var taskListIndex = -1;
-    var taskList = this.state.taskLists.find( (item, index) => {
-      if (item.uid === taskListWidgetId) {
-        taskListIndex = index;
-        return true;
-      }
-      else {
-        return false;
-      }
-    })
-    
-    var currentTaskIndex = -1;
-    var currentTask = taskList.tasks.find( (item, index) => {
-      if (item.uid === taskId) {
-        currentTaskIndex = index;
-        return true;
-      }
-      else {
-        return false;
-      }   
-    });
-    
     // Modify replace the Task.
-    taskList.tasks[currentTaskIndex] = {
-      taskName: newData,
-      dueDate: currentTask.dueDate,
-      isComplete: currentTask.isComplete,
-      uid: currentTask.uid
-    };
+    // var currentTaskIndex = this.state.tasks.findIndex(item => {
+    //   return item.uid === taskId;
+    // })
 
-    // Merge modified taskList back into State.
-    var newTaskLists = this.state.taskLists;
-    newTaskLists[taskListIndex] = taskList;
-    this.setState({taskLists: newTaskLists});
+    // var currentTask = this.state.tasks[currentTaskIndex];
+    // var newTasks = this.state.tasks;
+
+    // newTasks[currentTaskIndex] = new TaskStore(
+    //   newData,
+    //   currentTask.dueDate,
+    //   currentTask.isComplete,
+    //   projectId,
+    //   taskListWidgetId,
+    //   currentTask.uid
+    // )
+
+    // this.setState({tasks: newTasks});
+
   }
 
   handleKeyDown(e) {
-    console.log("Shift Down");
   }
 
 
@@ -314,42 +279,38 @@ class App extends React.Component {
     // Add to Firebase.
     this.setState({ isAwaitingFirebase: true });
     var newTaskListKey = Firebase.database().ref('taskLists/').push().key;
-    var newFirebaseTaskList = {
-      project: this.state.selectedProjectId,
-      uid: newTaskListKey,
-      taskListName: "New Task List"
-    }
 
-    Firebase.database().ref('taskLists/' + newTaskListKey).set(newFirebaseTaskList).then(result => {
+    var newTaskList = new TaskListStore(
+      "New Task List",
+      this.state.selectedProjectId,
+      newTaskListKey,
+      newTaskListKey
+    )
+
+    Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
 
-    // Add to React.
-    // TODO: Homogenise the Use of taskListId and uid across the App.
-    var newTaskList = {
-      taskListId: newFirebaseTaskList.uid,
-      taskListName: newFirebaseTaskList.taskListName,
-      uid: newTaskListKey,
-      tasks: []
-    }
+    // // Add to React.
+    // // TODO: Homogenise the Use of taskListId and uid across the App.
+    // var taskLists = this.state.taskLists;
+    // taskLists.push(newTaskList)
 
-    var taskLists = this.state.taskLists;
-    taskLists.push(newTaskList)
+    // newProjectLayout = this.state.projectLayout;
+    // newProjectLayout.layouts.push(this.makeNewLayoutEntry(newTaskListKey));
 
-    var newLayouts = this.state.layouts;
-    newLayouts.push(this.makeNewLayoutEntry(newTaskListKey));
-
-    this.setState({
-      taskLists: taskLists,
-      layouts: newLayouts,
-    });
+    // this.setState({
+    //   taskLists: taskLists,
+    //   projectLayout: newProjectLayout,
+    // });
   }
 
   addNewTask() {
     // Add a new Task.
     // Find the TaskList that currently has Focus retrieve it's Index in state.taskLists array.
+    // TODO: I don't think you need to get the TargetIndex any more.
     var targetIndex = -1;
     var targetTaskList = this.state.taskLists.find((item, index) => {
       if (this.state.focusedTaskListId === item.uid) {
@@ -367,35 +328,26 @@ class App extends React.Component {
       this.setState({ isAwaitingFirebase: true });
       var newTaskKey = Firebase.database().ref('tasks/').push().key;
 
-      var newFirebaseTask = {
-        dueDate: "Today!",
-        taskList: targetTaskList.uid,
-        taskName: "",
-        isComplete: "",
-        uid: newTaskKey,
-      }
+      var newTask = new TaskStore(
+        "",
+        "",
+        false,
+        this.state.selectedProjectId,
+        targetTaskList.uid,
+        newTaskKey
+      )
 
-      Firebase.database().ref('tasks/' + newTaskKey).set(newFirebaseTask).then(() => {
+      Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
         this.setState({ isAwaitingFirebase: false });
       }).catch(error => {
         this.postFirebaseError(error);
       })
 
       // Update React.
-      var newReactTask = {
-        taskName: newFirebaseTask.taskName,
-        dueDate: newFirebaseTask.dueDate,
-        isComplete: newFirebaseTask.isComplete,
-        uid: newFirebaseTask.uid
-      }
+      // var newTasks = this.state.tasks;
+      // newTasks.push(newTask);
 
-      targetTaskList.tasks.push(newReactTask);
-
-      // Pass into a new taskLists Array.
-      var newTaskListsArray = this.state.taskLists;
-      newTaskListsArray[targetIndex] = targetTaskList;
-
-      this.setState({ taskLists: newTaskListsArray });
+      // this.setState({tasks: newTasks});
     }
   }
 
@@ -421,63 +373,72 @@ class App extends React.Component {
     })
 
     // Update React.
-    var targetTaskList = this.state.taskLists.find(item => {
-      return item.uid === taskListWidgetId;
-    })
+    // var targetTaskList = this.state.taskLists.find(item => {
+    //   return item.uid === taskListWidgetId;
+    // })
 
-    targetTaskList.taskListName = newData;
+    // targetTaskList.taskListName = newData;
 
-    var taskLists = this.state.taskLists;
-    taskLists[taskListWidgetId] = targetTaskList;
+    // var taskLists = this.state.taskLists;
+    // taskLists[taskListWidgetId] = targetTaskList;
 
-    this.setState({taskLists: taskLists});
+    // this.setState({taskLists: taskLists});
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    // Select the Project and Load into Project Space.
-    // Collect Tasklists by the Project ID, then collect together Tasks by TaskList uid.
-    var taskLists = [];
-    this.setState({ isAwaitingFirebase: true });
+    this.setState({isAwaitingFirebase: true});
+
     var taskListsRef = Firebase.database().ref('taskLists');
-    taskListsRef.orderByChild('project').equalTo(projectSelectorId).once('value').then(snapshot => {
-      taskLists = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    var tasksRef = Firebase.database().ref('tasks');
+    var projectLayoutsRef = Firebase.database().ref('projectLayouts');
+    
+    // Disconnect Old Listeners.
+    var outgoingProjectId = this.state.selectedProjectId;
+    if (outgoingProjectId !== -1) {
+      // Task Lists.
+      taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+      tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+      projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+    }
 
-      var tasksRef = Firebase.database().ref('tasks');
+    // Collect Task Lists, Tasks and Layouts. Connect value Listeners.
+    taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
+    tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
+    projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
 
-      // What the Hell? - Collects tasks from Firebase and adds them to their respective taskLists, but does so in a way that
-      // builds a list of Promises, then only updates the state once all promsises are fullfilled. Means you aren't spamming setState
-      // and the isAwaitingFirebase state value can be toggled once all promises have been fullfiled.
-      var firebaseRequests = taskLists.map((item, index, array) => {
-        return new Promise(resolve => {
-          tasksRef.orderByChild('taskList').equalTo(item.uid).once('value').then(snapshot => {
-            array[index].tasks = snapshot.val() == null ? [] : (Object.values(snapshot.val())).sort(this.taskSortHelper);
-            resolve();
-          })
-        })
-      })
+    this.setState({ selectedProjectId: projectSelectorId })
+  }
 
-      // Load Layouts Query into firebaseRequest
-      var layouts = [];
-      var layoutsRef = Firebase.database().ref('projects/' + projectSelectorId + '/layouts/');
-      firebaseRequests.push(new Promise(resolve => {
-        layoutsRef.once('value', snapshot => {
-          layouts = snapshot.val() == null ? [] : Object.values(snapshot.val());
-          resolve();
-        })
-      }))
-
-      Promise.all(firebaseRequests).then(() => {
-        this.setState({
-          taskLists: taskLists,
-          layouts: layouts,
-          isAwaitingFirebase: false
-        })
-      })
-    }).catch(error => {
-      this.postFirebaseError(error);
+  onIncomingTaskLists(snapshot) {
+    // // TODO: What happens if a Change comes in for a Project that isn't the Selected One? Bad Stuff probably.
+    this.setState({isAwaitingFirebase: true});
+    var taskLists = [];
+    taskLists = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    this.setState({
+      isAwaitingFirebase: false,
+      taskLists: taskLists
     })
+  }
 
-    this.setState({ selectedProjectId: projectSelectorId });
+  onIncomingTasks(snapshot) {
+    this.setState({isAwaitingFirebase: true});
+    var tasks = [];
+    tasks = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    this.setState({
+      isAwaitingFirebase: false,
+      tasks: tasks
+    })
+  }
+
+  onIncomingLayouts(snapshot) {
+    this.setState({isAwaitingFirebase: true});
+    var projectLayouts = []
+    projectLayouts = snapshot.val() == null ? [new ProjectLayoutStore({}, -1, -1)] : Object.values(snapshot.val());
+
+    this.setState({
+      isAwaitingFirebase: false,
+      projectLayout: projectLayouts[0]
+    })
   }
 
   handleLayoutChange(layouts, projectId) {
@@ -485,7 +446,7 @@ class App extends React.Component {
     // Update Firebase.
     this.setState({ isAwaitingFirebase: true });
     var updates = {};
-    updates['/projects/' + projectId + '/layouts/'] = newTrimmedLayouts;
+    updates['/projectLayouts/' + projectId + '/layouts/' ] = newTrimmedLayouts;
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
@@ -494,7 +455,9 @@ class App extends React.Component {
     })
 
     // Update React.
-    this.setState({ layouts: newTrimmedLayouts });
+    // this.setState({
+    //   projectLayout: new ProjectLayoutStore(newTrimmedLayouts, projectId, projectId)
+    // });
 
   }
 
@@ -549,64 +512,60 @@ class App extends React.Component {
     })
 
     // Update React.
-    // Get the TaskList in question.
-    var taskListIndex = -1;
-    var taskList = this.state.taskLists.find((item, index) => {
-      if (item.uid === taskListWidgetId) {
-        taskListIndex = index;
-        return true;
-      }
-      else {
-        return false;
-      }
-    })
+    // var taskIndex = this.state.tasks.findIndex(item => {
+    //   return item.uid === taskId;
+    // })
 
-    var currentTaskIndex = -1;
-    var currentTask = taskList.tasks.find((item, index) => {
-      if (item.uid === taskId) {
-        currentTaskIndex = index;
-        return true;
-      }
-      else {
-        return false;
-      }
-    });
+    // var task = this.state.tasks[taskIndex];
+    // var newTasks = this.state.tasks;
+    
+    // // Modify replace the Task.
+    // newTasks[taskIndex] = new TaskStore(
+    //   task.taskName,
+    //   task.dueDate,
+    //   incomingValue,
+    //   task.project,
+    //   task.taskList,
+    //   task.uid
+    // );
 
-    // Modify replace the Task.
-    taskList.tasks[currentTaskIndex] = {
-      taskName: currentTask.taskName,
-      dueDate: currentTask.dueDate,
-      isComplete: incomingValue,
-      uid: currentTask.uid
-    };
-
-    taskList.tasks.sort(this.taskSortHelper);
-
-    // Merge modified taskList back into State.
-    var newTaskLists = this.state.taskLists;
-    newTaskLists[taskListIndex] = taskList;
-    this.setState({ taskLists: newTaskLists });
+    // // Merge modified taskList back into State.
+    // this.setState({tasks: newTasks});
   }
 
   handleAddProjectClick() {
     var newProjectName = "New Project";
+
     // Update Firebase.
     this.setState({ isAwaitingFirebase: true });
     var newProjectKey = Firebase.database().ref('projects/').push().key;
-    Firebase.database().ref('projects/' + newProjectKey).set({
-      uid: newProjectKey,
-      projectName: newProjectName,
-      layouts: []
-    }).then(() => {
+    var updates = {};
+
+    // Project.
+    var newProject = new ProjectStore(newProjectName, newProjectKey);
+    updates['projects/' + newProjectKey] = newProject;
+
+    // Layout.
+    var newProjectLayout = new ProjectLayoutStore({}, newProjectKey, newProjectKey);
+    updates['projectLayouts/' + newProjectKey] = newProjectLayout;
+
+    // Execute Additions.
+    Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
 
     // Update React.
-    var newProjects = this.state.projects;
-    newProjects.push({uid: newProjectKey, projectName: newProjectName, layouts: []});
-    this.setState({projects: newProjects});
+    // // Project
+    // var newProjects = this.state.projects;
+    // newProjects.push(newProject);
+
+    // // Layout
+    // this.setState({
+    //   projects: newProjects,
+    //   projectLayout: newProjectLayout
+    // });
   }
 
   handleRemoveProjectClick(projectId) {
@@ -622,11 +581,8 @@ class App extends React.Component {
 
       // TODO: Refactor the following Code, you are doing the same thing Here as well as within the Task List Widget Removal Code.
       // could be refactored into something like collectTaskId's.
-      var taskIds = [];
-      this.state.taskLists.forEach(item => {
-        item.tasks.forEach(task => {
-          taskIds.push(task.uid);
-        })
+      var taskIds = this.state.tasks.map(item => {
+        return item.uid;
       })
 
       // Build Updates (Deletes).
@@ -650,24 +606,25 @@ class App extends React.Component {
       })
 
       // Update React.
-      var newProjects = this.state.projects;
-      var index = -1;
+      // var newProjects = this.state.projects;
+      // var index = -1;
 
-      newProjects.find((item, itemIndex) => {
-        if (item.uid === projectId) {
-          index = itemIndex;
-          return true;
-        }
-        else {
-          return false;
-        }
-      })
+      // newProjects.find((item, itemIndex) => {
+      //   if (item.uid === projectId) {
+      //     index = itemIndex;
+      //     return true;
+      //   }
+      //   else {
+      //     return false;
+      //   }
+      // })
 
-      newProjects.splice(index, 1);
-      this.setState({
-        projects: newProjects,
-        taskLists: []
-      });
+      // newProjects.splice(index, 1);
+      // this.setState({
+      //   projects: newProjects,
+      //   taskLists: [],
+      //   tasks: [],
+      // });
     }
   }
 
@@ -685,22 +642,22 @@ class App extends React.Component {
     })
 
     // Update React.
-    var projectIndex = 0;
-    var projects = this.state.projects;
-    var project = projects.find((item, index) => {
-      if (item.uid === projectSelectorId) {
-        projectIndex = index;
-        return true;
-      }
-      else {
-        return false;
-      }
-    });
+    // var projectIndex = 0;
+    // var projects = this.state.projects;
+    // var project = projects.find((item, index) => {
+    //   if (item.uid === projectSelectorId) {
+    //     projectIndex = index;
+    //     return true;
+    //   }
+    //   else {
+    //     return false;
+    //   }
+    // });
 
-    project.projectName = newName
-    projects[projectIndex] = project;
+    // project.projectName = newName
+    // projects[projectIndex] = project;
 
-    this.setState({projects: projects});
+    // this.setState({projects: projects});
     
   }
 
@@ -715,11 +672,8 @@ class App extends React.Component {
       this.setState({ isAwaitingFirebase: true });
 
       // Collect related TaskIds.
-      var taskIds = [];
-      this.state.taskLists.forEach(item => {
-        item.tasks.forEach(task => {
-          taskIds.push(task.uid);
-        })
+      var taskIds = this.state.tasks.map(item => {
+        return item.uid;
       })
 
       var updates = {};
@@ -737,20 +691,29 @@ class App extends React.Component {
       })
 
       // Update React.
-      var taskLists = this.state.taskLists;
-      var index = 0;
-      taskLists.find((item, itemIndex) => {
-        if (item.uid === taskListWidgetId) {
-          index = itemIndex;
-          return true;
-        }
-        else {
-          return false;
-        }
-      })
+      // var taskLists = this.state.taskLists;
+      // var index = 0;
+      // taskLists.find((item, itemIndex) => {
+      //   if (item.uid === taskListWidgetId) {
+      //     index = itemIndex;
+      //     return true;
+      //   }
+      //   else {
+      //     return false;
+      //   }
+      // })
 
-      taskLists.splice(index, 1);
-      this.setState({ taskLists: taskLists });
+      // taskLists.splice(index, 1);
+
+      // // Remove Tasks.
+      // var newTasks = this.state.tasks.filter(item => {
+      //   return item.taskList != taskListWidgetId;
+      // })
+
+      // this.setState({
+      //   taskLists: taskLists,
+      //   tasks: newTasks
+      // });
   }
 
   taskSortHelper(a, b) {
@@ -758,6 +721,7 @@ class App extends React.Component {
   }
 
   postFirebaseError(error) {
+    console.error(error);
     this.setState({
       isAwaitingFirebase: false,
       currentErrorMessage: error});

@@ -45,6 +45,7 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  flex-grow: 1;
   animation: PingMovingTask 0.25s linear 1;
 }
 

@@ -13,6 +13,7 @@
     float: left;
     width: 24px;
     height: 24px;
+    color: white;
     animation: spin 0.25s linear infinite;
 }
 
