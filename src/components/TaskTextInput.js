@@ -10,6 +10,11 @@ class TaskTextInput extends React.Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
+    componentDidMount() {
+        // Pull Keyboard Focus.
+        this.refs.input.focus();
+    }
+
     componentWillUnmount() {
         if (this.hasEnterKeyBeenPressed === false) {
             this.props.onComponentUnmounting(this.refs.input.value); // Data change would have already have been handled.

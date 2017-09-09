@@ -92,7 +92,8 @@ class Project extends React.Component{
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}/>
                 </div>
                 <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
-                    onLayoutChange={this.handleLayoutChange} cols={12} rows={2} rowHeight={100} width={1600}>
+                    cols={12} rows={2} rowHeight={100} width={1600}
+                    onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
                     {taskListWidgets}
                 </ReactGridLayout>
             </div>
@@ -207,7 +208,7 @@ class Project extends React.Component{
         
     }
 
-    handleLayoutChange(layouts) {
+    handleLayoutChange(layouts, oldItem, newItem, e, element) {
         this.props.onLayoutChange(layouts, this.props.projectId);
     }
 

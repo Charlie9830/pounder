@@ -57,6 +57,7 @@ class App extends React.Component {
   }
 
   componentDidMount(){
+    console.log("+++++++++ Component Re Mounted ++++++++++++++++");
     // TODO: Tasks and probably TaskLists need to have their Firebase Value event listeners split up into Value Change
     // listeners and Collection Changed Listeners. Right now, When making a new Task, it gets added to React Twice. Once on
     // addNewTask and again on OnIncomingTasks. OnIncomingTasks can't reliably tell if a Task has already been Added if it also has
@@ -446,13 +447,14 @@ class App extends React.Component {
     // Update Firebase.
     this.setState({ isAwaitingFirebase: true });
     var updates = {};
-    updates['/projectLayouts/' + projectId + '/layouts/' ] = newTrimmedLayouts;
+    updates['/projectLayouts/' + projectId + '/layouts/'] = newTrimmedLayouts;
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
+    
 
     // Update React.
     // this.setState({
@@ -595,6 +597,9 @@ class App extends React.Component {
       taskListIds.forEach(id => {
         updates["/taskLists/" + id] = null;
       })
+
+      var projectLayoutId = this.state.projectLayout.uid;
+      updates["/projectLayouts/" + projectLayoutId] = null;
 
       updates["/projects/" + projectId] = null;
 
