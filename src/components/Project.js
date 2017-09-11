@@ -16,11 +16,6 @@ class Project extends React.Component{
 
         this.state = {
             openTaskListWidgetHeaderId: -1,
-            selectedTask: {taskListWidgetId: -1, taskId: -1, isInputOpen: false },
-            isCtrlKeyDown: false,
-            isATaskMoving: false,
-            movingTaskId: -1,
-            sourceTaskListId: -1
         }
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
@@ -31,13 +26,12 @@ class Project extends React.Component{
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
         this.handleTaskCheckBoxClick = this.handleTaskCheckBoxClick.bind(this);
         this.handleTaskListWidgetRemoveButtonClick = this.handleTaskListWidgetRemoveButtonClick.bind(this);
-        this.handleCtrlKeyDown = this.handleCtrlKeyDown.bind(this);
-        this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
         this.handleAddTaskButtonClick = this.handleAddTaskButtonClick.bind(this);
         this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
         this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
         this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
+        this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
     }
     
     componentDidMount() {
@@ -45,13 +39,19 @@ class Project extends React.Component{
         MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     }
 
+    componentWillUnmount() {
+        MouseTrap.unBind("mod", this.handleCtrlKeyDown);
+        MouseTrap.unBind("mod", this.handleCtrlKeyUp);
+    }
+
     render() {
         // Build a list of TaskListWidgets to Render out here.
         var taskListWidgets = this.props.taskLists.map((item, index) => {
             // Widget Layer.
             var isFocused = this.props.focusedTaskListId === item.uid;
-            var isHeaderOpen = this.state.openTaskListWidgetHeaderId === item.uid;           
-            
+            var isHeaderOpen = this.state.openTaskListWidgetHeaderId === item.uid;
+            var taskListSettings = item.settings;    
+
             // Task Layer.
             var tasks = this.props.tasks.filter(task => {
                 return task.taskList === item.uid;
@@ -59,15 +59,15 @@ class Project extends React.Component{
 
             var selectedTaskId = -1;
             var openTaskInputId = -1;
-            if (this.state.selectedTask.taskListWidgetId === item.uid) {
-                selectedTaskId = this.state.selectedTask.taskId;
+            if (this.props.selectedTask.taskListWidgetId === item.uid) {
+                selectedTaskId = this.props.selectedTask.taskId;
 
-                if (this.state.selectedTask.isInputOpen) {
+                if (this.props.selectedTask.isInputOpen) {
                     openTaskInputId = selectedTaskId;
                 }
             }
 
-            var movingTaskId = item.uid === this.state.sourceTaskListId ? this.state.movingTaskId : -1;
+            var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
 
             return (
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
@@ -78,7 +78,8 @@ class Project extends React.Component{
                      onRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
                      onHeaderDoubleClick={this.handleWidgetHeaderDoubleClick} onHeaderSubmit={this.handleTaskListWidgetHeaderSubmit}
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
-                     onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}/>   
+                     onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
+                     onSettingsChanged={this.handleTaskListSettingsChanged}/>   
                 </div>
             )
         });
@@ -101,15 +102,11 @@ class Project extends React.Component{
     }
 
     handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
-        this.setState({
-            isATaskMoving: true,
-            movingTaskId: taskId,
-            sourceTaskListId: taskListWidgetId,
-        })
+        this.props.onTaskTwoFingerTouch(taskListWidgetId, taskId);
     }
 
     handleRemoveTaskListButtonClick() {
-        this.props.onRemoveTaskListButtonClick(this.state.selectedTask.taskListWidgetId);
+        this.props.onRemoveTaskListButtonClick();
     }
 
     handleAddTaskListButtonClick() {
@@ -121,43 +118,15 @@ class Project extends React.Component{
     }
 
     handleRemoveTaskButtonClick() {
-        this.props.onRemoveTaskButtonClick(this.state.selectedTask.taskListWidgetId, this.state.selectedTask.taskId);
-    }
-
-    handleCtrlKeyDown(mouseTrap) {
-        this.setState({isCtrlKeyDown: true});
-    }
-
-    handleCtrlKeyUp(mouseTrap) {
-        this.setState({isCtrlKeyDown: false});
+        this.props.onRemoveTaskButtonClick();
     }
 
     handleTaskSubmit(taskListWidgetId, taskId, newData) {
-        // Close Task Input.
-        this.setState({selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false }});
-
         this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newData)
     }
 
     handleWidgetClick(taskListWidgetId, isFocused) {
-        if (!isFocused) {
-            // Intercept when a task Move is in progress.
-            if (this.state.isATaskMoving) {
-                var movingTaskId = this.state.movingTaskId;
-                var destinationTaskListId = taskListWidgetId;
-
-                this.props.onTaskMoved(this.props.projectId, movingTaskId, this.state.sourceTaskListId, destinationTaskListId);
-
-                this.setState({
-                    isATaskMoving: false,
-                    movingTaskId: -1,
-                    sourceTaskListId: -1,
-                    selectedTask: {taskListWidgetId: destinationTaskListId,taskId: movingTaskId, isInputOpen: false} // Pre Select Task in Destination list
-                })
-            }
-
-            this.props.onTaskListWidgetFocusChanged(taskListWidgetId);
-        }
+        this.props.onTaskListWidgetFocusChanged(taskListWidgetId, isFocused);
     }
 
     handleWidgetHeaderDoubleClick(taskListWidgetId) {
@@ -171,41 +140,7 @@ class Project extends React.Component{
     }
 
     handleTaskClick(element, taskListWidgetId) {
-        // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
-        var selectedTask = this.state.selectedTask;
-
-        if (this.state.isCtrlKeyDown) {
-            this.setState({
-                isATaskMoving: true,
-                movingTaskId: element.props.taskId,
-                sourceTaskListId: taskListWidgetId
-            })
-        }
-
-        else {
-            if (selectedTask.taskListWidgetId === taskListWidgetId &&
-                selectedTask.taskId === element.props.taskId) {
-                // Task Already Selected. Exclusively open it's Text Input.
-                this.setState({
-                    selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: true },
-                    isATaskMoving: false,
-                    movingTaskId: -1,
-                    sourceTaskListId: -1
-                })
-            }
-
-            else {
-                // Otherwise just Select it.
-                this.setState({
-                    selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: false },
-                    isATaskMoving: false,
-                    movingTaskId: -1,
-                    sourceTaskListId: -1,
-                })
-            }
-        }
-
-        
+        this.props.onTaskClick(element, this.props.projectId, taskListWidgetId);
     }
 
     handleLayoutChange(layouts, oldItem, newItem, e, element) {
@@ -213,16 +148,15 @@ class Project extends React.Component{
     }
 
     handleTaskCheckBoxClick(e, taskListWidgetId, taskId, incomingValue) {
-        // Intercept and Select Task if it isn't already selected.
-        if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
-            this.setState({selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false}});
-        }
-
         this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, incomingValue)
     }
 
     handleTaskListWidgetRemoveButtonClick(taskListWidgetId) {
         this.props.onTaskListWidgetRemoveButtonClick(this.props.projectId, taskListWidgetId);
+    }
+
+    handleTaskListSettingsChanged(taskListWidgetId, newTaskListSettings) {
+        this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings);
     }
 
 }

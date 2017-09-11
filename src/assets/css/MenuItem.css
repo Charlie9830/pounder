@@ -1,0 +1,11 @@
+.MenuItem {
+    color: white;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 12pt;
+    height: 40px;
+    width: 100%;
+}
+
+.MenuItem:hover {
+    background: rgba(52,55,56,255);    
+}

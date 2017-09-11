@@ -8,6 +8,7 @@ class ListToolbar extends React.Component{
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
+        this.handleShowCompletedTasksCheckboxClick = this.handleShowCompletedTasksCheckboxClick.bind(this);
     }
 
     render() {
@@ -15,11 +16,19 @@ class ListToolbar extends React.Component{
 
         return(
             <div className="ListToolbar">
-                <label className="SortingMenu"> = </label>
+                <div className="SortingMenu">
+                    <input ref="showCompleteTasksCheckbox" type="checkbox" defaultChecked={this.props.isCompleteTasksShown}
+                     onClick={this.handleShowCompletedTasksCheckboxClick}/>
+                    <label> Show Completed Tasks </label>
+                </div>
                 {listToolbarHeader}
                 <label className="DeleteButton" onClick={this.handleRemoveButtonClick}>X</label>
             </div>
         )
+    }
+
+    handleShowCompletedTasksCheckboxClick(e) {
+        this.props.onShowCompleteTasksChanged(this.refs.showCompleteTasksCheckbox.checked);
     }
 
     getListToolbarHeader(props) {

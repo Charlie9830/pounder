@@ -1,4 +1,5 @@
 import React from 'react';
+import '../assets/css/MenuItem.css'
 
 class MenuItem extends React.Component {
     constructor(props) {
@@ -7,8 +8,8 @@ class MenuItem extends React.Component {
 
     render() {
         return (
-            <div>
-
+            <div className={"MenuItem"}>
+                {this.props.text}
             </div>
         )
     }

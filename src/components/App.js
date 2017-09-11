@@ -4,6 +4,7 @@ import MouseTrap from 'mousetrap';
 import Sidebar from './Sidebar';
 import Project from './Project';
 import StatusBar from './StatusBar';
+import LockScreen from './LockScreen';
 import '../assets/css/TaskListWidget.css'
 import '../assets/css/Sidebar.css'
 import '../assets/css/Project.css'
@@ -12,12 +13,14 @@ import TaskListStore from '../stores/TaskListStore';
 import TaskStore from '../stores/TaskStore';
 import ProjectLayoutStore from '../stores/ProjectLayoutStore';
 import ProjectStore from '../stores/ProjectStore';
+import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 
 
 class App extends React.Component {
   constructor(props) {
     super(props);
 
+    // State.
     this.state = {
       projects: [],
       taskLists: [],
@@ -25,11 +28,20 @@ class App extends React.Component {
       projectLayout: new ProjectLayoutStore({}, -1, -1),
       focusedTaskListId: -1,
       selectedProjectId: -1,
+      selectedTask: {taskListWidgetId: -1, taskId: -1, isInputOpen: false},
+      isATaskMoving: false,
+      movingTaskId: -1,
+      sourceTaskListId: -1,
       isAwaitingFirebase: false,
       isConnectedToFirebase: false,
-      currentErrorMessage: ""
+      currentErrorMessage: "",
+      IsLockScreenDisplayed: false,
     }; 
+
+    // Class Storage.
+    this.isCtrlKeyDown = false;
     
+    // Method Bindings.
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
     this.handleKeyboardShortcut = this.handleKeyboardShortcut.bind(this);
     this.handleTaskListWidgetFocusChange = this.handleTaskListWidgetFocusChange.bind(this);
@@ -44,7 +56,6 @@ class App extends React.Component {
     this.handleProjectNameSubmit = this.handleProjectNameSubmit.bind(this);
     this.handleTaskListWidgetRemoveButtonClick = this.handleTaskListWidgetRemoveButtonClick.bind(this);
     this.handleKeyDown = this.handleKeyDown.bind(this);
-    this.handleTaskMoved = this.handleTaskMoved.bind(this);
     this.handleAddTaskButtonClick = this.handleAddTaskButtonClick.bind(this);
     this.addNewTask = this.addNewTask.bind(this);
     this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
@@ -54,10 +65,16 @@ class App extends React.Component {
     this.onIncomingTaskLists = this.onIncomingTaskLists.bind(this);
     this.onIncomingTasks = this.onIncomingTasks.bind(this);
     this.onIncomingLayouts = this.onIncomingLayouts.bind(this);
+    this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
+    this.handleTaskClick = this.handleTaskClick.bind(this);
+    this.handleCtrlKeyDown = this.handleCtrlKeyDown.bind(this);
+    this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
+    this.moveTask = this.moveTask.bind(this);
+    this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
+    this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
   }
 
   componentDidMount(){
-    console.log("+++++++++ Component Re Mounted ++++++++++++++++");
     // TODO: Tasks and probably TaskLists need to have their Firebase Value event listeners split up into Value Change
     // listeners and Collection Changed Listeners. Right now, When making a new Task, it gets added to React Twice. Once on
     // addNewTask and again on OnIncomingTasks. OnIncomingTasks can't reliably tell if a Task has already been Added if it also has
@@ -92,10 +109,87 @@ class App extends React.Component {
     /*
       1. Move Layouts from Underneath Projects to their own Node. Scaffold in uid and layouts nodes.
       2. Scaffold a 'project' Id into Tasks.
+      3. Scaffold in /settings/ node into TaskLists.
+      4. Migrate Database Rules Over.
     */
 
+    // Move Layouts to their Own Node.
+    // To hard basket. Just Delete them from underneath Projects. Then Remake new Layout Entries.
+    // Firebase.database().ref('projects/').orderByChild('uid').once('value').then(snapshot => {
+    //   if (snapshot.exists()) {
+    //     var projects = Object.values(snapshot.val());
+
+    //     var projectIds = projects.map(item => {
+    //       return item.uid;
+    //     })
+
+    //     var updates = {};
+    //     projectIds.forEach(item => {
+    //       updates['projects/' + item + '/layouts'] = null;
+
+    //       var newProjectLayout = new ProjectLayoutStore({}, item, item);
+    //       updates['projectLayouts/' + item] = newProjectLayout;
+    //     })
+
+    //     Firebase.database().ref().update(updates).then(() => {
+    //       console.log("Updates Completed");
+    //     })
+    //   }
+
+    //   else {
+    //     console.log("Snaphot.exists() failed.");
+    //   }
+    // })
+
+
+    // // Scaffold a 'project' id index into Tasks.
+    // Firebase.database().ref('tasks').orderByChild('taskList').once('value').then(snapshot => {
+    //   if (snapshot.exists()) {
+    //     var tasks = Object.values(snapshot.val());
+
+    //     Firebase.database().ref('taskLists').orderByChild('project').once('value').then(taskListSnap => {
+    //       if (taskListSnap.exists()) {
+    //         var taskLists = Object.values(taskListSnap.val());
+    //         console.log(taskLists);
+
+    //         var updates = {};
+
+    //         tasks.forEach(task => {
+    //           var taskList = taskLists.find(element => {
+    //             return task.taskList === element.uid;
+    //           })
+    //           if (taskList === undefined) {
+    //             console.log("taskList is undefined");
+    //           }
+    //           else
+    //             {
+    //               updates['tasks/' + task.uid + '/project/'] = taskList.project;
+    //             }
+    //         })
+
+    //         taskLists.forEach(item => {
+    //           updates['taskLists/' + item.uid + '/settings/'] = new TaskListSettingsStore(true);
+    //         })
+
+    //         Firebase.database().ref().update(updates).then(() => {
+    //           console.log("Task Updates Complete");
+    //         })
+    //       }
+    //       else {
+    //         console.log("Tasklists - snapshot.exists() failed");
+    //       }
+    //     })
+    //   }
+
+    //   else {
+    //     console.log("Tasks - snapshot.exists() failed");
+    //   }
+    // })
+
     // MouseTrap.
-    MouseTrap.bind(['mod+n', 'mod+shift+n'], this.handleKeyboardShortcut);
+    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc'], this.handleKeyboardShortcut);
+    MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
+    MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
     // TODO: Refactor Firebase ref() strings into Consts declared at the top of the document.
     // Collect Data from Firebase.
@@ -122,7 +216,9 @@ class App extends React.Component {
   }
   
   componentWillUnmount(){
-    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n'], this.handleKeyboardShortcut);
+    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc'], this.handleKeyboardShortcut);
+    MouseTrap.unBind("mod", this.handleCtrlKeyDown);
+    MouseTrap.unBind("mod", this.handleCtrlKeyUp);
 
     // Firebase.
     Firebase.database().ref('projects').off('value');
@@ -139,19 +235,82 @@ class App extends React.Component {
 
     return (
       <div>
-        <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}/>
+        <LockScreen isDisplayed={this.state.IsLockScreenDisplayed} onAccessGranted={this.handleLockScreenAccessGranted}/>
+
+        <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}
+        errorMessage={this.state.currentErrorMessage}/>
         <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
-         onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
-         onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}/>
-        <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} focusedTaskListId={this.state.focusedTaskListId}
-         projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
-         onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
-         onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
-         layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
-         onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
-         onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}/>
+          onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
+          onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit} />
+        <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} selectedTask={this.state.selectedTask}
+          movingTaskId={this.state.movingTaskId} focusedTaskListId={this.state.focusedTaskListId}
+          projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
+          onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
+          onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
+          layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
+          onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
+          onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
+          onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick} 
+          movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
+          onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}/>
       </div>
     );
+  }
+
+  handleLockScreenAccessGranted() {
+    this.setState({IsLockScreenDisplayed: false});
+  }
+
+  handleCtrlKeyDown(mouseTrap) {
+    this.isCtrlKeyDown = true;
+  }
+
+  handleCtrlKeyUp(mouseTrap) {
+    this.isCtrlKeyDown = false;
+  }
+
+  handleTaskClick(element, projectId, taskListWidgetId) {
+    // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
+    var selectedTask = this.state.selectedTask;
+
+    if (this.isCtrlKeyDown) {
+      this.setState({
+        isATaskMoving: true,
+        movingTaskId: element.props.taskId,
+        sourceTaskListId: taskListWidgetId
+      })
+    }
+
+    else {
+      if (selectedTask.taskListWidgetId === taskListWidgetId &&
+        selectedTask.taskId === element.props.taskId) {
+        // Task Already Selected. Exclusively open it's Text Input.
+        this.setState({
+          selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: true },
+          isATaskMoving: false,
+          movingTaskId: -1,
+          sourceTaskListId: -1
+        })
+      }
+
+      else {
+        // Otherwise just Select it.
+        this.setState({
+          selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: false },
+          isATaskMoving: false,
+          movingTaskId: -1,
+          sourceTaskListId: -1,
+        })
+      }
+    }
+  }
+
+  handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
+    this.setState({
+      isATaskMoving: true,
+      movingTaskId: taskId,
+      sourceTaskListId: taskListWidgetId,
+    })
   }
 
   handleRemoveTaskListButtonClick() {
@@ -169,35 +328,44 @@ class App extends React.Component {
     this.addNewTask();
   }
 
-  handleRemoveTaskButtonClick(taskListWidgetId, taskId) {
+  handleRemoveTaskButtonClick() {
     // TODO: Make this not crash out if nothing is selected.
-    // Update Firebase.
-    this.setState({isAwaitingFirebase: true});
-    var updates = {};
-    updates["tasks/" + taskId] = null;
+    var taskId = this.state.selectedTask.taskId;
+    if (taskId !== -1) {
+      // Update Firebase.
+      this.setState({ isAwaitingFirebase: true });
+      var updates = {};
+      updates["tasks/" + taskId] = null;
 
-    // Execute Updates (Deletes).
-    Firebase.database().ref().update(updates).then( () => {
-      this.setState({isAwaitingFirebase: false});
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+      // Execute Updates (Deletes).
+      Firebase.database().ref().update(updates).then(() => {
+        this.setState({ isAwaitingFirebase: false });
+      }).catch(error => {
+        this.postFirebaseError(error);
+      })
 
-    // Update React.
-    // var newTasks = this.state.tasks.filter(item => {
-    //   return item.uid !== taskId;
-    // })
+      // Update React.
+      // var newTasks = this.state.tasks.filter(item => {
+      //   return item.uid !== taskId;
+      // })
 
-    // this.setState({tasks: newTasks});
+      // this.setState({tasks: newTasks});
+    }
   }
 
-  handleTaskMoved(projectId, taskId, sourceTaskListId, destinationTaskListId) {
+  moveTask(taskId, sourceTaskListId, destinationTaskListId) {
     // Update Firebase.
     this.setState({isAwaitingFirebase: true});
     var updates = {};
     updates["tasks/" + taskId + "/taskList/"] = destinationTaskListId;
     Firebase.database().ref().update(updates).then( () => {
-      this.setState({isAwaitingFirebase: false});
+      this.setState({
+         isAwaitingFirebase: false,
+         isATaskMoving: false,
+         sourceTaskListId: -1,
+         movingTaskId: -1,
+         selectedTask: {taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
+      });
     }).catch(error => {
       this.postFirebaseError(error);
     })
@@ -225,13 +393,18 @@ class App extends React.Component {
 
   handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
     // Update Firebase.
-    this.setState({isAwaitingFirebase: true});
+    this.setState({
+      isAwaitingFirebase: true,
+      selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false}
+     }); // Close Task Input.
     
     var updates = {};
     updates['/tasks/' + taskId + "/taskName/"] = newData;
 
     Firebase.database().ref().update(updates).then( () => {
-      this.setState({isAwaitingFirebase: false});
+      this.setState({
+        isAwaitingFirebase: false,
+      });
     }).catch(error => {
       this.postFirebaseError(error);
     })
@@ -274,6 +447,15 @@ class App extends React.Component {
       // Add a new TaskList.
       this.addNewTaskList();
     }
+
+    console.log("ding");
+    // Shift + Escape
+    console.log(mouseTrap);
+    if (mouseTrap.shiftKey && mouseTrap.key === "Escape") {
+      // Lock App.
+      console.log("shift + esc");
+      this.setState({IsLockScreenDisplayed: true});
+    }
   }
 
   addNewTaskList() {
@@ -285,7 +467,8 @@ class App extends React.Component {
       "New Task List",
       this.state.selectedProjectId,
       newTaskListKey,
-      newTaskListKey
+      newTaskListKey,
+      new TaskListSettingsStore(true)
     )
 
     Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
@@ -339,7 +522,10 @@ class App extends React.Component {
       )
 
       Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
-        this.setState({ isAwaitingFirebase: false });
+        this.setState({
+          isAwaitingFirebase: false,
+          selectedTask: { taskListWidgetId: this.state.focusedTaskListId, taskId: newTaskKey, isInputOpen: true }
+        });
       }).catch(error => {
         this.postFirebaseError(error);
       })
@@ -356,8 +542,17 @@ class App extends React.Component {
     return {i: taskListId, x: 0, y: 0, w: 3, h: 5 };
   }
 
-  handleTaskListWidgetFocusChange(taskListWidgetId) {
-    this.setState({focusedTaskListId: taskListWidgetId});
+  handleTaskListWidgetFocusChange(taskListWidgetId, isFocused) {
+    if (!isFocused) {
+      if (this.state.isATaskMoving) {
+        var movingTaskId = this.state.movingTaskId;
+        var destinationTaskListId = taskListWidgetId;
+
+        this.moveTask(movingTaskId, this.state.sourceTaskListId, destinationTaskListId);
+      }
+
+      this.setState({focusedTaskListId: taskListWidgetId});
+    }
   }
 
   handleTaskListWidgetHeaderChanged(taskListWidgetId, newData) {
@@ -393,19 +588,21 @@ class App extends React.Component {
     var tasksRef = Firebase.database().ref('tasks');
     var projectLayoutsRef = Firebase.database().ref('projectLayouts');
     
-    // Disconnect Old Listeners.
+    // Disconnect Old Listeners and Connect new Listeners (Firebase will Call Callbacks for intial Values).
     var outgoingProjectId = this.state.selectedProjectId;
     if (outgoingProjectId !== -1) {
-      // Task Lists.
+      // Old Listeners.
       taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
       tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
       projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
     }
 
-    // Collect Task Lists, Tasks and Layouts. Connect value Listeners.
-    taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
-    tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
-    projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
+    if (projectSelectorId !== -1) {
+      // New Listeners.
+      taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
+      tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
+      projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
+    }
 
     this.setState({ selectedProjectId: projectSelectorId })
   }
@@ -501,6 +698,11 @@ class App extends React.Component {
     }
   
   handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue) {
+    // Todo: You call setState three times here. Could be less.
+    if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
+      this.setState({ selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId } });
+    }
+
     // Update Firebase.
     this.setState({ isAwaitingFirebase: true });
 
@@ -578,13 +780,17 @@ class App extends React.Component {
       // Get a List of Task List Id's and Task Id's. It's Okay to collect these from State as associated taskLists and tasks have already
       // been loaded in via the handleProjectSelectorClick method. No point in querying Firebase again for this data.
       var taskListIds = this.state.taskLists.map(item => {
-        return item.uid;
+        if (item.project === projectId) {
+          return item.uid;
+        }
       })
 
       // TODO: Refactor the following Code, you are doing the same thing Here as well as within the Task List Widget Removal Code.
       // could be refactored into something like collectTaskId's.
       var taskIds = this.state.tasks.map(item => {
-        return item.uid;
+        if (item.project === projectId) {
+          return item.uid;
+        }
       })
 
       // Build Updates (Deletes).
@@ -678,7 +884,9 @@ class App extends React.Component {
 
       // Collect related TaskIds.
       var taskIds = this.state.tasks.map(item => {
-        return item.uid;
+        if (item.taskList === taskListWidgetId) {
+          return item.uid;
+        }
       })
 
       var updates = {};
@@ -721,15 +929,24 @@ class App extends React.Component {
       // });
   }
 
-  taskSortHelper(a, b) {
-    return a.isComplete - b.isComplete;
-  }
-
   postFirebaseError(error) {
     console.error(error);
     this.setState({
       isAwaitingFirebase: false,
-      currentErrorMessage: error});
+      currentErrorMessage: "An Error has Occuered. Please consult Developer Diagnostics Log"});
+  }
+
+  handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
+    // Update Firebase.
+    var updates = {};
+    updates['taskLists/' + taskListWidgetId + '/settings/'] = newTaskListSettings;
+
+    this.setState({ isAwaitingFirebase: true });
+    Firebase.database().ref().update(updates).then(() => {
+      this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
   }
 }
 

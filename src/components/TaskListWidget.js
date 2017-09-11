@@ -3,6 +3,7 @@ import TaskArea from '../components/TaskArea';
 import Task from '../components/Task';
 import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
+import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 
 
 class TaskListWidget extends React.Component {
@@ -18,6 +19,7 @@ class TaskListWidget extends React.Component {
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskInputUnmounting = this.handleTaskInputUnmounting.bind(this);
+        this.handleShowCompleteTasksChanged = this.handleShowCompleteTasksChanged.bind(this);
     }
 
     componentDidMount(){
@@ -28,8 +30,16 @@ class TaskListWidget extends React.Component {
     render(){
         var builtTasks = [];
         if (this.props.tasks != undefined) {
-            builtTasks = this.props.tasks.map((item, index) => {
-                // Render element as selected or not selected.
+            // Sort Tasks.
+            var sortedTasks = this.props.tasks.concat().sort(this.taskSortHelper);
+
+            builtTasks = sortedTasks.map((item, index) => {
+                // Bail out if Task isn't meant to be Visible.
+                if (!this.props.settings.isCompleteTasksShown && item.isComplete) {
+                    return;
+                }
+
+                // Render Element.
                 var isTaskSelected = item.uid === this.props.selectedTaskId;
                 var isTaskInputOpen = item.uid === this.props.openTaskInputId;
                 var isTaskMoving = item.uid === this.props.movingTaskId;
@@ -45,15 +55,23 @@ class TaskListWidget extends React.Component {
         }
 
         var style = this.props.isFocused ? "IsFocused" : "IsNotFocused";
-
         return (
             <div className={style} onClick={this.handleWidgetClick}>
                 <ListToolbar headerText={this.props.taskListName} isHeaderOpen={this.props.isHeaderOpen}
                  onHeaderDoubleClick={this.handleHeaderDoubleClick} onHeaderSubmit={this.handleTaskListHeaderSubmit}
-                 onRemoveButtonClick={this.handleRemoveButtonClick}/>
+                 onRemoveButtonClick={this.handleRemoveButtonClick} 
+                 onShowCompleteTasksChanged={this.handleShowCompleteTasksChanged}
+                 isCompleteTasksShown={this.props.settings.isCompleteTasksShown}/>
                 <TaskArea> {builtTasks} </TaskArea>
             </div>
         )
+    }
+
+    handleShowCompleteTasksChanged(newValue) {
+        var newTaskListSettings = new TaskListSettingsStore(this.props.settings.isCompleteTasksShown);
+        newTaskListSettings.isCompleteTasksShown = newValue;
+
+        this.props.onSettingsChanged(this.props.taskListWidgetId, newTaskListSettings);
     }
 
     handleTaskInputUnmounting(data, taskId) {
@@ -99,6 +117,11 @@ class TaskListWidget extends React.Component {
     handleRemoveButtonClick(e) {
         this.props.onRemoveButtonClick(this.props.taskListWidgetId);
     }
+
+    taskSortHelper(a, b) {
+        return a.isComplete - b.isComplete;
+    }
+
 }
 
 export default TaskListWidget;

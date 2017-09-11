@@ -2,7 +2,7 @@
   "name": "pounder",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -13,7 +13,7 @@
     "build": "webpack --config webpack.build.config.js",
     "packageWeb": "webpack --config webpack.build.web.config.js",
     "package": "webpack --config webpack.build.config.js",
-    "postpackage": "electron-packager ./ --out=./builds"
+    "postpackage": "electron-packager ./ --asar --icon=src/assets/icons/icon.ico --out=./builds"
   },
   "repository": {
     "type": "git",

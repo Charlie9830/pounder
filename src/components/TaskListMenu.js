@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/TaskListMenu.css'
+import MenuItem from './MenuItem';
 
 class TaskListMenu extends React.Component {
     constructor(props) {
@@ -9,8 +10,10 @@ class TaskListMenu extends React.Component {
     render() {
         return (
             <div className="TaskListMenuDropdown">
+                <span> = </span>
                 <div className="TaskListMenuContent">
-                    Hello!
+                    <MenuItem text="Sort by Completion"/>
+                    <MenuItem text="Hide Completed Tasks"/>
                 </div>
             </div>
         )
