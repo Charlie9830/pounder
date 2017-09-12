@@ -22,9 +22,13 @@ class LockScreen extends React.Component {
                         <div className="LockScreenCentered">
                             <img className="LockScreenIcon" src="LoadingIcon.svg"/>
                             <input ref="input" className="LockScreenInput" type="password" onKeyPress={this.handleKeyPress}/>
-                            <label> Incorrect Pin </label>
                         </div>
                     </div>
+                </div>
+                <div className="LockScreenBackupMessageContainer">
+                    <label className="LockScreenBackupMessage">
+                        {this.props.backupMessage}
+                    </label>
                 </div>
             </div>
         )

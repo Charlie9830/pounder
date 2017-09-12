@@ -1,5 +1,6 @@
 {
   "name": "pounder",
+  "productName": "Pounder",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
   "version": "1.1.0",
@@ -13,7 +14,7 @@
     "build": "webpack --config webpack.build.config.js",
     "packageWeb": "webpack --config webpack.build.web.config.js",
     "package": "webpack --config webpack.build.config.js",
-    "postpackage": "electron-packager ./ --asar --icon=src/assets/icons/icon.ico --out=./builds"
+    "postpackage": "electron-packager ./ --asar --icon=./dist/icon.ico --out=./builds"
   },
   "repository": {
     "type": "git",
@@ -42,6 +43,7 @@
     "7zip-bin-win": "^2.1.0",
     "firebase": "^4.2.0",
     "firebase-tools": "^3.10.0",
+    "fs-jetpack": "^1.2.0",
     "mousetrap": "^1.6.1",
     "react-grid-layout": "^0.14.7",
     "react-resizable": "^1.7.1"

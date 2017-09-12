@@ -1,0 +1,752 @@
+{
+  "projects" : {
+    "-Ksr3vU3xAhJx6mfOrsv" : {
+      "layouts" : [ {
+        "h" : 2,
+        "i" : "-Ksr3xGEwBZYKMmmED3q",
+        "w" : 4,
+        "x" : 0,
+        "y" : 0
+      }, {
+        "h" : 4,
+        "i" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+        "w" : 3,
+        "x" : 4,
+        "y" : 0
+      }, {
+        "h" : 4,
+        "i" : "-Kt1UCNE_N36E6T1qGH5",
+        "w" : 4,
+        "x" : 0,
+        "y" : 2
+      }, {
+        "h" : 2,
+        "i" : "-Kt1UPQlJ-7OkVZ78ER5",
+        "w" : 3,
+        "x" : 4,
+        "y" : 4
+      }, {
+        "h" : 6,
+        "i" : "-KtKouAFtexf2nw2clUX",
+        "w" : 3,
+        "x" : 7,
+        "y" : 0
+      }, {
+        "h" : 3,
+        "i" : "-KtKoz5lW6c3nwAg7xAR",
+        "w" : 4,
+        "x" : 4,
+        "y" : 6
+      }, {
+        "h" : 3,
+        "i" : "-KtM-8IeeK6ZyLqfQHQq",
+        "w" : 4,
+        "x" : 0,
+        "y" : 6
+      } ],
+      "projectName" : "Pounder App",
+      "uid" : "-Ksr3vU3xAhJx6mfOrsv"
+    },
+    "-Kt1SYilMYcVnzHcQwom" : {
+      "layouts" : [ {
+        "h" : 5,
+        "i" : "-Kt1S_SrE3HbWuAfEnu-",
+        "w" : 4,
+        "x" : 0,
+        "y" : 0
+      }, {
+        "h" : 5,
+        "i" : "-Kt1Sc9dIe4QD5iDIeKT",
+        "w" : 3,
+        "x" : 4,
+        "y" : 0
+      }, {
+        "h" : 4,
+        "i" : "-Kt1SfkL_JczROn1fzLy",
+        "w" : 4,
+        "x" : 0,
+        "y" : 5
+      }, {
+        "h" : 4,
+        "i" : "-Kt1Sje-6LTYEF9zcs97",
+        "w" : 3,
+        "x" : 8,
+        "y" : 5
+      }, {
+        "h" : 5,
+        "i" : "-Kt1TPtiS_LxPrpEQZh4",
+        "w" : 5,
+        "x" : 7,
+        "y" : 0
+      }, {
+        "h" : 4,
+        "i" : "-KtW5nGX7_aM_RNpS2fh",
+        "w" : 4,
+        "x" : 4,
+        "y" : 5
+      } ],
+      "projectName" : "The Bodyguard",
+      "uid" : "-Kt1SYilMYcVnzHcQwom"
+    },
+    "-KtKasKrYPduyXdGHeXU" : {
+      "layouts" : [ {
+        "h" : 5,
+        "i" : "-KtKauT5KuPrvI8JgFBS",
+        "w" : 4,
+        "x" : 0,
+        "y" : 0
+      }, {
+        "h" : 5,
+        "i" : "-KtKbRz1qIYYTWleAfxb",
+        "w" : 4,
+        "x" : 4,
+        "y" : 0
+      } ],
+      "projectName" : "Twisted Broadway",
+      "uid" : "-KtKasKrYPduyXdGHeXU"
+    },
+    "-KtR9sm8PAB9yXNJ2AOC" : {
+      "layouts" : [ {
+        "h" : 5,
+        "i" : "-KtR9uQlrlKrolQzFTxZ",
+        "w" : 3,
+        "x" : 0,
+        "y" : 0
+      } ],
+      "projectName" : "Next Show",
+      "uid" : "-KtR9sm8PAB9yXNJ2AOC"
+    }
+  },
+  "taskLists" : {
+    "-Ksr3xGEwBZYKMmmED3q" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "For Version 1",
+      "uid" : "-Ksr3xGEwBZYKMmmED3q"
+    },
+    "-Ksr4Pk-Wv-7Ws_dJyPs" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "For Version 1.0.1",
+      "uid" : "-Ksr4Pk-Wv-7Ws_dJyPs"
+    },
+    "-Kt1S_SrE3HbWuAfEnu-" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "Main",
+      "uid" : "-Kt1S_SrE3HbWuAfEnu-"
+    },
+    "-Kt1Sc9dIe4QD5iDIeKT" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "Before Next Show",
+      "uid" : "-Kt1Sc9dIe4QD5iDIeKT"
+    },
+    "-Kt1SfkL_JczROn1fzLy" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "Maintenance",
+      "uid" : "-Kt1SfkL_JczROn1fzLy"
+    },
+    "-Kt1Sje-6LTYEF9zcs97" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "Rig Cleaning",
+      "uid" : "-Kt1Sje-6LTYEF9zcs97"
+    },
+    "-Kt1TPtiS_LxPrpEQZh4" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "During the Show",
+      "uid" : "-Kt1TPtiS_LxPrpEQZh4"
+    },
+    "-Kt1UCNE_N36E6T1qGH5" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "Known Issues",
+      "uid" : "-Kt1UCNE_N36E6T1qGH5"
+    },
+    "-Kt1UPQlJ-7OkVZ78ER5" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "Testing",
+      "uid" : "-Kt1UPQlJ-7OkVZ78ER5"
+    },
+    "-KtKauT5KuPrvI8JgFBS" : {
+      "project" : "-KtKasKrYPduyXdGHeXU",
+      "taskListName" : "Main",
+      "uid" : "-KtKauT5KuPrvI8JgFBS"
+    },
+    "-KtKbRz1qIYYTWleAfxb" : {
+      "project" : "-KtKasKrYPduyXdGHeXU",
+      "taskListName" : "Pre Programming",
+      "uid" : "-KtKbRz1qIYYTWleAfxb"
+    },
+    "-KtKouAFtexf2nw2clUX" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "To Do",
+      "uid" : "-KtKouAFtexf2nw2clUX"
+    },
+    "-KtKoz5lW6c3nwAg7xAR" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "For Version 1.+",
+      "uid" : "-KtKoz5lW6c3nwAg7xAR"
+    },
+    "-KtM-8IeeK6ZyLqfQHQq" : {
+      "project" : "-Ksr3vU3xAhJx6mfOrsv",
+      "taskListName" : "Refactoring",
+      "uid" : "-KtM-8IeeK6ZyLqfQHQq"
+    },
+    "-KtR9uQlrlKrolQzFTxZ" : {
+      "project" : "-KtR9sm8PAB9yXNJ2AOC",
+      "taskListName" : "Main",
+      "uid" : "-KtR9uQlrlKrolQzFTxZ"
+    },
+    "-KtW5nGX7_aM_RNpS2fh" : {
+      "project" : "-Kt1SYilMYcVnzHcQwom",
+      "taskListName" : "Upcoming Maintenance",
+      "uid" : "-KtW5nGX7_aM_RNpS2fh"
+    }
+  },
+  "tasks" : {
+    "-Ksr48gSDEMeFBHcqWEX" : {
+      "dueDate" : "Today!",
+      "isComplete" : false,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "Purchase Hardware",
+      "uid" : "-Ksr48gSDEMeFBHcqWEX"
+    },
+    "-Ksr4Czok3jytI3yYT_t" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "Firebase Auth",
+      "uid" : "-Ksr4Czok3jytI3yYT_t"
+    },
+    "-Ksr4EcPSPDMkk9AwsZp" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "Sort Tasks by Completed",
+      "uid" : "-Ksr4EcPSPDMkk9AwsZp"
+    },
+    "-Ksr4KeYp9w_pVXmadTu" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "Get electron-Builder and Package",
+      "uid" : "-Ksr4KeYp9w_pVXmadTu"
+    },
+    "-Ksr4Qy81Hj8cH1GHRVl" : {
+      "dueDate" : "Today!",
+      "isComplete" : false,
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Finish Due Date Functionality",
+      "uid" : "-Ksr4Qy81Hj8cH1GHRVl"
+    },
+    "-Ksr4WqmIt-77TnWD2cx" : {
+      "dueDate" : "Today!",
+      "isComplete" : false,
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Touch screen Functionality",
+      "uid" : "-Ksr4WqmIt-77TnWD2cx"
+    },
+    "-Ksr4ivbb5fvx9zhSSNm" : {
+      "dueDate" : "Today!",
+      "isComplete" : false,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "Validation of Task Persitance",
+      "uid" : "-Ksr4ivbb5fvx9zhSSNm"
+    },
+    "-Ksrh-VNkK52O2RXWtbC" : {
+      "dueDate" : "Today!",
+      "isComplete" : false,
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Offline Persistance",
+      "uid" : "-Ksrh-VNkK52O2RXWtbC"
+    },
+    "-KsrnSrHuPAmT180weqy" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Input opens Automatically for new Tasks",
+      "uid" : "-KsrnSrHuPAmT180weqy"
+    },
+    "-KsrnrlWSIvqdp6KzMze" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "More Complete Sorting system (Sort by Complete, Custom Sort, etc)",
+      "uid" : "-KsrnrlWSIvqdp6KzMze"
+    },
+    "-KsrtBhApzi_4GTQpjyU" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr3xGEwBZYKMmmED3q",
+      "taskName" : "New Awaiting Firebase Animation",
+      "uid" : "-KsrtBhApzi_4GTQpjyU"
+    },
+    "-KsrwUxORKQlVVB7ZUvO" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Add Higher Priority Task Decoration (think Pink Highlighter)",
+      "uid" : "-KsrwUxORKQlVVB7ZUvO"
+    },
+    "-Kt1UVS0tPdb8RbqgQ3p" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UPQlJ-7OkVZ78ER5",
+      "taskName" : "Task or Task List Selection persisting across Projects",
+      "uid" : "-Kt1UVS0tPdb8RbqgQ3p"
+    },
+    "-Kt1V9unmEZCobt8--cu" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Possible Stall when resuming from Sleep and performing DB Task",
+      "uid" : "-Kt1V9unmEZCobt8--cu"
+    },
+    "-Kt1Y3zKDP3GbjtO4CiZ" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Task Text can Spill outside Bounds of task itself.",
+      "uid" : "-Kt1Y3zKDP3GbjtO4CiZ"
+    },
+    "-Kt4wD59ZsLBqfhTrGRg" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "Test Database Error Handling",
+      "uid" : "-Kt4wD59ZsLBqfhTrGRg"
+    },
+    "-Kt4wF8tRfDtn5Lfv0XT" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Database Stall, could be caused by lack of Error Handling",
+      "uid" : "-Kt4wF8tRfDtn5Lfv0XT"
+    },
+    "-Kt4wanBqZ3iAQp7_hGZ" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Widgets seem to Jump from the bottom to Far Right of the Project Space",
+      "uid" : "-Kt4wanBqZ3iAQp7_hGZ"
+    },
+    "-Kt4wkHGCPdXJAfJZHUY" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Task List Header Label sizing is responding to Window Size, not Widget Size",
+      "uid" : "-Kt4wkHGCPdXJAfJZHUY"
+    },
+    "-KtAe0CBfEYdnEBOGidS" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Taskname should change Submit when Input looses focus",
+      "uid" : "-KtAe0CBfEYdnEBOGidS"
+    },
+    "-KtCE8Ufs_I8AURbvLZP" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Caching of Project Displays for Faster Switching",
+      "uid" : "-KtCE8Ufs_I8AURbvLZP"
+    },
+    "-KtCGiLMY1Ij-sa-LWra" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "When coming back from another Tab, it's as if the Ctrl key is being Held down",
+      "uid" : "-KtCGiLMY1Ij-sa-LWra"
+    },
+    "-KtFXoe7I_ZpKa_Tx0Ef" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "New Tasks Insert at the Top of the Task List",
+      "uid" : "-KtFXoe7I_ZpKa_Tx0Ef"
+    },
+    "-KtKb1VU1gqncEj-aZBt" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKauT5KuPrvI8JgFBS",
+      "taskName" : "Dead Trusses",
+      "uid" : "-KtKb1VU1gqncEj-aZBt"
+    },
+    "-KtKhrAMB14geKE8hzNX" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "More Obvious \"Complete\" Checkboxes",
+      "uid" : "-KtKhrAMB14geKE8hzNX"
+    },
+    "-KtKojbyjXRFnesahB8_" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "Version Numbering in Top Right Hand corner for Web Deploys",
+      "uid" : "-KtKojbyjXRFnesahB8_"
+    },
+    "-KtKp7Emzfgthq5aY26Z" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "Fix Task Selection Display",
+      "uid" : "-KtKp7Emzfgthq5aY26Z"
+    },
+    "-KtKpCoIiYJg8GLwi8K_" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Fix Build Problems, Build is way to Big",
+      "uid" : "-KtKpCoIiYJg8GLwi8K_"
+    },
+    "-KtKpOTowxe6u6jH37vv" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Implement Authorization",
+      "uid" : "-KtKpOTowxe6u6jH37vv"
+    },
+    "-KtLCAAsoVuSQPDjzola" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Squirell Auto Updates",
+      "uid" : "-KtLCAAsoVuSQPDjzola"
+    },
+    "-KtLrU-jO-NyVwmdS4bZ" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Change over to Firebase.on() instead of Firebase.once()",
+      "uid" : "-KtLrU-jO-NyVwmdS4bZ"
+    },
+    "-KtQ5v9Ca5gzQJiVJcwn" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKoz5lW6c3nwAg7xAR",
+      "taskName" : "Awaiting Firebase Display no longer very relevant due to nature of using .on() instead of .once(). Perhaps it should be Implemented as Uploading or Downloading Display",
+      "uid" : "-KtQ5v9Ca5gzQJiVJcwn"
+    },
+    "-KtQI30jIJhwVxU4u4od" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "Tasks with \"IsComplete\" Flag should re Render Task Text with Lowered Opacity",
+      "uid" : "-KtQI30jIJhwVxU4u4od"
+    },
+    "-KtQThFW8t4IreMe0AEC" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Scaffold new Changes to Pounder-Production Database",
+      "uid" : "-KtQThFW8t4IreMe0AEC"
+    },
+    "-KtR8ylnPwInuUcfsGmJ" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Ksr4Pk-Wv-7Ws_dJyPs",
+      "taskName" : "Enable Dev Tools in Production",
+      "uid" : "-KtR8ylnPwInuUcfsGmJ"
+    },
+    "-KtR9vkQNtor4eP_6UYu" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtR9uQlrlKrolQzFTxZ",
+      "taskName" : "Migrate list over from Wunderlist",
+      "uid" : "-KtR9vkQNtor4eP_6UYu"
+    },
+    "-KtW0mKGIxeCmCB7wLWO" : {
+      "isComplete" : true
+    },
+    "-KtW0nCfasBFbnIOHWXE" : {
+      "isComplete" : true
+    },
+    "-KtW0o1yBRGzNORY6imV" : {
+      "isComplete" : true
+    },
+    "-KtW0pj6Yk1jqKbwGqf4" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX5",
+      "uid" : "-KtW0pj6Yk1jqKbwGqf4"
+    },
+    "-KtW0yfT6xotK7qskLgb" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX6",
+      "uid" : "-KtW0yfT6xotK7qskLgb"
+    },
+    "-KtW0zgM2W4viMQP-68a" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Ladders",
+      "uid" : "-KtW0zgM2W4viMQP-68a"
+    },
+    "-KtW11VcRCpXg-AioPTv" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Advance Truss",
+      "uid" : "-KtW11VcRCpXg-AioPTv"
+    },
+    "-KtW12vScfPcFTK-VZtd" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Pro Booms",
+      "uid" : "-KtW12vScfPcFTK-VZtd"
+    },
+    "-KtW14VNTO_nJX6Z9evF" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Dress Circle",
+      "uid" : "-KtW14VNTO_nJX6Z9evF"
+    },
+    "-KtW16XE68m0GiYWR3MZ" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Box Booms",
+      "uid" : "-KtW16XE68m0GiYWR3MZ"
+    },
+    "-KtW1DSeISohDHTOXqoK" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1SfkL_JczROn1fzLy",
+      "taskName" : "Re-Attach Ethercon Ends",
+      "uid" : "-KtW1DSeISohDHTOXqoK"
+    },
+    "-KtW1JsnNQnGW3AjA6Wk" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Fit new Sharpy Wash Fan",
+      "uid" : "-KtW1JsnNQnGW3AjA6Wk"
+    },
+    "-KtW1MdJdD00R_775OBi" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Test Aura",
+      "uid" : "-KtW1MdJdD00R_775OBi"
+    },
+    "-KtW1RPGwqqijiLLTEZc" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Order more Source4 750w HPL Lamps",
+      "uid" : "-KtW1RPGwqqijiLLTEZc"
+    },
+    "-KtW3uXBfvbRbMYYqTzX" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sc9dIe4QD5iDIeKT",
+      "taskName" : "Fix Ch22 Framing Error",
+      "uid" : "-KtW3uXBfvbRbMYYqTzX"
+    },
+    "-KtW440V4Wfriumz-L9I" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sc9dIe4QD5iDIeKT",
+      "taskName" : "Rollback Show File",
+      "uid" : "-KtW440V4Wfriumz-L9I"
+    },
+    "-KtW466wjBAZ_LqPGLw0" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1TPtiS_LxPrpEQZh4",
+      "taskName" : "Fix Rev Lampcheck Initial Position",
+      "uid" : "-KtW466wjBAZ_LqPGLw0"
+    },
+    "-KtW4DWXvgJ9vJYzuLDY" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1TPtiS_LxPrpEQZh4",
+      "taskName" : "Take Ch2 out of Scrub State",
+      "uid" : "-KtW4DWXvgJ9vJYzuLDY"
+    },
+    "-KtW4uKqhpIXXAIod0-w" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX4",
+      "uid" : "-KtW4uKqhpIXXAIod0-w"
+    },
+    "-KtW4vsgLXF7SN4b4h0d" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX3",
+      "uid" : "-KtW4vsgLXF7SN4b4h0d"
+    },
+    "-KtW4xX7GpOhA6qe3lFd" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX2",
+      "uid" : "-KtW4xX7GpOhA6qe3lFd"
+    },
+    "-KtW4yoB2S-B8GDInItd" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "LX1",
+      "uid" : "-KtW4yoB2S-B8GDInItd"
+    },
+    "-KtW54npA-hRh1UAM5Nb" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sje-6LTYEF9zcs97",
+      "taskName" : "Pit Rail",
+      "uid" : "-KtW54npA-hRh1UAM5Nb"
+    },
+    "-KtW6Ado3h87fQ0Ti2ng" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1SfkL_JczROn1fzLy",
+      "taskName" : "Remove Position Attached Labels",
+      "uid" : "-KtW6Ado3h87fQ0Ti2ng"
+    },
+    "-KtW7T0D40d_l5DmIFdI" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UCNE_N36E6T1qGH5",
+      "taskName" : "Program is painfully slow on Bad Internet Connections",
+      "uid" : "-KtW7T0D40d_l5DmIFdI"
+    },
+    "-KtWJAOkZiv7CEVC0h25" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Re Implement Tasks and TaskList Listeners. TODO: with more info in App.ComponentHasMounted()",
+      "uid" : "-KtWJAOkZiv7CEVC0h25"
+    },
+    "-KtWP_0w2NBt85hIe9ct" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sc9dIe4QD5iDIeKT",
+      "taskName" : "Fix Sharpy Ignition Position and Grid Focus Palette",
+      "uid" : "-KtWP_0w2NBt85hIe9ct"
+    },
+    "-KtXH_hEiuYmPM_F7ST1" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Test Response of App when waking from Sleep",
+      "uid" : "-KtXH_hEiuYmPM_F7ST1"
+    },
+    "-KtZboRFllzT2gFzE-Ka" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtW5nGX7_aM_RNpS2fh",
+      "taskName" : "Clean LX1 and Ladders",
+      "uid" : "-KtZboRFllzT2gFzE-Ka"
+    },
+    "-Kt_9AkNRycPkH9S_TkD" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1UPQlJ-7OkVZ78ER5",
+      "taskName" : "Is there a problem if a Callback relies on the SelectedProjectId to target it's updates? What if that changes before the Callback is called?",
+      "uid" : "-Kt_9AkNRycPkH9S_TkD"
+    },
+    "-Kt_Fel8JFn0c7Ed-dmc" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Load out Truck Plan without the Ladders",
+      "uid" : "-Kt_Fel8JFn0c7Ed-dmc"
+    },
+    "-Kt_Fza6KzMEMdnaiO3o" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKauT5KuPrvI8JgFBS",
+      "taskName" : "Get track List",
+      "uid" : "-Kt_Fza6KzMEMdnaiO3o"
+    },
+    "-Kt_GCOyQ931gu4H35Ta" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKauT5KuPrvI8JgFBS",
+      "taskName" : "Get Outline",
+      "uid" : "-Kt_GCOyQ931gu4H35Ta"
+    },
+    "-Kt_HrDZGAxHS981rTPr" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1SfkL_JczROn1fzLy",
+      "taskName" : "Clean out Confetti From Salamanders",
+      "uid" : "-Kt_HrDZGAxHS981rTPr"
+    },
+    "-KtaFicd3ylUeXDoyYLZ" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sc9dIe4QD5iDIeKT",
+      "taskName" : "Fix MDG Internal Fan",
+      "uid" : "-KtaFicd3ylUeXDoyYLZ"
+    },
+    "-KtaZgN-kZt69JfqIwHe" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-Kt1Sc9dIe4QD5iDIeKT",
+      "taskName" : "Print another Copy of Dome 2 Plot",
+      "uid" : "-KtaZgN-kZt69JfqIwHe"
+    },
+    "-Ktab83LRflwyLQnBFqI" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtW5nGX7_aM_RNpS2fh",
+      "taskName" : "Purge Liquid C02 Tanks",
+      "uid" : "-Ktab83LRflwyLQnBFqI"
+    },
+    "-KteLq1Wu3R7a10KRYy-" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Order new MDG Internal Fan",
+      "uid" : "-KteLq1Wu3R7a10KRYy-"
+    },
+    "-KteLsihPDzHluBrguka" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-Kt1S_SrE3HbWuAfEnu-",
+      "taskName" : "Put Spare MDG Back Together",
+      "uid" : "-KteLsihPDzHluBrguka"
+    },
+    "-KteMEcf7zl54lf5ze7w" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Fix Task Selection De-syncing when Adding a new Task",
+      "uid" : "-KteMEcf7zl54lf5ze7w"
+    },
+    "-KteMKL--4Us9TXroCOW" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Look at CTRL Key getting \"Stuck Down\"",
+      "uid" : "-KteMKL--4Us9TXroCOW"
+    },
+    "-KtkxjNpEeR9303va2mx" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Implent Database Schema Version and have Migration Methods Check Version Before running",
+      "uid" : "-KtkxjNpEeR9303va2mx"
+    },
+    "-KtkyblvUA7xk2nWBxje" : {
+      "dueDate" : "Today!",
+      "isComplete" : "",
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "In Production Builds have the Lock Screen Display automatically on Window Load",
+      "uid" : "-KtkyblvUA7xk2nWBxje"
+    },
+    "-KtkyhnpYFbUdaymsGlt" : {
+      "dueDate" : "Today!",
+      "isComplete" : true,
+      "taskList" : "-KtKouAFtexf2nw2clUX",
+      "taskName" : "Implement a Backup Write to Disc system Triggered by the Lock Screen Display",
+      "uid" : "-KtkyhnpYFbUdaymsGlt"
+    }
+  }
+}

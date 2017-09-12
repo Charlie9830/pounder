@@ -45,7 +45,8 @@ module.exports = {
     new HtmlWebpackPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development')
-    })
+    }),
+    new webpack.IgnorePlugin(/electron|fs-jetpack/)
   ],
   devtool: 'cheap-source-map',
   devServer: {

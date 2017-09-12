@@ -1,4 +1,5 @@
 import '../assets/css/App.css';
+import Path from 'path';
 import React, { Component } from 'react';
 import MouseTrap from 'mousetrap';
 import Sidebar from './Sidebar';
@@ -15,6 +16,14 @@ import ProjectLayoutStore from '../stores/ProjectLayoutStore';
 import ProjectStore from '../stores/ProjectStore';
 import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 
+// Only Import if running in Electron.
+var remote = null;
+var fsJetpack = null;
+
+if (process.versions['electron'] !== undefined) {
+  remote = require('electron').remote;
+  fsJetpack = require('fs-jetpack');
+}
 
 class App extends React.Component {
   constructor(props) {
@@ -36,10 +45,12 @@ class App extends React.Component {
       isConnectedToFirebase: false,
       currentErrorMessage: "",
       IsLockScreenDisplayed: false,
+      lastBackupMessage: "",
     }; 
 
     // Class Storage.
     this.isCtrlKeyDown = false;
+    this.isInElectron = remote !== null;
     
     // Method Bindings.
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
@@ -72,122 +83,38 @@ class App extends React.Component {
     this.moveTask = this.moveTask.bind(this);
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
+    this.backupFirebase = this.backupFirebase.bind(this);
+    this.migrateDBtoV2 = this.migrateDBtoV2.bind(this);
+    this.lockApp = this.lockApp.bind(this);
   }
 
   componentDidMount(){
-    // TODO: Tasks and probably TaskLists need to have their Firebase Value event listeners split up into Value Change
-    // listeners and Collection Changed Listeners. Right now, When making a new Task, it gets added to React Twice. Once on
-    // addNewTask and again on OnIncomingTasks. OnIncomingTasks can't reliably tell if a Task has already been Added if it also has
-    // to respond to Data changing Events. If you split up these Events then you can tell more reliably what is happening.
-
-
     // Production DB
     // Initialize Firebase
-    // var config = {
-    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-    //   authDomain: "pounder-production.firebaseapp.com",
-    //   databaseURL: "https://pounder-production.firebaseio.com",
-    //   projectId: "pounder-production",
-    //   storageBucket: "",
-    //   messagingSenderId: "759706234917"
-    // };
-    // Firebase.initializeApp(config);
+    var config = {
+      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+      authDomain: "pounder-production.firebaseapp.com",
+      databaseURL: "https://pounder-production.firebaseio.com",
+      projectId: "pounder-production",
+      storageBucket: "",
+      messagingSenderId: "759706234917"
+    };
+    Firebase.initializeApp(config);
 
     // Testing DB.
     // Initialize Firebase
-    var config = {
-    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    authDomain: "halo-todo.firebaseapp.com",
-    databaseURL: "https://halo-todo.firebaseio.com",
-    projectId: "halo-todo",
-    storageBucket: "halo-todo.appspot.com",
-    messagingSenderId: "801359392837"
-    };
-    Firebase.initializeApp(config);
-    
-    // TODO Database Migrations.
-    /*
-      1. Move Layouts from Underneath Projects to their own Node. Scaffold in uid and layouts nodes.
-      2. Scaffold a 'project' Id into Tasks.
-      3. Scaffold in /settings/ node into TaskLists.
-      4. Migrate Database Rules Over.
-    */
-
-    // Move Layouts to their Own Node.
-    // To hard basket. Just Delete them from underneath Projects. Then Remake new Layout Entries.
-    // Firebase.database().ref('projects/').orderByChild('uid').once('value').then(snapshot => {
-    //   if (snapshot.exists()) {
-    //     var projects = Object.values(snapshot.val());
-
-    //     var projectIds = projects.map(item => {
-    //       return item.uid;
-    //     })
-
-    //     var updates = {};
-    //     projectIds.forEach(item => {
-    //       updates['projects/' + item + '/layouts'] = null;
-
-    //       var newProjectLayout = new ProjectLayoutStore({}, item, item);
-    //       updates['projectLayouts/' + item] = newProjectLayout;
-    //     })
-
-    //     Firebase.database().ref().update(updates).then(() => {
-    //       console.log("Updates Completed");
-    //     })
-    //   }
-
-    //   else {
-    //     console.log("Snaphot.exists() failed.");
-    //   }
-    // })
-
-
-    // // Scaffold a 'project' id index into Tasks.
-    // Firebase.database().ref('tasks').orderByChild('taskList').once('value').then(snapshot => {
-    //   if (snapshot.exists()) {
-    //     var tasks = Object.values(snapshot.val());
-
-    //     Firebase.database().ref('taskLists').orderByChild('project').once('value').then(taskListSnap => {
-    //       if (taskListSnap.exists()) {
-    //         var taskLists = Object.values(taskListSnap.val());
-    //         console.log(taskLists);
-
-    //         var updates = {};
-
-    //         tasks.forEach(task => {
-    //           var taskList = taskLists.find(element => {
-    //             return task.taskList === element.uid;
-    //           })
-    //           if (taskList === undefined) {
-    //             console.log("taskList is undefined");
-    //           }
-    //           else
-    //             {
-    //               updates['tasks/' + task.uid + '/project/'] = taskList.project;
-    //             }
-    //         })
-
-    //         taskLists.forEach(item => {
-    //           updates['taskLists/' + item.uid + '/settings/'] = new TaskListSettingsStore(true);
-    //         })
-
-    //         Firebase.database().ref().update(updates).then(() => {
-    //           console.log("Task Updates Complete");
-    //         })
-    //       }
-    //       else {
-    //         console.log("Tasklists - snapshot.exists() failed");
-    //       }
-    //     })
-    //   }
-
-    //   else {
-    //     console.log("Tasks - snapshot.exists() failed");
-    //   }
-    // })
+    // var config = {
+    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    // authDomain: "halo-todo.firebaseapp.com",
+    // databaseURL: "https://halo-todo.firebaseio.com",
+    // projectId: "halo-todo",
+    // storageBucket: "halo-todo.appspot.com",
+    // messagingSenderId: "801359392837"
+    // };
+    // Firebase.initializeApp(config);
 
     // MouseTrap.
-    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc'], this.handleKeyboardShortcut);
+    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i'], this.handleKeyboardShortcut);
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
@@ -213,10 +140,17 @@ class App extends React.Component {
         isAwaitingFirebase: false
       });
     })
+
+    // Auto Lock the App on Startup.
+    if (this.isInElectron) {
+      if (remote.process.env.NODE_ENV === 'production') {
+        this.lockApp();
+      }
+    }
   }
   
   componentWillUnmount(){
-    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc'], this.handleKeyboardShortcut);
+    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc', 'mod+shift+i'], this.handleKeyboardShortcut);
     MouseTrap.unBind("mod", this.handleCtrlKeyDown);
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
 
@@ -235,7 +169,8 @@ class App extends React.Component {
 
     return (
       <div>
-        <LockScreen isDisplayed={this.state.IsLockScreenDisplayed} onAccessGranted={this.handleLockScreenAccessGranted}/>
+        <LockScreen isDisplayed={this.state.IsLockScreenDisplayed} onAccessGranted={this.handleLockScreenAccessGranted}
+        backupMessage={this.state.lastBackupMessage}/>
 
         <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}
         errorMessage={this.state.currentErrorMessage}/>
@@ -448,14 +383,26 @@ class App extends React.Component {
       this.addNewTaskList();
     }
 
-    console.log("ding");
     // Shift + Escape
-    console.log(mouseTrap);
     if (mouseTrap.shiftKey && mouseTrap.key === "Escape") {
-      // Lock App.
-      console.log("shift + esc");
-      this.setState({IsLockScreenDisplayed: true});
+      this.lockApp();
     }
+
+    // Ctrl + Shift + I
+    if (mouseTrap.ctrlKey && mouseTrap.shiftKey && mouseTrap.key === "I") {
+      if (this.isInElectron) {
+        // Open Dev Tools.
+        remote.getCurrentWindow().openDevTools();
+      }
+    }
+  }
+
+  lockApp() {
+    // Lock App.
+    this.setState({ IsLockScreenDisplayed: true });
+
+    // Trigger Firebase Backup.
+    this.backupFirebase();
   }
 
   addNewTaskList() {
@@ -944,6 +891,151 @@ class App extends React.Component {
     this.setState({ isAwaitingFirebase: true });
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
+  }
+
+  backupFirebase() {
+    if (this.isInElectron) {
+      // Pull Data down from Firebase.
+      this.setState({isAwaitingFirebase: true});
+      Firebase.database().ref().once('value').then(snapshot => {
+        if (snapshot.exists()) {
+          // Write to Backup File.
+          // Intialize File Path and Name.
+          var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
+
+          var currentDate = new Date();
+          var normalizedDate = this.getNormalizedDate(currentDate);
+          var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
+
+          // Create File.
+          fsJetpack.file(filePath, { mode: '700' });
+
+          // Write to File.
+          fsJetpack.writeAsync(filePath, snapshot.val(), { atomic: true }).then(() => {
+            var message = "Last backup created at " +
+              currentDate.getHours() + ":" +
+              currentDate.getMinutes() + ":" +
+              currentDate.getSeconds() + " in " +
+              backupDirectory;
+            this.setState({
+              isAwaitingFirebase: false,
+              lastBackupMessage: message
+            });
+          })
+        }
+
+        else {
+          this.setState({
+            lastBackupMessage: "Couldn't backup to File, no data was returned from Firebase.",
+            isAwaitingFirebase: false
+          });
+        }
+      })
+    }
+  }
+
+  getNormalizedDate(date) {
+    var array = [];
+    array.push(
+      date.getFullYear(),
+      (date.getMonth() + 1),
+      date.getDate(),
+      " ",
+      date.getSeconds(),
+      date.getMinutes(),
+      date.getHours(),
+    )
+
+    var normalizedArray = array.map(n => {
+      if (n === " ") {
+        return n;
+      }
+
+      else {
+        return n < 10 ? '0'+n : ''+n;
+      }
+    });
+
+    return normalizedArray.join("");
+  }
+
+  migrateDBtoV2() {
+    Firebase.database().ref('projects/').orderByChild('uid').once('value').then(snapshot => {
+      if (snapshot.exists()) {
+        var projects = Object.values(snapshot.val());
+
+        var projectIds = projects.map(item => {
+          return item.uid;
+        })
+
+        var updates = {};
+        projectIds.forEach(item => {
+          updates['projects/' + item + '/layouts'] = null;
+
+          var newProjectLayout = new ProjectLayoutStore({}, item, item);
+          updates['projectLayouts/' + item] = newProjectLayout;
+        })
+
+        Firebase.database().ref().update(updates).then(() => {
+          console.log("Updates Completed");
+        })
+      }
+
+      else {
+        console.log("Snaphot.exists() failed.");
+      }
+    })
+
+
+    // Scaffold a 'project' id index into Tasks.
+    Firebase.database().ref('tasks').orderByChild('taskList').once('value').then(snapshot => {
+      if (snapshot.exists()) {
+        var tasks = Object.values(snapshot.val());
+
+        Firebase.database().ref('taskLists').orderByChild('project').once('value').then(taskListSnap => {
+          if (taskListSnap.exists()) {
+            var taskLists = Object.values(taskListSnap.val());
+            console.log(taskLists);
+
+            var updates = {};
+
+            tasks.forEach(task => {
+              var taskList = taskLists.find(element => {
+                return task.taskList === element.uid;
+              })
+              if (taskList === undefined) {
+                console.log("taskList is undefined");
+              }
+              else {
+                updates['tasks/' + task.uid + '/project/'] = taskList.project;
+              }
+            })
+
+            taskLists.forEach(item => {
+              updates['taskLists/' + item.uid + '/settings/'] = new TaskListSettingsStore(true);
+            })
+
+            Firebase.database().ref().update(updates).then(() => {
+              console.log("Task Updates Complete");
+            })
+          }
+          else {
+            console.log("Tasklists - snapshot.exists() failed");
+          }
+        })
+      }
+
+      else {
+        console.log("Tasks - snapshot.exists() failed");
+      }
+    })
+
+    // Update DbVersion.
+    Firebase.database().ref('/DbVersion').set(2).then( () => {
+      console.log("Db Version Update Complete");
     }).catch(error => {
       this.postFirebaseError(error);
     })
