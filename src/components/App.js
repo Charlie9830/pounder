@@ -114,7 +114,7 @@ class App extends React.Component {
     // Firebase.initializeApp(config);
 
     // MouseTrap.
-    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i'], this.handleKeyboardShortcut);
+    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
@@ -150,7 +150,7 @@ class App extends React.Component {
   }
   
   componentWillUnmount(){
-    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc', 'mod+shift+i'], this.handleKeyboardShortcut);
+    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
     MouseTrap.unBind("mod", this.handleCtrlKeyDown);
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
 
@@ -393,6 +393,13 @@ class App extends React.Component {
       if (this.isInElectron) {
         // Open Dev Tools.
         remote.getCurrentWindow().openDevTools();
+      }
+    }
+
+    // Ctrl + F
+    if (mouseTrap.ctrlKey && mouseTrap.key === "f") {
+      if (this.isInElectron) {
+        remote.getCurrentWindow().setFullScreen(false);
       }
     }
   }
