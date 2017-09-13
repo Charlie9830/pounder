@@ -141,11 +141,17 @@ class App extends React.Component {
       });
     })
 
-    // Auto Lock the App on Startup.
+    // Electron only Config.
     if (this.isInElectron) {
       if (remote.process.env.NODE_ENV === 'production') {
         this.lockApp();
       }
+
+      // TODO: Register an issue with Firebase about this.
+      // Firebase closes it's Websocket if it's been Inactive for more then 45 Seconds, then struggles to re-establish
+      // when inside Electron. This will 'ping' the firebase servers very 40 seconds.
+      setInterval(this.exerciseFirebase, 40000);
+      
     }
   }
   
@@ -190,6 +196,11 @@ class App extends React.Component {
           onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}/>
       </div>
     );
+  }
+
+  exerciseFirebase() {
+    // Pull down some blank data from Firebase to keep the Websocket Open.
+    var ref = Firebase.database().ref("websocketTimeoutFix").once('value', () => {});
   }
 
   handleLockScreenAccessGranted() {
