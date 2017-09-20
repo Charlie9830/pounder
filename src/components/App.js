@@ -46,6 +46,7 @@ class App extends React.Component {
       currentErrorMessage: "",
       IsLockScreenDisplayed: false,
       lastBackupMessage: "",
+      openCalendarId: -1
     }; 
 
     // Class Storage.
@@ -86,32 +87,34 @@ class App extends React.Component {
     this.backupFirebase = this.backupFirebase.bind(this);
     this.migrateDBtoV2 = this.migrateDBtoV2.bind(this);
     this.lockApp = this.lockApp.bind(this);
+    this.handleDueDateClick = this.handleDueDateClick.bind(this);
+    this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
   }
 
   componentDidMount(){
     // Production DB
     // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-      authDomain: "pounder-production.firebaseapp.com",
-      databaseURL: "https://pounder-production.firebaseio.com",
-      projectId: "pounder-production",
-      storageBucket: "",
-      messagingSenderId: "759706234917"
-    };
-    Firebase.initializeApp(config);
-
-    // Testing DB.
-    // Initialize Firebase
     // var config = {
-    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    // authDomain: "halo-todo.firebaseapp.com",
-    // databaseURL: "https://halo-todo.firebaseio.com",
-    // projectId: "halo-todo",
-    // storageBucket: "halo-todo.appspot.com",
-    // messagingSenderId: "801359392837"
+    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+    //   authDomain: "pounder-production.firebaseapp.com",
+    //   databaseURL: "https://pounder-production.firebaseio.com",
+    //   projectId: "pounder-production",
+    //   storageBucket: "",
+    //   messagingSenderId: "759706234917"
     // };
     // Firebase.initializeApp(config);
+
+    // Testing DB.
+    //Initialize Firebase
+    var config = {
+    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    authDomain: "halo-todo.firebaseapp.com",
+    databaseURL: "https://halo-todo.firebaseio.com",
+    projectId: "halo-todo",
+    storageBucket: "halo-todo.appspot.com",
+    messagingSenderId: "801359392837"
+    };
+    Firebase.initializeApp(config);
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
@@ -193,9 +196,17 @@ class App extends React.Component {
           onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
           onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick} 
           movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
-          onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}/>
+          onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
+          openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}/>
       </div>
     );
+  }
+
+  handleDueDateClick(projectId, taskListWidgetId, taskId) {
+      this.setState({
+        selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false },
+        openCalendarId: taskId
+      })
   }
 
   exerciseFirebase() {
@@ -218,12 +229,14 @@ class App extends React.Component {
   handleTaskClick(element, projectId, taskListWidgetId) {
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.state.selectedTask;
+    var openCalendarId = this.state.openCalendarId === element.props.taskId ? this.state.openCalendarId : -1; // Keep calendar Open if it already Open.
 
     if (this.isCtrlKeyDown) {
       this.setState({
         isATaskMoving: true,
         movingTaskId: element.props.taskId,
-        sourceTaskListId: taskListWidgetId
+        sourceTaskListId: taskListWidgetId,
+        openCalendarId: openCalendarId
       })
     }
 
@@ -235,7 +248,8 @@ class App extends React.Component {
           selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: true },
           isATaskMoving: false,
           movingTaskId: -1,
-          sourceTaskListId: -1
+          sourceTaskListId: -1,
+          openCalendarId: -1
         })
       }
 
@@ -246,6 +260,7 @@ class App extends React.Component {
           isATaskMoving: false,
           movingTaskId: -1,
           sourceTaskListId: -1,
+          openCalendarId: openCalendarId
         })
       }
     }
@@ -516,7 +531,9 @@ class App extends React.Component {
         this.moveTask(movingTaskId, this.state.sourceTaskListId, destinationTaskListId);
       }
 
-      this.setState({focusedTaskListId: taskListWidgetId});
+      this.setState({
+        focusedTaskListId: taskListWidgetId,
+        openCalendarId: -1});
     }
   }
 
@@ -1054,6 +1071,22 @@ class App extends React.Component {
     // Update DbVersion.
     Firebase.database().ref('/DbVersion').set(2).then( () => {
       console.log("Db Version Update Complete");
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
+  }
+
+  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate) {
+    // Update Firebase.
+    this.setState({ isAwaitingFirebase: true });
+    var updates = {};
+    updates['tasks/' + taskId + '/dueDate'] = newDate
+
+    Firebase.database().ref().update(updates).then(() => {
+      this.setState({ 
+        isAwaitingFirebase: false,
+        openCalendarId: -1,
+       });
     }).catch(error => {
       this.postFirebaseError(error);
     })

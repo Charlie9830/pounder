@@ -32,6 +32,8 @@ class Project extends React.Component{
         this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
+        this.handleDueDateClick = this.handleDueDateClick.bind(this);
+        this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     }
     
     componentDidMount() {
@@ -79,7 +81,8 @@ class Project extends React.Component{
                      onHeaderDoubleClick={this.handleWidgetHeaderDoubleClick} onHeaderSubmit={this.handleTaskListWidgetHeaderSubmit}
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
                      onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
-                     onSettingsChanged={this.handleTaskListSettingsChanged}/>   
+                     onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
+                     openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}/>   
                 </div>
             )
         });
@@ -99,6 +102,10 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    handleDueDateClick(taskListWidgetId, taskId) {
+        this.props.onDueDateClick(this.props.projectId, taskListWidgetId, taskId);
     }
 
     handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
@@ -159,6 +166,9 @@ class Project extends React.Component{
         this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings);
     }
 
+    handleNewDateSubmit(taskListWidgetId, taskId, newDate) {
+        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate);
+    }
 }
 
 export default Project;

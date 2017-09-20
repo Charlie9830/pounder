@@ -5,15 +5,40 @@
 }
 
 .DueDate {
+  position: relative;
   border-Radius: 50%;
-  width: 10px;
-  height: 10px;
-  background: rgba(0,225,0,255);
+  width: 28px;
+  height: 28px; /* Set line-height of .DueDateText equal to this */
   color: #FFF;
-  padding: 4px;
-  text-Align: center;
-  font-Family: segoe UI;
-  font-Weight: bold;
   flex-grow: 1;
   margin-right: 5px;
+}
+
+.DueDateText {
+  display: block;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-size: 7pt;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 28px; /* Set height: of .DueDate Equal to This */
+}
+
+.Overdue {
+  background: #F00;
+}
+
+.Soon {
+  background: #FF9300;
+}
+
+.Later {
+  background: #22B30B;
+}
+
+.NotSet {
+  background: transparent;
+  border: 1px solid #777;
+  height: 20px;
+  width: 20px;
 }

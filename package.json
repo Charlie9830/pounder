@@ -3,7 +3,7 @@
   "productName": "Pounder",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -44,7 +44,9 @@
     "firebase": "^4.2.0",
     "firebase-tools": "^3.10.0",
     "fs-jetpack": "^1.2.0",
+    "moment": "^2.18.1",
     "mousetrap": "^1.6.1",
+    "react-day-picker": "^6.1.0",
     "react-grid-layout": "^0.14.7",
     "react-resizable": "^1.7.1"
   }

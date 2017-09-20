@@ -1,15 +1,13 @@
 import React from 'react';
-import '../assets/css/MenuItem.css'
 
 class MenuItem extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
+        var containerClassName = this.props.isSelected ?
+            this.props.containerClassName + "IsSelected" :
+            this.props.containerClassName;
         return (
-            <div className={"MenuItem"}>
-                {this.props.text}
+            <div className={containerClassName} onClick={this.props.onClick}>
+                <label className={this.props.labelClassName}> {this.props.labelText} </label>
             </div>
         )
     }

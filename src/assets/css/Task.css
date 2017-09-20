@@ -1,9 +1,9 @@
 /* TODO: Clean up these Selectors, shift the Position and Sizing up to .TaskContainer */
 .TaskContainer {
   height: auto;
-  overflow: hidden;
+  overflow: visible;
   min-height: 40px;
-  max-height: 120px;
+  max-height: 120px; /* Same as .TaskClickContainer max-height */
   display: flex;
   flex-direction: column;
 }
@@ -61,6 +61,8 @@
   justify-content: space-between;
   align-items: center;
   min-height: 40px;
+  max-height: 120px;  /* Same as .TaskContainer max-height */
+  overflow: hidden;
   
 }
 

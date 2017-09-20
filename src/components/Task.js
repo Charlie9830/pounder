@@ -15,6 +15,8 @@ class Task extends React.Component {
         this.handleCheckBoxClick = this.handleCheckBoxClick.bind(this);
         this.handleTaskTouchStart = this.handleTaskTouchStart.bind(this);
         this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
+        this.handleDueDateClick = this.handleDueDateClick.bind(this);
+        this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     }
 
     render() {
@@ -38,15 +40,20 @@ class Task extends React.Component {
                             <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
                                 onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
                         </div>
-                        <div className="DueDateContainer">
-                            <DueDate dueDate={this.props.dueDate} />
-                        </div>
+                    </div>
+                    <div className="DueDateContainer">
+                        <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick}
+                            isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} />
                     </div>
                 </div>
             </div>
             
         )
     }
+
+    handleDueDateClick() {
+        this.props.onDueDateClick(this.props.taskId);
+    } 
 
     handleInputUnmounting(data) {
         this.props.onInputUnmounting(data, this.props.taskId);
@@ -68,6 +75,10 @@ class Task extends React.Component {
 
     handleCheckBoxClick(e, incomingValue) {
         this.props.onTaskCheckBoxClick(e, this.props.taskId, incomingValue);
+    }
+
+    handleNewDateSubmit(newDate) {
+        this.props.onNewDateSubmit(this.props.taskId, newDate);
     }
 }
 

@@ -20,6 +20,8 @@ class TaskListWidget extends React.Component {
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskInputUnmounting = this.handleTaskInputUnmounting.bind(this);
         this.handleShowCompleteTasksChanged = this.handleShowCompleteTasksChanged.bind(this);
+        this.handleDueDateClick = this.handleDueDateClick.bind(this);
+        this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     }
 
     componentDidMount(){
@@ -43,13 +45,15 @@ class TaskListWidget extends React.Component {
                 var isTaskSelected = item.uid === this.props.selectedTaskId;
                 var isTaskInputOpen = item.uid === this.props.openTaskInputId;
                 var isTaskMoving = item.uid === this.props.movingTaskId;
+                var isCalendarOpen = item.uid === this.props.openCalendarId;
 
                 return (
-                    <Task key={index} taskId={item.uid} text={item.taskName} daysRemaining={item.daysRemaining}
+                    <Task key={index} taskId={item.uid} text={item.taskName} dueDate={item.dueDate}
                     isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                     handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
                     OnKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
-                    onInputUnmounting={this.handleTaskInputUnmounting}/>
+                    onInputUnmounting={this.handleTaskInputUnmounting} onDueDateClick={this.handleDueDateClick}
+                    isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}/>
                 )
             })
         }
@@ -65,6 +69,10 @@ class TaskListWidget extends React.Component {
                 <TaskArea> {builtTasks} </TaskArea>
             </div>
         )
+    }
+
+    handleDueDateClick(taskId) {
+        this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
     }
 
     handleShowCompleteTasksChanged(newValue) {
@@ -120,6 +128,10 @@ class TaskListWidget extends React.Component {
 
     taskSortHelper(a, b) {
         return a.isComplete - b.isComplete;
+    }
+
+    handleNewDateSubmit(taskId, newDate) {
+        this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate);
     }
 
 }
