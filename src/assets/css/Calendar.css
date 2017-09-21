@@ -43,7 +43,7 @@
     min-height: 30px;
     flex-grow: 1;
     padding: 0px 0px;
-    background: purple;
+    background: rgba(63,63,76,255);
 }
 
 .CalendarPopupContainer .ShortcutItemContainer .ItemLabel {

@@ -34,6 +34,7 @@ class Project extends React.Component{
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
+        this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
     }
     
     componentDidMount() {
@@ -70,9 +71,9 @@ class Project extends React.Component{
             }
 
             var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
-
             return (
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
+
                 <div key={item.uid}>
                     <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
                      tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
@@ -82,7 +83,9 @@ class Project extends React.Component{
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
                      onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
                      onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
-                     openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}/>   
+                     openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+                     onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
+                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}/>   
                 </div>
             )
         });
@@ -102,6 +105,10 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    handleTaskListSettingsButtonClick(taskListWidgetId) {
+        this.props.onTaskListSettingsButtonClick(this.props.projectId, taskListWidgetId);
     }
 
     handleDueDateClick(taskListWidgetId, taskId) {

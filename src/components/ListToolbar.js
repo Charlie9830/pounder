@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/ListToolbar.css';
+import TaskListSettingsMenu from './TaskListSettingsMenu';
 
 class ListToolbar extends React.Component{
     constructor(props) {
@@ -8,18 +9,19 @@ class ListToolbar extends React.Component{
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
-        this.handleShowCompletedTasksCheckboxClick = this.handleShowCompletedTasksCheckboxClick.bind(this);
+        this.handleSettingsClick = this.handleSettingsClick.bind(this);
+        this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
     }
 
     render() {
         var listToolbarHeader = this.getListToolbarHeader(this.props);
+        var settingsMenu = this.getSettingsMenu(this.props);
 
-        return(
+        return (
             <div className="ListToolbar">
                 <div className="SortingMenu">
-                    <input ref="showCompleteTasksCheckbox" type="checkbox" defaultChecked={this.props.isCompleteTasksShown}
-                     onClick={this.handleShowCompletedTasksCheckboxClick}/>
-                    <label> Show Completed Tasks </label>
+                    <img id="ListToolbarSettingsIcon" src="/SettingsIcon.svg" onClick={this.handleSettingsClick}/>
+                    {settingsMenu}
                 </div>
                 {listToolbarHeader}
                 <label className="DeleteButton" onClick={this.handleRemoveButtonClick}>X</label>
@@ -27,14 +29,27 @@ class ListToolbar extends React.Component{
         )
     }
 
-    handleShowCompletedTasksCheckboxClick(e) {
-        this.props.onShowCompleteTasksChanged(this.refs.showCompleteTasksCheckbox.checked);
+    getSettingsMenu(props) {
+        if (props.isSettingsMenuOpen) {
+            return (
+                <TaskListSettingsMenu settings={this.props.settings}
+                 onSettingsChanged={this.handleTaskListSettingsChanged}/>
+            ) 
+        }
+    }
+
+    handleTaskListSettingsChanged(newSettings) {
+        this.props.onTaskListSettingsChanged(newSettings);
+    }
+
+    handleSettingsClick(e) {
+        this.props.onSettingsButtonClick();
     }
 
     getListToolbarHeader(props) {
         if (props.isHeaderOpen) {
             return (
-                <input id="headerInput" className="nonDraggable" type='text' defaultValue={props.headerText} onKeyPress={this.handleKeyPress}/>
+                <input id="headerInput" className="ListToolbarHeaderInput nonDraggable" type='text' defaultValue={props.headerText} onKeyPress={this.handleKeyPress}/>
             )
         }
 

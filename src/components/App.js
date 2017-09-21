@@ -15,6 +15,7 @@ import TaskStore from '../stores/TaskStore';
 import ProjectLayoutStore from '../stores/ProjectLayoutStore';
 import ProjectStore from '../stores/ProjectStore';
 import TaskListSettingsStore from '../stores/TaskListSettingsStore';
+import Moment from 'moment';
 
 // Only Import if running in Electron.
 var remote = null;
@@ -46,7 +47,8 @@ class App extends React.Component {
       currentErrorMessage: "",
       IsLockScreenDisplayed: false,
       lastBackupMessage: "",
-      openCalendarId: -1
+      openCalendarId: -1,
+      openTaskListSettingsMenuId: -1,
     }; 
 
     // Class Storage.
@@ -89,6 +91,7 @@ class App extends React.Component {
     this.lockApp = this.lockApp.bind(this);
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
+    this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
   }
 
   componentDidMount(){
@@ -115,6 +118,8 @@ class App extends React.Component {
     messagingSenderId: "801359392837"
     };
     Firebase.initializeApp(config);
+
+    //this.migrateDBtoV3();
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
@@ -197,9 +202,15 @@ class App extends React.Component {
           onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick} 
           movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
           onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
-          openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}/>
+          openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+          onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
+          openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId}/>
       </div>
     );
+  }
+
+  handleTaskListSettingsButtonClick(projectId, taskListWidgetId) {
+    this.setState({openTaskListSettingsMenuId: taskListWidgetId});
   }
 
   handleDueDateClick(projectId, taskListWidgetId, taskId) {
@@ -227,6 +238,12 @@ class App extends React.Component {
   }
 
   handleTaskClick(element, projectId, taskListWidgetId) {
+    var logTaskIndex = this.state.tasks.findIndex(item => {
+      return item.uid === element.props.taskId;
+    })
+    console.log(this.state.tasks[logTaskIndex]);
+
+
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.state.selectedTask;
     var openCalendarId = this.state.openCalendarId === element.props.taskId ? this.state.openCalendarId : -1; // Keep calendar Open if it already Open.
@@ -236,7 +253,8 @@ class App extends React.Component {
         isATaskMoving: true,
         movingTaskId: element.props.taskId,
         sourceTaskListId: taskListWidgetId,
-        openCalendarId: openCalendarId
+        openCalendarId: openCalendarId,
+        openTaskListSettingsMenuId: -1,
       })
     }
 
@@ -249,7 +267,8 @@ class App extends React.Component {
           isATaskMoving: false,
           movingTaskId: -1,
           sourceTaskListId: -1,
-          openCalendarId: -1
+          openCalendarId: -1,
+          openTaskListSettingsMenuId: -1
         })
       }
 
@@ -260,7 +279,8 @@ class App extends React.Component {
           isATaskMoving: false,
           movingTaskId: -1,
           sourceTaskListId: -1,
-          openCalendarId: openCalendarId
+          openCalendarId: openCalendarId,
+          openTaskListSettingsMenuId: -1
         })
       }
     }
@@ -345,7 +365,7 @@ class App extends React.Component {
     //   task.isComplete,
     //   task.project,
     //   destinationTaskListId,
-    //   task.uid
+    //   task.uid,
     // );
 
     // this.setState({newTasks});
@@ -448,7 +468,7 @@ class App extends React.Component {
       this.state.selectedProjectId,
       newTaskListKey,
       newTaskListKey,
-      new TaskListSettingsStore(true)
+      new TaskListSettingsStore(true, "completed")
     )
 
     Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
@@ -498,7 +518,8 @@ class App extends React.Component {
         false,
         this.state.selectedProjectId,
         targetTaskList.uid,
-        newTaskKey
+        newTaskKey,
+        new Moment().toISOString()
       )
 
       Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
@@ -533,7 +554,8 @@ class App extends React.Component {
 
       this.setState({
         focusedTaskListId: taskListWidgetId,
-        openCalendarId: -1});
+        openCalendarId: -1,
+        openTaskListSettingsMenuId: -1});
     }
   }
 
@@ -586,7 +608,15 @@ class App extends React.Component {
       projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
     }
 
-    this.setState({ selectedProjectId: projectSelectorId })
+    this.setState({ 
+      selectedProjectId: projectSelectorId,
+      openCalendarId: -1,
+      selectedTask: {taskListWidgetId: -1, taskId: -1, isInputOpen: false},
+      isATaskMoving: false,
+      movingTaskId: -1,
+      sourceTaskListId: -1,
+      focusedTaskListId: -1,
+      openTaskListSettingsMenuId: -1 })
   }
 
   onIncomingTaskLists(snapshot) {
@@ -923,9 +953,13 @@ class App extends React.Component {
     var updates = {};
     updates['taskLists/' + taskListWidgetId + '/settings/'] = newTaskListSettings;
 
-    this.setState({ isAwaitingFirebase: true });
+    this.setState({ 
+      isAwaitingFirebase: true,
+      openTaskListSettingsMenuId: -1 });
     Firebase.database().ref().update(updates).then(() => {
-      this.setState({ isAwaitingFirebase: false });
+      this.setState({
+        isAwaitingFirebase: false,
+      });
     }).catch(error => {
       this.postFirebaseError(error);
     })
@@ -995,6 +1029,70 @@ class App extends React.Component {
     });
 
     return normalizedArray.join("");
+  }
+
+  migrateDBtoV3() {
+    var firebaseOperations = [];
+    // Purge completed Tasks.
+    firebaseOperations.push(Firebase.database().ref('tasks/').once('value').then(snapshot => {
+      var tasks = Object.values(snapshot.val());
+      var taskIdsToRemove = tasks.map(item => {
+        if (item.isComplete) {
+          return item.uid;
+        }
+      })
+
+      console.log("Found " + taskIdsToRemove.length + " tasks to be Purged");
+
+      var updates = {};
+      taskIdsToRemove.forEach(id => {
+        updates['tasks/' + id] = null;
+      })
+
+      // Execute Deletes.
+      Firebase.database().ref().update(updates).then( () => {
+        console.log("Tasks Purge Complete.")
+
+        // Add Date Added and Clear dueDate to Survivors of the Purge.
+        Firebase.database().ref('/tasks').once('value').then( s => {
+          var survingTasks = Object.values(s.val());
+          var dateAddedUpdates = {};
+
+          survingTasks.forEach(survivor => {
+            dateAddedUpdates['tasks/' + survivor.uid + '/dateAdded/'] = new Moment().toISOString();
+            dateAddedUpdates['tasks/' + survivor.uid + '/dueDate/'] = "";
+          })
+
+          // Execute Updates.
+          Firebase.database().ref().update(dateAddedUpdates).then( () => {
+            console.log("Date Added Scaffolded to Tasks");
+          })
+        })
+      })
+    }))
+
+    // Scaffold sortBy into taskList Settings.
+    firebaseOperations.push(Firebase.database().ref('taskLists/').once('value').then( snapshot => {
+      var taskLists = Object.values(snapshot.val());
+      var updates = {};
+
+      taskLists.forEach(item => {
+        updates['taskLists/' + item.uid + '/settings/' + 'sortBy/'] = "completed";
+      })
+
+      Firebase.database().ref().update(updates).then( () => {
+        console.log("taskList.settings.sortBy scaffold complete");
+      })
+    }))
+
+    Promise.all(firebaseOperations).then( () => {
+      var versionUpdate = {};
+      versionUpdate['/DbVersion/'] = 3;
+
+      Firebase.database().ref().update(versionUpdate).then( () => {
+        console.log("Migration Complete");
+      })
+    })
   }
 
   migrateDBtoV2() {

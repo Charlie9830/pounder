@@ -56,7 +56,7 @@ class DueDate extends React.Component {
     if (difference < 0) {
       return {
         className: "DueDate Overdue",
-        text: "Overdue"
+        text: "Due"
       }
     }
 

@@ -1,6 +1,7 @@
 class TaskListSettingsStore {
-    constructor(isCompleteTasksShown) {
+    constructor(isCompleteTasksShown, sortBy) {
         this.isCompleteTasksShown = isCompleteTasksShown;
+        this.sortBy = sortBy;
     }
 }
 

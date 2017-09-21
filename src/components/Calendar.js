@@ -22,6 +22,8 @@ class Calendar extends React.Component {
         this.submitNewDateSelection = this.submitNewDateSelection.bind(this);
         this.handleNoDueDateClick = this.handleNoDueDateClick.bind(this);
         this.handleDaysApplyButtonClick = this.handleDaysApplyButtonClick.bind(this);
+        this.submitDays = this.submitDays.bind(this);
+        this.handleDaysInputKeyPress = this.handleDaysInputKeyPress.bind(this);
 
         const dateFormat = "DD-MM-YYYY";
     }
@@ -46,7 +48,8 @@ class Calendar extends React.Component {
                     <label className="ItemLabel"> No Due Date </label>
                 </div>
                 <div className="ShortcutItemContainer">
-                    <input ref="DaysInput" id="CalendarPopupDaysInput" type="number" onChange={this.handleDaysChanged} />
+                    <input ref="DaysInput" id="CalendarPopupDaysInput" type="number" onChange={this.handleDaysChanged}
+                    onKeyPress={this.handleDaysInputKeyPress} />
                     <label id="DaysLabel" className="ItemLabel"> Days </label>
                     {daysApplyButton}
                 </div>
@@ -56,6 +59,12 @@ class Calendar extends React.Component {
             </div>
         )
     }
+
+    handleDaysInputKeyPress(e) {
+        if (e.key === "Enter") {
+            this.submitDays();
+        }
+    }   
 
     getDaysApplyButton(state) {
         if (state.isApplyButtonVisible) {
@@ -110,6 +119,10 @@ class Calendar extends React.Component {
     }
 
     handleDaysApplyButtonClick() {
+        this.submitDays();
+    }
+
+    submitDays() {
         var days = this.refs.DaysInput.value;
         this.submitNewDateSelection(new Moment(new Date(), this.dateFormat).add(days, 'd'));
     }

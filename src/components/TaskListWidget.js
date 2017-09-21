@@ -19,9 +19,10 @@ class TaskListWidget extends React.Component {
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskInputUnmounting = this.handleTaskInputUnmounting.bind(this);
-        this.handleShowCompleteTasksChanged = this.handleShowCompleteTasksChanged.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
+        this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
+        this.handleSettingsButtonClick = this.handleSettingsButtonClick.bind(this);
     }
 
     componentDidMount(){
@@ -33,7 +34,8 @@ class TaskListWidget extends React.Component {
         var builtTasks = [];
         if (this.props.tasks != undefined) {
             // Sort Tasks.
-            var sortedTasks = this.props.tasks.concat().sort(this.taskSortHelper);
+            var taskSorter = this.getTaskSorter(this.props)
+            var sortedTasks = this.props.tasks.concat().sort(taskSorter);
 
             builtTasks = sortedTasks.map((item, index) => {
                 // Bail out if Task isn't meant to be Visible.
@@ -59,27 +61,29 @@ class TaskListWidget extends React.Component {
         }
 
         var style = this.props.isFocused ? "IsFocused" : "IsNotFocused";
+        var isSettingsMenuOpen = this.props.openTaskListSettingsMenuId === this.props.taskListWidgetId;
         return (
             <div className={style} onClick={this.handleWidgetClick}>
                 <ListToolbar headerText={this.props.taskListName} isHeaderOpen={this.props.isHeaderOpen}
                  onHeaderDoubleClick={this.handleHeaderDoubleClick} onHeaderSubmit={this.handleTaskListHeaderSubmit}
-                 onRemoveButtonClick={this.handleRemoveButtonClick} 
-                 onShowCompleteTasksChanged={this.handleShowCompleteTasksChanged}
-                 isCompleteTasksShown={this.props.settings.isCompleteTasksShown}/>
+                 onRemoveButtonClick={this.handleRemoveButtonClick} isSettingsMenuOpen={isSettingsMenuOpen}
+                 onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
+                 settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}/>
                 <TaskArea> {builtTasks} </TaskArea>
             </div>
         )
     }
 
-    handleDueDateClick(taskId) {
-        this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
+    handleSettingsButtonClick() {
+        this.props.onTaskListSettingsButtonClick(this.props.taskListWidgetId);
     }
 
-    handleShowCompleteTasksChanged(newValue) {
-        var newTaskListSettings = new TaskListSettingsStore(this.props.settings.isCompleteTasksShown);
-        newTaskListSettings.isCompleteTasksShown = newValue;
+    handleTaskListSettingsChanged(newSettings) {
+        this.props.onSettingsChanged(this.props.taskListWidgetId, newSettings);
+    }
 
-        this.props.onSettingsChanged(this.props.taskListWidgetId, newTaskListSettings);
+    handleDueDateClick(taskId) {
+        this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
     }
 
     handleTaskInputUnmounting(data, taskId) {
@@ -126,9 +130,36 @@ class TaskListWidget extends React.Component {
         this.props.onRemoveButtonClick(this.props.taskListWidgetId);
     }
 
-    taskSortHelper(a, b) {
+    taskSortIsCompletedHelper(a, b) {
         return a.isComplete - b.isComplete;
     }
+
+    taskSortDueDateHelper(a, b) {
+        var dueDateA = a.dueDate.length === 0 ? Infinity : new Date(a.dueDate);
+        var dueDateB = b.dueDate.length === 0 ? Infinity : new Date(b.dueDate);
+        return dueDateA - dueDateB;
+    }
+
+    taskSortDateAddedHelper(a, b) {
+        var dateAddedA = new Date(a.dateAdded);
+        var dateAddedB = new Date(b.dateAdded);
+        return dateAddedA - dateAddedB;
+    }
+
+    getTaskSorter(props) {
+        var sortBy = props.settings.sortBy;
+        if (sortBy === "completed") {
+            return this.taskSortIsCompletedHelper;
+        }
+
+        if (sortBy === "due date") {
+            return this.taskSortDueDateHelper;
+        }
+
+        if (sortBy === "date added") {
+            return this.taskSortDateAddedHelper;
+        }
+    } 
 
     handleNewDateSubmit(taskId, newDate) {
         this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate);

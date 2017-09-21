@@ -1,6 +1,11 @@
+#ListToolbarSettingsIcon {
+    width: 15px;
+    height: 15px;
+}
+
 .SortingMenu {
     color: #FFF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 8pt;
     flex-grow: 0;
     text-align: left;
@@ -13,20 +18,31 @@
 
 .ListToolbarHeader {
     color: #FFF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 14pt;
     overflow: hidden;
     text-align: center;
     flex-grow: 4;
     white-space: nowrap;
     -webkit-user-select: none;
-    user-select: none;
-    
+    user-select: none;   
+}
+
+.ListToolbarHeaderInput {
+    color: #FFF;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 14pt;
+    overflow: hidden;
+    text-align: center;
+    flex-grow: 4;
+    white-space: nowrap;
+    background: rgba(100,100,100,255);
+    border: 0px solid #FFF;
 }
 
 .DeleteButton {
     color: #FFF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     flex-grow: 1;
     text-align: right;
     margin-right: 5px;

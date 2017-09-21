@@ -20,7 +20,7 @@ class LockScreen extends React.Component {
                 <div className="LockScreenOuter">
                     <div className="LockScreenInner">
                         <div className="LockScreenCentered">
-                            <img className="LockScreenIcon" src="LoadingIcon.svg"/>
+                            <img className="LockScreenIcon" src="NewLockScreenIcon.svg"/>
                             <input ref="input" className="LockScreenInput" type="password" onKeyPress={this.handleKeyPress}/>
                         </div>
                     </div>

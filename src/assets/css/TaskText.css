@@ -8,16 +8,21 @@
 }
 
 .TaskText {
-  font-Family: segoe UI;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   color: #FFF;
   font-Size: 14pt;
   margin-left: 5px;
 }
 
 .Fade {
-  opacity: 0.20;
+  opacity: 0.15;
+  font-weight: 200;
 }
 
 .TaskTextInput {
   width: 300px;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  color: #FFF;
+  background: rgba(100,100,100,255);
+  border: 0px solid #FFF;
 }
