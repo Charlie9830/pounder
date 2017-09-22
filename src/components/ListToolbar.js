@@ -20,7 +20,7 @@ class ListToolbar extends React.Component{
         return (
             <div className="ListToolbar">
                 <div className="SortingMenu">
-                    <img id="ListToolbarSettingsIcon" src="/SettingsIcon.svg" onClick={this.handleSettingsClick}/>
+                    <img id="ListToolbarSettingsIcon" src="SettingsIcon.svg" onClick={this.handleSettingsClick}/>
                     {settingsMenu}
                 </div>
                 {listToolbarHeader}
