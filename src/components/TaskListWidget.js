@@ -32,10 +32,21 @@ class TaskListWidget extends React.Component {
 
     render(){
         var builtTasks = [];
+        var includesNewTask = false;
+
         if (this.props.tasks != undefined) {
             // Sort Tasks.
             var taskSorter = this.getTaskSorter(this.props)
             var sortedTasks = this.props.tasks.concat().sort(taskSorter);
+
+            // Promote any new Tasks to begining of Array.
+            var newTaskIndex = sortedTasks.findIndex(item => {
+                return item.isNewTask === true;
+            })
+
+            if (newTaskIndex > 0) { // Catches -1 and 0 (not Promotion Required)
+                sortedTasks.unshift(sortedTasks.splice(newTaskIndex, 1)[0]);
+            }
 
             builtTasks = sortedTasks.map((item, index) => {
                 // Bail out if Task isn't meant to be Visible.

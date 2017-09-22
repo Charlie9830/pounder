@@ -1,5 +1,5 @@
 class TaskStore {
-    constructor(taskName, dueDate, isComplete, project, taskList, uid, dateAdded) {
+    constructor(taskName, dueDate, isComplete, project, taskList, uid, dateAdded, isNewTask) {
         this.taskName = taskName;
         this.dueDate = dueDate;
         this.isComplete = isComplete;
@@ -7,6 +7,7 @@ class TaskStore {
         this.taskList = taskList;
         this.uid = uid;
         this.dateAdded = dateAdded;
+        this.isNewTask = isNewTask;
     }
 }
 

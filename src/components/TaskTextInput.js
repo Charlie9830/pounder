@@ -7,6 +7,7 @@ class TaskTextInput extends React.Component {
 
         this.hasEnterKeyBeenPressed = false;
 
+        // Method Bindings
         this.handleKeyPress = this.handleKeyPress.bind(this);
     }
 
@@ -23,7 +24,8 @@ class TaskTextInput extends React.Component {
 
     render() {
         return (
-            <input className="TaskTextInput" ref="input" type='text' defaultValue={this.props.defaultValue} onKeyPress={this.handleKeyPress}/>
+            <input className="TaskTextInput" ref="input" type='text' defaultValue={this.props.defaultValue}
+             onKeyPress={this.handleKeyPress}/>
         )
     }
 

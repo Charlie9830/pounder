@@ -15,7 +15,7 @@ class TaskText extends React.Component {
         if (this.props.isInputOpen) {
             return (
                 <div className='TaskText'>
-                    <TaskTextInput defaultValue={this.props.text} onKeyPress={this.forwardKeyPress} 
+                    <TaskTextInput defaultValue={this.props.text} onKeyPress={this.forwardKeyPress}
                     onComponentUnmounting={this.handleInputUnmounting}/>  
                 </div>
             )

@@ -119,7 +119,7 @@ class App extends React.Component {
     };
     Firebase.initializeApp(config);
 
-    //this.migrateDBtoV3();
+    this.migrateDBtoV3();
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
@@ -241,8 +241,6 @@ class App extends React.Component {
     var logTaskIndex = this.state.tasks.findIndex(item => {
       return item.uid === element.props.taskId;
     })
-    console.log(this.state.tasks[logTaskIndex]);
-
 
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.state.selectedTask;
@@ -381,6 +379,7 @@ class App extends React.Component {
     
     var updates = {};
     updates['/tasks/' + taskId + "/taskName/"] = newData;
+    updates['/tasks/' + taskId + '/isNewTask/'] = false; // Reset new Task Property.
 
     Firebase.database().ref().update(updates).then( () => {
       this.setState({
@@ -519,7 +518,8 @@ class App extends React.Component {
         this.state.selectedProjectId,
         targetTaskList.uid,
         newTaskKey,
-        new Moment().toISOString()
+        new Moment().toISOString(),
+        true
       )
 
       Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
@@ -720,6 +720,7 @@ class App extends React.Component {
 
     var updates = {};
     updates['/tasks/' + taskId + "/isComplete/"] = incomingValue;
+    updates['/tasks/' + taskId + '/isNewTask/'] = false;
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ isAwaitingFirebase: false });
@@ -945,7 +946,7 @@ class App extends React.Component {
     console.error(error);
     this.setState({
       isAwaitingFirebase: false,
-      currentErrorMessage: "An Error has Occuered. Please consult Developer Diagnostics Log"});
+      currentErrorMessage: "An error has occurred. Please consult Developer Diagnostics Log"});
   }
 
   handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
@@ -1053,7 +1054,7 @@ class App extends React.Component {
       Firebase.database().ref().update(updates).then( () => {
         console.log("Tasks Purge Complete.")
 
-        // Add Date Added and Clear dueDate to Survivors of the Purge.
+        // Add Date Added, dueDate and isNewTask and Clear dueDate to Survivors of the Purge.
         Firebase.database().ref('/tasks').once('value').then( s => {
           var survingTasks = Object.values(s.val());
           var dateAddedUpdates = {};
@@ -1061,6 +1062,7 @@ class App extends React.Component {
           survingTasks.forEach(survivor => {
             dateAddedUpdates['tasks/' + survivor.uid + '/dateAdded/'] = new Moment().toISOString();
             dateAddedUpdates['tasks/' + survivor.uid + '/dueDate/'] = "";
+            dateAddedUpdates['tasks/' + survivor.uid + '/isNewTask/'] = false;
           })
 
           // Execute Updates.
@@ -1179,6 +1181,7 @@ class App extends React.Component {
     this.setState({ isAwaitingFirebase: true });
     var updates = {};
     updates['tasks/' + taskId + '/dueDate'] = newDate
+    updates['tasks/' + taskId + '/isNewTask/'] = false;
 
     Firebase.database().ref().update(updates).then(() => {
       this.setState({ 
