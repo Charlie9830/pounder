@@ -119,7 +119,7 @@ class App extends React.Component {
     // };
     // Firebase.initializeApp(config);
 
-    this.migrateDBtoV3();
+    //this.migrateDBtoV3();
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
