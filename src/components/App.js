@@ -92,6 +92,9 @@ class App extends React.Component {
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
+    this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
+    this.getLockScreen = this.getLockScreen.bind(this);
+    this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
   }
 
   componentDidMount(){
@@ -108,7 +111,7 @@ class App extends React.Component {
     Firebase.initializeApp(config);
 
     // Testing DB.
-    //Initialize Firebase
+    // Initialize Firebase
     // var config = {
     // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
     // authDomain: "halo-todo.firebaseapp.com",
@@ -180,11 +183,11 @@ class App extends React.Component {
 
   render() {
     var layouts = this.state.projectLayout.layouts;
+    var lockScreenJSX = this.getLockScreen();
 
     return (
       <div>
-        <LockScreen isDisplayed={this.state.IsLockScreenDisplayed} onAccessGranted={this.handleLockScreenAccessGranted}
-        backupMessage={this.state.lastBackupMessage}/>
+        {lockScreenJSX}
 
         <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}
         errorMessage={this.state.currentErrorMessage}/>
@@ -204,9 +207,13 @@ class App extends React.Component {
           onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
           openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
           onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-          openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId}/>
+          openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}/>
       </div>
     );
+  }
+
+  handleLockButtonClick() {
+    this.lockApp();
   }
 
   handleTaskListSettingsButtonClick(projectId, taskListWidgetId) {
@@ -286,6 +293,8 @@ class App extends React.Component {
 
   handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
     this.setState({
+      focusedTaskListId: taskListWidgetId,
+      selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false},
       isATaskMoving: true,
       movingTaskId: taskId,
       sourceTaskListId: taskListWidgetId,
@@ -1191,6 +1200,22 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
+  }
+
+  getLockScreen() {
+    if (this.state.IsLockScreenDisplayed) {
+      return (
+        <LockScreen onAccessGranted={this.handleLockScreenAccessGranted}
+          backupMessage={this.state.lastBackupMessage} onQuitButtonClick={this.handleQuitButtonClick} />
+      )
+    }
+  }
+
+  handleQuitButtonClick() {
+    if (this.isInElectron) {
+      // Close Application.
+      remote.getCurrentWindow().close();
+    }
   }
 }
 

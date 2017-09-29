@@ -35,6 +35,7 @@ class Project extends React.Component{
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
+        this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
     }
     
     componentDidMount() {
@@ -96,7 +97,8 @@ class Project extends React.Component{
             <div className="ProjectContainer">
                 <div className="ProjectToolBar">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
-                    onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}/>
+                    onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
+                    onLockButtonClick={this.handleLockButtonClick}/>
                 </div>
                 <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
                     cols={12} rows={2} rowHeight={100} width={1600}
@@ -105,6 +107,10 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    handleLockButtonClick() {
+        this.props.onLockButtonClick();
     }
 
     handleTaskListSettingsButtonClick(taskListWidgetId) {

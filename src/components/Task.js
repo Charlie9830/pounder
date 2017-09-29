@@ -42,7 +42,7 @@ class Task extends React.Component {
                         </div>
                     </div>
                     <div className="DueDateContainer">
-                        <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick}
+                        <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
                             isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} />
                     </div>
                 </div>

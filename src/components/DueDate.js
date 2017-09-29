@@ -25,6 +25,13 @@ class DueDate extends React.Component {
   }
 
   getDueDateClassAndText(props) {
+    if (this.props.isComplete) {
+      return {
+        className: "DueDate Complete",
+        text: ""
+      }
+    }
+
     if (this.props.dueDate === "") {
       return { 
         className: "DueDate NotSet",

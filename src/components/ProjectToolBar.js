@@ -10,6 +10,7 @@ class ProjectToolBar extends React.Component {
         this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
         this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
         this.handleRemoveTaskListButtonCLick = this.handleRemoveTaskListButtonCLick.bind(this);
+        this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
 
     }
 
@@ -21,8 +22,13 @@ class ProjectToolBar extends React.Component {
                 <span className="ToolBarButtonSeparator"/>
                 <img className="ToolBarButton" src="NewTaskListIcon.svg" onClick={this.handleAddTaskListButtonClick}/>
                 <img className="ToolBarButton" src="RemoveTaskListIcon.svg" onClick={this.handleRemoveTaskListButtonCLick}/>
+                <img className="LockButton" src="LockIcon.svg" onClick={this.handleLockButtonClick}/>
             </div>
         )
+    }
+
+    handleLockButtonClick(e) {
+        this.props.onLockButtonClick();
     }
 
     handleAddTaskButtonClick(e) {

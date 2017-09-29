@@ -24,6 +24,12 @@
   line-height: 28px; /* Set height: of .DueDate Equal to This */
 }
 
+.Complete {
+  background: #444;
+  height: 20px;
+  width: 20px;
+}
+
 .Overdue {
   background: #F00;
 }
