@@ -16,6 +16,7 @@ import ProjectLayoutStore from '../stores/ProjectLayoutStore';
 import ProjectStore from '../stores/ProjectStore';
 import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 import Moment from 'moment';
+import ParseDueDate from '../utilities/ParseDueDate';
 
 // Only Import if running in Electron.
 var remote = null;
@@ -32,9 +33,9 @@ class App extends React.Component {
 
     // State.
     this.state = {
-      projects: [],
-      taskLists: [],
-      tasks: [],
+      projects: [], // Stores all Projects from the DB.
+      taskLists: [], // Currently only stores TaskLists from the Selected Project.
+      tasks: [], // Stores all Tasks from the DB.
       projectLayout: new ProjectLayoutStore({}, -1, -1),
       focusedTaskListId: -1,
       selectedProjectId: -1,
@@ -49,6 +50,7 @@ class App extends React.Component {
       lastBackupMessage: "",
       openCalendarId: -1,
       openTaskListSettingsMenuId: -1,
+      projectSelectorDueDateDisplays: {},
     }; 
 
     // Class Storage.
@@ -95,32 +97,34 @@ class App extends React.Component {
     this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
     this.getLockScreen = this.getLockScreen.bind(this);
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
+    this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
+    this.getProjectSelectorDueDateDisplays = this.getProjectSelectorDueDateDisplays.bind(this);
   }
 
   componentDidMount(){
     // Production DB
     // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-      authDomain: "pounder-production.firebaseapp.com",
-      databaseURL: "https://pounder-production.firebaseio.com",
-      projectId: "pounder-production",
-      storageBucket: "",
-      messagingSenderId: "759706234917"
-    };
-    Firebase.initializeApp(config);
+    // var config = {
+    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+    //   authDomain: "pounder-production.firebaseapp.com",
+    //   databaseURL: "https://pounder-production.firebaseio.com",
+    //   projectId: "pounder-production",
+    //   storageBucket: "",
+    //   messagingSenderId: "759706234917"
+    // };
+    // Firebase.initializeApp(config);
 
     // Testing DB.
     // Initialize Firebase
-    // var config = {
-    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    // authDomain: "halo-todo.firebaseapp.com",
-    // databaseURL: "https://halo-todo.firebaseio.com",
-    // projectId: "halo-todo",
-    // storageBucket: "halo-todo.appspot.com",
-    // messagingSenderId: "801359392837"
-    // };
-    // Firebase.initializeApp(config);
+    var config = {
+    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    authDomain: "halo-todo.firebaseapp.com",
+    databaseURL: "https://halo-todo.firebaseio.com",
+    projectId: "halo-todo",
+    storageBucket: "halo-todo.appspot.com",
+    messagingSenderId: "801359392837"
+    };
+    Firebase.initializeApp(config);
 
     //this.migrateDBtoV3();
 
@@ -151,6 +155,10 @@ class App extends React.Component {
         isAwaitingFirebase: false
       });
     })
+
+    // Get Tasks and Attach value Listener.
+    this.setState({ isAwaitingFirebase: true});
+    Firebase.database().ref('tasks/').orderByChild('project').on('value', this.onIncomingTasks);
 
     // Electron only Config.
     if (this.isInElectron) {
@@ -184,6 +192,7 @@ class App extends React.Component {
   render() {
     var layouts = this.state.projectLayout.layouts;
     var lockScreenJSX = this.getLockScreen();
+    var projectTasks = this.getSelectedProjectTasks();
 
     return (
       <div>
@@ -193,7 +202,8 @@ class App extends React.Component {
         errorMessage={this.state.currentErrorMessage}/>
         <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
           onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
-          onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit} />
+          onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
+          projectSelectorDueDateDisplays={this.state.projectSelectorDueDateDisplays} />
         <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} selectedTask={this.state.selectedTask}
           movingTaskId={this.state.movingTaskId} focusedTaskListId={this.state.focusedTaskListId}
           projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
@@ -210,6 +220,54 @@ class App extends React.Component {
           openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}/>
       </div>
     );
+  }
+
+  getProjectSelectorDueDateDisplays(tasks) {
+    var returnList = {};
+
+    tasks.forEach(item => {
+      if (item.dueDate !== "" && item.isComplete !== true) {
+        if (returnList[item.project] == undefined) {
+          returnList[item.project] = {greens: 0, yellows: 0, reds: 0};
+        }
+
+        var {className} = ParseDueDate(item.isComplete, item.dueDate);
+        switch (className) {
+          case "DueDate Later":
+            returnList[item.project].greens += 1;
+            break;
+          
+          case "DueDate Soon":
+            returnList[item.project].yellows += 1;
+            break;
+
+          case "DueDate Overdue":
+            returnList[item.project].reds += 1;
+
+          default:
+            break;
+        }
+      }
+    })
+
+    return returnList;
+  }
+
+  getSelectedProjectTasks() {
+    if (this.state.selectedProjectId === -1) {
+      return [];
+    }
+
+    // TODO: Firebase is return a query ordered by projectID, therefore this could bail out once it's found
+    // the first matching Task and iterated onto a non matching task for a performance gain.
+    else {
+      var returnList = [];
+      this.state.tasks.forEach(item => {
+        if (item.project === this.state.selectedProjectId) {
+          returnList.push(item);
+        }
+      })
+    }
   }
 
   handleLockButtonClick() {
@@ -606,14 +664,14 @@ class App extends React.Component {
     if (outgoingProjectId !== -1) {
       // Old Listeners.
       taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-      tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+      // tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
       projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
     }
 
     if (projectSelectorId !== -1) {
       // New Listeners.
       taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
-      tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
+      // tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
       projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
     }
 
@@ -645,7 +703,8 @@ class App extends React.Component {
     tasks = snapshot.val() == null ? [] : Object.values(snapshot.val());
     this.setState({
       isAwaitingFirebase: false,
-      tasks: tasks
+      tasks: tasks,
+      projectSelectorDueDateDisplays: this.getProjectSelectorDueDateDisplays(tasks)
     })
   }
 

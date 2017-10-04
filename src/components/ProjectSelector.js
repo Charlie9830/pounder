@@ -8,15 +8,46 @@ class ProjectSelector extends React.Component {
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.getDueDateCountsJSX = this.getDueDateCountsJSX.bind(this);
     }
 
     render(){
         var currentClassName = this.props.isSelected ? "ProjectSelectorActiveStyle" : "ProjectSelectorInactiveStyle";
         var projectLabelJSX = this.getProjectLabelJSX(this.props);
+        var dueDateCounts = this.getDueDateCountsJSX(this.props);
 
         return (
             <div className={currentClassName} onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
-                {projectLabelJSX}
+                <div className="ProjectSelectorFlexContainer">
+                    <div className="ProjectSelectorLabelContainer">
+                        {projectLabelJSX}
+                    </div>
+                    <div className="ProjectSelectorIconContainer">
+                        {dueDateCounts}
+                    </div>
+
+                </div>
+                
+            </div>
+        )
+    }
+
+    getDueDateCountsJSX(props) {
+        if (props.dueDateDisplay == undefined || props.dueDateDisplay == {}) {
+            return ( <div/>)
+        }
+        
+        return (
+            <div>
+                <div className="ProjectSelectorIcon" data-colour="Red" data-count={props.dueDateDisplay.reds}>
+                    <label className="ProjectSelectorIconText"> {props.dueDateDisplay.reds} </label>
+                </div>
+                <div className="ProjectSelectorIcon" data-colour="Yellow" data-count={props.dueDateDisplay.yellows}>
+                    <label className="ProjectSelectorIconText"> {props.dueDateDisplay.yellows} </label>
+                </div>
+                <div className="ProjectSelectorIcon" data-colour="Green" data-count={props.dueDateDisplay.greens}>
+                    <label className="ProjectSelectorIconText"> {props.dueDateDisplay.greens} </label>
+                </div>
             </div>
         )
     }

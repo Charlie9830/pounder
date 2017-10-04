@@ -7,6 +7,58 @@
     user-select: none;
 }
 
+.ProjectSelectorFlexContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
+.ProjectSelectorLabelContainer {
+  flex: 3;
+}
+
+.ProjectSelectorIconContainer {
+  flex-grow: 0;
+  height: 16px;
+}
+
+.ProjectSelectorIcon {
+  float: right;
+  margin: 0px 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0.85;
+}
+
+.ProjectSelectorIcon[data-colour*="Red"] {
+  background: #F00;
+}
+
+.ProjectSelectorIcon[data-colour*="Yellow"] {
+  background: #FF9300;
+}
+
+.ProjectSelectorIcon[data-colour*="Green"] {
+  background: #22B30B;
+}
+
+.ProjectSelectorIcon[data-count*="0"] {
+  display: none;
+}
+
+.ProjectSelectorIconText {
+  display: block;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-size: 8pt;
+  color: #FFF;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 16px;
+}
+
 #projectSelectorInput {
   color: #FFF;
   margin: auto 5px;
