@@ -1,12 +1,30 @@
-h1 {
-  font-family: helvetica;
-  font-weight: 200;
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.SidebarProjectFlexContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.SidebarFlexItemContainer {
+  flex-shrink: 0.15;
+}
+
+.ProjectFlexItemContainer {
+  flex-grow: 1;
 }
 
 ::-webkit-scrollbar {
   background: rgba(51,51,51,255);
+  width: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border: 1px solid #FFF;
+  background: rgba(77,77,77,255);
 }

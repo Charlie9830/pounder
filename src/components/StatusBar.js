@@ -11,7 +11,7 @@ class StatusBar extends React.Component {
             <div className="StatusBarContainer">
                 <img className={firebaseStatusClassName} src="LoadingIcon.svg"/>
                 <div className={connectionStatusClassName}/>
-                <label className="VersionNumber"> Version 1.1.3 </label>
+                <label className="VersionNumber"> Version 1.1.4 </label>
                 <label className={"ErrorMessage"}> {errorMessage} </label>
             </div>
         )

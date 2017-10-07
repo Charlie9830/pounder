@@ -22,6 +22,7 @@
   text-align: center;
   margin: 0 auto;
   line-height: 28px; /* Set height: of .DueDate Equal to This */
+  user-select: none;
 }
 
 .Complete {

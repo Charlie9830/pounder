@@ -17,17 +17,17 @@ class ProjectSelector extends React.Component {
         var dueDateCounts = this.getDueDateCountsJSX(this.props);
 
         return (
-            <div className={currentClassName} onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
-                <div className="ProjectSelectorFlexContainer">
-                    <div className="ProjectSelectorLabelContainer">
-                        {projectLabelJSX}
+            <div>
+                <div className={currentClassName} onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
+                    <div className="ProjectSelectorFlexContainer">
+                        <div className="ProjectSelectorLabelContainer">
+                            {projectLabelJSX}
+                        </div>
+                        <div className="ProjectSelectorIconContainer">
+                            {dueDateCounts}
+                        </div>
                     </div>
-                    <div className="ProjectSelectorIconContainer">
-                        {dueDateCounts}
-                    </div>
-
                 </div>
-                
             </div>
         )
     }

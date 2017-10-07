@@ -1,4 +1,8 @@
-.SideBarToolbar {
+.SidebarToolbarContainer {
+    height: 30px;
+}
+
+.SidebarToolbar {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-Size: 16pt;
     color: #FFF;
@@ -7,12 +11,59 @@
     user-select: none;
 }
 
-.Sidebar {
+.SidebarOpen {
+    position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
     background: rgba(37,37,37,255);
-    width:15%;
+    width: 250px;
     height: 1130px;
     float: left;
     margin-top: 30px;
     -webkit-user-select: none;
     user-select: none;
 }
+
+.SidebarCollapsed {
+    position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
+    background: rgba(37,37,37,255);
+    width: 25px;
+    height: 1130px;
+    float: left;
+    margin-top: 70px;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.SidebarCollapseButtonContainer {
+    position: absolute;
+    right: 0px;
+    top: 400px;
+}
+
+.SidebarCollapseButtonOpen {
+    height: 50px;
+    width: 15px;
+    text-align: center;
+}
+
+.SidebarCollapseButtonCollapsed {
+    height: 50px;
+    width: 25px;
+    text-align: center;
+}
+
+.SidebarCollapseButtonIcon {
+    display: inline-block;
+    height: 50px;
+    width: 15px;
+    margin: auto;
+}
+
+.ProjectSelectorsContainerOpen {
+    display: block;
+}
+
+.ProjectSelectorsContainerCollapsed {
+    display: none;
+}
+
+

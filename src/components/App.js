@@ -104,27 +104,27 @@ class App extends React.Component {
   componentDidMount(){
     // Production DB
     // Initialize Firebase
-    // var config = {
-    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-    //   authDomain: "pounder-production.firebaseapp.com",
-    //   databaseURL: "https://pounder-production.firebaseio.com",
-    //   projectId: "pounder-production",
-    //   storageBucket: "",
-    //   messagingSenderId: "759706234917"
-    // };
-    // Firebase.initializeApp(config);
+    var config = {
+      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+      authDomain: "pounder-production.firebaseapp.com",
+      databaseURL: "https://pounder-production.firebaseio.com",
+      projectId: "pounder-production",
+      storageBucket: "",
+      messagingSenderId: "759706234917"
+    };
+    Firebase.initializeApp(config);
 
     // Testing DB.
     // Initialize Firebase
-    var config = {
-    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    authDomain: "halo-todo.firebaseapp.com",
-    databaseURL: "https://halo-todo.firebaseio.com",
-    projectId: "halo-todo",
-    storageBucket: "halo-todo.appspot.com",
-    messagingSenderId: "801359392837"
-    };
-    Firebase.initializeApp(config);
+    // var config = {
+    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    // authDomain: "halo-todo.firebaseapp.com",
+    // databaseURL: "https://halo-todo.firebaseio.com",
+    // projectId: "halo-todo",
+    // storageBucket: "halo-todo.appspot.com",
+    // messagingSenderId: "801359392837"
+    // };
+    // Firebase.initializeApp(config);
 
     //this.migrateDBtoV3();
 
@@ -200,24 +200,31 @@ class App extends React.Component {
 
         <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}
         errorMessage={this.state.currentErrorMessage}/>
-        <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
-          onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
-          onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-          projectSelectorDueDateDisplays={this.state.projectSelectorDueDateDisplays} />
-        <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} selectedTask={this.state.selectedTask}
-          movingTaskId={this.state.movingTaskId} focusedTaskListId={this.state.focusedTaskListId}
-          projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
-          onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
-          onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
-          layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
-          onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
-          onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
-          onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick} 
-          movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
-          onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
-          openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
-          onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-          openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}/>
+        <div className="SidebarProjectFlexContainer">
+          <div className="SidebarFlexItemContainer">
+            <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
+              onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
+              onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
+              projectSelectorDueDateDisplays={this.state.projectSelectorDueDateDisplays} />
+          </div>
+          <div className="ProjectFlexItemContainer">
+            <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} selectedTask={this.state.selectedTask}
+              movingTaskId={this.state.movingTaskId} focusedTaskListId={this.state.focusedTaskListId}
+              projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
+              onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
+              onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
+              layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
+              onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
+              onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
+              onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
+              movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
+              onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
+              openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+              onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
+              openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
+              />
+          </div>
+        </div>
       </div>
     );
   }

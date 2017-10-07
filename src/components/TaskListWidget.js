@@ -10,6 +10,7 @@ class TaskListWidget extends React.Component {
     constructor(props){
         super(props);
 
+        // Method Bindings.
         this.handleTaskClick = this.handleTaskClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleWidgetClick = this.handleWidgetClick.bind(this);
@@ -80,7 +81,9 @@ class TaskListWidget extends React.Component {
                  onRemoveButtonClick={this.handleRemoveButtonClick} isSettingsMenuOpen={isSettingsMenuOpen}
                  onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}/>
-                <TaskArea> {builtTasks} </TaskArea>
+                <TaskArea>
+                    {builtTasks}
+                </TaskArea>
             </div>
         )
     }

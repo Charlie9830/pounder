@@ -7,40 +7,74 @@ class Sidebar extends React.Component{
     constructor(props) {
         super(props);
 
+        // Method Bindings.
         this.handleProjectSelectorClick = this.handleProjectSelectorClick.bind(this);
         this.handleProjectSelectorDoubleClick = this.handleProjectSelectorDoubleClick.bind(this);
         this.handleAddProjectClick = this.handleAddProjectClick.bind(this);
         this.handleRemoveProjectClick = this.handleRemoveProjectClick.bind(this);
         this.handleProjectNameSubmit = this.handleProjectNameSubmit.bind(this);
+        this.handleSidebarCollapseButtonClick = this.handleSidebarCollapseButtonClick.bind(this);
+        this.getSidebarToolbarJSX = this.getSidebarToolbarJSX.bind(this);
 
         this.state = {
-            openProjectSelectorInputId: -1
+            openProjectSelectorInputId: -1,
+            isCollapsed: false,
         }
     }
 
     render() {
-        var projectSelectors = this.props.projects.map((item, index) => {
+        var sidebarClassName = this.state.isCollapsed ? "SidebarCollapsed" : "SidebarOpen";
+        var projectSelectorsContainerClassName = this.state.isCollapsed ? "ProjectSelectorsContainerCollapsed" : "ProjectSelectorsContainerOpen";
+        var sidebarCollapseButtonClassName = this.state.isCollapsed ? "SidebarCollapseButtonCollapsed" : "SidebarCollapseButtonOpen";
+
+        var projectSelectorsJSX = this.props.projects.map((item, index) => {
             var isSelected = this.props.selectedProjectId === item.uid;
             var isInputOpen = item.uid === this.state.openProjectSelectorInputId;
             var dueDateDisplay = this.props.projectSelectorDueDateDisplays[item.uid];
 
             return (
                 <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
-                isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
-                onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}/>
+                    isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
+                    onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay} />
             )
         })
-            return (
-                <div className="Sidebar">
-                    <div className="SideBarToolbar">
-                        <img className="ToolBarButton" src="NewProjectIcon.svg" onClick={this.handleAddProjectClick}/>
-                        <img className="ToolBarButton" src="RemoveProjectIcon.svg" onClick={this.handleRemoveProjectClick}/>
-                    </div>
-                    <div>
-                        {projectSelectors}
+
+        var sidebarToolbarJSX = this.getSidebarToolbarJSX();
+
+        return (
+            <div className={sidebarClassName}>
+                <div className="sidebarToolbarContainer">
+                    {sidebarToolbarJSX}
+                </div>
+                <div className={projectSelectorsContainerClassName}>
+                    {projectSelectorsJSX}
+                </div>
+                <div className="SidebarCollapseButtonContainer">
+                    <div className={sidebarCollapseButtonClassName} onClick={this.handleSidebarCollapseButtonClick}>
+                        <img className="SidebarCollapseButtonIcon" src="SidebarIcon.svg"/>
                     </div>
                 </div>
-            ) 
+            </div>
+        )
+    }
+
+    getSidebarToolbarJSX() {
+        if (this.state.isCollapsed !== true) {
+            return (
+                <div className="SidebarToolbar">
+                    <img className="ToolBarButton" src="NewProjectIcon.svg" onClick={this.handleAddProjectClick} />
+                    <img className="ToolBarButton" src="RemoveProjectIcon.svg" onClick={this.handleRemoveProjectClick} />
+                </div>
+            )     
+        }
+
+        else {
+            return (<div/>)
+        }
+    }
+
+    handleSidebarCollapseButtonClick(e) {
+        this.setState({isCollapsed: !this.state.isCollapsed});
     }
 
     handleProjectSelectorClick(e, projectSelectorId) {
