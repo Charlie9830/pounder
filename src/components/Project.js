@@ -16,6 +16,7 @@ class Project extends React.Component{
 
         this.state = {
             openTaskListWidgetHeaderId: -1,
+            rglWidth: 1280
         }
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
@@ -41,6 +42,10 @@ class Project extends React.Component{
     componentDidMount() {
         MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
         MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
+
+        // Hacky fix for DPI Scaling causing issues with the React Grid Layout width.
+        // saves having to change to a Responsive Grid Layout with a Width Provider HOC.
+        this.setState({rglWidth: this.refs.projectContainer.offsetWidth});
     }
 
     componentWillUnmount() {
@@ -95,14 +100,14 @@ class Project extends React.Component{
         var layouts = Array.isArray(this.props.layouts) ? this.props.layouts : [];
 
         return (
-            <div className="ProjectContainer">
+            <div className="ProjectContainer" ref="projectContainer">
                 <div className="ProjectToolBar">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
                     onLockButtonClick={this.handleLockButtonClick}/>
                 </div>
                 <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
-                    cols={17} rows={8} rowHeight={100} width={1280}
+                    cols={17} rows={8} rowHeight={100} width={this.state.rglWidth}
                     onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
                     {taskListWidgets}
                 </ReactGridLayout>

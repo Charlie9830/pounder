@@ -1,21 +1,92 @@
-h1 {
-  font-family: helvetica;
-  font-weight: 200;
+* {
+  margin: 0px;
+  padding: 0px;
+}
+
+.SidebarProjectFlexContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.SidebarFlexItemContainer {
+  flex-shrink: 0.15;
+}
+
+.ProjectFlexItemContainer {
+  flex-grow: 1;
 }
 
 ::-webkit-scrollbar {
   background: rgba(51,51,51,255);
+  width: 5px;
 }
 
 ::-webkit-scrollbar-thumb {
-  border: 1px solid #FFF;
-}.ProjectSelectorText {
+  background: rgba(77,77,77,255);
+}
+.ProjectSelectorText {
     color: #FFF;
     margin: 5px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 16pt;
     -webkit-user-select: none;
     user-select: none;
+}
+
+.ProjectSelectorFlexContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
+.ProjectSelectorLabelContainer {
+  flex: 3;
+}
+
+.ProjectSelectorIconContainer {
+  flex-grow: 0;
+  height: 16px;
+}
+
+.ProjectSelectorIcon {
+  float: right;
+  margin: 0px 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0.80;
+}
+
+.ProjectSelectorIcon[data-colour*="Red"] {
+  background: #F00;
+}
+
+.ProjectSelectorIcon[data-colour*="Yellow"] {
+  background: #FF9300;
+}
+
+.ProjectSelectorIcon[data-colour*="Green"] {
+  background: #22B30B;
+}
+
+.ProjectSelectorIcon[data-count*="0"] {
+  display: none;
+}
+
+.ProjectSelectorIconText {
+  display: block;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-size: 8pt;
+  color: #FFF;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 16px;
 }
 
 #projectSelectorInput {
@@ -33,7 +104,11 @@ h1 {
 
 .ProjectSelectorActiveStyle {
   background: rgba(63,63,76,255);
-}.SideBarToolbar {
+}.SidebarToolbarContainer {
+    height: 30px;
+}
+
+.SidebarToolbar {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-Size: 16pt;
     color: #FFF;
@@ -42,15 +117,63 @@ h1 {
     user-select: none;
 }
 
-.Sidebar {
+.SidebarOpen {
+    position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
     background: rgba(37,37,37,255);
-    width:15%;
+    width: 250px;
     height: 1130px;
     float: left;
     margin-top: 30px;
     -webkit-user-select: none;
     user-select: none;
-}.ToolBarButton {
+}
+
+.SidebarCollapsed {
+    position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
+    background: rgba(37,37,37,255);
+    width: 25px;
+    height: 1130px;
+    float: left;
+    margin-top: 70px;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.SidebarCollapseButtonContainer {
+    position: absolute;
+    right: 0px;
+    top: 400px;
+}
+
+.SidebarCollapseButtonOpen {
+    height: 50px;
+    width: 15px;
+    text-align: center;
+}
+
+.SidebarCollapseButtonCollapsed {
+    height: 50px;
+    width: 25px;
+    text-align: center;
+}
+
+.SidebarCollapseButtonIcon {
+    display: inline-block;
+    height: 50px;
+    width: 15px;
+    margin: auto;
+}
+
+.ProjectSelectorsContainerOpen {
+    display: block;
+}
+
+.ProjectSelectorsContainerCollapsed {
+    display: none;
+}
+
+
+.ToolBarButton {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 36px;
     width: 36px;
@@ -131,6 +254,7 @@ h1 {
   text-align: center;
   margin: 0 auto;
   line-height: 28px; /* Set height: of .DueDate Equal to This */
+  user-select: none;
 }
 
 .Complete {
@@ -559,14 +683,18 @@ div {
 .SortingMenu {
     color: #FFF;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-weight: 500;
     font-size: 8pt;
-    flex-grow: 0;
+    flex-grow: 0.5;
+    height: 30px;
+    line-height: 35px;
     text-align: left;
-    margin-left: 5px;
+    padding-left: 5px;
     -webkit-user-select: none;
     overflow: hidden;
     white-space: nowrap;
     user-select: none;
+    
 }
 
 .ListToolbarHeader {
@@ -579,6 +707,7 @@ div {
     white-space: nowrap;
     -webkit-user-select: none;
     user-select: none;   
+    line-height: 30px;
 }
 
 .ListToolbarHeaderInput {
@@ -596,9 +725,11 @@ div {
 .DeleteButton {
     color: #FFF;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    flex-grow: 1;
+    flex-grow: 0.5;
+    height: 30px;
+    line-height: 30px;
     text-align: right;
-    margin-right: 5px;
+    padding-right: 5px;
     -webkit-user-select: none;
     user-select: none;
 }
@@ -609,7 +740,7 @@ div {
 
 
 .ListToolbar {
-    height:30px;
+    height: 30px;
     background: rgba(51,51,51,255);
     width: 100%;
     margin: 0px;
@@ -687,10 +818,11 @@ div {
 
 }.ProjectContainer {
     float: left;
-    width: 85%;
+    width: 100%;
     height: 1080px;
     margin: 0px;
 }
+
 .Project {
     background: rgba(30,30,30,255);
     width: 100%;
@@ -857,8 +989,8 @@ div {
     background: rgba(37,37,37,255);
     margin: 0px;
     padding: 0px;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     z-index: 10;
 }
 
