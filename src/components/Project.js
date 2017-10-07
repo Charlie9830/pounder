@@ -45,7 +45,11 @@ class Project extends React.Component{
 
         // Hacky fix for DPI Scaling causing issues with the React Grid Layout width.
         // saves having to change to a Responsive Grid Layout with a Width Provider HOC.
-        this.setState({rglWidth: this.refs.projectContainer.offsetWidth});
+        window.addEventListener("resize", () => {
+            this.setState({ rglWidth: this.refs.projectContainer.offsetWidth });
+        })
+        
+        
     }
 
     componentWillUnmount() {
