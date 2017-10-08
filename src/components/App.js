@@ -104,27 +104,27 @@ class App extends React.Component {
   componentDidMount(){
     // Production DB
     // Initialize Firebase
-    var config = {
-      apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-      authDomain: "pounder-production.firebaseapp.com",
-      databaseURL: "https://pounder-production.firebaseio.com",
-      projectId: "pounder-production",
-      storageBucket: "",
-      messagingSenderId: "759706234917"
-    };
-    Firebase.initializeApp(config);
+    // var config = {
+    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
+    //   authDomain: "pounder-production.firebaseapp.com",
+    //   databaseURL: "https://pounder-production.firebaseio.com",
+    //   projectId: "pounder-production",
+    //   storageBucket: "",
+    //   messagingSenderId: "759706234917"
+    // };
+    // Firebase.initializeApp(config);
 
     // Testing DB.
     // Initialize Firebase
-    // var config = {
-    // apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    // authDomain: "halo-todo.firebaseapp.com",
-    // databaseURL: "https://halo-todo.firebaseio.com",
-    // projectId: "halo-todo",
-    // storageBucket: "halo-todo.appspot.com",
-    // messagingSenderId: "801359392837"
-    // };
-    // Firebase.initializeApp(config);
+    var config = {
+    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
+    authDomain: "halo-todo.firebaseapp.com",
+    databaseURL: "https://halo-todo.firebaseio.com",
+    projectId: "halo-todo",
+    storageBucket: "halo-todo.appspot.com",
+    messagingSenderId: "801359392837"
+    };
+    Firebase.initializeApp(config);
 
     //this.migrateDBtoV3();
 
@@ -396,13 +396,6 @@ class App extends React.Component {
       }).catch(error => {
         this.postFirebaseError(error);
       })
-
-      // Update React.
-      // var newTasks = this.state.tasks.filter(item => {
-      //   return item.uid !== taskId;
-      // })
-
-      // this.setState({tasks: newTasks});
     }
   }
 
@@ -422,26 +415,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // var taskIndex = this.state.tasks.findIndex(item => {
-    //   return item.uid === taskId;
-    // })
-    // var task = this.state.tasks[taskIndex];
-
-    // // Fine Example of a New Task.
-    // var newTasks = this.state.tasks;
-    // newTasks[taskIndex] = new TaskStore(
-    //   task.taskName,
-    //   task.dueDate,
-    //   task.isComplete,
-    //   task.project,
-    //   destinationTaskListId,
-    //   task.uid,
-    // );
-
-    // this.setState({newTasks});
-    
   }
 
   handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
@@ -462,27 +435,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // Modify replace the Task.
-    // var currentTaskIndex = this.state.tasks.findIndex(item => {
-    //   return item.uid === taskId;
-    // })
-
-    // var currentTask = this.state.tasks[currentTaskIndex];
-    // var newTasks = this.state.tasks;
-
-    // newTasks[currentTaskIndex] = new TaskStore(
-    //   newData,
-    //   currentTask.dueDate,
-    //   currentTask.isComplete,
-    //   projectId,
-    //   taskListWidgetId,
-    //   currentTask.uid
-    // )
-
-    // this.setState({tasks: newTasks});
-
   }
 
   handleKeyDown(e) {
@@ -549,19 +501,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // // Add to React.
-    // // TODO: Homogenise the Use of taskListId and uid across the App.
-    // var taskLists = this.state.taskLists;
-    // taskLists.push(newTaskList)
-
-    // newProjectLayout = this.state.projectLayout;
-    // newProjectLayout.layouts.push(this.makeNewLayoutEntry(newTaskListKey));
-
-    // this.setState({
-    //   taskLists: taskLists,
-    //   projectLayout: newProjectLayout,
-    // });
   }
 
   addNewTask() {
@@ -604,12 +543,6 @@ class App extends React.Component {
       }).catch(error => {
         this.postFirebaseError(error);
       })
-
-      // Update React.
-      // var newTasks = this.state.tasks;
-      // newTasks.push(newTask);
-
-      // this.setState({tasks: newTasks});
     }
   }
 
@@ -645,18 +578,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // var targetTaskList = this.state.taskLists.find(item => {
-    //   return item.uid === taskListWidgetId;
-    // })
-
-    // targetTaskList.taskListName = newData;
-
-    // var taskLists = this.state.taskLists;
-    // taskLists[taskListWidgetId] = targetTaskList;
-
-    // this.setState({taskLists: taskLists});
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
@@ -738,13 +659,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-    
-
-    // Update React.
-    // this.setState({
-    //   projectLayout: new ProjectLayoutStore(newTrimmedLayouts, projectId, projectId)
-    // });
-
   }
 
   trimLayouts(layouts) {
@@ -802,27 +716,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // var taskIndex = this.state.tasks.findIndex(item => {
-    //   return item.uid === taskId;
-    // })
-
-    // var task = this.state.tasks[taskIndex];
-    // var newTasks = this.state.tasks;
-    
-    // // Modify replace the Task.
-    // newTasks[taskIndex] = new TaskStore(
-    //   task.taskName,
-    //   task.dueDate,
-    //   incomingValue,
-    //   task.project,
-    //   task.taskList,
-    //   task.uid
-    // );
-
-    // // Merge modified taskList back into State.
-    // this.setState({tasks: newTasks});
   }
 
   handleAddProjectClick() {
@@ -847,17 +740,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // // Project
-    // var newProjects = this.state.projects;
-    // newProjects.push(newProject);
-
-    // // Layout
-    // this.setState({
-    //   projects: newProjects,
-    //   projectLayout: newProjectLayout
-    // });
   }
 
   handleRemoveProjectClick(projectId) {
@@ -903,27 +785,6 @@ class App extends React.Component {
       }).catch(error => {
         this.postFirebaseError(error);
       })
-
-      // Update React.
-      // var newProjects = this.state.projects;
-      // var index = -1;
-
-      // newProjects.find((item, itemIndex) => {
-      //   if (item.uid === projectId) {
-      //     index = itemIndex;
-      //     return true;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      // })
-
-      // newProjects.splice(index, 1);
-      // this.setState({
-      //   projects: newProjects,
-      //   taskLists: [],
-      //   tasks: [],
-      // });
     }
   }
 
@@ -939,25 +800,6 @@ class App extends React.Component {
     }).catch(error => {
       this.postFirebaseError(error);
     })
-
-    // Update React.
-    // var projectIndex = 0;
-    // var projects = this.state.projects;
-    // var project = projects.find((item, index) => {
-    //   if (item.uid === projectSelectorId) {
-    //     projectIndex = index;
-    //     return true;
-    //   }
-    //   else {
-    //     return false;
-    //   }
-    // });
-
-    // project.projectName = newName
-    // projects[projectIndex] = project;
-
-    // this.setState({projects: projects});
-    
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
@@ -990,31 +832,6 @@ class App extends React.Component {
       }).catch(error => {
         this.postFirebaseError(error);
       })
-
-      // Update React.
-      // var taskLists = this.state.taskLists;
-      // var index = 0;
-      // taskLists.find((item, itemIndex) => {
-      //   if (item.uid === taskListWidgetId) {
-      //     index = itemIndex;
-      //     return true;
-      //   }
-      //   else {
-      //     return false;
-      //   }
-      // })
-
-      // taskLists.splice(index, 1);
-
-      // // Remove Tasks.
-      // var newTasks = this.state.tasks.filter(item => {
-      //   return item.taskList != taskListWidgetId;
-      // })
-
-      // this.setState({
-      //   taskLists: taskLists,
-      //   tasks: newTasks
-      // });
   }
 
   postFirebaseError(error) {
@@ -1284,6 +1101,5 @@ class App extends React.Component {
     }
   }
 }
-
 
 export default App;
