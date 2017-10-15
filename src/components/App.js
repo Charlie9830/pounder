@@ -10,6 +10,7 @@ import '../assets/css/TaskListWidget.css'
 import '../assets/css/Sidebar.css'
 import '../assets/css/Project.css'
 import Firebase from 'firebase';
+require('firebase/firestore');
 import TaskListStore from '../stores/TaskListStore';
 import TaskStore from '../stores/TaskStore';
 import ProjectLayoutStore from '../stores/ProjectLayoutStore';
@@ -17,6 +18,7 @@ import ProjectStore from '../stores/ProjectStore';
 import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 import Moment from 'moment';
 import ParseDueDate from '../utilities/ParseDueDate';
+var Firestore = null;
 
 // Only Import if running in Electron.
 var remote = null;
@@ -26,6 +28,12 @@ if (process.versions['electron'] !== undefined) {
   remote = require('electron').remote;
   fsJetpack = require('fs-jetpack');
 }
+
+// Firestore Collection Paths.
+const TASKS = "tasks";
+const TASKLISTS = "taskLists";
+const PROJECTS = "projects";
+const PROJECTLAYOUTS = "projectLayouts";
 
 class App extends React.Component {
   constructor(props) {
@@ -99,6 +107,7 @@ class App extends React.Component {
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
     this.getProjectSelectorDueDateDisplays = this.getProjectSelectorDueDateDisplays.bind(this);
+    this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
   }
 
   componentDidMount(){
@@ -126,7 +135,12 @@ class App extends React.Component {
     };
     Firebase.initializeApp(config);
 
-    //this.migrateDBtoV3();
+    Firestore = Firebase.firestore();
+
+    // Enable Firestore Persistence if running in Electron.
+    if (this.isInElectron) {
+      Firestore.enablePersistence();
+    }
 
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
@@ -134,6 +148,7 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
     // TODO: Refactor Firebase ref() strings into Consts declared at the top of the document.
+    // TODO: Bring connection Status Monitoring over to Firestore.
     // Collect Data from Firebase.
     // Setup Connection Monitoring.
     var connectionRef = Firebase.database().ref(".info/connected");
@@ -147,18 +162,37 @@ class App extends React.Component {
     })
 
     // Get Projects and Attach Value Listener
+    // this.setState({ isAwaitingFirebase: true });
+    // Firebase.database().ref('projects/').on('value', snapshot => {
+    //   var projects = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    //   this.setState({
+    //     projects: projects,
+    //     isAwaitingFirebase: false
+    //   });
+    // })
+
+
+    // Get Projects and attach value Listener.
     this.setState({ isAwaitingFirebase: true });
-    Firebase.database().ref('projects/').on('value', snapshot => {
-      var projects = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    Firestore.collection(PROJECTS).onSnapshot(snapshot => {
+      var projects = [];
+      snapshot.forEach( doc => {
+        projects.push(doc.data());
+      })
+
       this.setState({
-        projects: projects,
-        isAwaitingFirebase: false
-      });
+        isAwaitingFirebase: false,
+        projects: projects
+      })
     })
 
     // Get Tasks and Attach value Listener.
-    this.setState({ isAwaitingFirebase: true});
-    Firebase.database().ref('tasks/').orderByChild('project').on('value', this.onIncomingTasks);
+    // this.setState({ isAwaitingFirebase: true});
+    // Firebase.database().ref('tasks/').orderByChild('project').on('value', this.onIncomingTasks);
+
+    // Get Tasks and Attach value Listener.
+    this.setState({ isAwaitingFirebase: true });
+    Firestore.collection(TASKS).orderBy("project").onSnapshot(this.onIncomingTasks);
 
     // Electron only Config.
     if (this.isInElectron) {
@@ -168,7 +202,7 @@ class App extends React.Component {
 
       // TODO: Register an issue with Firebase about this.
       // Firebase closes it's Websocket if it's been Inactive for more then 45 Seconds, then struggles to re-establish
-      // when inside Electron. This will 'ping' the firebase servers very 40 seconds.
+      // when inside Electron. This will 'ping' the firebase servers every 40 seconds.
       setInterval(this.exerciseFirebase, 40000);
       
     }
@@ -180,12 +214,24 @@ class App extends React.Component {
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
 
     // Firebase.
-    Firebase.database().ref('projects').off('value');
-    Firebase.database().ref('taskLists').off('value');
-    Firebase.database().ref('tasks').off('value');
+    // Firebase.database().ref('projects').off('value');
+    // Firebase.database().ref('taskLists').off('value');
+    // Firebase.database().ref('tasks').off('value');
+
+    // Firestore.
+    var projectUnsubscribe = Firestore.collection(PROJECTS).onSnapshot( () => {});
+    projectUnsubscribe();
+
+    var taskListsUnsubscribe = Firestore.collection(TASKLISTS).onSnapshot( () => {});
+    taskListsUnsubscribe();
+
+    var tasksUnsubscribe = Firestore.collection(TASKS).onSnapshot( () => {});
+    tasksUnsubscribe();
 
     if (this.state.selectedProjectId !== -1) {
-      Firebase.database().ref('projectLayouts/' + this.state.selectedProjectId).off('value');
+      // Firebase.database().ref('projectLayouts/' + this.state.selectedProjectId).off('value');
+      var projectLayoutsUnsubscribe = Firestore.collection(PROJECTLAYOUTS).doc(this.state.selectedProjectId).onSnapshot( () => {});
+      projectLayoutsUnsubscribe();
     }
   }
 
@@ -382,35 +428,68 @@ class App extends React.Component {
   }
 
   handleRemoveTaskButtonClick() {
-    // TODO: Make this not crash out if nothing is selected.
     var taskId = this.state.selectedTask.taskId;
     if (taskId !== -1) {
+
+      // // Update Firebase.
+      // this.setState({ isAwaitingFirebase: true });
+      // var updates = {};
+      // updates["tasks/" + taskId] = null;
+
+      // // Execute Updates (Deletes).
+      // Firebase.database().ref().update(updates).then(() => {
+      //   this.setState({ isAwaitingFirebase: false });
+      // }).catch(error => {
+      //   this.postFirebaseError(error);
+      // })
+
       // Update Firebase.
       this.setState({ isAwaitingFirebase: true });
-      var updates = {};
-      updates["tasks/" + taskId] = null;
 
-      // Execute Updates (Deletes).
-      Firebase.database().ref().update(updates).then(() => {
-        this.setState({ isAwaitingFirebase: false });
+      // Build Batch and Execute.
+      var batch = Firestore.batch();
+      var taskRef = Firestore.collection(TASKS).doc(taskId);
+      batch.delete(taskRef);
+      
+      batch.commit().then(() => {
+        this.setState({ isAwaitingFirebase: false })
       }).catch(error => {
         this.postFirebaseError(error);
       })
+
     }
   }
 
   moveTask(taskId, sourceTaskListId, destinationTaskListId) {
-    // Update Firebase.
+    // // Update Firebase.
+    // this.setState({isAwaitingFirebase: true});
+    // var updates = {};
+    // updates["tasks/" + taskId + "/taskList/"] = destinationTaskListId;
+    // Firebase.database().ref().update(updates).then( () => {
+    //   this.setState({
+    //      isAwaitingFirebase: false,
+    //      isATaskMoving: false,
+    //      sourceTaskListId: -1,
+    //      movingTaskId: -1,
+    //      selectedTask: {taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
+    //   });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    //  Update Firestore.
     this.setState({isAwaitingFirebase: true});
-    var updates = {};
-    updates["tasks/" + taskId + "/taskList/"] = destinationTaskListId;
-    Firebase.database().ref().update(updates).then( () => {
+
+    var taskRef = Firestore.collection(TASKS).doc(taskId);
+    taskRef.update({
+      taskList: destinationTaskListId
+    }).then(() => {
       this.setState({
-         isAwaitingFirebase: false,
-         isATaskMoving: false,
-         sourceTaskListId: -1,
-         movingTaskId: -1,
-         selectedTask: {taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
+        isAwaitingFirebase: false,
+        isATaskMoving: false,
+        sourceTaskListId: -1,
+        movingTaskId: -1,
+        selectedTask: { taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
       });
     }).catch(error => {
       this.postFirebaseError(error);
@@ -418,20 +497,36 @@ class App extends React.Component {
   }
 
   handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
-    // Update Firebase.
+    // // Update Firebase.
+    // this.setState({
+    //   isAwaitingFirebase: true,
+    //   selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false}
+    //  }); // Close Task Input.
+    
+    // var updates = {};
+    // updates['/tasks/' + taskId + "/taskName/"] = newData;
+    // updates['/tasks/' + taskId + '/isNewTask/'] = false; // Reset new Task Property.
+
+    // Firebase.database().ref().update(updates).then( () => {
+    //   this.setState({
+    //     isAwaitingFirebase: false,
+    //   });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
     this.setState({
       isAwaitingFirebase: true,
-      selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false}
-     }); // Close Task Input.
-    
-    var updates = {};
-    updates['/tasks/' + taskId + "/taskName/"] = newData;
-    updates['/tasks/' + taskId + '/isNewTask/'] = false; // Reset new Task Property.
+      selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false } // Close TaskText Input.
+    });
 
-    Firebase.database().ref().update(updates).then( () => {
-      this.setState({
-        isAwaitingFirebase: false,
-      });
+    var taskRef = Firestore.collection(TASKS).doc(taskId);
+    taskRef.update({
+      taskName: newData,
+      isNewTask: false // Reset new Task Property.
+    }).then(() => {
+      this.setState({ isAwaitingFirebase: false })
     }).catch(error => {
       this.postFirebaseError(error);
     })
@@ -485,25 +580,86 @@ class App extends React.Component {
 
   addNewTaskList() {
     // Add to Firebase.
+    // this.setState({ isAwaitingFirebase: true });
+    // var newTaskListKey = Firebase.database().ref('taskLists/').push().key;
+
+    // var newTaskList = new TaskListStore(
+    //   "New Task List",
+    //   this.state.selectedProjectId,
+    //   newTaskListKey,
+    //   newTaskListKey,
+    //   new TaskListSettingsStore(true, "completed")
+    // )
+
+    // Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
+    //   this.setState({ isAwaitingFirebase: false });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Add to Firestore.
     this.setState({ isAwaitingFirebase: true });
-    var newTaskListKey = Firebase.database().ref('taskLists/').push().key;
+    var newTaskListRef = Firestore.collection(TASKLISTS).doc();
 
     var newTaskList = new TaskListStore(
       "New Task List",
       this.state.selectedProjectId,
-      newTaskListKey,
-      newTaskListKey,
-      new TaskListSettingsStore(true, "completed")
+      newTaskListRef.id,
+      newTaskListRef.id,
+      Object.assign({}, new TaskListSettingsStore(true, "completed"))
     )
 
-    Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
+    newTaskListRef.set(Object.assign({},newTaskList)).then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
+
+    
   }
 
   addNewTask() {
+    // Add a new Task.
+    // Find the TaskList that currently has Focus retrieve it's Index in state.taskLists array.
+    // TODO: I don't think you need to get the TargetIndex any more.
+    // var targetIndex = -1;
+    // var targetTaskList = this.state.taskLists.find((item, index) => {
+    //   if (this.state.focusedTaskListId === item.uid) {
+    //     targetIndex = index;
+    //     return true;
+    //   }
+
+    //   else {
+    //     return false;
+    //   }
+    // })
+
+    // if (targetTaskList !== undefined) {
+    //   // Update Firebase.
+    //   this.setState({ isAwaitingFirebase: true });
+    //   var newTaskKey = Firebase.database().ref('tasks/').push().key;
+
+    //   var newTask = new TaskStore(
+    //     "",
+    //     "",
+    //     false,
+    //     this.state.selectedProjectId,
+    //     targetTaskList.uid,
+    //     newTaskKey,
+    //     new Moment().toISOString(),
+    //     true
+    //   )
+
+    //   Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
+    //     this.setState({
+    //       isAwaitingFirebase: false,
+    //       selectedTask: { taskListWidgetId: this.state.focusedTaskListId, taskId: newTaskKey, isInputOpen: true }
+    //     });
+    //   }).catch(error => {
+    //     this.postFirebaseError(error);
+    //   })
+    // }
+
     // Add a new Task.
     // Find the TaskList that currently has Focus retrieve it's Index in state.taskLists array.
     // TODO: I don't think you need to get the TargetIndex any more.
@@ -520,9 +676,10 @@ class App extends React.Component {
     })
 
     if (targetTaskList !== undefined) {
-      // Update Firebase.
+      // Update Firestore.
       this.setState({ isAwaitingFirebase: true });
-      var newTaskKey = Firebase.database().ref('tasks/').push().key;
+      var newTaskRef = Firestore.collection(TASKS).doc();
+      var newTaskKey = newTaskRef.id;
 
       var newTask = new TaskStore(
         "",
@@ -535,7 +692,7 @@ class App extends React.Component {
         true
       )
 
-      Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
+      newTaskRef.set(Object.assign({}, newTask)).then(() => {
         this.setState({
           isAwaitingFirebase: false,
           selectedTask: { taskListWidgetId: this.state.focusedTaskListId, taskId: newTaskKey, isInputOpen: true }
@@ -543,7 +700,11 @@ class App extends React.Component {
       }).catch(error => {
         this.postFirebaseError(error);
       })
+
     }
+
+    
+
   }
 
   makeNewLayoutEntry(taskListId) {
@@ -567,58 +728,110 @@ class App extends React.Component {
   }
 
   handleTaskListWidgetHeaderChanged(taskListWidgetId, newData) {
-    // Update Firebase.
+    // // Update Firebase.
+    // this.setState({isAwaitingFirebase: true});
+
+    // var updates = {};
+    // updates['/taskLists/' + taskListWidgetId + '/taskListName'] = newData;
+
+    // Firebase.database().ref().update(updates).then( () => {
+    //   this.setState({isAwaitingFirebase: false});
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
     this.setState({isAwaitingFirebase: true});
 
-    var updates = {};
-    updates['/taskLists/' + taskListWidgetId + '/taskListName'] = newData;
-
-    Firebase.database().ref().update(updates).then( () => {
-      this.setState({isAwaitingFirebase: false});
+    var taskListRef = Firestore.collection(TASKLISTS).doc(taskListWidgetId);
+    taskListRef.update({ taskListName: newData }).then(() => {
+      this.setState({isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    this.setState({isAwaitingFirebase: true});
+    // this.setState({isAwaitingFirebase: true});
 
-    var taskListsRef = Firebase.database().ref('taskLists');
-    var tasksRef = Firebase.database().ref('tasks');
-    var projectLayoutsRef = Firebase.database().ref('projectLayouts');
+    // var taskListsRef = Firebase.database().ref('taskLists');
+    // var tasksRef = Firebase.database().ref('tasks');
+    // var projectLayoutsRef = Firebase.database().ref('projectLayouts');
     
-    // Disconnect Old Listeners and Connect new Listeners (Firebase will Call Callbacks for intial Values).
+    // // Disconnect Old Listeners and Connect new Listeners (Firebase will Call Callbacks for intial Values).
+    // var outgoingProjectId = this.state.selectedProjectId;
+    // if (outgoingProjectId !== -1) {
+    //   // Old Listeners.
+    //   taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+    //   // tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+    //   projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+    // }
+
+    // if (projectSelectorId !== -1) {
+    //   // New Listeners.
+    //   taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
+    //   // tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
+    //   projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
+    // }
+
+    // this.setState({
+    //   selectedProjectId: projectSelectorId,
+    //   openCalendarId: -1,
+    //   selectedTask: { taskListWidgetId: -1, taskId: -1, isInputOpen: false },
+    //   isATaskMoving: false,
+    //   movingTaskId: -1,
+    //   sourceTaskListId: -1,
+    //   focusedTaskListId: -1,
+    //   openTaskListSettingsMenuId: -1
+    // })
+
+    this.setState({ isAwaitingFirebase: true });
     var outgoingProjectId = this.state.selectedProjectId;
+    var incomingProjectId = projectSelectorId;
+
     if (outgoingProjectId !== -1) {
       // Old Listeners.
-      taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-      // tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-      projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
+      var taskListsUnsubscribe = Firestore.collection(TASKLISTS).where("project", "==", outgoingProjectId).onSnapshot(() => {});
+      taskListsUnsubscribe();
+
+      var projectLayoutsUnsubscribe = Firestore.collection(PROJECTLAYOUTS).where("project", "==", outgoingProjectId).onSnapshot(() => {});
+      taskListsUnsubscribe();
     }
 
-    if (projectSelectorId !== -1) {
-      // New Listeners.
-      taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
-      // tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
-      projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
+    if (incomingProjectId !== -1 ) {
+      Firestore.collection(TASKLISTS).where("project", "==", incomingProjectId).onSnapshot(this.onIncomingTaskLists);
+      Firestore.collection(PROJECTLAYOUTS).where("project", "==", incomingProjectId).onSnapshot(this.onIncomingLayouts);
     }
 
-    this.setState({ 
-      selectedProjectId: projectSelectorId,
+    this.setState({
+      selectedProjectId: incomingProjectId,
       openCalendarId: -1,
-      selectedTask: {taskListWidgetId: -1, taskId: -1, isInputOpen: false},
+      selectedTask: { taskListWidgetId: -1, taskId: -1, isInputOpen: false },
       isATaskMoving: false,
       movingTaskId: -1,
       sourceTaskListId: -1,
       focusedTaskListId: -1,
-      openTaskListSettingsMenuId: -1 })
+      openTaskListSettingsMenuId: -1
+    })
+
   }
 
   onIncomingTaskLists(snapshot) {
     // // TODO: What happens if a Change comes in for a Project that isn't the Selected One? Bad Stuff probably.
-    this.setState({isAwaitingFirebase: true});
+    // this.setState({isAwaitingFirebase: true});
+    // var taskLists = [];
+    // taskLists = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    // this.setState({
+    //   isAwaitingFirebase: false,
+    //   taskLists: taskLists
+    // })
+
+    this.setState({ isAwaitingFirebase: true });
     var taskLists = [];
-    taskLists = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    snapshot.forEach(doc => {
+      taskLists.push(doc.data());
+    })
+
     this.setState({
       isAwaitingFirebase: false,
       taskLists: taskLists
@@ -626,9 +839,22 @@ class App extends React.Component {
   }
 
   onIncomingTasks(snapshot) {
+    // this.setState({isAwaitingFirebase: true});
+    // var tasks = [];
+    // tasks = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    // this.setState({
+    //   isAwaitingFirebase: false,
+    //   tasks: tasks,
+    //   projectSelectorDueDateDisplays: this.getProjectSelectorDueDateDisplays(tasks)
+    // })
+
     this.setState({isAwaitingFirebase: true});
+
     var tasks = [];
-    tasks = snapshot.val() == null ? [] : Object.values(snapshot.val());
+    snapshot.forEach(doc => {
+      tasks.push(doc.data());
+    })
+
     this.setState({
       isAwaitingFirebase: false,
       tasks: tasks,
@@ -637,28 +863,60 @@ class App extends React.Component {
   }
 
   onIncomingLayouts(snapshot) {
-    this.setState({isAwaitingFirebase: true});
-    var projectLayouts = []
-    projectLayouts = snapshot.val() == null ? [new ProjectLayoutStore({}, -1, -1)] : Object.values(snapshot.val());
+    // this.setState({isAwaitingFirebase: true});
+
+    // var projectLayouts = []
+    // projectLayouts = snapshot.val() == null ? [new ProjectLayoutStore({}, -1, -1)] : Object.values(snapshot.val());
+
+    // this.setState({
+    //   isAwaitingFirebase: false,
+    //   projectLayout: projectLayouts[0]
+    // })
+
+    this.setState({ isAwaitingFirebase: true });
+
+    var projectLayouts = [];
+
+    if (snapshot.empty !== true) {
+      snapshot.forEach(doc => {
+        projectLayouts.push(doc.data());
+      })
+    }
+
+    else {
+      projectLayouts[0] = new ProjectLayoutStore({}, -1, -1);
+    }
 
     this.setState({
       isAwaitingFirebase: false,
       projectLayout: projectLayouts[0]
     })
+    
   }
 
   handleLayoutChange(layouts, projectId) {
-    var newTrimmedLayouts = this.trimLayouts(layouts);
-    // Update Firebase.
-    this.setState({ isAwaitingFirebase: true });
-    var updates = {};
-    updates['/projectLayouts/' + projectId + '/layouts/'] = newTrimmedLayouts;
+    // var newTrimmedLayouts = this.trimLayouts(layouts);
+    // // Update Firebase.
+    // this.setState({ isAwaitingFirebase: true });
+    // var updates = {};
+    // updates['/projectLayouts/' + projectId + '/layouts/'] = newTrimmedLayouts;
 
-    Firebase.database().ref().update(updates).then(() => {
+    // Firebase.database().ref().update(updates).then(() => {
+    //   this.setState({ isAwaitingFirebase: false });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    var newTrimmedLayouts = this.trimLayouts(layouts);
+
+    // Update Firestore.
+    this.setState({ isAwaitingFirebase: true });
+    var projectLayoutsRef = Firestore.collection(PROJECTLAYOUTS).doc(projectId);
+    projectLayoutsRef.update({ layouts: newTrimmedLayouts }).then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
-    })
+    });
   }
 
   trimLayouts(layouts) {
@@ -700,18 +958,36 @@ class App extends React.Component {
   
   handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue) {
     // Todo: You call setState three times here. Could be less.
+    // if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
+    //   this.setState({ selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId } });
+    // }
+
+    // // Update Firebase.
+    // this.setState({ isAwaitingFirebase: true });
+
+    // var updates = {};
+    // updates['/tasks/' + taskId + "/isComplete/"] = incomingValue;
+    // updates['/tasks/' + taskId + '/isNewTask/'] = false;
+
+    // Firebase.database().ref().update(updates).then(() => {
+    //   this.setState({ isAwaitingFirebase: false });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
     if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
       this.setState({ selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId } });
     }
 
-    // Update Firebase.
+    // Update Firestore.
     this.setState({ isAwaitingFirebase: true });
 
-    var updates = {};
-    updates['/tasks/' + taskId + "/isComplete/"] = incomingValue;
-    updates['/tasks/' + taskId + '/isNewTask/'] = false;
+    var taskRef = Firestore.collection(TASKS).doc(taskId);
 
-    Firebase.database().ref().update(updates).then(() => {
+    taskRef.update({
+      isComplete: incomingValue,
+      isNewTask: false
+    }).then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
@@ -721,21 +997,46 @@ class App extends React.Component {
   handleAddProjectClick() {
     var newProjectName = "New Project";
 
-    // Update Firebase.
+    // // Update Firebase.
+    // this.setState({ isAwaitingFirebase: true });
+    // var newProjectKey = Firebase.database().ref('projects/').push().key;
+    // var updates = {};
+
+    // // Project.
+    // var newProject = new ProjectStore(newProjectName, newProjectKey);
+    // updates['projects/' + newProjectKey] = newProject;
+
+    // // Layout.
+    // var newProjectLayout = new ProjectLayoutStore({}, newProjectKey, newProjectKey);
+    // updates['projectLayouts/' + newProjectKey] = newProjectLayout;
+
+    // // Execute Additions.
+    // Firebase.database().ref().update(updates).then(() => {
+    //   this.setState({ isAwaitingFirebase: false });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
     this.setState({ isAwaitingFirebase: true });
-    var newProjectKey = Firebase.database().ref('projects/').push().key;
-    var updates = {};
+    
+    var batch = Firestore.batch();
 
     // Project.
+    var newProjectRef = Firestore.collection(PROJECTS).doc();
+    var newProjectKey = newProjectRef.id;
+
     var newProject = new ProjectStore(newProjectName, newProjectKey);
-    updates['projects/' + newProjectKey] = newProject;
+    batch.set(newProjectRef, Object.assign({}, newProject));
 
-    // Layout.
+    // Layout
+    var newLayoutRef = Firestore.collection(PROJECTLAYOUTS).doc(newProjectKey);
+
     var newProjectLayout = new ProjectLayoutStore({}, newProjectKey, newProjectKey);
-    updates['projectLayouts/' + newProjectKey] = newProjectLayout;
-
+    batch.set(newLayoutRef, Object.assign({}, newProjectLayout));
+    
     // Execute Additions.
-    Firebase.database().ref().update(updates).then(() => {
+    batch.commit().then(() => {
       this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
@@ -744,10 +1045,49 @@ class App extends React.Component {
 
   handleRemoveProjectClick(projectId) {
     if (confirm("Are you sure?") === true) {
-      // Update Firebase.
-      this.setState({ isAwaitingFirebase: true });
+      // // Update Firebase.
+      // this.setState({ isAwaitingFirebase: true });
 
-      // Get a List of Task List Id's and Task Id's. It's Okay to collect these from State as associated taskLists and tasks have already
+      // // Get a List of Task List Id's . It's Okay to collect these from State as associated taskLists have already
+      // // been loaded in via the handleProjectSelectorClick method. No point in querying Firebase again for this data.
+      // var taskListIds = this.state.taskLists.map(item => {
+      //   if (item.project === projectId) {
+      //     return item.uid;
+      //   }
+      // })
+
+      // // TODO: Refactor the following Code, you are doing the same thing Here as well as within the Task List Widget Removal Code.
+      // // could be refactored into something like collectTaskId's.
+      // var taskIds = this.state.tasks.map(item => {
+      //   if (item.project === projectId) {
+      //     return item.uid;
+      //   }
+      // })
+
+      // // Build Updates (Deletes).
+      // var updates = {};
+
+      // taskIds.forEach(id => {
+      //   updates["/tasks/" + id] = null;
+      // })
+
+      // taskListIds.forEach(id => {
+      //   updates["/taskLists/" + id] = null;
+      // })
+
+      // var projectLayoutId = this.state.projectLayout.uid;
+      // updates["/projectLayouts/" + projectLayoutId] = null;
+
+      // updates["/projects/" + projectId] = null;
+
+      // // Execute Updates (Deletes).
+      // Firebase.database().ref().update(updates).then(() => {
+      //   this.setState({ isAwaitingFirebase: false });
+      // }).catch(error => {
+      //   this.postFirebaseError(error);
+      // })
+
+      // Get a List of Task List Id's . It's Okay to collect these from State as associated taskLists have already
       // been loaded in via the handleProjectSelectorClick method. No point in querying Firebase again for this data.
       var taskListIds = this.state.taskLists.map(item => {
         if (item.project === projectId) {
@@ -763,24 +1103,30 @@ class App extends React.Component {
         }
       })
 
-      // Build Updates (Deletes).
-      var updates = {};
+      // Build Updates.
+      var batch = Firestore.batch();
 
-      taskIds.forEach(id => {
-        updates["/tasks/" + id] = null;
-      })
-
+      // Tasklists.
       taskListIds.forEach(id => {
-        updates["/taskLists/" + id] = null;
+        batch.delete(Firestore.collection(TASKLISTS).doc(id));
       })
 
+      // Tasks
+      taskIds.forEach(id => {
+        batch.delete(Firestore.collection(TASKS).doc(id));
+      })
+
+      // Project Layout
       var projectLayoutId = this.state.projectLayout.uid;
-      updates["/projectLayouts/" + projectLayoutId] = null;
+      batch.delete(Firestore.collection(PROJECTLAYOUTS).doc(projectLayoutId));
 
-      updates["/projects/" + projectId] = null;
+      // Project.
+      batch.delete(Firestore.collection(PROJECTS).doc(projectId));
 
-      // Execute Updates (Deletes).
-      Firebase.database().ref().update(updates).then(() => {
+      // Execute the Batch.
+      this.setState({ isAwaitingFirebase: true });
+
+      batch.commit().then(() => {
         this.setState({ isAwaitingFirebase: false });
       }).catch(error => {
         this.postFirebaseError(error);
@@ -789,17 +1135,28 @@ class App extends React.Component {
   }
 
   handleProjectNameSubmit(projectSelectorId, newName) {
-    // Update Firebase.
-    this.setState({isAwaitingFirebase: true});
+    // // Update Firebase.
+    // this.setState({isAwaitingFirebase: true});
 
-    var updates = {};
-    updates['projects/' + projectSelectorId + "/projectName"] = newName;
+    // var updates = {};
+    // updates['projects/' + projectSelectorId + "/projectName"] = newName;
 
-    Firebase.database().ref().update(updates).then( () => {
-      this.setState({isAwaitingFirebase: false});
+    // Firebase.database().ref().update(updates).then( () => {
+    //   this.setState({isAwaitingFirebase: false});
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
+    this.setState({ isAwaitingFirebase: true });
+
+    var projectRef = Firestore.collection(PROJECTS).doc(projectSelectorId);
+    projectRef.update({ projectName: newName }).then(() => {
+      this.setState({ isAwaitingFirebase: false })
     }).catch(error => {
       this.postFirebaseError(error);
     })
+
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
@@ -809,29 +1166,57 @@ class App extends React.Component {
   }
 
   removeTaskList(taskListWidgetId) {
-    // Update Firebase.
-      this.setState({ isAwaitingFirebase: true });
+    // // Update Firebase.
+    //   this.setState({ isAwaitingFirebase: true });
 
-      // Collect related TaskIds.
-      var taskIds = this.state.tasks.map(item => {
-        if (item.taskList === taskListWidgetId) {
-          return item.uid;
-        }
-      })
+    //   // Collect related TaskIds.
+    //   var taskIds = this.state.tasks.map(item => {
+    //     if (item.taskList === taskListWidgetId) {
+    //       return item.uid;
+    //     }
+    //   })
 
-      var updates = {};
-      updates["taskLists/" + taskListWidgetId] = null;
+    //   var updates = {};
+    //   updates["taskLists/" + taskListWidgetId] = null;
 
-      taskIds.forEach(id => {
-        updates["tasks/" + id] = null
-      })
+    //   taskIds.forEach(id => {
+    //     updates["tasks/" + id] = null
+    //   })
 
-      // Execute Updates (Deletes).
-      Firebase.database().ref().update(updates).then(() => {
-        this.setState({ isAwaitingFirebase: false });
-      }).catch(error => {
-        this.postFirebaseError(error);
-      })
+    //   // Execute Updates (Deletes).
+    //   Firebase.database().ref().update(updates).then(() => {
+    //     this.setState({ isAwaitingFirebase: false });
+    //   }).catch(error => {
+    //     this.postFirebaseError(error);
+    //   })
+
+    // Update Firestore.
+    this.setState({ isAwaitingFirebase: true });
+
+    // Collect related TaskIds.
+    var taskIds = this.state.tasks.map(item => {
+      if (item.taskList === taskListWidgetId) {
+        return item.uid;
+      }
+    })
+
+    // Build Batch.
+    var batch = Firestore.batch();
+
+    // Task lists
+    batch.delete(Firestore.collection(TASKLISTS).doc(taskListWidgetId));
+
+    // Tasks.
+    taskIds.forEach(id => {
+      batch.delete(Firestore.collection(TASKS).doc(id));
+    })
+
+    batch.commit().then(() => {
+      this.setState({ isAwaitingFirebase: false });
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
+
   }
 
   postFirebaseError(error) {
@@ -842,17 +1227,33 @@ class App extends React.Component {
   }
 
   handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
-    // Update Firebase.
-    var updates = {};
-    updates['taskLists/' + taskListWidgetId + '/settings/'] = newTaskListSettings;
+    // // Update Firebase.
+    // var updates = {};
+    // updates['taskLists/' + taskListWidgetId + '/settings/'] = newTaskListSettings;
 
-    this.setState({ 
+    // this.setState({ 
+    //   isAwaitingFirebase: true,
+    //   openTaskListSettingsMenuId: -1 });
+    // Firebase.database().ref().update(updates).then(() => {
+    //   this.setState({
+    //     isAwaitingFirebase: false,
+    //   });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
+    var taskListRef = Firestore.collection(TASKLISTS).doc(taskListWidgetId);
+
+    this.setState({
       isAwaitingFirebase: true,
-      openTaskListSettingsMenuId: -1 });
-    Firebase.database().ref().update(updates).then(() => {
-      this.setState({
-        isAwaitingFirebase: false,
-      });
+      openTaskListSettingsMenuId: -1
+    });
+
+    taskListRef.update({
+      settings: Object.assign({}, newTaskListSettings)
+    }).then(() => {
+      this.setState({ isAwaitingFirebase: false });
     }).catch(error => {
       this.postFirebaseError(error);
     })
@@ -860,42 +1261,93 @@ class App extends React.Component {
 
   backupFirebase() {
     if (this.isInElectron) {
-      // Pull Data down from Firebase.
+      // Pull Data down from Firestore.
       this.setState({isAwaitingFirebase: true});
-      Firebase.database().ref().once('value').then(snapshot => {
-        if (snapshot.exists()) {
-          // Write to Backup File.
-          // Intialize File Path and Name.
-          var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
+      var requests = [];
+      var projects = [];
+      var projectLayouts = [];
+      var taskLists = [];
+      var tasks = [];
 
-          var currentDate = new Date();
-          var normalizedDate = this.getNormalizedDate(currentDate);
-          var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
+      // Projects.
+      requests.push(Firestore.collection(PROJECTS).get().then(snapshot => {
+        snapshot.forEach(doc => {
+          projects.push(doc.data());
+        })
+      }))
 
-          // Create File.
-          fsJetpack.file(filePath, { mode: '700' });
+      // Project Layouts.
+      requests.push(Firestore.collection(PROJECTLAYOUTS).get().then(snapshot => {
+        snapshot.forEach(doc => {
+          projectLayouts.push(doc.data());
+        })
+      }))
 
-          // Write to File.
-          fsJetpack.writeAsync(filePath, snapshot.val(), { atomic: true }).then(() => {
-            var message = "Last backup created at " +
-              currentDate.getHours() + ":" +
-              currentDate.getMinutes() + ":" +
-              currentDate.getSeconds() + " in " +
-              backupDirectory;
-            this.setState({
-              isAwaitingFirebase: false,
-              lastBackupMessage: message
-            });
-          })
-        }
+      // TaskLists.
+      requests.push(Firestore.collection(TASKLISTS).get().then(snapshot => {
+        snapshot.forEach(doc => {
+          taskLists.push(doc.data());
+        })
+      }))
 
-        else {
-          this.setState({
-            lastBackupMessage: "Couldn't backup to File, no data was returned from Firebase.",
-            isAwaitingFirebase: false
-          });
-        }
+      // Tasks.
+      requests.push(Firestore.collection(TASKS).get().then(snapshot => {
+        snapshot.forEach(doc => {
+          tasks.push(doc.data());
+        })
+      }))
+    }
+
+    Promise.all(requests).then(() => {
+      // Build into JSON object and write to File.
+      var combined = {
+        projects: projects,
+        projectLayouts: projectLayouts,
+        taskLists: taskLists,
+        tasksJSON: tasks
+      }
+
+      this.writeDatabaseToFile(JSON.stringify(combined));
+
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
+    
+  }
+
+  writeDatabaseToFile(json) {
+    if (json.length > 0) {
+      // Write to Backup File.
+      // Intialize File Path and Name.
+      var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
+
+      var currentDate = new Date();
+      var normalizedDate = this.getNormalizedDate(currentDate);
+      var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
+
+      // Create File.
+      fsJetpack.file(filePath, { mode: '700' });
+
+      // Write to File.
+      fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
+        var message = "Last backup created at " +
+          currentDate.getHours() + ":" +
+          currentDate.getMinutes() + ":" +
+          currentDate.getSeconds() + " in " +
+          backupDirectory;
+          
+        this.setState({
+          isAwaitingFirebase: false,
+          lastBackupMessage: message
+        });
       })
+    }
+
+    else {
+      this.setState({
+        lastBackupMessage: "Couldn't backup to File, json object was empty",
+        isAwaitingFirebase: false
+      });
     }
   }
 
@@ -1069,17 +1521,33 @@ class App extends React.Component {
   }
 
   handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate) {
-    // Update Firebase.
-    this.setState({ isAwaitingFirebase: true });
-    var updates = {};
-    updates['tasks/' + taskId + '/dueDate'] = newDate
-    updates['tasks/' + taskId + '/isNewTask/'] = false;
+    // // Update Firebase.
+    // this.setState({ isAwaitingFirebase: true });
+    // var updates = {};
+    // updates['tasks/' + taskId + '/dueDate'] = newDate
+    // updates['tasks/' + taskId + '/isNewTask/'] = false;
 
-    Firebase.database().ref().update(updates).then(() => {
-      this.setState({ 
+    // Firebase.database().ref().update(updates).then(() => {
+    //   this.setState({ 
+    //     isAwaitingFirebase: false,
+    //     openCalendarId: -1,
+    //    });
+    // }).catch(error => {
+    //   this.postFirebaseError(error);
+    // })
+
+    // Update Firestore.
+    this.setState({ isAwaitingFirebase: true });
+
+    var taskRef = Firestore.collection(TASKS).doc(taskId);
+    taskRef.update({
+      dueDate: newDate,
+      isNewTask: false
+    }).then(() => {
+      this.setState({
         isAwaitingFirebase: false,
-        openCalendarId: -1,
-       });
+        openCalendarId: -1
+      })
     }).catch(error => {
       this.postFirebaseError(error);
     })
