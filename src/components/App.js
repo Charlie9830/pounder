@@ -6,19 +6,25 @@ import Sidebar from './Sidebar';
 import Project from './Project';
 import StatusBar from './StatusBar';
 import LockScreen from './LockScreen';
-import '../assets/css/TaskListWidget.css'
-import '../assets/css/Sidebar.css'
-import '../assets/css/Project.css'
-import Firebase from 'firebase';
-require('firebase/firestore');
 import TaskListStore from '../stores/TaskListStore';
 import TaskStore from '../stores/TaskStore';
 import ProjectLayoutStore from '../stores/ProjectLayoutStore';
 import ProjectStore from '../stores/ProjectStore';
 import TaskListSettingsStore from '../stores/TaskListSettingsStore';
+import '../assets/css/TaskListWidget.css';
+import '../assets/css/Sidebar.css';
+import '../assets/css/Project.css';
 import Moment from 'moment';
 import ParseDueDate from '../utilities/ParseDueDate';
-var Firestore = null;
+import { connect } from 'react-redux';
+import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
+unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
+lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
+changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
+removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
+addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
+updateTaskDueDateAsync, unlockApp } from '../action-creators/index';
+import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS } from '../firebase/index';
 
 // Only Import if running in Electron.
 var remote = null;
@@ -29,36 +35,14 @@ if (process.versions['electron'] !== undefined) {
   fsJetpack = require('fs-jetpack');
 }
 
-// Firestore Collection Paths.
-const TASKS = "tasks";
-const TASKLISTS = "taskLists";
-const PROJECTS = "projects";
-const PROJECTLAYOUTS = "projectLayouts";
-
 class App extends React.Component {
   constructor(props) {
     super(props);
 
     // State.
     this.state = {
-      projects: [], // Stores all Projects from the DB.
-      taskLists: [], // Currently only stores TaskLists from the Selected Project.
-      tasks: [], // Stores all Tasks from the DB.
-      projectLayout: new ProjectLayoutStore({}, -1, -1),
-      focusedTaskListId: -1,
-      selectedProjectId: -1,
-      selectedTask: {taskListWidgetId: -1, taskId: -1, isInputOpen: false},
-      isATaskMoving: false,
-      movingTaskId: -1,
-      sourceTaskListId: -1,
-      isAwaitingFirebase: false,
       isConnectedToFirebase: false,
       currentErrorMessage: "",
-      IsLockScreenDisplayed: false,
-      lastBackupMessage: "",
-      openCalendarId: -1,
-      openTaskListSettingsMenuId: -1,
-      projectSelectorDueDateDisplays: {},
     }; 
 
     // Class Storage.
@@ -72,8 +56,6 @@ class App extends React.Component {
     this.handleTaskListWidgetHeaderChanged = this.handleTaskListWidgetHeaderChanged.bind(this);
     this.handleProjectSelectorClick = this.handleProjectSelectorClick.bind(this);
     this.handleLayoutChange = this.handleLayoutChange.bind(this);
-    this.trimLayouts = this.trimLayouts.bind(this);
-    this.compareLayouts = this.compareLayouts.bind(this);
     this.handleTaskCheckBoxClick = this.handleTaskCheckBoxClick.bind(this);
     this.handleAddProjectClick = this.handleAddProjectClick.bind(this);
     this.handleRemoveProjectClick = this.handleRemoveProjectClick.bind(this);
@@ -86,18 +68,13 @@ class App extends React.Component {
     this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
     this.addNewTaskList = this.addNewTaskList.bind(this);
     this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
-    this.onIncomingTaskLists = this.onIncomingTaskLists.bind(this);
-    this.onIncomingTasks = this.onIncomingTasks.bind(this);
-    this.onIncomingLayouts = this.onIncomingLayouts.bind(this);
     this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
     this.handleTaskClick = this.handleTaskClick.bind(this);
     this.handleCtrlKeyDown = this.handleCtrlKeyDown.bind(this);
     this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
-    this.moveTask = this.moveTask.bind(this);
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
     this.backupFirebase = this.backupFirebase.bind(this);
-    this.migrateDBtoV2 = this.migrateDBtoV2.bind(this);
     this.lockApp = this.lockApp.bind(this);
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
@@ -106,93 +83,32 @@ class App extends React.Component {
     this.getLockScreen = this.getLockScreen.bind(this);
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
-    this.getProjectSelectorDueDateDisplays = this.getProjectSelectorDueDateDisplays.bind(this);
     this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
   }
 
   componentDidMount(){
-    // Production DB
-    // Initialize Firebase
-    // var config = {
-    //   apiKey: "AIzaSyC73TEUhmgaV2h4Ml3hF4VAYnm9oUCapFM",
-    //   authDomain: "pounder-production.firebaseapp.com",
-    //   databaseURL: "https://pounder-production.firebaseio.com",
-    //   projectId: "pounder-production",
-    //   storageBucket: "",
-    //   messagingSenderId: "759706234917"
-    // };
-    // Firebase.initializeApp(config);
-
-    // Testing DB.
-    // Initialize Firebase
-    var config = {
-    apiKey: "AIzaSyBjzZE8FZ0lBvUIj52R_10eHm70aKsT0Hw",
-    authDomain: "halo-todo.firebaseapp.com",
-    databaseURL: "https://halo-todo.firebaseio.com",
-    projectId: "halo-todo",
-    storageBucket: "halo-todo.appspot.com",
-    messagingSenderId: "801359392837"
-    };
-    Firebase.initializeApp(config);
-
-    Firestore = Firebase.firestore();
-
-    // Enable Firestore Persistence if running in Electron.
-    if (this.isInElectron) {
-      Firestore.enablePersistence();
-    }
-
     // MouseTrap.
     MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
-    // TODO: Refactor Firebase ref() strings into Consts declared at the top of the document.
     // TODO: Bring connection Status Monitoring over to Firestore.
-    // Collect Data from Firebase.
     // Setup Connection Monitoring.
-    var connectionRef = Firebase.database().ref(".info/connected");
-    connectionRef.on("value", snap => {
-      if (snap.val() === true) {
-        this.setState({isConnectedToFirebase: true})
-      }
-      else {
-        this.setState({isConnectedToFirebase: false})
-      }
-    })
-
-    // Get Projects and Attach Value Listener
-    // this.setState({ isAwaitingFirebase: true });
-    // Firebase.database().ref('projects/').on('value', snapshot => {
-    //   var projects = snapshot.val() == null ? [] : Object.values(snapshot.val());
-    //   this.setState({
-    //     projects: projects,
-    //     isAwaitingFirebase: false
-    //   });
+    // var connectionRef = Firebase.database().ref(".info/connected");
+    // connectionRef.on("value", snap => {
+    //   if (snap.val() === true) {
+    //     this.setState({isConnectedToFirebase: true})
+    //   }
+    //   else {
+    //     this.setState({isConnectedToFirebase: false})
+    //   }
     // })
 
+    // Get Projects (Also attaches a Value listener for future changes).
+    this.props.dispatch(getProjectsAsync());
 
-    // Get Projects and attach value Listener.
-    this.setState({ isAwaitingFirebase: true });
-    Firestore.collection(PROJECTS).onSnapshot(snapshot => {
-      var projects = [];
-      snapshot.forEach( doc => {
-        projects.push(doc.data());
-      })
-
-      this.setState({
-        isAwaitingFirebase: false,
-        projects: projects
-      })
-    })
-
-    // Get Tasks and Attach value Listener.
-    // this.setState({ isAwaitingFirebase: true});
-    // Firebase.database().ref('tasks/').orderByChild('project').on('value', this.onIncomingTasks);
-
-    // Get Tasks and Attach value Listener.
-    this.setState({ isAwaitingFirebase: true });
-    Firestore.collection(TASKS).orderBy("project").onSnapshot(this.onIncomingTasks);
+    // Get Tasks (Also attaches a Value listener for future changes).
+    this.props.dispatch(getTasksAsync());
 
     // Electron only Config.
     if (this.isInElectron) {
@@ -203,8 +119,7 @@ class App extends React.Component {
       // TODO: Register an issue with Firebase about this.
       // Firebase closes it's Websocket if it's been Inactive for more then 45 Seconds, then struggles to re-establish
       // when inside Electron. This will 'ping' the firebase servers every 40 seconds.
-      setInterval(this.exerciseFirebase, 40000);
-      
+      // setInterval(this.exerciseFirebase, 40000);
     }
   }
   
@@ -213,61 +128,47 @@ class App extends React.Component {
     MouseTrap.unBind("mod", this.handleCtrlKeyDown);
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
 
-    // Firebase.
-    // Firebase.database().ref('projects').off('value');
-    // Firebase.database().ref('taskLists').off('value');
-    // Firebase.database().ref('tasks').off('value');
-
-    // Firestore.
-    var projectUnsubscribe = Firestore.collection(PROJECTS).onSnapshot( () => {});
-    projectUnsubscribe();
-
-    var taskListsUnsubscribe = Firestore.collection(TASKLISTS).onSnapshot( () => {});
-    taskListsUnsubscribe();
-
-    var tasksUnsubscribe = Firestore.collection(TASKS).onSnapshot( () => {});
-    tasksUnsubscribe();
-
-    if (this.state.selectedProjectId !== -1) {
-      // Firebase.database().ref('projectLayouts/' + this.state.selectedProjectId).off('value');
-      var projectLayoutsUnsubscribe = Firestore.collection(PROJECTLAYOUTS).doc(this.state.selectedProjectId).onSnapshot( () => {});
-      projectLayoutsUnsubscribe();
-    }
+    // Stop listening to the Database.
+    this.props.dispatch(unsubscribeProjectsAsync());
+    this.props.dispatch(unsubscribeTaskListsAsync());
+    this.props.dispatch(unsubscribeTasksAsync());
+    this.props.dispatch(unsubscribeProjectLayoutsAsync());
   }
 
   render() {
-    var layouts = this.state.projectLayout.layouts;
+    var layouts = this.props.projectLayout.layouts;
     var lockScreenJSX = this.getLockScreen();
+    var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
 
     return (
       <div>
         {lockScreenJSX}
 
-        <StatusBar isAwaitingFirebase={this.state.isAwaitingFirebase} isConnectedToFirebase={this.state.isConnectedToFirebase}
-        errorMessage={this.state.currentErrorMessage}/>
+        <StatusBar isAwaitingFirebase={this.props.isAwaitingFirebase} isConnectedToFirebase={this.props.isConnectedToFirebase}
+        errorMessage={this.props.currentErrorMessage}/>
         <div className="SidebarProjectFlexContainer">
           <div className="SidebarFlexItemContainer">
-            <Sidebar className="Sidebar" projects={this.state.projects} selectedProjectId={this.state.selectedProjectId}
+            <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-              projectSelectorDueDateDisplays={this.state.projectSelectorDueDateDisplays} />
+              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} />
           </div>
           <div className="ProjectFlexItemContainer">
-            <Project className="Project" taskLists={this.state.taskLists} tasks={this.state.tasks} selectedTask={this.state.selectedTask}
-              movingTaskId={this.state.movingTaskId} focusedTaskListId={this.state.focusedTaskListId}
-              projectId={this.state.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
+            <Project className="Project" taskLists={this.props.taskLists} tasks={this.props.tasks} selectedTask={this.props.selectedTask}
+              movingTaskId={this.props.movingTaskId} focusedTaskListId={this.props.focusedTaskListId}
+              projectId={this.props.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
               onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
               onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
               layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
               onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
               onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
               onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
-              movingTaskId={this.state.movingTaskId} sourceTaskListId={this.state.sourceTaskListId}
+              movingTaskId={this.props.movingTaskId} sourceTaskListId={this.props.sourceTaskListId}
               onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
-              openCalendarId={this.state.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+              openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-              openTaskListSettingsMenuId={this.state.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
+              openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               />
           </div>
         </div>
@@ -275,39 +176,8 @@ class App extends React.Component {
     );
   }
 
-  getProjectSelectorDueDateDisplays(tasks) {
-    var returnList = {};
-
-    tasks.forEach(item => {
-      if (item.dueDate !== "" && item.isComplete !== true) {
-        if (returnList[item.project] == undefined) {
-          returnList[item.project] = {greens: 0, yellows: 0, reds: 0};
-        }
-
-        var {className} = ParseDueDate(item.isComplete, item.dueDate);
-        switch (className) {
-          case "DueDate Later":
-            returnList[item.project].greens += 1;
-            break;
-          
-          case "DueDate Soon":
-            returnList[item.project].yellows += 1;
-            break;
-
-          case "DueDate Overdue":
-            returnList[item.project].reds += 1;
-
-          default:
-            break;
-        }
-      }
-    })
-
-    return returnList;
-  }
-
   getSelectedProjectTasks() {
-    if (this.state.selectedProjectId === -1) {
+    if (this.props.selectedProjectId === -1) {
       return [];
     }
 
@@ -315,8 +185,8 @@ class App extends React.Component {
     // the first matching Task and iterated onto a non matching task for a performance gain.
     else {
       var returnList = [];
-      this.state.tasks.forEach(item => {
-        if (item.project === this.state.selectedProjectId) {
+      this.props.tasks.forEach(item => {
+        if (item.project === this.props.selectedProjectId) {
           returnList.push(item);
         }
       })
@@ -328,23 +198,21 @@ class App extends React.Component {
   }
 
   handleTaskListSettingsButtonClick(projectId, taskListWidgetId) {
-    this.setState({openTaskListSettingsMenuId: taskListWidgetId});
+    this.props.dispatch(setOpenTaskListSettingsMenuId(taskListWidgetId));
   }
 
   handleDueDateClick(projectId, taskListWidgetId, taskId) {
-      this.setState({
-        selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false },
-        openCalendarId: taskId
-      })
+    console.log("Due Date Click");
+    this.props.dispatch(openCalendar(taskListWidgetId, taskId));
   }
 
   exerciseFirebase() {
     // Pull down some blank data from Firebase to keep the Websocket Open.
-    var ref = Firebase.database().ref("websocketTimeoutFix").once('value', () => {});
+    // var ref = Firebase.database().ref("websocketTimeoutFix").once('value', () => {});
   }
 
   handleLockScreenAccessGranted() {
-    this.setState({IsLockScreenDisplayed: false});
+    this.props.dispatch(unlockApp());
   }
 
   handleCtrlKeyDown(mouseTrap) {
@@ -356,65 +224,35 @@ class App extends React.Component {
   }
 
   handleTaskClick(element, projectId, taskListWidgetId) {
-    var logTaskIndex = this.state.tasks.findIndex(item => {
-      return item.uid === element.props.taskId;
-    })
-
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
-    var selectedTask = this.state.selectedTask;
-    var openCalendarId = this.state.openCalendarId === element.props.taskId ? this.state.openCalendarId : -1; // Keep calendar Open if it already Open.
+    var selectedTask = this.props.selectedTask;
+    var openCalendarId = this.props.openCalendarId === element.props.taskId ? this.props.openCalendarId : -1; // Keep calendar Open if it already Open.
 
     if (this.isCtrlKeyDown) {
-      this.setState({
-        isATaskMoving: true,
-        movingTaskId: element.props.taskId,
-        sourceTaskListId: taskListWidgetId,
-        openCalendarId: openCalendarId,
-        openTaskListSettingsMenuId: -1,
-      })
+      this.props.dispatch(startTaskMove(element.props.taskId, taskListWidgetId));
     }
 
     else {
       if (selectedTask.taskListWidgetId === taskListWidgetId &&
         selectedTask.taskId === element.props.taskId) {
         // Task Already Selected. Exclusively open it's Text Input.
-        this.setState({
-          selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: true },
-          isATaskMoving: false,
-          movingTaskId: -1,
-          sourceTaskListId: -1,
-          openCalendarId: -1,
-          openTaskListSettingsMenuId: -1
-        })
+        this.props.dispatch(openTask(taskListWidgetId, element.props.taskId));
       }
 
       else {
         // Otherwise just Select it.
-        this.setState({
-          selectedTask: { taskListWidgetId: taskListWidgetId, taskId: element.props.taskId, isInputOpen: false },
-          isATaskMoving: false,
-          movingTaskId: -1,
-          sourceTaskListId: -1,
-          openCalendarId: openCalendarId,
-          openTaskListSettingsMenuId: -1
-        })
+        this.props.dispatch(selectTask(taskListWidgetId, element.props.taskId));
       }
     }
   }
 
   handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
-    this.setState({
-      focusedTaskListId: taskListWidgetId,
-      selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false},
-      isATaskMoving: true,
-      movingTaskId: taskId,
-      sourceTaskListId: taskListWidgetId,
-    })
+    this.props.dispatch(startTaskMove(taskId, taskListWidgetId));
   }
 
   handleRemoveTaskListButtonClick() {
-    if (this.state.focusedTaskListId !== -1 && confirm("Are you Sure?") === true) {
-      this.removeTaskList(this.state.focusedTaskListId);
+    if (this.props.focusedTaskListId !== -1 && confirm("Are you Sure?") === true) {
+      this.removeTaskList(this.props.focusedTaskListId);
     }
   }
 
@@ -428,108 +266,11 @@ class App extends React.Component {
   }
 
   handleRemoveTaskButtonClick() {
-    var taskId = this.state.selectedTask.taskId;
-    if (taskId !== -1) {
-
-      // // Update Firebase.
-      // this.setState({ isAwaitingFirebase: true });
-      // var updates = {};
-      // updates["tasks/" + taskId] = null;
-
-      // // Execute Updates (Deletes).
-      // Firebase.database().ref().update(updates).then(() => {
-      //   this.setState({ isAwaitingFirebase: false });
-      // }).catch(error => {
-      //   this.postFirebaseError(error);
-      // })
-
-      // Update Firebase.
-      this.setState({ isAwaitingFirebase: true });
-
-      // Build Batch and Execute.
-      var batch = Firestore.batch();
-      var taskRef = Firestore.collection(TASKS).doc(taskId);
-      batch.delete(taskRef);
-      
-      batch.commit().then(() => {
-        this.setState({ isAwaitingFirebase: false })
-      }).catch(error => {
-        this.postFirebaseError(error);
-      })
-
-    }
-  }
-
-  moveTask(taskId, sourceTaskListId, destinationTaskListId) {
-    // // Update Firebase.
-    // this.setState({isAwaitingFirebase: true});
-    // var updates = {};
-    // updates["tasks/" + taskId + "/taskList/"] = destinationTaskListId;
-    // Firebase.database().ref().update(updates).then( () => {
-    //   this.setState({
-    //      isAwaitingFirebase: false,
-    //      isATaskMoving: false,
-    //      sourceTaskListId: -1,
-    //      movingTaskId: -1,
-    //      selectedTask: {taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
-    //   });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    //  Update Firestore.
-    this.setState({isAwaitingFirebase: true});
-
-    var taskRef = Firestore.collection(TASKS).doc(taskId);
-    taskRef.update({
-      taskList: destinationTaskListId
-    }).then(() => {
-      this.setState({
-        isAwaitingFirebase: false,
-        isATaskMoving: false,
-        sourceTaskListId: -1,
-        movingTaskId: -1,
-        selectedTask: { taskListWidgetId: destinationTaskListId, taskId: taskId, isInputOpen: false } // Pre Select Task
-      });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(removeSelectedTaskAsync());
   }
 
   handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
-    // // Update Firebase.
-    // this.setState({
-    //   isAwaitingFirebase: true,
-    //   selectedTask: {taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false}
-    //  }); // Close Task Input.
-    
-    // var updates = {};
-    // updates['/tasks/' + taskId + "/taskName/"] = newData;
-    // updates['/tasks/' + taskId + '/isNewTask/'] = false; // Reset new Task Property.
-
-    // Firebase.database().ref().update(updates).then( () => {
-    //   this.setState({
-    //     isAwaitingFirebase: false,
-    //   });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    this.setState({
-      isAwaitingFirebase: true,
-      selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId, isInputOpen: false } // Close TaskText Input.
-    });
-
-    var taskRef = Firestore.collection(TASKS).doc(taskId);
-    taskRef.update({
-      taskName: newData,
-      isNewTask: false // Reset new Task Property.
-    }).then(() => {
-      this.setState({ isAwaitingFirebase: false })
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newData));
   }
 
   handleKeyDown(e) {
@@ -572,139 +313,19 @@ class App extends React.Component {
 
   lockApp() {
     // Lock App.
-    this.setState({ IsLockScreenDisplayed: true });
+    // this.setState({ IsLockScreenDisplayed: true });
+    this.props.dispatch(lockApp());
 
     // Trigger Firebase Backup.
     this.backupFirebase();
   }
 
   addNewTaskList() {
-    // Add to Firebase.
-    // this.setState({ isAwaitingFirebase: true });
-    // var newTaskListKey = Firebase.database().ref('taskLists/').push().key;
-
-    // var newTaskList = new TaskListStore(
-    //   "New Task List",
-    //   this.state.selectedProjectId,
-    //   newTaskListKey,
-    //   newTaskListKey,
-    //   new TaskListSettingsStore(true, "completed")
-    // )
-
-    // Firebase.database().ref('taskLists/' + newTaskListKey).set(newTaskList).then(result => {
-    //   this.setState({ isAwaitingFirebase: false });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Add to Firestore.
-    this.setState({ isAwaitingFirebase: true });
-    var newTaskListRef = Firestore.collection(TASKLISTS).doc();
-
-    var newTaskList = new TaskListStore(
-      "New Task List",
-      this.state.selectedProjectId,
-      newTaskListRef.id,
-      newTaskListRef.id,
-      Object.assign({}, new TaskListSettingsStore(true, "completed"))
-    )
-
-    newTaskListRef.set(Object.assign({},newTaskList)).then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
-
-    
+    this.props.dispatch(addNewTaskListAsync());
   }
 
   addNewTask() {
-    // Add a new Task.
-    // Find the TaskList that currently has Focus retrieve it's Index in state.taskLists array.
-    // TODO: I don't think you need to get the TargetIndex any more.
-    // var targetIndex = -1;
-    // var targetTaskList = this.state.taskLists.find((item, index) => {
-    //   if (this.state.focusedTaskListId === item.uid) {
-    //     targetIndex = index;
-    //     return true;
-    //   }
-
-    //   else {
-    //     return false;
-    //   }
-    // })
-
-    // if (targetTaskList !== undefined) {
-    //   // Update Firebase.
-    //   this.setState({ isAwaitingFirebase: true });
-    //   var newTaskKey = Firebase.database().ref('tasks/').push().key;
-
-    //   var newTask = new TaskStore(
-    //     "",
-    //     "",
-    //     false,
-    //     this.state.selectedProjectId,
-    //     targetTaskList.uid,
-    //     newTaskKey,
-    //     new Moment().toISOString(),
-    //     true
-    //   )
-
-    //   Firebase.database().ref('tasks/' + newTaskKey).set(newTask).then(() => {
-    //     this.setState({
-    //       isAwaitingFirebase: false,
-    //       selectedTask: { taskListWidgetId: this.state.focusedTaskListId, taskId: newTaskKey, isInputOpen: true }
-    //     });
-    //   }).catch(error => {
-    //     this.postFirebaseError(error);
-    //   })
-    // }
-
-    // Add a new Task.
-    // Find the TaskList that currently has Focus retrieve it's Index in state.taskLists array.
-    // TODO: I don't think you need to get the TargetIndex any more.
-    var targetIndex = -1;
-    var targetTaskList = this.state.taskLists.find((item, index) => {
-      if (this.state.focusedTaskListId === item.uid) {
-        targetIndex = index;
-        return true;
-      }
-
-      else {
-        return false;
-      }
-    })
-
-    if (targetTaskList !== undefined) {
-      // Update Firestore.
-      this.setState({ isAwaitingFirebase: true });
-      var newTaskRef = Firestore.collection(TASKS).doc();
-      var newTaskKey = newTaskRef.id;
-
-      var newTask = new TaskStore(
-        "",
-        "",
-        false,
-        this.state.selectedProjectId,
-        targetTaskList.uid,
-        newTaskKey,
-        new Moment().toISOString(),
-        true
-      )
-
-      newTaskRef.set(Object.assign({}, newTask)).then(() => {
-        this.setState({
-          isAwaitingFirebase: false,
-          selectedTask: { taskListWidgetId: this.state.focusedTaskListId, taskId: newTaskKey, isInputOpen: true }
-        });
-      }).catch(error => {
-        this.postFirebaseError(error);
-      })
-
-    }
-
-    
-
+    this.props.dispatch(addNewTaskAsync());
   }
 
   makeNewLayoutEntry(taskListId) {
@@ -713,450 +334,57 @@ class App extends React.Component {
 
   handleTaskListWidgetFocusChange(taskListWidgetId, isFocused) {
     if (!isFocused) {
-      if (this.state.isATaskMoving) {
-        var movingTaskId = this.state.movingTaskId;
-        var destinationTaskListId = taskListWidgetId;
-
-        this.moveTask(movingTaskId, this.state.sourceTaskListId, destinationTaskListId);
+      if (this.props.isATaskMoving) {
+        this.props.dispatch(moveTaskAsync(taskListWidgetId));
       }
 
-      this.setState({
-        focusedTaskListId: taskListWidgetId,
-        openCalendarId: -1,
-        openTaskListSettingsMenuId: -1});
+      this.props.dispatch(changeFocusedTaskList(taskListWidgetId));
     }
   }
 
   handleTaskListWidgetHeaderChanged(taskListWidgetId, newData) {
-    // // Update Firebase.
-    // this.setState({isAwaitingFirebase: true});
-
-    // var updates = {};
-    // updates['/taskLists/' + taskListWidgetId + '/taskListName'] = newData;
-
-    // Firebase.database().ref().update(updates).then( () => {
-    //   this.setState({isAwaitingFirebase: false});
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    this.setState({isAwaitingFirebase: true});
-
-    var taskListRef = Firestore.collection(TASKLISTS).doc(taskListWidgetId);
-    taskListRef.update({ taskListName: newData }).then(() => {
-      this.setState({isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(updateTaskListWidgetHeaderAsync(taskListWidgetId, newData));
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    // this.setState({isAwaitingFirebase: true});
-
-    // var taskListsRef = Firebase.database().ref('taskLists');
-    // var tasksRef = Firebase.database().ref('tasks');
-    // var projectLayoutsRef = Firebase.database().ref('projectLayouts');
-    
-    // // Disconnect Old Listeners and Connect new Listeners (Firebase will Call Callbacks for intial Values).
-    // var outgoingProjectId = this.state.selectedProjectId;
-    // if (outgoingProjectId !== -1) {
-    //   // Old Listeners.
-    //   taskListsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-    //   // tasksRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-    //   projectLayoutsRef.orderByChild('project').equalTo(outgoingProjectId).off('value');
-    // }
-
-    // if (projectSelectorId !== -1) {
-    //   // New Listeners.
-    //   taskListsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTaskLists);
-    //   // tasksRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingTasks);
-    //   projectLayoutsRef.orderByChild('project').equalTo(projectSelectorId).on('value', this.onIncomingLayouts)
-    // }
-
-    // this.setState({
-    //   selectedProjectId: projectSelectorId,
-    //   openCalendarId: -1,
-    //   selectedTask: { taskListWidgetId: -1, taskId: -1, isInputOpen: false },
-    //   isATaskMoving: false,
-    //   movingTaskId: -1,
-    //   sourceTaskListId: -1,
-    //   focusedTaskListId: -1,
-    //   openTaskListSettingsMenuId: -1
-    // })
-
-    this.setState({ isAwaitingFirebase: true });
-    var outgoingProjectId = this.state.selectedProjectId;
+    var outgoingProjectId = this.props.selectedProjectId;
     var incomingProjectId = projectSelectorId;
 
     if (outgoingProjectId !== -1) {
       // Old Listeners.
-      var taskListsUnsubscribe = Firestore.collection(TASKLISTS).where("project", "==", outgoingProjectId).onSnapshot(() => {});
-      taskListsUnsubscribe();
-
-      var projectLayoutsUnsubscribe = Firestore.collection(PROJECTLAYOUTS).where("project", "==", outgoingProjectId).onSnapshot(() => {});
-      taskListsUnsubscribe();
+      this.props.dispatch(unsubscribeTaskListsAsync());
+      this.props.dispatch(unsubscribeProjectLayoutsAsync());
     }
 
     if (incomingProjectId !== -1 ) {
-      Firestore.collection(TASKLISTS).where("project", "==", incomingProjectId).onSnapshot(this.onIncomingTaskLists);
-      Firestore.collection(PROJECTLAYOUTS).where("project", "==", incomingProjectId).onSnapshot(this.onIncomingLayouts);
+      this.props.dispatch(getTaskListsAsync(projectSelectorId));
+      this.props.dispatch(getProjectLayoutsAsync(projectSelectorId));
     }
 
-    this.setState({
-      selectedProjectId: incomingProjectId,
-      openCalendarId: -1,
-      selectedTask: { taskListWidgetId: -1, taskId: -1, isInputOpen: false },
-      isATaskMoving: false,
-      movingTaskId: -1,
-      sourceTaskListId: -1,
-      focusedTaskListId: -1,
-      openTaskListSettingsMenuId: -1
-    })
+    this.props.dispatch(selectProject(projectSelectorId));
 
-  }
-
-  onIncomingTaskLists(snapshot) {
-    // // TODO: What happens if a Change comes in for a Project that isn't the Selected One? Bad Stuff probably.
-    // this.setState({isAwaitingFirebase: true});
-    // var taskLists = [];
-    // taskLists = snapshot.val() == null ? [] : Object.values(snapshot.val());
-    // this.setState({
-    //   isAwaitingFirebase: false,
-    //   taskLists: taskLists
-    // })
-
-    this.setState({ isAwaitingFirebase: true });
-    var taskLists = [];
-    snapshot.forEach(doc => {
-      taskLists.push(doc.data());
-    })
-
-    this.setState({
-      isAwaitingFirebase: false,
-      taskLists: taskLists
-    })
-  }
-
-  onIncomingTasks(snapshot) {
-    // this.setState({isAwaitingFirebase: true});
-    // var tasks = [];
-    // tasks = snapshot.val() == null ? [] : Object.values(snapshot.val());
-    // this.setState({
-    //   isAwaitingFirebase: false,
-    //   tasks: tasks,
-    //   projectSelectorDueDateDisplays: this.getProjectSelectorDueDateDisplays(tasks)
-    // })
-
-    this.setState({isAwaitingFirebase: true});
-
-    var tasks = [];
-    snapshot.forEach(doc => {
-      tasks.push(doc.data());
-    })
-
-    this.setState({
-      isAwaitingFirebase: false,
-      tasks: tasks,
-      projectSelectorDueDateDisplays: this.getProjectSelectorDueDateDisplays(tasks)
-    })
-  }
-
-  onIncomingLayouts(snapshot) {
-    // this.setState({isAwaitingFirebase: true});
-
-    // var projectLayouts = []
-    // projectLayouts = snapshot.val() == null ? [new ProjectLayoutStore({}, -1, -1)] : Object.values(snapshot.val());
-
-    // this.setState({
-    //   isAwaitingFirebase: false,
-    //   projectLayout: projectLayouts[0]
-    // })
-
-    this.setState({ isAwaitingFirebase: true });
-
-    var projectLayouts = [];
-
-    if (snapshot.empty !== true) {
-      snapshot.forEach(doc => {
-        projectLayouts.push(doc.data());
-      })
-    }
-
-    else {
-      projectLayouts[0] = new ProjectLayoutStore({}, -1, -1);
-    }
-
-    this.setState({
-      isAwaitingFirebase: false,
-      projectLayout: projectLayouts[0]
-    })
-    
   }
 
   handleLayoutChange(layouts, projectId) {
-    // var newTrimmedLayouts = this.trimLayouts(layouts);
-    // // Update Firebase.
-    // this.setState({ isAwaitingFirebase: true });
-    // var updates = {};
-    // updates['/projectLayouts/' + projectId + '/layouts/'] = newTrimmedLayouts;
-
-    // Firebase.database().ref().update(updates).then(() => {
-    //   this.setState({ isAwaitingFirebase: false });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    var newTrimmedLayouts = this.trimLayouts(layouts);
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-    var projectLayoutsRef = Firestore.collection(PROJECTLAYOUTS).doc(projectId);
-    projectLayoutsRef.update({ layouts: newTrimmedLayouts }).then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    });
+    this.props.dispatch(updateProjectLayoutAsync(layouts, projectId));
   }
-
-  trimLayouts(layouts) {
-  var trimmedLayouts = layouts.map(item => {
-    return {
-      i: item.i,
-      x: item.x,
-      y: item.y,
-      w: item.w,
-      h: item.h,
-    }
-  })
-
-  return trimmedLayouts
-  }
-
-  compareLayouts(a,b) {
-    if (a.length !== b.length) {
-      return false;
-    }
-
-    for (var i = 0; i < a.length; i++) {
-      if (!this.compareLayoutHelper(a[i], b[i])) {
-        return false;
-      }
-
-      return true;
-    }
-
-  }
-
-  compareLayoutHelper(a,b) {
-  //       i:              x:             y:             w:             h:           
-    if (a.i === b.i  && a.x === b.x && a.y === b.y && a.w === b.w && a.h === b.h) {
-        return true;
-      } 
-      return false;
-    }
   
   handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue) {
-    // Todo: You call setState three times here. Could be less.
-    // if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
-    //   this.setState({ selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId } });
-    // }
-
-    // // Update Firebase.
-    // this.setState({ isAwaitingFirebase: true });
-
-    // var updates = {};
-    // updates['/tasks/' + taskId + "/isComplete/"] = incomingValue;
-    // updates['/tasks/' + taskId + '/isNewTask/'] = false;
-
-    // Firebase.database().ref().update(updates).then(() => {
-    //   this.setState({ isAwaitingFirebase: false });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    if (this.state.selectedTask.taskId !== taskId || this.state.selectedTask.taskListWidgetId !== taskListWidgetId) {
-      this.setState({ selectedTask: { taskListWidgetId: taskListWidgetId, taskId: taskId } });
-    }
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-
-    var taskRef = Firestore.collection(TASKS).doc(taskId);
-
-    taskRef.update({
-      isComplete: incomingValue,
-      isNewTask: false
-    }).then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(updateTaskCompleteAsync(taskListWidgetId, taskId, incomingValue));
   }
 
   handleAddProjectClick() {
-    var newProjectName = "New Project";
-
-    // // Update Firebase.
-    // this.setState({ isAwaitingFirebase: true });
-    // var newProjectKey = Firebase.database().ref('projects/').push().key;
-    // var updates = {};
-
-    // // Project.
-    // var newProject = new ProjectStore(newProjectName, newProjectKey);
-    // updates['projects/' + newProjectKey] = newProject;
-
-    // // Layout.
-    // var newProjectLayout = new ProjectLayoutStore({}, newProjectKey, newProjectKey);
-    // updates['projectLayouts/' + newProjectKey] = newProjectLayout;
-
-    // // Execute Additions.
-    // Firebase.database().ref().update(updates).then(() => {
-    //   this.setState({ isAwaitingFirebase: false });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-    
-    var batch = Firestore.batch();
-
-    // Project.
-    var newProjectRef = Firestore.collection(PROJECTS).doc();
-    var newProjectKey = newProjectRef.id;
-
-    var newProject = new ProjectStore(newProjectName, newProjectKey);
-    batch.set(newProjectRef, Object.assign({}, newProject));
-
-    // Layout
-    var newLayoutRef = Firestore.collection(PROJECTLAYOUTS).doc(newProjectKey);
-
-    var newProjectLayout = new ProjectLayoutStore({}, newProjectKey, newProjectKey);
-    batch.set(newLayoutRef, Object.assign({}, newProjectLayout));
-    
-    // Execute Additions.
-    batch.commit().then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(addNewProjectAsync());
   }
 
   handleRemoveProjectClick(projectId) {
     if (confirm("Are you sure?") === true) {
-      // // Update Firebase.
-      // this.setState({ isAwaitingFirebase: true });
-
-      // // Get a List of Task List Id's . It's Okay to collect these from State as associated taskLists have already
-      // // been loaded in via the handleProjectSelectorClick method. No point in querying Firebase again for this data.
-      // var taskListIds = this.state.taskLists.map(item => {
-      //   if (item.project === projectId) {
-      //     return item.uid;
-      //   }
-      // })
-
-      // // TODO: Refactor the following Code, you are doing the same thing Here as well as within the Task List Widget Removal Code.
-      // // could be refactored into something like collectTaskId's.
-      // var taskIds = this.state.tasks.map(item => {
-      //   if (item.project === projectId) {
-      //     return item.uid;
-      //   }
-      // })
-
-      // // Build Updates (Deletes).
-      // var updates = {};
-
-      // taskIds.forEach(id => {
-      //   updates["/tasks/" + id] = null;
-      // })
-
-      // taskListIds.forEach(id => {
-      //   updates["/taskLists/" + id] = null;
-      // })
-
-      // var projectLayoutId = this.state.projectLayout.uid;
-      // updates["/projectLayouts/" + projectLayoutId] = null;
-
-      // updates["/projects/" + projectId] = null;
-
-      // // Execute Updates (Deletes).
-      // Firebase.database().ref().update(updates).then(() => {
-      //   this.setState({ isAwaitingFirebase: false });
-      // }).catch(error => {
-      //   this.postFirebaseError(error);
-      // })
-
-      // Get a List of Task List Id's . It's Okay to collect these from State as associated taskLists have already
-      // been loaded in via the handleProjectSelectorClick method. No point in querying Firebase again for this data.
-      var taskListIds = this.state.taskLists.map(item => {
-        if (item.project === projectId) {
-          return item.uid;
-        }
-      })
-
-      // TODO: Refactor the following Code, you are doing the same thing Here as well as within the Task List Widget Removal Code.
-      // could be refactored into something like collectTaskId's.
-      var taskIds = this.state.tasks.map(item => {
-        if (item.project === projectId) {
-          return item.uid;
-        }
-      })
-
-      // Build Updates.
-      var batch = Firestore.batch();
-
-      // Tasklists.
-      taskListIds.forEach(id => {
-        batch.delete(Firestore.collection(TASKLISTS).doc(id));
-      })
-
-      // Tasks
-      taskIds.forEach(id => {
-        batch.delete(Firestore.collection(TASKS).doc(id));
-      })
-
-      // Project Layout
-      var projectLayoutId = this.state.projectLayout.uid;
-      batch.delete(Firestore.collection(PROJECTLAYOUTS).doc(projectLayoutId));
-
-      // Project.
-      batch.delete(Firestore.collection(PROJECTS).doc(projectId));
-
-      // Execute the Batch.
-      this.setState({ isAwaitingFirebase: true });
-
-      batch.commit().then(() => {
-        this.setState({ isAwaitingFirebase: false });
-      }).catch(error => {
-        this.postFirebaseError(error);
-      })
+      this.props.dispatch(removeProjectAsync(projectId));
     }
   }
 
   handleProjectNameSubmit(projectSelectorId, newName) {
-    // // Update Firebase.
-    // this.setState({isAwaitingFirebase: true});
-
-    // var updates = {};
-    // updates['projects/' + projectSelectorId + "/projectName"] = newName;
-
-    // Firebase.database().ref().update(updates).then( () => {
-    //   this.setState({isAwaitingFirebase: false});
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-
-    var projectRef = Firestore.collection(PROJECTS).doc(projectSelectorId);
-    projectRef.update({ projectName: newName }).then(() => {
-      this.setState({ isAwaitingFirebase: false })
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
-
+    this.props.dispatch(updateProjectNameAsync(projectSelectorId, newName));
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
@@ -1166,103 +394,73 @@ class App extends React.Component {
   }
 
   removeTaskList(taskListWidgetId) {
-    // // Update Firebase.
-    //   this.setState({ isAwaitingFirebase: true });
-
-    //   // Collect related TaskIds.
-    //   var taskIds = this.state.tasks.map(item => {
-    //     if (item.taskList === taskListWidgetId) {
-    //       return item.uid;
-    //     }
-    //   })
-
-    //   var updates = {};
-    //   updates["taskLists/" + taskListWidgetId] = null;
-
-    //   taskIds.forEach(id => {
-    //     updates["tasks/" + id] = null
-    //   })
-
-    //   // Execute Updates (Deletes).
-    //   Firebase.database().ref().update(updates).then(() => {
-    //     this.setState({ isAwaitingFirebase: false });
-    //   }).catch(error => {
-    //     this.postFirebaseError(error);
-    //   })
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-
-    // Collect related TaskIds.
-    var taskIds = this.state.tasks.map(item => {
-      if (item.taskList === taskListWidgetId) {
-        return item.uid;
-      }
-    })
-
-    // Build Batch.
-    var batch = Firestore.batch();
-
-    // Task lists
-    batch.delete(Firestore.collection(TASKLISTS).doc(taskListWidgetId));
-
-    // Tasks.
-    taskIds.forEach(id => {
-      batch.delete(Firestore.collection(TASKS).doc(id));
-    })
-
-    batch.commit().then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
-
+    this.props.dispatch(removeTaskListAsync(taskListWidgetId));
   }
 
   postFirebaseError(error) {
-    console.error(error);
-    this.setState({
-      isAwaitingFirebase: false,
-      currentErrorMessage: "An error has occurred. Please consult Developer Diagnostics Log"});
+    // console.error(error);
+    // this.setState({
+    //   isAwaitingFirebase: false,
+    //   currentErrorMessage: "An error has occurred. Please consult Developer Diagnostics Log"});
   }
 
   handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
-    // // Update Firebase.
-    // var updates = {};
-    // updates['taskLists/' + taskListWidgetId + '/settings/'] = newTaskListSettings;
-
-    // this.setState({ 
-    //   isAwaitingFirebase: true,
-    //   openTaskListSettingsMenuId: -1 });
-    // Firebase.database().ref().update(updates).then(() => {
-    //   this.setState({
-    //     isAwaitingFirebase: false,
-    //   });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    var taskListRef = Firestore.collection(TASKLISTS).doc(taskListWidgetId);
-
-    this.setState({
-      isAwaitingFirebase: true,
-      openTaskListSettingsMenuId: -1
-    });
-
-    taskListRef.update({
-      settings: Object.assign({}, newTaskListSettings)
-    }).then(() => {
-      this.setState({ isAwaitingFirebase: false });
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
   backupFirebase() {
     if (this.isInElectron) {
+      var data = this.pullDownDatabase().then(data => {
+        this.writeDatabaseToFile(data.toJSON());
+      }).catch(error => {
+        this.postFirebaseError(error);
+      })
+    }
+  }
+
+  overwriteFirebase(data) {
+    var confirmMessage = "THIS WILL WIPE FIRESTORE!. Are you sure you want to proceed?";
+    if (confirm(confirmMessage) === true) {
+      this.nukeFirestore().then(() => {
+        // Collect Data from File.
+        // var data = this.readBackupFile();
+        var { projects, projectLayouts, taskLists, tasks } = data;
+        var batch = getFirestore().batch();
+
+        // Projects.
+        projects.forEach(project => {
+          batch.set(getFirestore().collection(PROJECTS).doc(project.uid), project);
+        })
+
+        // Project Layouts.
+        projectLayouts.forEach(projectLayout => {
+          batch.set(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid), projectLayout);
+        })
+
+        // Task Lists.
+        taskLists.forEach(taskList => {
+          batch.set(getFirestore().collection(TASKLISTS).doc(taskList.uid), taskList);
+        })
+
+        // Tasks
+        tasks.forEach(task => {
+          batch.set(getFirestore().collection(TASKS).doc(task.uid), task);
+        })
+
+        batch.commit().then(() => {
+          console.log("Sucseffully Commited Batch");
+        })
+      })
+    }
+  }
+
+  readBackupFile() {
+    throw "Function not Implemented";
+  }
+
+  pullDownDatabase() {
+    return new Promise((resolve, reject) => {
       // Pull Data down from Firestore.
-      this.setState({isAwaitingFirebase: true});
       var requests = [];
       var projects = [];
       var projectLayouts = [];
@@ -1270,49 +468,91 @@ class App extends React.Component {
       var tasks = [];
 
       // Projects.
-      requests.push(Firestore.collection(PROJECTS).get().then(snapshot => {
+      requests.push(getFirestore().collection(PROJECTS).get().then(snapshot => {
         snapshot.forEach(doc => {
           projects.push(doc.data());
         })
       }))
 
       // Project Layouts.
-      requests.push(Firestore.collection(PROJECTLAYOUTS).get().then(snapshot => {
+      requests.push(getFirestore().collection(PROJECTLAYOUTS).get().then(snapshot => {
         snapshot.forEach(doc => {
           projectLayouts.push(doc.data());
         })
       }))
 
       // TaskLists.
-      requests.push(Firestore.collection(TASKLISTS).get().then(snapshot => {
+      requests.push(getFirestore().collection(TASKLISTS).get().then(snapshot => {
         snapshot.forEach(doc => {
           taskLists.push(doc.data());
         })
       }))
 
       // Tasks.
-      requests.push(Firestore.collection(TASKS).get().then(snapshot => {
+      requests.push(getFirestore().collection(TASKS).get().then(snapshot => {
         snapshot.forEach(doc => {
           tasks.push(doc.data());
         })
       }))
-    }
 
-    Promise.all(requests).then(() => {
-      // Build into JSON object and write to File.
-      var combined = {
-        projects: projects,
-        projectLayouts: projectLayouts,
-        taskLists: taskLists,
-        tasksJSON: tasks
-      }
+      Promise.all(requests).then(() => {
+        // Combine Together.
+        var combined = {
+          projects: projects,
+          projectLayouts: projectLayouts,
+          taskLists: taskLists,
+          tasks: tasks
+        }
 
-      this.writeDatabaseToFile(JSON.stringify(combined));
-
-    }).catch(error => {
-      this.postFirebaseError(error);
+        resolve(combined);
+      }).catch(error => {
+        reject(error);
+      })
     })
-    
+  }
+
+  nukeFirestore() {
+    return new Promise((resolve, reject) => {
+      this.pullDownDatabase().then(data => {
+        var { projects, projectLayouts, taskLists, tasks } = data;
+
+        // Build a list of References.
+        var refs = [];
+
+        // Projects.
+        projects.forEach(project => {
+          refs.push(getFirestore().collection(PROJECTS).doc(project.uid));
+        })
+
+        // Project Layouts.
+        projectLayouts.forEach(projectLayout => {
+          refs.push(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid));
+        })
+
+        // TaskLists.
+        taskLists.forEach(taskList => {
+          refs.push(getFirestore().collection(TASKLISTS).doc(taskList.uid));
+        })
+
+        // Tasks.
+        tasks.forEach(task => {
+          refs.push(getFirestore().collection(TASKS).doc(task.uid));
+        })
+
+        // Build Delete Batch.
+        var batch = getFirestore().batch();
+        refs.forEach(ref => {
+          batch.delete(ref);
+        })
+
+        // Execute Batch.
+        batch.commit().then(() => {
+          resolve();
+        }).catch(error => {
+          reject(error);
+        });
+      })
+    })
   }
 
   writeDatabaseToFile(json) {
@@ -1336,18 +576,12 @@ class App extends React.Component {
           currentDate.getSeconds() + " in " +
           backupDirectory;
           
-        this.setState({
-          isAwaitingFirebase: false,
-          lastBackupMessage: message
-        });
+        this.props.dispatch(setLastBackupMessage(message));
       })
     }
 
     else {
-      this.setState({
-        lastBackupMessage: "Couldn't backup to File, json object was empty",
-        isAwaitingFirebase: false
-      });
+      this.props.dispatch(setLastBackupMessage("Something went wrong while writing to backup."));
     }
   }
 
@@ -1376,188 +610,15 @@ class App extends React.Component {
     return normalizedArray.join("");
   }
 
-  migrateDBtoV3() {
-    var firebaseOperations = [];
-    // Purge completed Tasks.
-    firebaseOperations.push(Firebase.database().ref('tasks/').once('value').then(snapshot => {
-      var tasks = Object.values(snapshot.val());
-      var taskIdsToRemove = tasks.map(item => {
-        if (item.isComplete) {
-          return item.uid;
-        }
-      })
-
-      console.log("Found " + taskIdsToRemove.length + " tasks to be Purged");
-
-      var updates = {};
-      taskIdsToRemove.forEach(id => {
-        updates['tasks/' + id] = null;
-      })
-
-      // Execute Deletes.
-      Firebase.database().ref().update(updates).then( () => {
-        console.log("Tasks Purge Complete.")
-
-        // Add Date Added, dueDate and isNewTask and Clear dueDate to Survivors of the Purge.
-        Firebase.database().ref('/tasks').once('value').then( s => {
-          var survingTasks = Object.values(s.val());
-          var dateAddedUpdates = {};
-
-          survingTasks.forEach(survivor => {
-            dateAddedUpdates['tasks/' + survivor.uid + '/dateAdded/'] = new Moment().toISOString();
-            dateAddedUpdates['tasks/' + survivor.uid + '/dueDate/'] = "";
-            dateAddedUpdates['tasks/' + survivor.uid + '/isNewTask/'] = false;
-          })
-
-          // Execute Updates.
-          Firebase.database().ref().update(dateAddedUpdates).then( () => {
-            console.log("Date Added Scaffolded to Tasks");
-          })
-        })
-      })
-    }))
-
-    // Scaffold sortBy into taskList Settings.
-    firebaseOperations.push(Firebase.database().ref('taskLists/').once('value').then( snapshot => {
-      var taskLists = Object.values(snapshot.val());
-      var updates = {};
-
-      taskLists.forEach(item => {
-        updates['taskLists/' + item.uid + '/settings/' + 'sortBy/'] = "completed";
-      })
-
-      Firebase.database().ref().update(updates).then( () => {
-        console.log("taskList.settings.sortBy scaffold complete");
-      })
-    }))
-
-    Promise.all(firebaseOperations).then( () => {
-      var versionUpdate = {};
-      versionUpdate['/DbVersion/'] = 3;
-
-      Firebase.database().ref().update(versionUpdate).then( () => {
-        console.log("Migration Complete");
-      })
-    })
-  }
-
-  migrateDBtoV2() {
-    Firebase.database().ref('projects/').orderByChild('uid').once('value').then(snapshot => {
-      if (snapshot.exists()) {
-        var projects = Object.values(snapshot.val());
-
-        var projectIds = projects.map(item => {
-          return item.uid;
-        })
-
-        var updates = {};
-        projectIds.forEach(item => {
-          updates['projects/' + item + '/layouts'] = null;
-
-          var newProjectLayout = new ProjectLayoutStore({}, item, item);
-          updates['projectLayouts/' + item] = newProjectLayout;
-        })
-
-        Firebase.database().ref().update(updates).then(() => {
-          console.log("Updates Completed");
-        })
-      }
-
-      else {
-        console.log("Snaphot.exists() failed.");
-      }
-    })
-
-
-    // Scaffold a 'project' id index into Tasks.
-    Firebase.database().ref('tasks').orderByChild('taskList').once('value').then(snapshot => {
-      if (snapshot.exists()) {
-        var tasks = Object.values(snapshot.val());
-
-        Firebase.database().ref('taskLists').orderByChild('project').once('value').then(taskListSnap => {
-          if (taskListSnap.exists()) {
-            var taskLists = Object.values(taskListSnap.val());
-            console.log(taskLists);
-
-            var updates = {};
-
-            tasks.forEach(task => {
-              var taskList = taskLists.find(element => {
-                return task.taskList === element.uid;
-              })
-              if (taskList === undefined) {
-                console.log("taskList is undefined");
-              }
-              else {
-                updates['tasks/' + task.uid + '/project/'] = taskList.project;
-              }
-            })
-
-            taskLists.forEach(item => {
-              updates['taskLists/' + item.uid + '/settings/'] = new TaskListSettingsStore(true);
-            })
-
-            Firebase.database().ref().update(updates).then(() => {
-              console.log("Task Updates Complete");
-            })
-          }
-          else {
-            console.log("Tasklists - snapshot.exists() failed");
-          }
-        })
-      }
-
-      else {
-        console.log("Tasks - snapshot.exists() failed");
-      }
-    })
-
-    // Update DbVersion.
-    Firebase.database().ref('/DbVersion').set(2).then( () => {
-      console.log("Db Version Update Complete");
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
-  }
-
   handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate) {
-    // // Update Firebase.
-    // this.setState({ isAwaitingFirebase: true });
-    // var updates = {};
-    // updates['tasks/' + taskId + '/dueDate'] = newDate
-    // updates['tasks/' + taskId + '/isNewTask/'] = false;
-
-    // Firebase.database().ref().update(updates).then(() => {
-    //   this.setState({ 
-    //     isAwaitingFirebase: false,
-    //     openCalendarId: -1,
-    //    });
-    // }).catch(error => {
-    //   this.postFirebaseError(error);
-    // })
-
-    // Update Firestore.
-    this.setState({ isAwaitingFirebase: true });
-
-    var taskRef = Firestore.collection(TASKS).doc(taskId);
-    taskRef.update({
-      dueDate: newDate,
-      isNewTask: false
-    }).then(() => {
-      this.setState({
-        isAwaitingFirebase: false,
-        openCalendarId: -1
-      })
-    }).catch(error => {
-      this.postFirebaseError(error);
-    })
+    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate));
   }
 
   getLockScreen() {
-    if (this.state.IsLockScreenDisplayed) {
+    if (this.props.isLockScreenDisplayed) {
       return (
         <LockScreen onAccessGranted={this.handleLockScreenAccessGranted}
-          backupMessage={this.state.lastBackupMessage} onQuitButtonClick={this.handleQuitButtonClick} />
+          backupMessage={this.props.lastBackupMessage} onQuitButtonClick={this.handleQuitButtonClick} />
       )
     }
   }
@@ -1570,4 +631,27 @@ class App extends React.Component {
   }
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    projects: state.projects,
+    taskLists: state.taskLists,
+    tasks: state.tasks,
+    projectLayout: state.projectLayout,
+    focusedTaskListId: state.focusedTaskListId,
+    selectedTask: state.selectedTask,
+    selectedProjectId: state.selectedProjectId,
+    isATaskMoving: state.isATaskMoving,
+    movingTaskId: state.movingTaskId,
+    sourceTaskListId: state.sourceTaskListId,
+    openCalendarId: state.openCalendarId,
+    openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
+    projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
+    lastBackupMessage: state.lastBackupMessage,
+    isLockScreenDisplayed: state.isLockScreenDisplayed,
+    openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
+  }
+}
+
+let VisibleApp = connect(mapStateToProps)(App);
+export default VisibleApp;
+

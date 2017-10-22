@@ -35,7 +35,9 @@ class DueDate extends React.Component {
   }
 
   handleClick() {
-    this.props.onClick();
+    if (!this.props.isCalendarOpen) {
+      this.props.onClick();
+    }
   }
 
   handleNewDateSubmit(newDate) {
