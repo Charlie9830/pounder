@@ -3,7 +3,7 @@ import TaskArea from '../components/TaskArea';
 import Task from '../components/Task';
 import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
-import TaskListSettingsStore from '../stores/TaskListSettingsStore';
+import { TaskListSettingsStore } from 'pounder-stores';
 
 
 class TaskListWidget extends React.Component {

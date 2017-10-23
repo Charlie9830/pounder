@@ -6,16 +6,10 @@ import Sidebar from './Sidebar';
 import Project from './Project';
 import StatusBar from './StatusBar';
 import LockScreen from './LockScreen';
-import TaskListStore from '../stores/TaskListStore';
-import TaskStore from '../stores/TaskStore';
-import ProjectLayoutStore from '../stores/ProjectLayoutStore';
-import ProjectStore from '../stores/ProjectStore';
-import TaskListSettingsStore from '../stores/TaskListSettingsStore';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
 import Moment from 'moment';
-import ParseDueDate from '../utilities/ParseDueDate';
 import { connect } from 'react-redux';
 import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
 unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
@@ -23,8 +17,8 @@ lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addN
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp } from '../action-creators/index';
-import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS } from '../firebase/index';
+updateTaskDueDateAsync, unlockApp } from 'pounder-redux/action-creators';
+import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS } from 'pounder-firebase';
 
 // Only Import if running in Electron.
 var remote = null;

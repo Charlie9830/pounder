@@ -1,6 +1,6 @@
 import React from 'react';
 import '../assets/css/TaskListSettingsMenu.css'
-import TaskListSettingsStore from '../stores/TaskListSettingsStore';
+import { TaskListSettingsStore } from 'pounder-stores';
 
 class TaskListSettingsMenu extends React.Component {
     constructor(props) {

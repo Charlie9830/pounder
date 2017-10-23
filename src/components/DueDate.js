@@ -2,7 +2,7 @@ import React from 'react';
 import '../assets/css/DueDate.css';
 import Calendar from './Calendar';
 import Moment from 'moment';
-import ParseDueDate from '../utilities/ParseDueDate';
+import { ParseDueDate } from 'pounder-utilities';
 
 class DueDate extends React.Component {
   constructor(props) {

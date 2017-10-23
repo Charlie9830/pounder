@@ -42,7 +42,6 @@
   },
   "dependencies": {
     "7zip-bin-win": "^2.1.0",
-    "firebase": "^4.5.1",
     "firebase-tools": "^3.10.0",
     "fs-jetpack": "^1.2.0",
     "moment": "^2.18.1",
@@ -51,8 +50,6 @@
     "react-grid-layout": "^0.14.7",
     "react-redux": "^5.0.6",
     "react-resizable": "^1.7.1",
-    "redux": "^3.7.2",
-    "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0"
+    "redux": "^3.7.2"
   }
 }

@@ -1,9 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 import VisibleApp from './components/App';
-import Firebase from 'firebase';
 import Path from 'path';
-import appStore from './redux-stores/appStore';
+import { appStore } from 'pounder-redux';
 import { Provider } from 'react-redux';
 
 // Since we are using HtmlWebpackPlugin WITHOUT a template, we should create our own root node in the body element before rendering into it
