@@ -39,6 +39,8 @@ class App extends React.Component {
       currentErrorMessage: "",
     }; 
 
+    console.log(getFirestore());
+
     // Class Storage.
     this.isCtrlKeyDown = false;
     this.isInElectron = remote !== null;
