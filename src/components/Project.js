@@ -59,7 +59,12 @@ class Project extends React.Component{
 
     render() {
         // Build a list of TaskListWidgets to Render out here.
-        var taskListWidgets = this.props.taskLists.map((item, index) => {
+        // Filter out Task Lists from other Projects.
+        var filteredTaskListWidgets = this.props.taskLists.filter(taskList => {
+            return taskList.project === this.props.projectId;
+        })
+
+        var taskListWidgets = filteredTaskListWidgets.map((item, index) => {
             // Widget Layer.
             var isFocused = this.props.focusedTaskListId === item.uid;
             var isHeaderOpen = this.state.openTaskListWidgetHeaderId === item.uid;
