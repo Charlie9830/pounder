@@ -110,49 +110,6 @@ class App extends React.Component {
         this.lockApp();
       }
     }
-
-    // var importDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Import", "/", "import.json");
-    // fsJetpack.readAsync(importDirectory, 'json').then( data => {
-    //   var batch = getFirestore().batch();
-
-    //   var taskValidate = Object.values(data.tasks);
-    //   var retardTasks = [];
-
-    //   // Projects.
-    //   var projects = Object.values(data.projects);
-    //   projects.forEach(item => {
-    //     let ref = getFirestore().collection(PROJECTS).doc(item.uid);
-    //     batch.set(ref, item);
-    //   })
-
-    //   // Project Layouts.
-    //   var projectLayouts = Object.values(data.projectLayouts);
-    //   projectLayouts.forEach(item => {
-    //     let ref = getFirestore().collection(PROJECTLAYOUTS).doc(item.uid);
-    //     batch.set(ref, item);
-    //   })
-
-    //   // Task lists.
-    //   var taskLists = Object.values(data.taskLists);
-    //   taskLists.forEach(item => {
-    //     let ref = getFirestore().collection(TASKLISTS).doc(item.uid);
-    //     batch.set(ref, item);
-    //   })
-
-    //   // Tasks
-    //   var tasks = Object.values(data.tasks);
-    //   tasks.forEach(item => {
-    //     if (item.uid != undefined) {
-    //       let ref = getFirestore().collection(TASKS).doc(item.uid);
-    //       batch.set(ref, item);
-    //     }
-    //   })
-
-    //   batch.commit().then( () => {
-    //     console.log("Commit Succseful");
-    //   })
-
-    // })
   }
   
   componentWillUnmount(){
@@ -657,6 +614,51 @@ class App extends React.Component {
       // Close Application.
       remote.getCurrentWindow().close();
     }
+  }
+
+  importDatabaseFromFile() {
+    var importDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Import", "/", "import.json");
+    fsJetpack.readAsync(importDirectory, 'json').then( data => {
+      var batch = getFirestore().batch();
+
+      var taskValidate = Object.values(data.tasks);
+      var retardTasks = [];
+
+      // Projects.
+      var projects = Object.values(data.projects);
+      projects.forEach(item => {
+        let ref = getFirestore().collection(PROJECTS).doc(item.uid);
+        batch.set(ref, item);
+      })
+
+      // Project Layouts.
+      var projectLayouts = Object.values(data.projectLayouts);
+      projectLayouts.forEach(item => {
+        let ref = getFirestore().collection(PROJECTLAYOUTS).doc(item.uid);
+        batch.set(ref, item);
+      })
+
+      // Task lists.
+      var taskLists = Object.values(data.taskLists);
+      taskLists.forEach(item => {
+        let ref = getFirestore().collection(TASKLISTS).doc(item.uid);
+        batch.set(ref, item);
+      })
+
+      // Tasks
+      var tasks = Object.values(data.tasks);
+      tasks.forEach(item => {
+        if (item.uid != undefined) {
+          let ref = getFirestore().collection(TASKS).doc(item.uid);
+          batch.set(ref, item);
+        }
+      })
+
+      batch.commit().then( () => {
+        console.log("Commit was a Succsess!");
+      })
+
+    })
   }
 }
 
