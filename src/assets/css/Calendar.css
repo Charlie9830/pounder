@@ -84,6 +84,7 @@
 #DaysApplyButton {
     float: right;
     margin: 10px 10px;
+    padding: 2px;
     background: transparent;
     color: #FFF;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;

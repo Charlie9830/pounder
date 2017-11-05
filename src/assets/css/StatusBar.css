@@ -28,32 +28,6 @@
     100% { transform: rotate(360deg); }
 }
 
-.IsConnected {
-    float: left;
-    width: 16px;
-    height: 16px;
-    margin: 5px;
-    border-width: 1px;
-    border-color: #000;
-    border-style: solid;
-    border-radius: 50%;
-    background: #0A0;
-    animation: ConnectionPing 1s linear 1;
-  }
-  
-  .IsNotConnected {
-    float: left;
-    width: 16px;
-    height: 16px;
-    margin: 5px;
-    border-width: 1px;
-    border-color: #000;
-    border-style: solid;
-    border-radius: 50%;
-    background: #AA0000;
-    animation: ConnectionPing 1s linear 1;
-  }
-
   @keyframes ConnectionPing {
       0% { background: #000; }
       100% { background: #FFF; }
@@ -70,4 +44,18 @@
       font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
       font-size: 8pt;
       color: #FFF;
+      margin-left: 5px;
+      margin-right: 10px;
+  }
+
+  .PendingWrites {
+      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+      font-size: 8pt;
+      font-weight: 600;
+      color: green;
+      margin-left: 3px;
+  }
+
+  .PendingWrites[data-havePendingWrites*="true"] {
+      color: #FF9300;
   }

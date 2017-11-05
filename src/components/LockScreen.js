@@ -1,6 +1,7 @@
 import React from 'react';
 import '../assets/css/LockScreen.css'
 import PinCodeKeypad from './PinCodeKeypad';
+import { connect } from 'react-redux';
 
 
 class LockScreen extends React.Component {
@@ -45,7 +46,7 @@ class LockScreen extends React.Component {
                 </div>
                 <div className="LockScreenBackupMessageContainer">
                     <label className="LockScreenBackupMessage">
-                        {this.props.backupMessage}
+                        {this.props.lastBackupMessage}
                     </label>
                     <img className="LockScreenQuitButton" src="QuitIcon.svg" onClick={this.handleQuitButtonClick}/> 
                 </div>
@@ -113,4 +114,12 @@ class LockScreen extends React.Component {
     }
 }
 
-export default LockScreen;
+const mapStateToProps = state => {
+    return {
+        lastBackupMessage: state.lastBackupMessage
+    }
+}
+
+let VisibleLockScreen = connect(mapStateToProps)(LockScreen);
+
+export default VisibleLockScreen;

@@ -4,8 +4,8 @@ import React, { Component } from 'react';
 import MouseTrap from 'mousetrap';
 import Sidebar from './Sidebar';
 import Project from './Project';
-import StatusBar from './StatusBar';
-import LockScreen from './LockScreen';
+import VisibleStatusBar from './StatusBar';
+import VisibleLockScreen from './LockScreen';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -37,9 +37,7 @@ class App extends React.Component {
     this.state = {
       isConnectedToFirebase: false,
       currentErrorMessage: "",
-    }; 
-
-    console.log(getFirestore());
+    };
 
     // Class Storage.
     this.isCtrlKeyDown = false;
@@ -111,12 +109,50 @@ class App extends React.Component {
       if (remote.process.env.NODE_ENV === 'production') {
         this.lockApp();
       }
-
-      // TODO: Register an issue with Firebase about this.
-      // Firebase closes it's Websocket if it's been Inactive for more then 45 Seconds, then struggles to re-establish
-      // when inside Electron. This will 'ping' the firebase servers every 40 seconds.
-      // setInterval(this.exerciseFirebase, 40000);
     }
+
+    // var importDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Import", "/", "import.json");
+    // fsJetpack.readAsync(importDirectory, 'json').then( data => {
+    //   var batch = getFirestore().batch();
+
+    //   var taskValidate = Object.values(data.tasks);
+    //   var retardTasks = [];
+
+    //   // Projects.
+    //   var projects = Object.values(data.projects);
+    //   projects.forEach(item => {
+    //     let ref = getFirestore().collection(PROJECTS).doc(item.uid);
+    //     batch.set(ref, item);
+    //   })
+
+    //   // Project Layouts.
+    //   var projectLayouts = Object.values(data.projectLayouts);
+    //   projectLayouts.forEach(item => {
+    //     let ref = getFirestore().collection(PROJECTLAYOUTS).doc(item.uid);
+    //     batch.set(ref, item);
+    //   })
+
+    //   // Task lists.
+    //   var taskLists = Object.values(data.taskLists);
+    //   taskLists.forEach(item => {
+    //     let ref = getFirestore().collection(TASKLISTS).doc(item.uid);
+    //     batch.set(ref, item);
+    //   })
+
+    //   // Tasks
+    //   var tasks = Object.values(data.tasks);
+    //   tasks.forEach(item => {
+    //     if (item.uid != undefined) {
+    //       let ref = getFirestore().collection(TASKS).doc(item.uid);
+    //       batch.set(ref, item);
+    //     }
+    //   })
+
+    //   batch.commit().then( () => {
+    //     console.log("Commit Succseful");
+    //   })
+
+    // })
   }
   
   componentWillUnmount(){
@@ -141,8 +177,7 @@ class App extends React.Component {
       <div>
         {lockScreenJSX}
 
-        <StatusBar isAwaitingFirebase={this.props.isAwaitingFirebase} isConnectedToFirebase={this.props.isConnectedToFirebase}
-        errorMessage={this.props.currentErrorMessage}/>
+        <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
           <div className="SidebarFlexItemContainer">
             <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
@@ -311,7 +346,6 @@ class App extends React.Component {
 
   lockApp() {
     // Lock App.
-    // this.setState({ IsLockScreenDisplayed: true });
     this.props.dispatch(lockApp());
 
     // Trigger Firebase Backup.
@@ -396,10 +430,7 @@ class App extends React.Component {
   }
 
   postFirebaseError(error) {
-    // console.error(error);
-    // this.setState({
-    //   isAwaitingFirebase: false,
-    //   currentErrorMessage: "An error has occurred. Please consult Developer Diagnostics Log"});
+    console.error(error);
   }
 
   handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
@@ -408,8 +439,8 @@ class App extends React.Component {
 
   backupFirebase() {
     if (this.isInElectron) {
-      var data = this.pullDownDatabase().then(data => {
-        this.writeDatabaseToFile(data.toJSON());
+      this.pullDownDatabase().then(data => {
+        this.writeDatabaseToFile(JSON.stringify(data));
       }).catch(error => {
         this.postFirebaseError(error);
       })
@@ -615,8 +646,8 @@ class App extends React.Component {
   getLockScreen() {
     if (this.props.isLockScreenDisplayed) {
       return (
-        <LockScreen onAccessGranted={this.handleLockScreenAccessGranted}
-          backupMessage={this.props.lastBackupMessage} onQuitButtonClick={this.handleQuitButtonClick} />
+        <VisibleLockScreen onAccessGranted={this.handleLockScreenAccessGranted}
+         onQuitButtonClick={this.handleQuitButtonClick} />
       )
     }
   }
@@ -644,7 +675,6 @@ const mapStateToProps = state => {
     openCalendarId: state.openCalendarId,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
     projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
-    lastBackupMessage: state.lastBackupMessage,
     isLockScreenDisplayed: state.isLockScreenDisplayed,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
   }
