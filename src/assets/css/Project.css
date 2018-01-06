@@ -6,7 +6,7 @@
 }
 
 .Project {
-    background: rgba(30,30,30,255);
+    background: rgba(0,0,0,255);
     width: 100%;
     height: 100%;
     margin:0px;
@@ -14,7 +14,7 @@
 }
 
 .ProjectToolBar {
-    background: rgba(37,37,37,255);
+    background: rgba(20,20,20,255);
     width: 100%;
     margin-top: 30px;
     -webkit-user-select: none;

@@ -23,8 +23,8 @@
   flex-shrink: 1;
   width: 12px;
   height: 12px;
-  border: 1px solid #777;
-  background: rgba(80,80,80,255);
+  border: 1px solid #555;
+  background: rgba(40,40,40,255);
   margin-left: 5px;
   animation: isChecking 0.25s linear 1;
 }

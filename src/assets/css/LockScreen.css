@@ -1,7 +1,7 @@
 .LockScreenContainer {
     display: block;
     position: fixed;
-    background: rgba(37,37,37,255);
+    background: rgba(0,0,0,255);
     margin: 0px;
     padding: 0px;
     width: 100%;

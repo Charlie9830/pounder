@@ -6,7 +6,7 @@
     color: #FFF;
     margin: 5px;
     cursor: pointer;
-    opacity: 0.85
+    opacity: 0.6;
 }
 
 .LockButton {
@@ -16,7 +16,7 @@
     color: #FFF;
     margin: 5px;
     cursor: pointer;
-    opacity: 0.85;
+    opacity: 0.6;
 }
 
 .ToolBarButtonSeparator {

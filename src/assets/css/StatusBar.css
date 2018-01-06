@@ -4,7 +4,7 @@
     height: 30px;
     margin: 0px;
     padding: 0px;
-    background: rgba(37,37,37,255);
+    background: rgba(20,20,20,255);
     -webkit-user-select: none;
     user-select: none;
 }
@@ -21,6 +21,7 @@
     float: left;
     width: 24px;
     height: 24px;
+    opacity: 0.75;
 }
 
 @keyframes spin {
@@ -46,6 +47,7 @@
       color: #FFF;
       margin-left: 5px;
       margin-right: 10px;
+      opacity: 0.5;
   }
 
   .PendingWrites {
@@ -58,4 +60,5 @@
 
   .PendingWrites[data-havePendingWrites*="true"] {
       color: #FF9300;
+      font-weight: 700;
   }
