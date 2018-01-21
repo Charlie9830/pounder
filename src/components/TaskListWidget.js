@@ -24,6 +24,7 @@ class TaskListWidget extends React.Component {
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleSettingsButtonClick = this.handleSettingsButtonClick.bind(this);
+        this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     }
 
     componentDidMount(){
@@ -67,7 +68,9 @@ class TaskListWidget extends React.Component {
                     handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
                     OnKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
                     onInputUnmounting={this.handleTaskInputUnmounting} onDueDateClick={this.handleDueDateClick}
-                    isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}/>
+                    isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
+                    isHighPriority={item.isHighPriority}
+                    onPriorityToggleClick={this.handleTaskPriorityToggleClick}/>
                 )
             })
         }
@@ -86,6 +89,10 @@ class TaskListWidget extends React.Component {
                 </TaskArea>
             </div>
         )
+    }
+
+    handleTaskPriorityToggleClick(taskId, newValue) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue);
     }
 
     handleSettingsButtonClick() {

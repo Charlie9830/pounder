@@ -17,6 +17,7 @@ class Task extends React.Component {
         this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
+        this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
     }
 
     render() {
@@ -38,17 +39,23 @@ class Task extends React.Component {
                     <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
                         <div className="TaskTextContainer">
                             <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
-                                onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting} />
+                                onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
+                                isHighPriority={this.props.isHighPriority}/>
                         </div>
                     </div>
                     <div className="DueDateContainer">
                         <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
-                            isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} />
+                            isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
+                            onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority} />
                     </div>
                 </div>
             </div>
             
         )
+    }
+
+    handlePriorityToggleClick(newValue) {
+        this.props.onPriorityToggleClick(this.props.taskId, newValue);
     }
 
     handleDueDateClick() {

@@ -3,7 +3,7 @@
   "productName": "Pounder",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
-  "version": "1.2.1",
+  "version": "1.2.3",
   "license": "MIT",
   "main": "main.js",
   "scripts": {

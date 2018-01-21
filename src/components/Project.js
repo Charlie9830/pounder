@@ -37,6 +37,7 @@ class Project extends React.Component{
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
+        this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     }
     
     componentDidMount() {
@@ -101,6 +102,7 @@ class Project extends React.Component{
                      openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
+                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
                      />   
                 </div>
             )
@@ -122,6 +124,10 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    handleTaskPriorityToggleClick(taskId, newValue) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue);
     }
 
     handleLockButtonClick() {

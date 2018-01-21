@@ -14,6 +14,13 @@
   margin-left: 8px;
 }
 
+.TaskText[data-isHighPriority*="true"] {
+  color: #D11;
+  font-weight: 700;
+  font-stretch: 1;
+}
+
+
 .Fade {
   opacity: 0.15;
   font-weight: 200;

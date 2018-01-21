@@ -17,7 +17,7 @@ lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addN
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp } from 'pounder-redux/action-creators';
+updateTaskDueDateAsync, unlockApp, updateTaskPriority } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS } from 'pounder-firebase';
 
 // Only Import if running in Electron.
@@ -78,6 +78,7 @@ class App extends React.Component {
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
     this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
+    this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
   }
 
   componentDidMount(){
@@ -160,11 +161,16 @@ class App extends React.Component {
               openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
+              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
               />
           </div>
         </div>
       </div>
     );
+  }
+
+  handleTaskPriorityToggleClick(taskId, newValue) {
+    this.props.dispatch(updateTaskPriority(taskId, newValue));
   }
 
   getSelectedProjectTasks() {
@@ -206,10 +212,12 @@ class App extends React.Component {
   }
 
   handleCtrlKeyDown(mouseTrap) {
+    console.log("Down");
     this.isCtrlKeyDown = true;
   }
 
   handleCtrlKeyUp(mouseTrap) {
+    console.log("Up");
     this.isCtrlKeyDown = false;
   }
 
@@ -301,6 +309,9 @@ class App extends React.Component {
         remote.getCurrentWindow().setFullScreen(false);
       }
     }
+
+    // Force Control Key up.
+    this.isCtrlKeyDown = false;
   }
 
   lockApp() {

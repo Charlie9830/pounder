@@ -14,8 +14,32 @@
     border: 1px solid #FFF;
 }
 
+.PriorityToggle {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    color: #FFF;
+    font-weight: 500;
+    font-size: 20px;
+    vertical-align: middle;
+}
 
-/* Keep the same as .CalenderPopupCOntainer .ShortcutItemContainerIsSelected */
+.PriorityToggle[data-isHighPriority*=true] {
+    color: #F00;
+    font-weight: 600;
+}
+
+.PriorityToggleContainer {
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    padding-left: 8px;
+    padding-right: 8px;
+}
+
+.PriorityToggleContainer:hover {
+    background: rgba(52,52,52,255);
+}
+
+/* Keep the same as .CalenderPopupContainer .ShortcutItemContainerIsSelected */
 .CalendarPopupContainer .ShortcutItemContainer, #DateLabelContainer { 
     display: table;
     width: 100%;

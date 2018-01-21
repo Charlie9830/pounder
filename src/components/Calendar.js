@@ -24,6 +24,7 @@ class Calendar extends React.Component {
         this.handleDaysApplyButtonClick = this.handleDaysApplyButtonClick.bind(this);
         this.submitDays = this.submitDays.bind(this);
         this.handleDaysInputKeyPress = this.handleDaysInputKeyPress.bind(this);
+        this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
 
         const dateFormat = "DD-MM-YYYY";
     }
@@ -34,7 +35,14 @@ class Calendar extends React.Component {
 
         return (
             <div className="CalendarPopupContainer">
-                {humanFriendlyDate}
+                <div>
+                    {humanFriendlyDate}
+                    <div className="PriorityToggleContainer" onClick={this.handlePriorityToggleClick}>
+                        <label className="PriorityToggle" data-isHighPriority={this.props.isHighPriority}>
+                            !
+                        </label>
+                    </div>
+                </div>
                 <div className="ShortcutItemContainer" onClick={this.handleTodayItemClick}>
                     <label className="ItemLabel"> Today </label>
                 </div>
@@ -58,6 +66,10 @@ class Calendar extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handlePriorityToggleClick(e) {
+        this.props.onPriorityToggleClick(!this.props.isHighPriority);
     }
 
     handleDaysInputKeyPress(e) {
