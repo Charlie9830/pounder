@@ -87,18 +87,6 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
-    // TODO: Bring connection Status Monitoring over to Firestore.
-    // Setup Connection Monitoring.
-    // var connectionRef = Firebase.database().ref(".info/connected");
-    // connectionRef.on("value", snap => {
-    //   if (snap.val() === true) {
-    //     this.setState({isConnectedToFirebase: true})
-    //   }
-    //   else {
-    //     this.setState({isConnectedToFirebase: false})
-    //   }
-    // })
-
     // Get Projects (Also attaches a Value listener for future changes).
     this.props.dispatch(getProjectsAsync());
 
@@ -212,12 +200,10 @@ class App extends React.Component {
   }
 
   handleCtrlKeyDown(mouseTrap) {
-    console.log("Down");
     this.isCtrlKeyDown = true;
   }
 
   handleCtrlKeyUp(mouseTrap) {
-    console.log("Up");
     this.isCtrlKeyDown = false;
   }
 
@@ -669,6 +655,31 @@ class App extends React.Component {
         console.log("Commit was a Succsess!");
       })
 
+    })
+  }
+
+  migrateDatabaseTo123() {
+    console.log("Starting Migration to 1.2.3");
+
+    getFirestore().collection(TASKS).get().then(snapshot => {
+      var taskIds = [];
+      snapshot.forEach(doc => {
+        taskIds.push(doc.id);
+      })
+
+      console.log(taskIds.length);
+  
+      var batch = getFirestore().batch();
+  
+      taskIds.forEach(id => {
+        var ref = getFirestore().collection(TASKS).doc(id);
+  
+        batch.update(ref, {isHighPriority: false});
+      })
+  
+      batch.commit().then(() => {
+        console.log("Commit Sucsessful");
+      })
     })
   }
 }
