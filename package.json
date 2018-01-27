@@ -3,7 +3,7 @@
   "productName": "Pounder",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -30,12 +30,12 @@
     "electron": "^1.7.5",
     "electron-builder": "^19.27.3",
     "electron-devtools-installer": "^2.2.0",
-    "electron-packager": "^8.7.2",
+    "electron-packager": "^10.1.2",
     "extract-text-webpack-plugin": "^2.1.0",
     "file-loader": "^0.11.1",
     "html-webpack-plugin": "^2.30.1",
-    "react": "^15.4.2",
-    "react-dom": "^15.4.2",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
     "style-loader": "^0.17.0",
     "webpack": "^2.7.0",
     "webpack-dev-server": "^2.7.1"
@@ -43,12 +43,12 @@
   "dependencies": {
     "7zip-bin-win": "^2.1.0",
     "fs-jetpack": "^1.2.0",
-    "moment": "^2.18.1",
+    "moment": "^2.20.1",
     "mousetrap": "^1.6.1",
-    "react-day-picker": "^6.1.0",
-    "react-grid-layout": "^0.14.7",
+    "react-day-picker": "^6.2.1",
+    "react-grid-layout": "^0.16.2",
     "react-redux": "^5.0.6",
-    "react-resizable": "^1.7.1",
+    "react-resizable": "^1.7.5",
     "redux": "^3.7.2"
   }
 }

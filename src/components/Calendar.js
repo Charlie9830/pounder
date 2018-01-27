@@ -38,7 +38,7 @@ class Calendar extends React.Component {
                 <div>
                     {humanFriendlyDate}
                     <div className="PriorityToggleContainer" onClick={this.handlePriorityToggleClick}>
-                        <label className="PriorityToggle" data-isHighPriority={this.props.isHighPriority}>
+                        <label className="PriorityToggle" data-ishighpriority={this.props.isHighPriority}>
                             !
                         </label>
                     </div>

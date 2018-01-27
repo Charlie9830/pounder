@@ -58,7 +58,7 @@
       margin-left: 3px;
   }
 
-  .PendingWrites[data-havePendingWrites*="true"] {
+  .PendingWrites[data-havependingwrites*="true"] {
       color: #FF9300;
       font-weight: 700;
   }

@@ -14,7 +14,7 @@
   margin-left: 8px;
 }
 
-.TaskText[data-isHighPriority*="true"] {
+.TaskText[data-ishighpriority*="true"] {
   color: #D11;
   font-weight: 700;
   font-stretch: 1;
