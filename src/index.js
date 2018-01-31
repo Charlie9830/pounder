@@ -14,7 +14,7 @@ document.body.appendChild( root );
 document.body.style.background = "rgba(37,37,37,255)";
 
 // Setup Backend.
-setupBackend("development", "desktop");
+setupBackend("production", "desktop");
 
 // Now we can render our application into it
 render( <Provider store={appStore}><VisibleApp/></Provider>, document.getElementById('root') );

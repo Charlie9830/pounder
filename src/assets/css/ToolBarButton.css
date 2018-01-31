@@ -19,6 +19,15 @@
     opacity: 0.6;
 }
 
+.AccountButton {
+    float: right;
+    width: 36px;
+    height: 36px;
+    color: #FFF;
+    margin: 5px;
+    cursor: pointer;
+}
+
 .ToolBarButtonSeparator {
     height: 100%;
     margin: 0px 20px 0px 20px;
