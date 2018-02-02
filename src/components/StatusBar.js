@@ -10,7 +10,7 @@ class StatusBar extends React.Component {
         return (
             <div className="StatusBarContainer">
                 <img className="NotAwaitingFirebase" src="LoadingIcon.svg"/>
-                <label className="VersionNumber"> Version 1.2.4 </label>
+                <label className="VersionNumber"> Version 1.2.5 </label>
                 <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
                 <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>
                 <label className="PendingWrites" data-havependingwrites={this.props.taskListsHavePendingWrites}> Tl </label>

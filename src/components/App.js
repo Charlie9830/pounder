@@ -21,6 +21,15 @@ addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAs
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 
+const KEYBOARD_COMBOS = {
+  MOD_N: 'mod+n',
+  MOD_SHIFT_N: 'mod+shift+n',
+  SHIFT_ESC: 'shift+esc',
+  MOD_SHIFT_I: 'mod+shift+i',
+  MOD_F: 'mod+f',
+  MOD_DEL: 'mod+del'
+};
+
 // Only Import if running in Electron.
 var remote = null;
 var fsJetpack = null;
@@ -80,18 +89,22 @@ class App extends React.Component {
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
     this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
+    this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
   }
 
   componentDidMount(){
     // MouseTrap.
-    MouseTrap.bind(['mod+n', 'mod+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
+    MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
+    MouseTrap.bind("del", this.handleDeleteKeyPress);
 
     // Get Projects (Also attaches a Value listener for future changes).
     this.props.dispatch(getProjectsAsync());
+
     // Get Task Lists (Also Attaches a value listener for future changes).
     this.props.dispatch(getTaskListsAsync());
+
     // Get Tasks (Also attaches a Value listener for future changes).
     this.props.dispatch(getTasksAsync());
 
@@ -105,9 +118,10 @@ class App extends React.Component {
   }
   
   componentWillUnmount(){
-    MouseTrap.unBind(['ctrl+n', 'ctrl+shift+n', 'shift+esc', 'mod+shift+i', 'mod+f'], this.handleKeyboardShortcut);
+    MouseTrap.unBind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
     MouseTrap.unBind("mod", this.handleCtrlKeyDown);
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
+    MouseTrap.unbind("del", this.handleDeleteKeyPress);
 
     // Stop listening to the Database.
     this.props.dispatch(unsubscribeProjectsAsync());
@@ -207,6 +221,10 @@ class App extends React.Component {
     this.isCtrlKeyDown = false;
   }
 
+  handleDeleteKeyPress(mouseTrap) {
+    this.props.dispatch(removeSelectedTaskAsync());
+  }
+
   handleTaskClick(element, projectId, taskListWidgetId) {
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.props.selectedTask;
@@ -263,26 +281,26 @@ class App extends React.Component {
   }
 
 
-  handleKeyboardShortcut(mouseTrap){
+  handleKeyboardShortcut(mouseTrap, combo){
     // Ctrl + n
-    if (mouseTrap.ctrlKey && mouseTrap.key === "n")
+    if (combo === KEYBOARD_COMBOS.MOD_N)
       {
         this.addNewTask();
       }
 
     // Ctrl + Shift + N
-    if (mouseTrap.ctrlKey && mouseTrap.shiftKey && mouseTrap.key === "N") {
+    if (combo === KEYBOARD_COMBOS.MOD_SHIFT_N) {
       // Add a new TaskList.
       this.addNewTaskList();
     }
 
     // Shift + Escape
-    if (mouseTrap.shiftKey && mouseTrap.key === "Escape") {
+    if (combo === KEYBOARD_COMBOS.SHIFT_ESC) {
       this.lockApp();
     }
 
     // Ctrl + Shift + I
-    if (mouseTrap.ctrlKey && mouseTrap.shiftKey && mouseTrap.key === "I") {
+    if (combo === KEYBOARD_COMBOS.MOD_SHIFT_I) {
       if (this.isInElectron) {
         // Open Dev Tools.
         remote.getCurrentWindow().openDevTools();
@@ -290,9 +308,15 @@ class App extends React.Component {
     }
 
     // Ctrl + F
-    if (mouseTrap.ctrlKey && mouseTrap.key === "f") {
+    if (combo === KEYBOARD_COMBOS.MOD_F) {
       if (this.isInElectron) {
         remote.getCurrentWindow().setFullScreen(false);
+      }
+    }
+
+    if (combo === KEYBOARD_COMBOS.MOD_DEL) {
+      if (this.props.focusedTaskListId !== -1 && confirm("Are you sure?") === true) {
+        this.removeTaskList(this.props.focusedTaskListId);
       }
     }
 
