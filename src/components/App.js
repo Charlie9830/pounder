@@ -18,9 +18,8 @@ lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addN
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, subscribeToAuth, openAccountScreen, closeAccountScreen,
-logInUser, logOutUser } from 'pounder-redux/action-creators';
-import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS } from 'pounder-firebase';
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, } from 'pounder-redux/action-creators';
+import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 
 // Only Import if running in Electron.
 var remote = null;
@@ -81,9 +80,6 @@ class App extends React.Component {
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
     this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
-    this.handleAccountButtonClick = this.handleAccountButtonClick.bind(this);
-    this.handleAccountScreenCloseButtonClick = this.handleAccountScreenCloseButtonClick.bind(this);
-    this.handleAccountScreenLogInLogOutButtonClick = this.handleAccountScreenLogInLogOutButtonClick.bind(this);
   }
 
   componentDidMount(){
@@ -92,16 +88,12 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
 
-    // Subscribe to Firebase Authorisation changes. Auth observer will populate Projects, Tasklists and tasks once
-    // authorisation has been granted.
-    this.props.dispatch(subscribeToAuth());
-
     // Get Projects (Also attaches a Value listener for future changes).
-    // this.props.dispatch(getProjectsAsync());
-    // // Get Task Lists (Also Attaches a value listener for future changes).
-    // this.props.dispatch(getTaskListsAsync());
-    // // Get Tasks (Also attaches a Value listener for future changes).
-    // this.props.dispatch(getTasksAsync());
+    this.props.dispatch(getProjectsAsync());
+    // Get Task Lists (Also Attaches a value listener for future changes).
+    this.props.dispatch(getTaskListsAsync());
+    // Get Tasks (Also attaches a Value listener for future changes).
+    this.props.dispatch(getTasksAsync());
 
     // Electron only Config.
     if (this.isInElectron) {
@@ -109,6 +101,7 @@ class App extends React.Component {
         this.lockApp();
       }
     }
+
   }
   
   componentWillUnmount(){
@@ -128,12 +121,10 @@ class App extends React.Component {
     var lockScreenJSX = this.getLockScreen();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
-    var accountScreenJSX = this.getAccountScreenJSX(this.props);
 
     return (
       <div>
         {lockScreenJSX}
-        {accountScreenJSX}
 
         <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
@@ -158,43 +149,12 @@ class App extends React.Component {
               openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
-              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAccountButtonClick={this.handleAccountButtonClick}
-              isUserLoggedIn={this.props.isUserLoggedIn}
+              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
               />
           </div>
         </div>
       </div>
     );
-  }
-
-  getAccountScreenJSX(props) {
-    if (props.isAccountScreenOpen) {
-      return (
-        <div>
-          <AccountScreen onCloseButtonClick={this.handleAccountScreenCloseButtonClick}
-           onButtonClick={this.handleAccountScreenLogInLogOutButtonClick} authMessage={this.props.authMessage}
-           isUserLoggedIn={this.props.isUserLoggedIn}/>
-        </div>
-      )
-    }
-  }
-
-  handleAccountScreenLogInLogOutButtonClick(email, password) {
-    if (this.props.isUserLoggedIn === false) {
-      this.props.dispatch(logInUser(email, password))
-    }
-
-    else {
-      this.props.dispatch(logOutUser());
-    }
-  }
-
-  handleAccountScreenCloseButtonClick() {
-    this.props.dispatch(closeAccountScreen());
-  }
-
-  handleAccountButtonClick() {
-    this.props.dispatch(openAccountScreen());
   }
 
   handleTaskPriorityToggleClick(taskId, newValue) {
@@ -741,9 +701,6 @@ const mapStateToProps = state => {
     projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
     isLockScreenDisplayed: state.isLockScreenDisplayed,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
-    isUserLoggedIn: state.isUserLoggedIn,
-    authMessage: state.authMessage,
-    isAccountScreenOpen: state.isAccountScreenOpen,
   }
 }
 

@@ -38,7 +38,6 @@ class Project extends React.Component{
         this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
-        this.handleAccountButtonClick = this.handleAccountButtonClick.bind(this);
     }
     
     componentDidMount() {
@@ -116,8 +115,7 @@ class Project extends React.Component{
                 <div className="ProjectToolBar">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
-                    onLockButtonClick={this.handleLockButtonClick} onAccountButtonClick={this.handleAccountButtonClick}
-                    isUserLoggedIn={this.props.isUserLoggedIn} authMessage={this.props.authMessage}/>
+                    onLockButtonClick={this.handleLockButtonClick}/>
                 </div>
                 <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
                     cols={17} rows={8} rowHeight={100} width={this.state.rglWidth}
@@ -126,10 +124,6 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
-    }
-
-    handleAccountButtonClick() {
-        this.props.onAccountButtonClick();
     }
 
     handleTaskPriorityToggleClick(taskId, newValue) {

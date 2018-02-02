@@ -11,13 +11,10 @@ class ProjectToolBar extends React.Component {
         this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
         this.handleRemoveTaskListButtonCLick = this.handleRemoveTaskListButtonCLick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
-        this.handleAccountButtonClick = this.handleAccountButtonClick.bind(this);
 
     }
 
     render() {
-        var accountIconSrc = this.props.isUserLoggedIn ? "AccountIconLoggedIn.svg" : "AccountIconLoggedOut.svg";
-
         return (
             <div>
                 <img className="ToolBarButton" src="NewTaskIcon.svg" onClick={this.handleAddTaskButtonClick}/>
@@ -25,14 +22,9 @@ class ProjectToolBar extends React.Component {
                 <span className="ToolBarButtonSeparator"/>
                 <img className="ToolBarButton" src="NewTaskListIcon.svg" onClick={this.handleAddTaskListButtonClick}/>
                 <img className="ToolBarButton" src="RemoveTaskListIcon.svg" onClick={this.handleRemoveTaskListButtonCLick}/>
-                <img className="AccountButton" src={accountIconSrc} onClick={this.handleAccountButtonClick}/>
                 <img className="LockButton" src="LockIcon.svg" onClick={this.handleLockButtonClick}/>
             </div>
         )
-    }
-
-    handleAccountButtonClick(e) {
-        this.props.onAccountButtonClick();
     }
 
     handleLockButtonClick(e) {
