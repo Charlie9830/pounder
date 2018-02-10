@@ -2,6 +2,7 @@
 
 // Import parts of electron to use
 const {app, BrowserWindow} = require('electron');
+const electron = require('electron');
 const path = require('path')
 const url = require('url')
 
@@ -43,6 +44,11 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     mainWindow.maximize()
+
+    electron.powerMonitor.on('resume', () => {
+      mainWindow.webContents.send('resume');
+    })
+
     // Open the DevTools automatically if developing
     if ( dev ) {
       mainWindow.webContents.openDevTools();

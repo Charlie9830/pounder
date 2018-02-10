@@ -31,12 +31,14 @@ const KEYBOARD_COMBOS = {
 };
 
 // Only Import if running in Electron.
+var electron = null;
 var remote = null;
 var fsJetpack = null;
 
 if (process.versions['electron'] !== undefined) {
   remote = require('electron').remote;
   fsJetpack = require('fs-jetpack');
+  electron = require('electron');
 }
 
 class App extends React.Component {
@@ -90,6 +92,8 @@ class App extends React.Component {
     this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
+    this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
+    this.subscribeToDatabase = this.subscribeToDatabase.bind(this);
   }
 
   componentDidMount(){
@@ -99,21 +103,14 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     MouseTrap.bind("del", this.handleDeleteKeyPress);
 
-    // Get Projects (Also attaches a Value listener for future changes).
-    this.props.dispatch(getProjectsAsync());
+    // Pull down Data from Database, will also attach listeners for future changes.
+    this.subscribeToDatabase();
 
-    // Get Task Lists (Also Attaches a value listener for future changes).
-    this.props.dispatch(getTaskListsAsync());
-
-    // Get Tasks (Also attaches a Value listener for future changes).
-    this.props.dispatch(getTasksAsync());
-
-    // Electron only Config.
-    if (this.isInElectron) {
-      if (remote.process.env.NODE_ENV === 'production') {
-        this.lockApp();
-      }
-    }
+    electron.ipcRenderer.on('resume', () => {
+      // Refresh Data.
+      this.unsubscribeFromDatabase();
+      this.subscribeToDatabase();
+    })
 
   }
   
@@ -123,11 +120,7 @@ class App extends React.Component {
     MouseTrap.unBind("mod", this.handleCtrlKeyUp);
     MouseTrap.unbind("del", this.handleDeleteKeyPress);
 
-    // Stop listening to the Database.
-    this.props.dispatch(unsubscribeProjectsAsync());
-    this.props.dispatch(unsubscribeTaskListsAsync());
-    this.props.dispatch(unsubscribeTasksAsync());
-    this.props.dispatch(unsubscribeProjectLayoutsAsync());
+    this.unsubscribeFromDatabase();
   }
 
   render() {
@@ -169,6 +162,26 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  subscribeToDatabase() {
+        // Get Projects (Also attaches a Value listener for future changes).
+        this.props.dispatch(getProjectsAsync());
+
+        // Get Task Lists (Also Attaches a value listener for future changes).
+
+        this.props.dispatch(getTaskListsAsync());   
+        // Get Tasks (Also attaches a Value listener for future changes).
+        this.props.dispatch(getTasksAsync());
+    
+  }
+
+  unsubscribeFromDatabase() {
+    // Stop listening to the Database.
+    this.props.dispatch(unsubscribeProjectsAsync());
+    this.props.dispatch(unsubscribeTaskListsAsync());
+    this.props.dispatch(unsubscribeTasksAsync());
+    this.props.dispatch(unsubscribeProjectLayoutsAsync());
   }
 
   handleTaskPriorityToggleClick(taskId, newValue) {
