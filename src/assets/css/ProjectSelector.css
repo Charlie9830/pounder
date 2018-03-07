@@ -38,6 +38,14 @@
   background: #F00;
 }
 
+.ProjectSelectorIcon[data-colour*="YellowRed"] {
+  background: #FF9300;
+  border: 2px red solid;
+  width: 14px; /* Width and Height to account for Increased Border */
+  height: 14px;
+  line-height: 12px;
+}
+
 .ProjectSelectorIcon[data-colour*="Yellow"] {
   background: #FF9300;
 }
@@ -56,8 +64,7 @@
   font-size: 8pt;
   color: #FFF;
   text-align: center;
-  margin: 0 auto;
-  line-height: 16px;
+  margin: 0px auto;
 }
 
 #projectSelectorInput {

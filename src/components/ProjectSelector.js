@@ -42,6 +42,9 @@ class ProjectSelector extends React.Component {
                 <div className="ProjectSelectorIcon" data-colour="Red" data-count={props.dueDateDisplay.reds}>
                     <label className="ProjectSelectorIconText"> {props.dueDateDisplay.reds} </label>
                 </div>
+                <div className="ProjectSelectorIcon" data-colour="YellowRed" data-count={props.dueDateDisplay.reds}>
+                    <label className="ProjectSelectorIconText"> {props.dueDateDisplay.reds} </label>
+                </div>
                 <div className="ProjectSelectorIcon" data-colour="Yellow" data-count={props.dueDateDisplay.yellows}>
                     <label className="ProjectSelectorIconText"> {props.dueDateDisplay.yellows} </label>
                 </div>

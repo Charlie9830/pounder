@@ -20,9 +20,13 @@
   font-size: 7pt;
   font-weight: 700;
   text-align: center;
-  margin: 0 auto;
+  margin-left: -1px; /* Makes the "Today" text more centered */
   line-height: 28px; /* Set height: of .DueDate Equal to This */
   user-select: none;
+}
+
+.Today .DueDateText {
+  line-height: 24px; /* Override Line Height to re center text */
 }
 
 .Complete {
@@ -41,6 +45,13 @@
 
 .Later {
   background: #22B30B;
+}
+
+.Today {
+  background: #FF9300;
+  border: 4px #CC0000 solid;
+  height: 24px;
+  width: 24px;
 }
 
 .NotSet {

@@ -139,7 +139,8 @@ class App extends React.Component {
             <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} />
+              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} 
+            />
           </div>
           <div className="ProjectFlexItemContainer">
             <Project className="Project" taskLists={this.props.taskLists} tasks={this.props.tasks} selectedTask={this.props.selectedTask}
@@ -157,7 +158,7 @@ class App extends React.Component {
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
-              />
+            />
           </div>
         </div>
       </div>
@@ -169,8 +170,8 @@ class App extends React.Component {
         this.props.dispatch(getProjectsAsync());
 
         // Get Task Lists (Also Attaches a value listener for future changes).
-
-        this.props.dispatch(getTaskListsAsync());   
+        this.props.dispatch(getTaskListsAsync());  
+         
         // Get Tasks (Also attaches a Value listener for future changes).
         this.props.dispatch(getTasksAsync());
     
