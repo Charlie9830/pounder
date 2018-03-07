@@ -3,6 +3,7 @@ import '../assets/css/Calendar.css';
 import '../assets/css/react-day-picker/style.css';
 import DayPicker from 'react-day-picker';
 import Moment from 'moment';
+import { getDayPickerDate, getClearedDate, getDaysForwardDate, getWeeksForwardDate } from 'pounder-utilities';
 
 
 class Calendar extends React.Component {
@@ -107,23 +108,23 @@ class Calendar extends React.Component {
     }
 
     handleNoDueDateClick() {
-        this.submitNewDateSelection("");
+        this.submitNewDateSelection(getClearedDate());
     }
 
     handleDayClick(day) {
-        this.submitNewDateSelection(new Moment(day, this.dateFormat));
+        this.submitNewDateSelection(getDayPickerDate(day));
     }
 
     handleTodayItemClick() {
-        this.submitNewDateSelection(new Moment(new Date(), this.dateFormat));
+        this.submitNewDateSelection(getDaysForwardDate(0));
     }
 
     handleTomorrowItemClick() {
-        this.submitNewDateSelection(new Moment(new Date(), this.dateFormat).add(1, 'd'));
+        this.submitNewDateSelection(getDaysForwardDate(1));
     }
 
     handleOneWeekItemClick() {
-        this.submitNewDateSelection(new Moment(new Date(), this.dateFormat).add(7, 'd'));
+        this.submitNewDateSelection(getWeeksForwardDate(1));
     }
 
     handleDaysChanged() {
@@ -136,7 +137,7 @@ class Calendar extends React.Component {
 
     submitDays() {
         var days = this.refs.DaysInput.value;
-        this.submitNewDateSelection(new Moment(new Date(), this.dateFormat).add(days, 'd'));
+        this.submitNewDateSelection(getDaysForwardDate(days));
     }
 
     submitNewDateSelection(newDate) {
