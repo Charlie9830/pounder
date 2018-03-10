@@ -7,8 +7,8 @@
 .DueDate {
   position: relative;
   border-Radius: 50%;
-  width: 28px;
-  height: 28px; /* Set line-height of .DueDateText equal to this */
+  width: 30px;
+  height: 30px; /* Set line-height of .DueDateText equal to this */
   color: #FFF;
   flex-grow: 1;
   margin-right: 5px;
@@ -21,12 +21,8 @@
   font-weight: 700;
   text-align: center;
   margin-left: -1px; /* Makes the "Today" text more centered */
-  line-height: 28px; /* Set height: of .DueDate Equal to This */
+  line-height: 30px; /* Set height: of .DueDate Equal to This */
   user-select: none;
-}
-
-.Today .DueDateText {
-  line-height: 24px; /* Override Line Height to re center text */
 }
 
 .Complete {
@@ -48,10 +44,12 @@
 }
 
 .Today {
-  background: #FF9300;
-  border: 4px #CC0000 solid;
-  height: 24px;
-  width: 24px;
+  background: #00D;
+}
+
+.Today .DueDateText {
+  font-weight: 700;
+  font-stretch: extra-condensed;
 }
 
 .NotSet {

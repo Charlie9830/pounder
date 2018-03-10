@@ -27,7 +27,7 @@
 
 .ProjectSelectorIcon {
   float: right;
-  margin: 0px 2px;
+  margin: 0px 1px;
   width: 16px;
   height: 16px;
   border-radius: 50%;
@@ -38,12 +38,8 @@
   background: #F00;
 }
 
-.ProjectSelectorIcon[data-colour*="YellowRed"] {
-  background: #FF9300;
-  border: 2px red solid;
-  width: 14px; /* Width and Height to account for Increased Border */
-  height: 14px;
-  line-height: 12px;
+.ProjectSelectorIcon[data-colour*="Blue"] {
+  background: #01D;
 }
 
 .ProjectSelectorIcon[data-colour*="Yellow"] {
@@ -64,6 +60,7 @@
   font-size: 8pt;
   color: #FFF;
   text-align: center;
+  line-height: 16px;
   margin: 0px auto;
 }
 
