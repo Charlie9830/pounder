@@ -111,7 +111,6 @@ class App extends React.Component {
       this.unsubscribeFromDatabase();
       this.subscribeToDatabase();
     })
-
   }
   
   componentWillUnmount(){
