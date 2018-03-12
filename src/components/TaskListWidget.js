@@ -155,6 +155,10 @@ class TaskListWidget extends React.Component {
         return a.isComplete - b.isComplete;
     }
 
+    taskSortPriorityHelper(a,b) {
+        return b.isHighPriority - a.isHighPriority;
+    }
+
     taskSortDueDateHelper(a, b) {
         var dueDateA = a.dueDate.length === 0 ? Infinity : new Date(a.dueDate);
         var dueDateB = b.dueDate.length === 0 ? Infinity : new Date(b.dueDate);
@@ -179,6 +183,10 @@ class TaskListWidget extends React.Component {
 
         if (sortBy === "date added") {
             return this.taskSortDateAddedHelper;
+        }
+
+        if (sortBy === "priority") {
+            return this.taskSortPriorityHelper;
         }
     } 
 

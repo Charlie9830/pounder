@@ -3,10 +3,12 @@
     position: absolute;
     top: 5px;
     left: 5px;
-    width: 150px;
-    height: 150px;
+    width: 160px;
+    height: 175px;
     z-index: 2;
     background: rgba(37,37,37,255);
+    border: 1px solid white;
+    box-shadow:  5px 5px 10px 0px #111;
 }
 
 .TaskListSettingsMenuContainer {
