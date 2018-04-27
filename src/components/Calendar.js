@@ -99,7 +99,7 @@ class Calendar extends React.Component {
             var date = new Moment(this.props.dueDate);
             return (
                 <div id="DateLabelContainer">
-                    <label id="DateLabel"> {date.date()}/{date.month()}/{date.year()} </label>
+                    <label id="DateLabel"> {date.date()}/{date.month() + 1}/{date.year()} </label>
                 </div>
             )
         }
