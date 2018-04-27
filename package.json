@@ -43,7 +43,6 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
-    "7zip-bin-win": "^2.1.0",
     "fs-jetpack": "^1.2.0",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.1",
