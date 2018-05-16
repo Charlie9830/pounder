@@ -3,7 +3,7 @@
   height: auto;
   overflow: visible;
   min-height: 40px;
-  max-height: 120px; /* Same as .TaskClickContainer max-height */
+  max-height: 240px; /* Same as .TaskClickContainer max-height */
   display: flex;
   flex-direction: column;
 }
@@ -61,7 +61,7 @@
   justify-content: space-between;
   align-items: center;
   min-height: 40px;
-  max-height: 120px;  /* Same as .TaskContainer max-height */
+  max-height: 240px;  /* Same as .TaskContainer max-height */
   overflow: hidden;
   
 }

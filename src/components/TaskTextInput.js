@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/TaskText.css'
+import TextareaAutosize from 'react-autosize-textarea';
 
 class TaskTextInput extends React.Component {
     constructor(props) {
@@ -13,18 +14,19 @@ class TaskTextInput extends React.Component {
 
     componentDidMount() {
         // Pull Keyboard Focus.
-        this.refs.input.focus();
+        this.textarea.focus();
     }
 
     componentWillUnmount() {
         if (this.hasEnterKeyBeenPressed === false) {
-            this.props.onComponentUnmounting(this.refs.input.value); // Data change would have already have been handled.
+            // Ensure the new data will be forwarded when the user elects to Click away from the input as opposed to pressing Enter.
+            this.props.onComponentUnmounting(this.textarea.value); 
         }
     }
 
     render() {
         return (
-            <input className="TaskTextInput" ref="input" type='text' defaultValue={this.props.defaultValue}
+            <TextareaAutosize suppressContentEditableWarning contentEditable="true" className="TaskTextInput" innerRef={ref => this.textarea = ref} type='text' defaultValue={this.props.defaultValue}
              onKeyPress={this.handleKeyPress}/>
         )
     }
@@ -33,8 +35,8 @@ class TaskTextInput extends React.Component {
         if (e.key === "Enter") {
             this.hasEnterKeyBeenPressed = true;
         }
-        
-        this.props.onKeyPress(e, this.refs.input.value);
+
+        this.props.onKeyPress(e, this.textarea.value);
     }
 
 

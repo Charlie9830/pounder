@@ -46,6 +46,7 @@
     "fs-jetpack": "^1.2.0",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.1",
+    "react-autosize-textarea": "^3.0.3",
     "react-day-picker": "^6.2.1",
     "react-grid-layout": "^0.16.2",
     "react-redux": "^5.0.6",
