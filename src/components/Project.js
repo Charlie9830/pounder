@@ -118,7 +118,7 @@ class Project extends React.Component{
                     onLockButtonClick={this.handleLockButtonClick}/>
                 </div>
                 <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
-                    cols={20} rows={1} rowHeight={70} width={this.state.rglWidth}
+                    cols={20} rows={11} rowHeight={70} width={this.state.rglWidth}
                     onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
                     {taskListWidgets}
                 </ReactGridLayout>
