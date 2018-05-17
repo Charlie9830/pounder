@@ -26,7 +26,7 @@ class TaskTextInput extends React.Component {
 
     render() {
         return (
-            <TextareaAutosize suppressContentEditableWarning contentEditable="true" className="TaskTextInput" innerRef={ref => this.textarea = ref} type='text' defaultValue={this.props.defaultValue}
+            <TextareaAutosize className="TaskTextInput" innerRef={ref => this.textarea = ref} type='text' defaultValue={this.props.defaultValue}
              onKeyPress={this.handleKeyPress}/>
         )
     }
