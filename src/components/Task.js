@@ -32,23 +32,24 @@ class Task extends React.Component {
 
         return (
             <div className="TaskContainer">
-                <div className={currentClassName}>
-                    <div className={"TaskCheckBox"} >
-                        <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick} />
-                    </div>
-                    <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
-                        <div className="TaskTextContainer">
-                            <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
-                                onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
-                                isHighPriority={this.props.isHighPriority}/>
+                    <div className={currentClassName}>
+                        <div className={"TaskCheckBox"} >
+                            <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick} />
+                        </div>
+                        <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
+                            <div className="TaskTextContainer">
+                                <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
+                                    onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
+                                    isHighPriority={this.props.isHighPriority} />
+                            </div>
+                        </div>
+                        <div className="DueDateContainer">
+                            <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
+                                isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
+                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority} />
                         </div>
                     </div>
-                    <div className="DueDateContainer">
-                        <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
-                            isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
-                            onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority} />
-                    </div>
-                </div>
+                    <div className="TaskBottomBorder"/>
             </div>
             
         )

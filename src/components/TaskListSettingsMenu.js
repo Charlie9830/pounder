@@ -20,11 +20,11 @@ class TaskListSettingsMenu extends React.Component {
         return (
             <div className="TaskListSettingsMenuPopup">
                 <div className="TaskListSettingMenuContainer">
-                    <div className="TaskListSettingsMenuItemContainer">
-                        <input ref="showCompleteTasksCheckbox" type="checkbox"
+                    <div className="ShowCompletedTasksSelection">
+                        <input className="ShowCompletedTasksCheckBox" ref="showCompleteTasksCheckbox" type="checkbox"
                             defaultChecked={this.props.settings.isCompleteTasksShown}
                             onClick={this.handleShowCompletedTasksCheckboxClick} />
-                        <label> Show Completed Tasks </label>
+                        <label className="ShowCompletedTasksLabel"> Show Completed Tasks </label>
                     </div>
                     {selectableItems}
                 </div>
@@ -63,20 +63,24 @@ class TaskListSettingsMenu extends React.Component {
         var selectedClassSuffix = "IsSelected";
         
         // Sort by Completed.
-        var completedClassName = this.props.settings.sortBy === "completed" ?
-         "TaskListSettingsMenuItemContainer" + selectedClassSuffix : "TaskListSettingsMenuItemContainer";
         jsx.push((
-            <div key="0" className={completedClassName} onClick={this.handleSortByCompletedTasksItemClick}>
-                <label className="TaskListSettingsMenuItemContainer"> Sort by Completed </label>
+            <div key="0" className="TaskListSettingsMenuItemContainer" onClick={this.handleSortByCompletedTasksItemClick}>
+                <div className="TaskListSettingsMenuItemFlexContainer">
+                <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "completed" }/>
+                    <label className="TaskListSettingsMenuItemLabel"> Sort by Completed </label>
+                </div>
+                <div className="TaskListSettingsMenuItemBottomBorder"/>
             </div>
         ))
 
         // Sort by Due Date.
-        var dueDateClassName = this.props.settings.sortBy === "due date" ?
-            "TaskListSettingsMenuItemContainer" + selectedClassSuffix : "TaskListSettingsMenuItemContainer";
         jsx.push((
-            <div key="1" className={dueDateClassName} onClick={this.handleSortByDueDateItemClick}>
-                <label className="TaskListSettingsMenuItemContainer"> Sort by Due Date </label>
+            <div key="1" className="TaskListSettingsMenuItemContainer" onClick={this.handleSortByDueDateItemClick}>
+                <div className="TaskListSettingsMenuItemFlexContainer">
+                    <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "due date" }/>
+                    <label className="TaskListSettingsMenuItemLabel"> Sort by Due Date </label>
+                </div>
+                <div className="TaskListSettingsMenuItemBottomBorder"/>
             </div>
        ))
 
@@ -84,8 +88,12 @@ class TaskListSettingsMenu extends React.Component {
        var priorityClassName = this.props.settings.sortBy === "priority" ?
             "TaskListSettingsMenuItemContainer" + selectedClassSuffix : "TaskListSettingsMenuItemContainer";
         jsx.push((
-            <div key="2" className={priorityClassName} onClick={this.handleSortByPriorityItemClick}>
-                <label className="TaskListSettingsMenuItemContainer"> Sort by Priority </label>
+            <div key="2" className="TaskListSettingsMenuItemContainer" onClick={this.handleSortByPriorityItemClick}>
+                <div className="TaskListSettingsMenuItemFlexContainer">
+                    <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "priority" }/>
+                    <label className="TaskListSettingsMenuItemLabel"> Sort by Priority </label>
+                </div>
+                <div className="TaskListSettingsMenuItemBottomBorder" />
             </div>
         ))
 
@@ -93,8 +101,12 @@ class TaskListSettingsMenu extends React.Component {
         var dateAddedClassName = this.props.settings.sortBy === "date added" ?
             "TaskListSettingsMenuItemContainer" + selectedClassSuffix : "TaskListSettingsMenuItemContainer";
         jsx.push((
-            <div key="3" className={dateAddedClassName} onClick={this.handleSortByDateAddedItemClick}>
-                <label className="TaskListSettingsMenuItemContainer"> Sort by Date Added </label>
+            <div key="3" className="TaskListSettingsMenuItemContainer" onClick={this.handleSortByDateAddedItemClick}>
+                <div className="TaskListSettingsMenuItemFlexContainer">
+                    <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "date added" } />
+                    <label className="TaskListSettingsMenuItemLabel"> Sort by Date Added </label>
+                </div>
+                {/* No Bottom Border here because it's the bottom of the Menu */}
             </div>
         ))
 
