@@ -3,6 +3,13 @@
   padding: 0px;
 }
 
+#root {
+  --primary-color: hsla(0, 0%, 15%, 1);
+  --background-color: #000000;
+  --surface-color: hsla(0, 0%, 7%, 1);
+  --surface-color-alternate: #1b1b1b;
+}
+
 .SidebarProjectFlexContainer {
   display: flex;
   flex-direction: row;

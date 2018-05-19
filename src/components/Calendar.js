@@ -43,6 +43,7 @@ class Calendar extends React.Component {
                         </label>
                     </div>
                 </div>
+                <div className="CalendarFullBleedDivider"/>
                 <div className="ShortcutItemContainer" onClick={this.handleTodayItemClick}>
                     <label className="ItemLabel"> Today </label>
                 </div>

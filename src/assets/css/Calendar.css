@@ -3,7 +3,7 @@
     top: 5px;
     right: 5px;
     z-index: 5;
-    background: rgba(37,37,37,255);
+    background: var(--surface-color-alternate);
     width: 280px;
     height: auto;
     margin: 0px;
@@ -113,6 +113,14 @@
     color: #FFF;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     border: 1px solid #FFF;
+}
+
+.CalendarFullBleedDivider {
+    height: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    border-bottom: 1px rgb(65,65,65) solid;
 }
 
 

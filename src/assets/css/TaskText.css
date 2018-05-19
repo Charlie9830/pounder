@@ -39,6 +39,6 @@
   font-size: 12pt;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   color: #FFF;
-  background: rgba(100,100,100,255);
+  background: var(--surface-color-alternate);
   border: 0px solid #FFF;
 }

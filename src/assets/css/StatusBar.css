@@ -4,7 +4,7 @@
     height: 30px;
     margin: 0px;
     padding: 0px;
-    background: rgba(20,20,20,255);
+    background: var(--primary-color);
     -webkit-user-select: none;
     user-select: none;
 }
