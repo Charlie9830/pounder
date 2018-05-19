@@ -49,12 +49,19 @@ class Task extends React.Component {
                                 onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority} />
                         </div>
                     </div>
-                    <div className="TaskBottomBorder"/>
+                    {this.getBottomBorderJSX(this.props)}
             </div>
             
         )
     }
 
+    getBottomBorderJSX(props) {
+        if (props.renderBottomBorder) {
+            return (
+                <div className="TaskBottomBorder"/>
+            )
+        }
+    }
     handlePriorityToggleClick(newValue) {
         this.props.onPriorityToggleClick(this.props.taskId, newValue);
     }
