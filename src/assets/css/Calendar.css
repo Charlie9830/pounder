@@ -23,7 +23,7 @@
 }
 
 .PriorityToggle[data-ishighpriority*=true] {
-    color: #F00;
+    color: rgb(255, 150, 0);
     font-weight: 600;
 }
 

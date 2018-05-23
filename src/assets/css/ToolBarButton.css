@@ -1,31 +1,52 @@
-.ToolBarButton {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-size: 36px;
-    width: 36px;
-    height: 36px;
-    color: #FFF;
-    margin: 5px;
+.ToolBarFlexContainer {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    align-items: center;
+}
+
+.ToolBarButtonContainer {
+    flex-grow: 0;
+    height: 27px;
+    width: 62px;
+    margin: 4px;
+    padding: 4px;
+    background-image: var(--primary-button-background-image);
     cursor: pointer;
-    opacity: 0.6;
+    border-radius: 2px;
+}
+
+.ToolBarButtonContainer:hover {
+    background-image: linear-gradient(to bottom,rgba(68,68,68,0.75),rgba(60,60,60,0.75));
+}
+
+.ToolBarButton {
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.ToolBarButton:hover {
+    opacity: 1;
+}
+
+.ToolBarFloatRightContainer {
+    align-self: flex-end;
+
+}
+
+.ToolBarFlexDivider {
+    flex-grow: 2;
 }
 
 .LockButton {
-    float: right;
     width: 36px;
     height: 36px;
     color: #FFF;
-    margin: 5px;
     cursor: pointer;
     opacity: 0.6;
-}
-
-.AccountButton {
-    float: right;
-    width: 36px;
-    height: 36px;
-    color: #FFF;
-    margin: 5px;
-    cursor: pointer;
 }
 
 .ToolBarButtonSeparator {

@@ -1,12 +1,24 @@
+.ProjectSelectorContainer {
+  padding-bottom: 8px;
+}
+
+.ProjectSelectorContainer:hover {
+  background: rgba(52,55,56,255);
+}
 
 .ProjectSelectorText {
-    color: #FFF;
+    color: gray;
     margin: 5px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 16pt;
     -webkit-user-select: none;
     user-select: none;
 }
+
+.ProjectSelectorText[data-isselected*="true"] {
+  color: #FFF;
+}
+
 
 .ProjectSelectorFlexContainer {
   display: flex;
@@ -73,11 +85,4 @@
   border: 0px solid #FFF;
 }
 
-.ProjectSelectorInactiveStyle:hover {
-  background: rgba(52,52,52,255);
-}
 
-.ProjectSelectorActiveStyle {
-  /* background: rgba(63,63,76,255); */
-  color: #FF9300;
-}

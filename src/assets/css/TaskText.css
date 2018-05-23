@@ -19,9 +19,7 @@
 }
 
 .TaskText[data-ishighpriority*="true"] {
-  color: #D11;
-  font-weight: 700;
-  font-stretch: 1;
+  color: rgb(255, 150, 0);
 }
 
 

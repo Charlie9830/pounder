@@ -61,9 +61,13 @@ class Sidebar extends React.Component{
     getSidebarToolbarJSX() {
         if (this.state.isCollapsed !== true) {
             return (
-                <div className="SidebarToolbar">
-                    <img className="ToolBarButton" src="NewProjectIcon.svg" onClick={this.handleAddProjectClick} />
-                    <img className="ToolBarButton" src="RemoveProjectIcon.svg" onClick={this.handleRemoveProjectClick} />
+                <div className="SidebarToolbarFlexContainer">
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="NewProjectIcon.svg" onClick={this.handleAddProjectClick} />
+                    </div>
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="RemoveProjectIcon.svg" onClick={this.handleRemoveProjectClick} />
+                    </div>
                 </div>
             )     
         }

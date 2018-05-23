@@ -17,12 +17,26 @@ class ProjectToolBar extends React.Component {
     render() {
         return (
             <div>
-                <img className="ToolBarButton" src="NewTaskIcon.svg" onClick={this.handleAddTaskButtonClick}/>
-                <img className="ToolBarButton" src="RemoveTaskIcon.svg" onClick={this.handleRemoveTaskButtonClick}/>
-                <span className="ToolBarButtonSeparator"/>
-                <img className="ToolBarButton" src="NewTaskListIcon.svg" onClick={this.handleAddTaskListButtonClick}/>
-                <img className="ToolBarButton" src="RemoveTaskListIcon.svg" onClick={this.handleRemoveTaskListButtonCLick}/>
-                <img className="LockButton" src="LockIcon.svg" onClick={this.handleLockButtonClick}/>
+                <div className="ToolBarFlexContainer">
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="NewTaskIcon.svg" onClick={this.handleAddTaskButtonClick} />
+                    </div>
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="RemoveTaskIcon.svg" onClick={this.handleRemoveTaskButtonClick} />
+                    </div>
+                    <span className="ToolBarButtonSeparator" />
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="NewTaskListIcon.svg" onClick={this.handleAddTaskListButtonClick} />
+                    </div>
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="RemoveTaskListIcon.svg" onClick={this.handleRemoveTaskListButtonCLick} />
+                    </div>
+                    <div className="ToolBarFlexDivider">
+                    </div>
+                    <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src="LockIcon.svg" onClick={this.handleLockButtonClick} />
+                    </div>
+                </div>
             </div>
         )
     }

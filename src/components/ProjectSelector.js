@@ -12,13 +12,12 @@ class ProjectSelector extends React.Component {
     }
 
     render(){
-        var currentClassName = this.props.isSelected ? "ProjectSelectorActiveStyle" : "ProjectSelectorInactiveStyle";
         var projectLabelJSX = this.getProjectLabelJSX(this.props);
         var dueDateCounts = this.getDueDateCountsJSX(this.props);
 
         return (
             <div>
-                <div className={currentClassName} onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
+                <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
                     <div className="ProjectSelectorFlexContainer">
                         <div className="ProjectSelectorLabelContainer">
                             {projectLabelJSX}
@@ -64,7 +63,7 @@ class ProjectSelector extends React.Component {
 
         else {
             return (
-                <label className="ProjectSelectorText">{props.projectName}</label>
+                <label className="ProjectSelectorText" data-isselected={this.props.isSelected}>{props.projectName}</label>
             )
         }
     }
