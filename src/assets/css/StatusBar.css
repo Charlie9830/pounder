@@ -1,6 +1,6 @@
 .StatusBarContainer {
     position: fixed;
-    width: 100%;
+    width: fit-content;
     height: 30px;
     margin: 0px;
     padding: 0px;

@@ -10,9 +10,6 @@ let root = document.createElement('div');
 root.id = "root";
 document.body.appendChild( root );
 
-// Set Document Background Style.
-document.body.style.background = "rgba(37,37,37,255)";
-
 // Setup Backend.
 setupBackend("development", "desktop");
 

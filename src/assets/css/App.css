@@ -10,8 +10,11 @@
   --surface-color:  rgb(17, 17, 17);
   --surface-color-alternate: rgb(27, 27, 27);
   --primary-button-background-image: linear-gradient(to bottom,rgba(68,68,68,0.50),rgba(60,60,60,0.50));
+
+  background: var(--primary-color);
   
 }
+
 
 .SidebarProjectFlexContainer {
   display: flex;
