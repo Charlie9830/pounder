@@ -1,6 +1,7 @@
 import React from 'react';
 import '../assets/css/ListToolbar.css';
 import TaskListSettingsMenu from './TaskListSettingsMenu';
+import TaskListSettingsIcon from '../assets/icons/SettingsIcon.svg';
 
 class ListToolbar extends React.Component{
     constructor(props) {
@@ -20,7 +21,7 @@ class ListToolbar extends React.Component{
         return (
             <div className="ListToolbar">
                 <div className="SortingMenu">
-                    <img id="ListToolbarSettingsIcon" src="SettingsIcon.svg" onClick={this.handleSettingsClick}/>
+                    <img id="ListToolbarSettingsIcon" src={TaskListSettingsIcon} onClick={this.handleSettingsClick}/>
                     {settingsMenu}
                 </div>
                 {listToolbarHeader}
