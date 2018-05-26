@@ -1,6 +1,0 @@
-.Project : 0,0,0,255
-Sidebar and Toolbar : 20,20,20,255
-List Toolbar: 37,37,37,255
-Task Area :20,20,20,255
-TaskActiveStyle : 63,63,63,255
-Calendar Popup Container : 37,37,37,255
