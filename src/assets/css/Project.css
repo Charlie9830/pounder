@@ -9,7 +9,6 @@
     background: var(--background-color);
     width: 100%;
     height: 100%;
-    margin-top: 75px;
 }
 
 .ProjectToolBar {
@@ -18,7 +17,5 @@
     -webkit-user-select: none;
     user-select: none;
     padding-top: 30px;
-    position: fixed;
-    z-index: 3;
 }
 

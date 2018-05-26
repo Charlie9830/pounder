@@ -80,7 +80,7 @@ class App extends React.Component {
     this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
-    this.backupFirebase = this.backupFirebase.bind(this);
+    this.backupFirebaseAsync = this.backupFirebaseAsync.bind(this);
     this.lockApp = this.lockApp.bind(this);
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
@@ -89,7 +89,7 @@ class App extends React.Component {
     this.getLockScreen = this.getLockScreen.bind(this);
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
-    this.writeDatabaseToFile = this.writeDatabaseToFile.bind(this);
+    this.writeDatabaseToFileAsync = this.writeDatabaseToFileAsync.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
     this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
@@ -106,10 +106,21 @@ class App extends React.Component {
     // Pull down Data from Database, will also attach listeners for future changes.
     this.subscribeToDatabase();
 
+    // Computer has resumed from sleep.
     electron.ipcRenderer.on('resume', () => {
       // Refresh Data.
       this.unsubscribeFromDatabase();
       this.subscribeToDatabase();
+    })
+
+    electron.ipcRenderer.on('window-closing', () => {
+      // Backup Data to HDD.
+      this.backupFirebaseAsync().then(() => {
+        // Send Message back to Main once complete.
+        electron.ipcRenderer.send('ready-to-close');
+      }).catch(error => {
+        this.postFirebaseError(error);
+      })
     })
   }
   
@@ -342,7 +353,12 @@ class App extends React.Component {
     this.props.dispatch(lockApp());
 
     // Trigger Firebase Backup.
-    this.backupFirebase();
+    this.props.dispatch(setLastBackupMessage("Writing to File..."));
+    this.backupFirebaseAsync().then(message => {
+      this.props.dispatch(setLastBackupMessage(message));
+    }).catch(error => {
+      this.postFirebaseError(error);
+    })
   }
 
   addNewTaskList() {
@@ -428,14 +444,19 @@ class App extends React.Component {
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
-  backupFirebase() {
-    if (this.isInElectron) {
-      this.pullDownDatabase().then(data => {
-        this.writeDatabaseToFile(JSON.stringify(data));
-      }).catch(error => {
-        this.postFirebaseError(error);
-      })
-    }
+  backupFirebaseAsync() {
+    return new Promise((resolve, reject) => {
+      if (this.isInElectron) {
+        this.pullDownDatabase().then(data => {
+          this.writeDatabaseToFileAsync(JSON.stringify(data)).then((message) => {
+            resolve(message);
+          });
+        }).catch(error => {
+          // this.postFirebaseError(error);
+          reject(error);
+        })
+      }
+    })
   }
 
   overwriteFirebase(data) {
@@ -575,34 +596,40 @@ class App extends React.Component {
     })
   }
 
-  writeDatabaseToFile(json) {
-    if (json.length > 0) {
-      // Write to Backup File.
-      // Intialize File Path and Name.
-      var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
+  writeDatabaseToFileAsync(json) {
+    return new Promise((resolve, reject) => {
+      if (json.length > 0) {
+        // Write to Backup File.
+        // Intialize File Path and Name.
+        var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
 
-      var currentDate = new Date();
-      var normalizedDate = this.getNormalizedDate(currentDate);
-      var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
+        var currentDate = new Date();
+        var normalizedDate = this.getNormalizedDate(currentDate);
+        var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
 
-      // Create File.
-      fsJetpack.file(filePath, { mode: '700' });
+        // Create File.
+        fsJetpack.file(filePath, { mode: '700' });
 
-      // Write to File.
-      fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
-        var message = "Last backup created at " +
-          currentDate.getHours() + ":" +
-          currentDate.getMinutes() + ":" +
-          currentDate.getSeconds() + " in " +
-          backupDirectory;
-          
-        this.props.dispatch(setLastBackupMessage(message));
-      })
-    }
+        // Write to File.
+        fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
+          var message = "Last backup created at " +
+            currentDate.getHours() + ":" +
+            currentDate.getMinutes() + ":" +
+            currentDate.getSeconds() + " in " +
+            backupDirectory;
 
-    else {
-      this.props.dispatch(setLastBackupMessage("Something went wrong while writing to backup."));
-    }
+          //this.props.dispatch(setLastBackupMessage(message));
+          resolve(message);
+        }).catch(error => {
+          reject(error);
+        })
+      }
+
+      else {
+        //this.props.dispatch(setLastBackupMessage("Something went wrong while writing to backup."));
+        reject("Something went wrong. There was no data to write to File.");
+      }
+    })
   }
 
   getNormalizedDate(date) {

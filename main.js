@@ -9,7 +9,7 @@ const url = require('url')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
-
+let readyToClose = false;
 // Keep a reference for dev mode
 let dev = false;
 if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath) ) {
@@ -45,8 +45,24 @@ function createWindow() {
     mainWindow.show();
     mainWindow.maximize()
 
+    // Power Monitor Event Listener.
     electron.powerMonitor.on('resume', () => {
       mainWindow.webContents.send('resume');
+    })
+
+    // Window Closing Event Listener.
+    mainWindow.addListener('close', event => {
+      if (readyToClose === false) {
+        event.preventDefault();
+        mainWindow.webContents.send('window-closing');
+      }
+    })
+
+    // Window 'ready-to-close' Listener.
+    electron.ipcMain.on('ready-to-close', event => {
+      // Pounder Process is ready to close.
+      readyToClose = true;
+      app.quit();
     })
 
     // Open the DevTools automatically if developing
