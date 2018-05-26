@@ -2,7 +2,8 @@ import React from 'react';
 import '../assets/css/LockScreen.css'
 import PinCodeKeypad from './PinCodeKeypad';
 import { connect } from 'react-redux';
-
+import LockScreenIcon from '../assets/icons/NewLockScreenIcon.svg';
+import QuitIcon from '../assets/icons/QuitIcon.svg';
 
 class LockScreen extends React.Component {
     constructor(props) {
@@ -48,7 +49,7 @@ class LockScreen extends React.Component {
                     <label className="LockScreenBackupMessage">
                         {this.props.lastBackupMessage}
                     </label>
-                    <img className="LockScreenQuitButton" src="QuitIcon.svg" onClick={this.handleQuitButtonClick}/> 
+                    <img className="LockScreenQuitButton" src={QuitIcon} onClick={this.handleQuitButtonClick}/> 
                 </div>
             </div>
         )
@@ -73,7 +74,7 @@ class LockScreen extends React.Component {
 
         else {
             return (
-                <img className="LockScreenIcon" src="NewLockScreenIcon.svg" onClick={this.handleLogoClick} />
+                <img className="LockScreenIcon" src={LockScreenIcon} onClick={this.handleLogoClick} />
             )
         }
     }

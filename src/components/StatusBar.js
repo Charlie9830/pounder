@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/StatusBar.css';
+import LoadingIcon from '../assets/icons/LoadingIcon.svg'
 import { connect } from 'react-redux';
 
 class StatusBar extends React.Component {
@@ -9,7 +10,7 @@ class StatusBar extends React.Component {
 
         return (
             <div className="StatusBarContainer">
-                <img className="NotAwaitingFirebase" src="LoadingIcon.svg"/>
+                <img className="NotAwaitingFirebase" src={LoadingIcon}/>
                 <label className="VersionNumber"> Version 1.2.5 </label>
                 <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
                 <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>

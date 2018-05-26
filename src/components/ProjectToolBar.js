@@ -1,6 +1,10 @@
 import React from 'react';
 import '../assets/css/ToolBarButton.css';
-import '../assets/icons/NewTaskIcon.svg';
+import NewTaskIcon from '../assets/icons/NewTaskIcon.svg';
+import RemoveTaskIcon from '../assets/icons/RemoveTaskIcon.svg';
+import NewTaskListIcon from '../assets/icons/NewTaskListIcon.svg';
+import RemoveTaskListIcon from '../assets/icons/RemoveTaskListIcon.svg';
+import LockIcon from '../assets/icons/LockIcon.svg';
 
 class ProjectToolBar extends React.Component {
     constructor(props) {
@@ -19,22 +23,22 @@ class ProjectToolBar extends React.Component {
             <div>
                 <div className="ToolBarFlexContainer">
                     <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src="NewTaskIcon.svg" onClick={this.handleAddTaskButtonClick} />
+                        <img className="ToolBarButton" src={NewTaskIcon} onClick={this.handleAddTaskButtonClick} />
                     </div>
                     <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src="RemoveTaskIcon.svg" onClick={this.handleRemoveTaskButtonClick} />
+                        <img className="ToolBarButton" src={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick} />
                     </div>
                     <span className="ToolBarButtonSeparator" />
                     <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src="NewTaskListIcon.svg" onClick={this.handleAddTaskListButtonClick} />
+                        <img className="ToolBarButton" src={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick} />
                     </div>
                     <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src="RemoveTaskListIcon.svg" onClick={this.handleRemoveTaskListButtonCLick} />
+                        <img className="ToolBarButton" src={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonCLick} />
                     </div>
                     <div className="ToolBarFlexDivider">
                     </div>
                     <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src="LockIcon.svg" onClick={this.handleLockButtonClick} />
+                        <img className="ToolBarButton" src={LockIcon} onClick={this.handleLockButtonClick} />
                     </div>
                 </div>
             </div>
