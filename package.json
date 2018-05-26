@@ -14,7 +14,7 @@
     "build": "webpack --config webpack.build.config.js",
     "packageWeb": "webpack --config webpack.build.web.config.js",
     "package": "webpack --config webpack.build.config.js",
-    "postpackage": "electron-packager ./ --asar --icon=./dist/icon.ico --out=./builds"
+    "postpackage": "electron-packager ./ --asar --icon=./src/assets/icons/icon.ico --out=./builds"
   },
   "repository": {
     "type": "git",

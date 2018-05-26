@@ -3,6 +3,19 @@
   padding: 0px;
 }
 
+#root {
+  /* Colors */
+  --primary-color: rgb(27, 27, 27);
+  --background-color: #000000; 
+  --surface-color:  rgb(17, 17, 17);
+  --surface-color-alternate: rgb(27, 27, 27);
+  --primary-button-background-image: linear-gradient(to bottom,rgba(68,68,68,0.50),rgba(60,60,60,0.50));
+
+  background: var(--primary-color);
+  
+}
+
+
 .SidebarProjectFlexContainer {
   display: flex;
   flex-direction: row;
@@ -28,15 +41,27 @@
 
 ::-webkit-scrollbar-thumb {
   background: rgba(77,77,77,255);
+}.ProjectSelectorContainer {
+  padding-bottom: 8px;
 }
+
+.ProjectSelectorContainer:hover {
+  background: rgba(52,55,56,255);
+}
+
 .ProjectSelectorText {
-    color: #FFF;
+    color: gray;
     margin: 5px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 16pt;
     -webkit-user-select: none;
     user-select: none;
 }
+
+.ProjectSelectorText[data-isselected*="true"] {
+  color: #FFF;
+}
+
 
 .ProjectSelectorFlexContainer {
   display: flex;
@@ -99,32 +124,26 @@
   margin: auto 5px;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   font-size: 16pt;
-  background: rgba(100,100,100,255);
+  background: var(--surface-color-alternate);
   border: 0px solid #FFF;
 }
 
-.ProjectSelectorInactiveStyle:hover {
-  background: rgba(52,52,52,255);
-}
 
-.ProjectSelectorActiveStyle {
-  background: rgba(63,63,76,255);
-}.SidebarToolbarContainer {
+.SidebarToolbarContainer {
     height: 30px;
 }
 
-.SidebarToolbar {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-Size: 16pt;
-    color: #FFF;
-    cursor: pointer;
-    -webkit-user-select: none;
-    user-select: none;
+.SidebarToolbarFlexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
 }
 
 .SidebarOpen {
     position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
-    background: rgba(20,20,20,255);
+    background: var(--primary-color);
     width: 250px;
     height: 1130px;
     float: left;
@@ -135,7 +154,7 @@
 
 .SidebarCollapsed {
     position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
-    background: rgba(20,20,20,255);
+    background: var(--primary-color);
     width: 25px;
     height: 1130px;
     float: left;
@@ -171,6 +190,7 @@
 
 .ProjectSelectorsContainerOpen {
     display: block;
+    margin-top: 8px;
 }
 
 .ProjectSelectorsContainerCollapsed {
@@ -178,34 +198,55 @@
 }
 
 
-.ToolBarButton {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-size: 36px;
-    width: 36px;
-    height: 36px;
-    color: #FFF;
-    margin: 5px;
+.ToolBarFlexContainer {
+    display: flex;
+    flex-direction: row;
+    align-content: flex-start;
+    align-items: center;
+}
+
+.ToolBarButtonContainer {
+    flex-grow: 0;
+    height: 27px;
+    width: 62px;
+    margin: 4px;
+    padding: 4px;
+    background-image: var(--primary-button-background-image);
     cursor: pointer;
-    opacity: 0.6;
+    border-radius: 2px;
+}
+
+.ToolBarButtonContainer:hover {
+    background-image: linear-gradient(to bottom,rgba(68,68,68,0.75),rgba(60,60,60,0.75));
+}
+
+.ToolBarButton {
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    cursor: pointer;
+    opacity: 0.75;
+}
+
+.ToolBarButton:hover {
+    opacity: 1;
+}
+
+.ToolBarFloatRightContainer {
+    align-self: flex-end;
+
+}
+
+.ToolBarFlexDivider {
+    flex-grow: 2;
 }
 
 .LockButton {
-    float: right;
     width: 36px;
     height: 36px;
     color: #FFF;
-    margin: 5px;
     cursor: pointer;
     opacity: 0.6;
-}
-
-.AccountButton {
-    float: right;
-    width: 36px;
-    height: 36px;
-    color: #FFF;
-    margin: 5px;
-    cursor: pointer;
 }
 
 .ToolBarButtonSeparator {
@@ -215,7 +256,7 @@
   height: 100%;
   margin: 0px;
   padding: 0px;
-  background: rgba(20,20,20,255);
+  background: var(--surface-color);
   overflow: auto;
 }.TaskTextContainer {
   display: flex;
@@ -228,15 +269,17 @@
 
 .TaskText {
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  width: 100%;
   color: #FFF;
   font-Size: 12pt;
   margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 3px;
+  margin-top: 3px;
 }
 
 .TaskText[data-ishighpriority*="true"] {
-  color: #D11;
-  font-weight: 700;
-  font-stretch: 1;
+  color: rgb(255, 150, 0);
 }
 
 
@@ -246,11 +289,15 @@
 }
 
 .TaskTextInput {
-  width: 300px;
-  /* font-family: 'Roboto'; */
+  width: 100%;
+  min-height: 20px;
+  margin: 10px 0px;
+  resize: none;
+  vertical-align: middle;
+  font-size: 12pt;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   color: #FFF;
-  background: rgba(100,100,100,255);
+  background: var(--surface-color-alternate);
   border: 0px solid #FFF;
 }.DueDateContainer {
   display: flex;
@@ -316,7 +363,7 @@
     top: 5px;
     right: 5px;
     z-index: 5;
-    background: rgba(37,37,37,255);
+    background: var(--surface-color-alternate);
     width: 280px;
     height: auto;
     margin: 0px;
@@ -336,7 +383,7 @@
 }
 
 .PriorityToggle[data-ishighpriority*=true] {
-    color: #F00;
+    color: rgb(255, 150, 0);
     font-weight: 600;
 }
 
@@ -426,6 +473,14 @@
     color: #FFF;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     border: 1px solid #FFF;
+}
+
+.CalendarFullBleedDivider {
+    height: 0px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    width: 100%;
+    border-bottom: 1px rgb(65,65,65) solid;
 }
 
 
@@ -631,7 +686,7 @@ div {
   height: auto;
   overflow: visible;
   min-height: 40px;
-  max-height: 120px; /* Same as .TaskClickContainer max-height */
+  max-height: 240px; /* Same as .TaskClickContainer max-height */
   display: flex;
   flex-direction: column;
 }
@@ -648,12 +703,20 @@ div {
   flex-grow: 1;
 }
 
+.TaskBottomBorder {
+  width: 100%;
+  margin-left: 27px;
+  margin-bottom: -1px;
+  height: 0px;
+  border-bottom: 1px rgb(50,50,50) solid;
+}
+
 .TaskInactiveStyle:hover {
-  background: rgba(52,55,56,255);
+  background: rgba(40,40,40,255);
 }
 
 .TaskActiveStyle {
-  background: rgba(63,63,76,255);
+  background: rgba(55,55,55,255);
   color: #FFF;
   width: 100%;
   display: flex;
@@ -689,9 +752,8 @@ div {
   justify-content: space-between;
   align-items: center;
   min-height: 40px;
-  max-height: 120px;  /* Same as .TaskContainer max-height */
+  max-height: 240px;  /* Same as .TaskContainer max-height */
   overflow: hidden;
-  
 }
 
 
@@ -799,24 +861,50 @@ div {
 
 .ListToolbar {
     height: 30px;
-    background: rgba(37,37,37,255);
+    background: var(--primary-color);
     width: 100%;
     margin: 0px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-}
-.TaskListSettingsMenuPopup {
+}.TaskListSettingsMenuPopup {
     position: absolute;
-    top: 5px;
-    left: 5px;
-    width: 160px;
-    height: 175px;
+    top: 10px;
+    left: 10px;
+    width: 180px;
+    height: fit-content;
     z-index: 2;
-    background: rgba(37,37,37,255);
+    background: var(--surface-color-alternate);
     border: 1px solid white;
-    box-shadow:  5px 5px 10px 0px #111;
+    box-shadow: 5px 5px 10px 0px #111;
+}
+
+.ShowCompletedTasksSelection {
+    display: table;
+    width: fit-content;
+    padding-left: 4px;
+    padding-bottom: 8px;
+    padding-top: 8px;
+    border-bottom: 1px rgb(80, 80, 80) solid;
+}
+
+.ShowCompletedTasksCheckBox {
+    display: table-cell;
+    vertical-align: middle;
+    margin-left: 5px;
+    height: 12px;
+    width: 12px;
+}
+
+.ShowCompletedTasksLabel {
+    width: 100%;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-weight: 400;
+    font-size: 10pt;
+    padding-left: 15px;
+    display: table-cell;
+    vertical-align: middle;
 }
 
 .TaskListSettingsMenuContainer {
@@ -829,34 +917,55 @@ div {
 }
 
 .TaskListSettingsMenuItemContainer {
-    display: table;
     flex-grow: 1;
-    height: 30px;
-    width: 100%;
+    width: 175px;
+    padding-left: 5px;
 }
 
-.TaskListSettingsMenuItemContainerIsSelected {
-    display: table;
-    flex-grow: 1;
-    height: 30px;
-    width: 100%;
-    background: rgba(63,63,76,255);
+.TaskListSettingsMenuItemFlexContainer {
+    display: flex;
+    height: 40px;
+    flex-direction: row;
+    justify-content: left;
+    align-items: center;
 }
 
 .TaskListSettingsMenuItemContainer:hover {
-    background: rgba(52,52,52,255);
+    background: rgba(52, 52, 52, 255);
 }
 
 .TaskListSettingsMenuItemLabel {
-    display: table-cell;
-    vertical-align: middle;
+    flex-grow: 1;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
     font-weight: 400;
-    font-size: 12pt;
     color: #FFF;
-    padding: 5px 10px;
+    padding: 0px;
     text-align: left;
-}.IsNotFocused {
+    line-height: 30px;
+}
+
+.TaskListSettingsMenuSelectedItemChit {
+    border-radius: 50%;
+    width: 10px;
+    height: 10px;
+    background: #BBB;
+    margin-right: 15px;
+    margin-left: 5px;
+}
+
+.TaskListSettingsMenuSelectedItemChit[data-isselected*="false"] {
+    visibility: hidden;
+}
+
+.TaskListSettingsMenuItemBottomBorder {
+    height: 0px;
+    margin-bottom: -1px;
+    width: 135px;
+    margin-left: 20px;
+    border-bottom: 0px rgb(65,65,65) solid;
+}
+.IsNotFocused {
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -876,7 +985,6 @@ div {
     border-style: solid;
     margin: 0px;
     padding: 0px;
-
 }.ProjectContainer {
     float: left;
     width: 100%;
@@ -885,19 +993,17 @@ div {
 }
 
 .Project {
-    background: rgba(0,0,0,255);
+    background: var(--background-color);
     width: 100%;
     height: 100%;
-    margin: 0px;
-    float: left;
 }
 
 .ProjectToolBar {
-    background: rgba(20,20,20,255);
+    background: var(--primary-color);
     width: 100%;
     -webkit-user-select: none;
     user-select: none;
-    margin-top: 30px;
+    padding-top: 30px;
 }
 
 .react-grid-layout {
@@ -974,11 +1080,11 @@ div {
 }
 .StatusBarContainer {
     position: fixed;
-    width: 100%;
+    width: fit-content;
     height: 30px;
     margin: 0px;
     padding: 0px;
-    background: rgba(20,20,20,255);
+    background: var(--primary-color);
     -webkit-user-select: none;
     user-select: none;
 }
