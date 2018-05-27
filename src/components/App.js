@@ -7,6 +7,7 @@ import Project from './Project';
 import VisibleStatusBar from './StatusBar';
 import VisibleLockScreen from './LockScreen';
 import AccountScreen from './AccountScreen';
+import ShutdownScreen from './ShutdownScreen';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -18,7 +19,7 @@ lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addN
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, } from 'pounder-redux/action-creators';
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 
 const KEYBOARD_COMBOS = {
@@ -94,6 +95,7 @@ class App extends React.Component {
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
     this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
     this.subscribeToDatabase = this.subscribeToDatabase.bind(this);
+    this.getShutdownScreenJSX = this.getShutdownScreenJSX.bind(this);
   }
 
   componentDidMount(){
@@ -114,9 +116,11 @@ class App extends React.Component {
     })
 
     electron.ipcRenderer.on('window-closing', () => {
+      this.props.dispatch(setIsShuttingDownFlag(true));
+
       // Backup Data to HDD.
       this.backupFirebaseAsync().then(() => {
-        // Send Message back to Main once complete.
+        // Send Message back to Main Process once complete.
         electron.ipcRenderer.send('ready-to-close');
       }).catch(error => {
         this.postFirebaseError(error);
@@ -136,12 +140,14 @@ class App extends React.Component {
   render() {
     var layouts = this.props.projectLayout.layouts;
     var lockScreenJSX = this.getLockScreen();
+    var shutdownScreenJSX = this.getShutdownScreenJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
 
     return (
       <div>
         {lockScreenJSX}
+        {shutdownScreenJSX}
 
         <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
@@ -173,6 +179,14 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  getShutdownScreenJSX() {
+    if (this.props.isShuttingDown) {
+      return (
+        <ShutdownScreen/>
+      )
+    }
   }
 
   subscribeToDatabase() {
@@ -765,6 +779,7 @@ const mapStateToProps = state => {
     projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
     isLockScreenDisplayed: state.isLockScreenDisplayed,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
+    isShuttingDown: state.isShuttingDown,
   }
 }
 
