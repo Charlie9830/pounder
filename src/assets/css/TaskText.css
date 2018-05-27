@@ -18,10 +18,6 @@
   margin-top: 3px;
 }
 
-.TaskText[data-ishighpriority*="true"] {
-  color: rgb(255, 150, 0);
-}
-
 
 .Fade {
   opacity: 0.15;

@@ -25,7 +25,7 @@ class TaskText extends React.Component {
             var currentClassName = this.props.isComplete ? "TaskText Fade" : "TaskText";
 
             return (
-                <div className={currentClassName} data-ishighpriority={this.props.isHighPriority}>
+                <div className={currentClassName}>
                     <label>{this.props.text}</label>
                 </div>
             )

@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/ProjectSelector.css';
+import FavoriteIcon from '../assets/icons/HeartIcon.svg';
 
 class ProjectSelector extends React.Component {
     constructor(props) {
@@ -19,6 +20,9 @@ class ProjectSelector extends React.Component {
             <div>
                 <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
                     <div className="ProjectSelectorFlexContainer">
+                        <div className="ProjectSelectorHeartContainer">
+                            <img className="ProjectSelectorFavoriteIcon" src={FavoriteIcon}/>
+                        </div>
                         <div className="ProjectSelectorLabelContainer">
                             {projectLabelJSX}
                         </div>

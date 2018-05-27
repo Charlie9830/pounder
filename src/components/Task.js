@@ -32,7 +32,7 @@ class Task extends React.Component {
 
         return (
             <div className="TaskContainer">
-                    <div className={currentClassName}>
+                    <div className={currentClassName} data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete} >
                         <div className={"TaskCheckBox"} >
                             <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick} />
                         </div>
@@ -40,7 +40,7 @@ class Task extends React.Component {
                             <div className="TaskTextContainer">
                                 <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
                                     onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
-                                    isHighPriority={this.props.isHighPriority} />
+                                    />
                             </div>
                         </div>
                         <div className="DueDateContainer">
