@@ -11,6 +11,10 @@
     height: 100%;
 }
 
+.ProjectHidden {
+    visibility: hidden;
+}
+
 .ProjectToolBar {
     background: var(--primary-color);
     width: 100%;

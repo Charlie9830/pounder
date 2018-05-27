@@ -1,5 +1,6 @@
 import React from 'react';
 import TaskListWidget from './TaskListWidget';
+import ProjectMessageDisplay from './ProjectMessageDisplay';
 import MouseTrap from 'mousetrap';
 import '../assets/css/Project.css';
 var ReactGridLayout = require('react-grid-layout');
@@ -38,6 +39,7 @@ class Project extends React.Component{
         this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
+        this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
     }
     
     componentDidMount() {
@@ -109,6 +111,9 @@ class Project extends React.Component{
         });
 
         var layouts = Array.isArray(this.props.layouts) ? this.props.layouts : [];
+        var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
+        // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
+        var rglClassName = projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
 
         return (
             <div className="ProjectContainer" ref="projectContainer">
@@ -117,13 +122,30 @@ class Project extends React.Component{
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
                     onLockButtonClick={this.handleLockButtonClick}/>
                 </div>
-                <ReactGridLayout className="Project" layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
+                {projectMessageDisplayJSX}
+                <ReactGridLayout className={rglClassName} layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
                     cols={20} rows={11} rowHeight={70} width={this.state.rglWidth}
                     onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
                     {taskListWidgets}
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    getProjectMessageDisplayJSX(taskListWidgetCount) {
+        // No Project Selected.
+        if (this.props.projectId === -1) {
+            return (
+                <ProjectMessageDisplay message="No project selected"/>
+            )
+        }
+
+        // No Tasklists created.
+        if (taskListWidgetCount === 0 || taskListWidgetCount == null) {
+            return (
+                <ProjectMessageDisplay message="No Task Lists created"/>
+            )
+        }
     }
 
     handleTaskPriorityToggleClick(taskId, newValue) {
