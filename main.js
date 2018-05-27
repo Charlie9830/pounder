@@ -9,6 +9,7 @@ const url = require('url')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow;
+let isClosing = false;
 let readyToClose = false;
 // Keep a reference for dev mode
 let dev = false;
@@ -52,8 +53,10 @@ function createWindow() {
 
     // Window Closing Event Listener.
     mainWindow.addListener('close', event => {
-      if (readyToClose === false) {
+      // Check that we won't fire this code multiple times.
+      if (readyToClose === false && isClosing === false) {
         event.preventDefault();
+        isClosing = true; // Set this flag incase the user smashes the Exit button multiple times, stops us triggering multiple backups.
         mainWindow.webContents.send('window-closing');
       }
     })
