@@ -11,7 +11,7 @@
     width: 62px;
     margin: 4px;
     padding: 4px;
-    background-image: var(--primary-button-background-image);
+    background-image: linear-gradient(to bottom,rgba(68,68,68,0.50),rgba(60,60,60,0.50));
     cursor: pointer;
     border-radius: 2px;
 }
@@ -26,6 +26,7 @@
     color: #FFF;
     cursor: pointer;
     opacity: 0.75;
+    text-align: center;
 }
 
 .ToolBarButton:hover {

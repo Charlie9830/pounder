@@ -8,6 +8,8 @@ import VisibleStatusBar from './StatusBar';
 import VisibleLockScreen from './LockScreen';
 import AccountScreen from './AccountScreen';
 import ShutdownScreen from './ShutdownScreen';
+import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
+import MessageBox from './MessageBox';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -21,6 +23,8 @@ removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayout
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
+import { backupFirebaseAsync } from '../utilities/FileHandling';
+
 
 const KEYBOARD_COMBOS = {
   MOD_N: 'mod+n',
@@ -34,13 +38,12 @@ const KEYBOARD_COMBOS = {
 // Only Import if running in Electron.
 var electron = null;
 var remote = null;
-var fsJetpack = null;
 
 if (process.versions['electron'] !== undefined) {
   remote = require('electron').remote;
-  fsJetpack = require('fs-jetpack');
   electron = require('electron');
 }
+
 
 class App extends React.Component {
   constructor(props) {
@@ -81,7 +84,6 @@ class App extends React.Component {
     this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
-    this.backupFirebaseAsync = this.backupFirebaseAsync.bind(this);
     this.lockApp = this.lockApp.bind(this);
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
@@ -90,7 +92,6 @@ class App extends React.Component {
     this.getLockScreen = this.getLockScreen.bind(this);
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
-    this.writeDatabaseToFileAsync = this.writeDatabaseToFileAsync.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
     this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
@@ -118,8 +119,8 @@ class App extends React.Component {
     electron.ipcRenderer.on('window-closing', () => {
       this.props.dispatch(setIsShuttingDownFlag(true));
 
-      // Backup Data to HDD.
-      this.backupFirebaseAsync().then(() => {
+      // Backup Data to Disk.
+      backupFirebaseAsync(getFirestore).then(() => {
         // Send Message back to Main Process once complete.
         electron.ipcRenderer.send('ready-to-close');
       }).catch(error => {
@@ -149,6 +150,7 @@ class App extends React.Component {
         {lockScreenJSX}
         {shutdownScreenJSX}
 
+        <VisibleAppSettingsMenu/>
         <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
           <div className="SidebarFlexItemContainer">
@@ -368,7 +370,8 @@ class App extends React.Component {
 
     // Trigger Firebase Backup.
     this.props.dispatch(setLastBackupMessage("Writing to File..."));
-    this.backupFirebaseAsync().then(message => {
+
+    backupFirebaseAsync(getFirestore).then(message => {
       this.props.dispatch(setLastBackupMessage(message));
     }).catch(error => {
       this.postFirebaseError(error);
@@ -458,219 +461,6 @@ class App extends React.Component {
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
-  backupFirebaseAsync() {
-    return new Promise((resolve, reject) => {
-      if (this.isInElectron) {
-        this.pullDownDatabase().then(data => {
-          this.writeDatabaseToFileAsync(JSON.stringify(data)).then((message) => {
-            resolve(message);
-          });
-        }).catch(error => {
-          // this.postFirebaseError(error);
-          reject(error);
-        })
-      }
-    })
-  }
-
-  overwriteFirebase(data) {
-    var confirmMessage = "THIS WILL WIPE FIRESTORE!. Are you sure you want to proceed?";
-    if (confirm(confirmMessage) === true) {
-      this.nukeFirestore().then(() => {
-        // Collect Data from File.
-        // var data = this.readBackupFile();
-        var { projects, projectLayouts, taskLists, tasks } = data;
-        var batch = getFirestore().batch();
-
-        // Projects.
-        projects.forEach(project => {
-          batch.set(getFirestore().collection(PROJECTS).doc(project.uid), project);
-        })
-
-        // Project Layouts.
-        projectLayouts.forEach(projectLayout => {
-          batch.set(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid), projectLayout);
-        })
-
-        // Task Lists.
-        taskLists.forEach(taskList => {
-          batch.set(getFirestore().collection(TASKLISTS).doc(taskList.uid), taskList);
-        })
-
-        // Tasks
-        tasks.forEach(task => {
-          batch.set(getFirestore().collection(TASKS).doc(task.uid), task);
-        })
-
-        batch.commit().then(() => {
-          console.log("Sucseffully Commited Batch");
-        })
-      })
-    }
-  }
-
-  readBackupFile() {
-    throw "Function not Implemented";
-  }
-
-  pullDownDatabase() {
-    return new Promise((resolve, reject) => {
-      // Pull Data down from Firestore.
-      var requests = [];
-      var projects = [];
-      var projectLayouts = [];
-      var taskLists = [];
-      var tasks = [];
-
-      // Projects.
-      requests.push(getFirestore().collection(PROJECTS).get().then(snapshot => {
-        snapshot.forEach(doc => {
-          projects.push(doc.data());
-        })
-      }))
-
-      // Project Layouts.
-      requests.push(getFirestore().collection(PROJECTLAYOUTS).get().then(snapshot => {
-        snapshot.forEach(doc => {
-          projectLayouts.push(doc.data());
-        })
-      }))
-
-      // TaskLists.
-      requests.push(getFirestore().collection(TASKLISTS).get().then(snapshot => {
-        snapshot.forEach(doc => {
-          taskLists.push(doc.data());
-        })
-      }))
-
-      // Tasks.
-      requests.push(getFirestore().collection(TASKS).get().then(snapshot => {
-        snapshot.forEach(doc => {
-          tasks.push(doc.data());
-        })
-      }))
-
-      Promise.all(requests).then(() => {
-        // Combine Together.
-        var combined = {
-          projects: projects,
-          projectLayouts: projectLayouts,
-          taskLists: taskLists,
-          tasks: tasks
-        }
-
-        resolve(combined);
-      }).catch(error => {
-        reject(error);
-      })
-    })
-  }
-
-  nukeFirestore() {
-    return new Promise((resolve, reject) => {
-      this.pullDownDatabase().then(data => {
-        var { projects, projectLayouts, taskLists, tasks } = data;
-
-        // Build a list of References.
-        var refs = [];
-
-        // Projects.
-        projects.forEach(project => {
-          refs.push(getFirestore().collection(PROJECTS).doc(project.uid));
-        })
-
-        // Project Layouts.
-        projectLayouts.forEach(projectLayout => {
-          refs.push(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid));
-        })
-
-        // TaskLists.
-        taskLists.forEach(taskList => {
-          refs.push(getFirestore().collection(TASKLISTS).doc(taskList.uid));
-        })
-
-        // Tasks.
-        tasks.forEach(task => {
-          refs.push(getFirestore().collection(TASKS).doc(task.uid));
-        })
-
-        // Build Delete Batch.
-        var batch = getFirestore().batch();
-        refs.forEach(ref => {
-          batch.delete(ref);
-        })
-
-        // Execute Batch.
-        batch.commit().then(() => {
-          resolve();
-        }).catch(error => {
-          reject(error);
-        });
-      })
-    })
-  }
-
-  writeDatabaseToFileAsync(json) {
-    return new Promise((resolve, reject) => {
-      if (json.length > 0) {
-        // Write to Backup File.
-        // Intialize File Path and Name.
-        var backupDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
-
-        var currentDate = new Date();
-        var normalizedDate = this.getNormalizedDate(currentDate);
-        var filePath = Path.join(backupDirectory, "/", "backup " + normalizedDate + ".json");
-
-        // Create File.
-        fsJetpack.file(filePath, { mode: '700' });
-
-        // Write to File.
-        fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
-          var message = "Last backup created at " +
-            currentDate.getHours() + ":" +
-            currentDate.getMinutes() + ":" +
-            currentDate.getSeconds() + " in " +
-            backupDirectory;
-
-          //this.props.dispatch(setLastBackupMessage(message));
-          resolve(message);
-        }).catch(error => {
-          reject(error);
-        })
-      }
-
-      else {
-        //this.props.dispatch(setLastBackupMessage("Something went wrong while writing to backup."));
-        reject("Something went wrong. There was no data to write to File.");
-      }
-    })
-  }
-
-  getNormalizedDate(date) {
-    var array = [];
-    array.push(
-      date.getFullYear(),
-      (date.getMonth() + 1),
-      date.getDate(),
-      " ",
-      date.getSeconds(),
-      date.getMinutes(),
-      date.getHours(),
-    )
-
-    var normalizedArray = array.map(n => {
-      if (n === " ") {
-        return n;
-      }
-
-      else {
-        return n < 10 ? '0'+n : ''+n;
-      }
-    });
-
-    return normalizedArray.join("");
-  }
-
   handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate) {
     this.props.dispatch(updateTaskDueDateAsync(taskId, newDate));
   }
@@ -689,76 +479,6 @@ class App extends React.Component {
       // Close Application.
       remote.getCurrentWindow().close();
     }
-  }
-
-  importDatabaseFromFile() {
-    var importDirectory = Path.join(remote.app.getPath('documents'), "/Pounder", "/Import", "/", "import.json");
-    fsJetpack.readAsync(importDirectory, 'json').then( data => {
-      var batch = getFirestore().batch();
-
-      var taskValidate = Object.values(data.tasks);
-      var retardTasks = [];
-
-      // Projects.
-      var projects = Object.values(data.projects);
-      projects.forEach(item => {
-        let ref = getFirestore().collection(PROJECTS).doc(item.uid);
-        batch.set(ref, item);
-      })
-
-      // Project Layouts.
-      var projectLayouts = Object.values(data.projectLayouts);
-      projectLayouts.forEach(item => {
-        let ref = getFirestore().collection(PROJECTLAYOUTS).doc(item.uid);
-        batch.set(ref, item);
-      })
-
-      // Task lists.
-      var taskLists = Object.values(data.taskLists);
-      taskLists.forEach(item => {
-        let ref = getFirestore().collection(TASKLISTS).doc(item.uid);
-        batch.set(ref, item);
-      })
-
-      // Tasks
-      var tasks = Object.values(data.tasks);
-      tasks.forEach(item => {
-        if (item.uid != undefined) {
-          let ref = getFirestore().collection(TASKS).doc(item.uid);
-          batch.set(ref, item);
-        }
-      })
-
-      batch.commit().then( () => {
-        console.log("Commit was a Succsess!");
-      })
-
-    })
-  }
-
-  migrateDatabaseTo123() {
-    console.log("Starting Migration to 1.2.3");
-
-    getFirestore().collection(TASKS).get().then(snapshot => {
-      var taskIds = [];
-      snapshot.forEach(doc => {
-        taskIds.push(doc.id);
-      })
-
-      console.log(taskIds.length);
-  
-      var batch = getFirestore().batch();
-  
-      taskIds.forEach(id => {
-        var ref = getFirestore().collection(TASKS).doc(id);
-  
-        batch.update(ref, {isHighPriority: false});
-      })
-  
-      batch.commit().then(() => {
-        console.log("Commit Sucsessful");
-      })
-    })
   }
 }
 
