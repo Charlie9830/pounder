@@ -75,7 +75,7 @@ class DatabaseSettingsPage extends React.Component {
                 <MessageBox isOpen={this.state.isRestoreDatabaseConfirmBoxOpen} message="Are you sure?" 
                 onDialogClosing={this.handleRestoreDatabaseConfirmBoxClosing}/>
 
-                { /* Restore Database Complete Dialog */}
+                { /* Restore Database Complete Dialog   */}
                 <MessageBox isOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
                  message={this.props.restoreDatabaseStatusMessage} okOnly={true}
                  onDialogClosing={this.handleRestoreDatabaseCompleteDialogClosing}/>

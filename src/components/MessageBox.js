@@ -32,10 +32,12 @@ class MessageBox extends React.Component {
     getButtonsJSX() {
         if (!this.props.okOnly === undefined || this.props.okOnly === true) {
             return (
-                <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
-                    <div className="ToolBarButton">
-                        Ok
-                            </div>
+                <div className="MessageBoxButtonFooter">
+                    <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
+                        <div className="ToolBarButton">
+                            Ok
+                        </div>
+                    </div>
                 </div>
             )
         }
