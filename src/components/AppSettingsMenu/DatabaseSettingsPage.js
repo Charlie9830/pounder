@@ -179,8 +179,13 @@ class DatabaseSettingsPage extends React.Component {
 
         else {
             return (
-                <textarea className="DatabaseSettingsPageInfoPane" type='text' defaultValue={this.props.databaseInfo}
-                readOnly="true" />
+                <div>
+                    <textarea className="DatabaseSettingsPageInfoPane" type='text' value={this.props.databaseInfo} 
+                        readOnly="true" />
+                    <div className="ToolBarButtonContainer" onClick={this.handleGetInfoButtonClick}>
+                        <label className="ToolBarButton"> Refresh </label>
+                    </div>
+                </div>
             )
         }
     }
