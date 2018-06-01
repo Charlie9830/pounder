@@ -25,7 +25,9 @@ updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, ge
 setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
+import electron from 'electron';
 
+const remote = electron.remote;
 
 const KEYBOARD_COMBOS = {
   MOD_N: 'mod+n',
@@ -37,13 +39,13 @@ const KEYBOARD_COMBOS = {
 };
 
 // Only Import if running in Electron.
-var electron = null;
-var remote = null;
+// var electron = null;
+// var remote = null;
 
-if (process.versions['electron'] !== undefined) {
-  remote = require('electron').remote;
-  electron = require('electron');
-}
+// if (process.versions['electron'] !== undefined) {
+//   remote = require('electron').remote;
+//   electron = require('electron');
+// }
 
 
 class App extends React.Component {
@@ -58,7 +60,6 @@ class App extends React.Component {
 
     // Class Storage.
     this.isCtrlKeyDown = false;
-    this.isInElectron = remote !== null;
     
     // Method Bindings.
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
@@ -393,17 +394,14 @@ class App extends React.Component {
 
     // Ctrl + Shift + I
     if (combo === KEYBOARD_COMBOS.MOD_SHIFT_I) {
-      if (this.isInElectron) {
         // Open Dev Tools.
         remote.getCurrentWindow().openDevTools();
-      }
+      
     }
 
     // Ctrl + F
     if (combo === KEYBOARD_COMBOS.MOD_F) {
-      if (this.isInElectron) {
         this.setFullscreenFlag(false);
-      }
     }
 
     if (combo === KEYBOARD_COMBOS.MOD_DEL) {
@@ -518,10 +516,8 @@ class App extends React.Component {
   }
 
   handleQuitButtonClick() {
-    if (this.isInElectron) {
       // Close Application.
       remote.getCurrentWindow().close();
-    }
   }
 }
 
