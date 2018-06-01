@@ -106,8 +106,6 @@ class GeneralSettingsPage extends React.Component {
             filledCSSVariables.push({property: property, value: filledValue});
         }
 
-        console.log(filledCSSVariables);
-
         var jsx = filledCSSVariables.map((item,index) => {
             var colorDisplayStyle = {
                 height: '20px',
