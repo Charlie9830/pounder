@@ -9,8 +9,8 @@
   --background-color: #000000; 
   --surface-color:  rgb(17, 17, 17);
   --surface-color-alternate: rgb(27, 27, 27);
-  --primary-button-background-image: linear-gradient(to bottom,rgba(68,68,68,0.50),rgba(60,60,60,0.50));
 
+  
   background: var(--primary-color);
   
 }
@@ -73,6 +73,18 @@
 
 .ProjectSelectorLabelContainer {
   flex: 3;
+}
+
+.ProjectSelectorHeartContainer {
+  flex-grow: 0;
+  padding-left: 5px;
+  width: 12px;
+  height: 16px;
+}
+
+.ProjectSelectorFavoriteIcon {
+  width: 100%;
+  height: 100%;
 }
 
 .ProjectSelectorIconContainer {
@@ -211,7 +223,7 @@
     width: 62px;
     margin: 4px;
     padding: 4px;
-    background-image: var(--primary-button-background-image);
+    background-image: linear-gradient(to bottom,rgba(68,68,68,0.50),rgba(60,60,60,0.50));
     cursor: pointer;
     border-radius: 2px;
 }
@@ -226,11 +238,13 @@
     color: #FFF;
     cursor: pointer;
     opacity: 0.75;
+    text-align: center;
 }
 
 .ToolBarButton:hover {
     opacity: 1;
 }
+
 
 .ToolBarFloatRightContainer {
     align-self: flex-end;
@@ -276,10 +290,6 @@
   margin-right: 8px;
   margin-bottom: 3px;
   margin-top: 3px;
-}
-
-.TaskText[data-ishighpriority*="true"] {
-  color: rgb(255, 150, 0);
 }
 
 
@@ -691,6 +701,20 @@ div {
   flex-direction: column;
 }
 
+.TaskPriorityIndicator {
+  background:  rgb(255, 150, 0);
+  flex-grow: 0;
+  width: 5px;
+  min-height: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.Dummy {
+  flex-grow: 1;
+  flex-basis: 40px;
+}
+
 .TaskInactiveStyle {
   background: rgba(0,0,0,0);
   color: #FFF;
@@ -701,14 +725,6 @@ div {
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
-}
-
-.TaskBottomBorder {
-  width: 100%;
-  margin-left: 27px;
-  margin-bottom: -1px;
-  height: 0px;
-  border-bottom: 1px rgb(50,50,50) solid;
 }
 
 .TaskInactiveStyle:hover {
@@ -725,6 +741,26 @@ div {
   justify-content: space-between;
   align-items: center;
   flex-grow: 1;
+}
+
+/* Active and Inactive Tasks set to highPriority */
+.TaskActiveStyle[data-ishighpriority*="true"], .TaskInactiveStyle[data-ishighpriority*="true"] {
+  box-sizing: border-box;
+  border-left: rgb(255, 150, 0) 6px solid;
+}
+
+/* Active and Inactive Tasks set to highPriority whilst also being complete */
+.TaskActiveStyle[data-ishighpriority*="true"].TaskActiveStyle[data-iscomplete*="true"],
+.TaskInactiveStyle[data-ishighpriority*="true"].TaskInactiveStyle[data-iscomplete*="true"] {
+  border-left: #282828 6px solid;
+}
+
+.TaskBottomBorder {
+  width: 100%;
+  margin-left: 27px;
+  margin-bottom: -1px;
+  height: 0px;
+  border-bottom: 1px rgb(50,50,50) solid;
 }
 
 .TaskMovingStyle {
@@ -985,6 +1021,40 @@ div {
     border-style: solid;
     margin: 0px;
     padding: 0px;
+}.ProjectMessageDisplayContainer {
+    display: block;
+    background: var(--background-color);
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.ProjectMessageDisplayOuter {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.ProjectMessageDisplayInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.ProjectMessageDisplayCentered {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    padding: 1em;
+}
+
+
+.ProjectMessageDisplayMessage {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 14pt;
+    color: #AAA;
+    text-align: center;
 }.ProjectContainer {
     float: left;
     width: 100%;
@@ -996,6 +1066,10 @@ div {
     background: var(--background-color);
     width: 100%;
     height: 100%;
+}
+
+.ProjectHidden {
+    visibility: hidden;
 }
 
 .ProjectToolBar {
@@ -1378,4 +1452,312 @@ div {
     font-size: 10pt;
     border: 1px white solid;
     padding: 5px 15px;
+}.ShutdownScreenContainer {
+    display: block;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 11;
+}
+
+.ShutdownScreenOuter {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.ShutdownScreenInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.ShutdownScreenCentered {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    padding: 1em;
+}
+
+.ShutdownScreenSpinner {
+    border: 6px solid darkgray;
+    border-top: 6px solid white;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin: auto;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.ShutdownScreenTitle {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 18pt;
+    color: #EEE;
+    text-align: center;
+}.AppSettingsMenuSubtitleContainer {
+    width: 100%;
+}
+
+.AppSettingsMenuSubtitle {
+    display: inline;
+    color: #CCC;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    text-align: center;
+}/* Window Layout */
+
+.AppSettingsMenuContainer {
+    background: var(--primary-color);
+    border: gray 1px solid;
+    margin-top: -25%;
+}
+
+.AppSettingsMenuSidebarContentFlexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: flex-start;
+}
+
+.AppSettingsMenuSidebarContainer {
+    flex-shrink: 1;
+    width: 100px;
+}
+
+.AppSettingsMenuContentContainer {
+    flex: 1;
+    width: fit-content;
+    background: var(--surface-color);
+    padding: 10px;
+    height: 60vh;
+    overflow-y: scroll;
+}
+
+.AppSettingsMenuFooterContainer {
+    width: 100%;
+    height: 48px;
+}
+
+.AppSettingsMenuFooterFloatContainer {
+    float: right;
+}
+
+/* Page Content */
+
+.AppSettingsVerticalFlexContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.AppSettingsVerticalFlexItem {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin: 5px 0px 5px 0px;
+}
+
+.AppSettingsHorizontalFlexItem {
+    flex-grow: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    margin: 5px 10px 5px 10px;
+}
+
+.AppSettingsItemLabel {
+    color: #FFF;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    line-height: 10pt;
+}
+
+.AppSettingsItemInput {
+    margin: 0px;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    background: var(--surface-color-alternate);
+    color: #FFF;
+    border: gray 1px solid;
+    padding: 1px;
+}
+
+.DatabaseSettingsPageInfoPane {
+    width: 500px;
+    min-height: 260px;
+    margin: 10px 0px;
+    resize: none;
+    vertical-align: middle;
+    font-size: 9pt;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    color: #FFF;
+    background: var(--surface-color-alternate);
+    border: 0px solid #FFF;
+    padding: 5px;
+}
+
+.DatabaseWorkingSpinner {
+    border: 2px solid darkgray;
+    border-top: 2px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    margin: auto;
+    animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.DatabaseRestoringStatusMessage {
+    background: var(--surface-color);
+    color: #FFF;
+    width: 400px;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+/* Centering */
+
+.AppSettingsContainer {
+    display: block;
+    position: fixed;
+    background: rgba(0, 0, 0, 0.5);
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    height: 100%;
+    z-index: 6;
+}
+
+.AppSettingsOuter {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.AppSettingsInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.AppSettingsCentered {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    height: 50vh;
+    padding: 1em;
+}/* Layout */
+.ModalPortal {
+    position: absolute;
+    z-index: 7;
+}
+
+.ModalOverlay {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    background-color: rgba(0,0,0,0.5);
+
+}
+
+.ModalContent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(37,37,37);
+    border: gray 1px solid;
+    padding: 5px;
+    width: 256px;
+    height: 144px;
+    z-index: 8;
+    user-select: none;
+}
+
+.MessageBoxVerticalFlexContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
+.MessageBoxMessageContainer {
+    flex-grow: 1;
+    width: 100%;
+    color: #FFF;
+}
+
+.MessageBoxMessage {
+    position: absolute;
+    top: 35%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.MessageBoxButtonFooter {
+    flex-shrink: 0.25;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.MessageBoxButtonContainer {
+    flex: 1;
+}.AppSettingsSidebarFlexContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.AppSettingsSidebarItemContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 5px 0px;
+    width: 100%;
+    height: 100%;
+}
+
+.AppSettingsSidebarItemContainer:hover {
+    background: rgba(52,55,56,255);
+}
+
+.AppSettingsSidebarItemLabel {
+    flex: 1;
+    color: gray;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 12pt;
+    padding-left: 5px;
+}
+
+.AppSettingsSidebarItemLabel[data-isselected*="true"] {
+    color: #FFF;
 }

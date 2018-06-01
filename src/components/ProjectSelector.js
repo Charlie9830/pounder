@@ -10,19 +10,19 @@ class ProjectSelector extends React.Component {
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.getDueDateCountsJSX = this.getDueDateCountsJSX.bind(this);
+        this.getHeartJSX = this.getHeartJSX.bind(this);
     }
 
     render(){
         var projectLabelJSX = this.getProjectLabelJSX(this.props);
         var dueDateCounts = this.getDueDateCountsJSX(this.props);
+        var heartJSX = this.getHeartJSX();
 
         return (
             <div>
                 <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
                     <div className="ProjectSelectorFlexContainer">
-                        <div className="ProjectSelectorHeartContainer">
-                            <img className="ProjectSelectorFavoriteIcon" src={FavoriteIcon}/>
-                        </div>
+                        {heartJSX}
                         <div className="ProjectSelectorLabelContainer">
                             {projectLabelJSX}
                         </div>
@@ -33,6 +33,16 @@ class ProjectSelector extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    getHeartJSX() {
+        if (this.props.isFavouriteProject) {
+            return (
+                <div className="ProjectSelectorHeartContainer">
+                    <img className="ProjectSelectorFavoriteIcon" src={FavoriteIcon} />
+                </div>
+            )
+        }
     }
 
     getDueDateCountsJSX(props) {

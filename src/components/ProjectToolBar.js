@@ -5,6 +5,7 @@ import RemoveTaskIcon from '../assets/icons/RemoveTaskIcon.svg';
 import NewTaskListIcon from '../assets/icons/NewTaskListIcon.svg';
 import RemoveTaskListIcon from '../assets/icons/RemoveTaskListIcon.svg';
 import LockIcon from '../assets/icons/LockIcon.svg';
+import SettingsIcon from '../assets/icons/SettingsIcon.svg';
 
 class ProjectToolBar extends React.Component {
     constructor(props) {
@@ -15,6 +16,7 @@ class ProjectToolBar extends React.Component {
         this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
         this.handleRemoveTaskListButtonCLick = this.handleRemoveTaskListButtonCLick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
+        this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
 
     }
 
@@ -38,11 +40,19 @@ class ProjectToolBar extends React.Component {
                     <div className="ToolBarFlexDivider">
                     </div>
                     <div className="ToolBarButtonContainer">
+                        <img className="ToolBarButton" src={SettingsIcon} onClick={this.handleAppSettingsButtonClick} />
+                    </div>
+                    <span className="ToolBarButtonSeparator" />
+                    <div className="ToolBarButtonContainer">
                         <img className="ToolBarButton" src={LockIcon} onClick={this.handleLockButtonClick} />
                     </div>
                 </div>
             </div>
         )
+    }
+
+    handleAppSettingsButtonClick() {
+        this.props.onAppSettingsButtonClick();
     }
 
     handleLockButtonClick(e) {
@@ -63,7 +73,7 @@ class ProjectToolBar extends React.Component {
 
     handleRemoveTaskListButtonCLick(e) {
         this.props.onRemoveTaskListButtonClick();
-    } 
+    }
 }
 
 export default ProjectToolBar;

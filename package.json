@@ -43,6 +43,7 @@
     "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
+    "dexie": "^2.0.4",
     "fs-jetpack": "^1.2.0",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.1",

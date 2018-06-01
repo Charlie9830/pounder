@@ -5,14 +5,13 @@
 
 #root {
   /* Colors */
+  /* *** MAKE SURE THAT ANYTHING YOU CHANGE HERE IS ALSO REFLECTED IN THE FALLBACK CSS CONFIG *** */
   --primary-color: rgb(27, 27, 27);
   --background-color: #000000; 
   --surface-color:  rgb(17, 17, 17);
   --surface-color-alternate: rgb(27, 27, 27);
 
-  
   background: var(--primary-color);
-  
 }
 
 

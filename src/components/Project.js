@@ -40,6 +40,7 @@ class Project extends React.Component{
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
+        this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
     }
     
     componentDidMount() {
@@ -120,7 +121,7 @@ class Project extends React.Component{
                 <div className="ProjectToolBar">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
-                    onLockButtonClick={this.handleLockButtonClick}/>
+                    onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}/>
                 </div>
                 {projectMessageDisplayJSX}
                 <ReactGridLayout className={rglClassName} layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
@@ -130,6 +131,10 @@ class Project extends React.Component{
                 </ReactGridLayout>
             </div>
         )
+    }
+
+    handleAppSettingsButtonClick() {
+        this.props.onAppSettingsButtonClick();
     }
 
     getProjectMessageDisplayJSX(taskListWidgetCount) {

@@ -19,9 +19,10 @@ import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsA
 unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
-removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
+removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag } from 'pounder-redux/action-creators';
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, 
+setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 
@@ -97,6 +98,9 @@ class App extends React.Component {
     this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
     this.subscribeToDatabase = this.subscribeToDatabase.bind(this);
     this.getShutdownScreenJSX = this.getShutdownScreenJSX.bind(this);
+    this.initalizeConfig = this.initalizeConfig.bind(this);
+    this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
+    this.getAppSettingsMenuJSX = this.getAppSettingsMenuJSX.bind(this);
   }
 
   componentDidMount(){
@@ -105,6 +109,9 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     MouseTrap.bind("del", this.handleDeleteKeyPress);
+
+    // Read and Apply Config Values.
+    this.initalizeConfig();
 
     // Pull down Data from Database, will also attach listeners for future changes.
     this.subscribeToDatabase();
@@ -128,7 +135,29 @@ class App extends React.Component {
       })
     })
   }
-  
+
+  componentDidUpdate(prevProps, prevState, snapshot) {
+    // Determine if Fullscreen mode should be triggered.
+    if (this.props.ignoreFullscreenTrigger === false && this.props.isDexieConfigLoadComplete &&
+      this.props.generalConfig.startInFullscreen) {
+      this.setFullscreenFlag(true);
+      // This code will be called on every update, set an ignore flag for subsequent
+      // updates.
+      this.props.dispatch(setIgnoreFullscreenTriggerFlag(true));
+    }
+
+    // Apply CSS Variables.
+    if (JSON.stringify(prevProps.cssConfig) !== JSON.stringify(this.props.cssConfig)) {
+      // Enumerate and Apply CSS Values.
+      for (var property in this.props.cssConfig) {
+        let value = this.props.cssConfig[property];
+        if (value !== "") {
+          document.getElementById("root").style.setProperty(property, value);
+        }
+      }
+    }
+  }
+
   componentWillUnmount(){
     MouseTrap.unBind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
     MouseTrap.unBind("mod", this.handleCtrlKeyDown);
@@ -142,6 +171,7 @@ class App extends React.Component {
     var layouts = this.props.projectLayout.layouts;
     var lockScreenJSX = this.getLockScreen();
     var shutdownScreenJSX = this.getShutdownScreenJSX();
+    var appSettingsMenuJSX = this.getAppSettingsMenuJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
 
@@ -150,14 +180,15 @@ class App extends React.Component {
         {lockScreenJSX}
         {shutdownScreenJSX}
 
-        <VisibleAppSettingsMenu/>
+        {appSettingsMenuJSX}
         <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
           <div className="SidebarFlexItemContainer">
             <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} 
+              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays}
+              favouriteProjectId={this.props.accountConfig.favouriteProjectId}
             />
           </div>
           <div className="ProjectFlexItemContainer">
@@ -175,12 +206,24 @@ class App extends React.Component {
               openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
-              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
+              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
             />
           </div>
         </div>
       </div>
     );
+  }
+
+  getAppSettingsMenuJSX() {
+    if (this.props.isAppSettingsOpen) {
+      return (
+        <VisibleAppSettingsMenu/>
+      )
+    }
+  }
+
+  handleAppSettingsButtonClick() {
+    this.props.dispatch(setIsAppSettingsOpen(!this.props.isAppSettingsOpen));
   }
 
   getShutdownScreenJSX() {
@@ -189,6 +232,11 @@ class App extends React.Component {
         <ShutdownScreen/>
       )
     }
+  }
+
+  initalizeConfig() {
+    this.props.dispatch(getGeneralConfigAsync());
+    this.props.dispatch(getCSSConfigAsync());
   }
 
   subscribeToDatabase() {
@@ -200,6 +248,9 @@ class App extends React.Component {
          
         // Get Tasks (Also attaches a Value listener for future changes).
         this.props.dispatch(getTasksAsync());
+
+        // Get Account Config (Also attaches a Value listener for future changes).
+        this.props.dispatch(getAccountConfigAsync());
     
   }
 
@@ -209,6 +260,7 @@ class App extends React.Component {
     this.props.dispatch(unsubscribeTaskListsAsync());
     this.props.dispatch(unsubscribeTasksAsync());
     this.props.dispatch(unsubscribeProjectLayoutsAsync());
+    this.props.dispatch(unsubscribeAccountConfigAsync());
   }
 
   handleTaskPriorityToggleClick(taskId, newValue) {
@@ -350,7 +402,7 @@ class App extends React.Component {
     // Ctrl + F
     if (combo === KEYBOARD_COMBOS.MOD_F) {
       if (this.isInElectron) {
-        remote.getCurrentWindow().setFullScreen(false);
+        this.setFullscreenFlag(false);
       }
     }
 
@@ -362,6 +414,10 @@ class App extends React.Component {
 
     // Force Control Key up.
     this.isCtrlKeyDown = false;
+  }
+
+  setFullscreenFlag(isFullscreen) {
+    remote.getCurrentWindow().setFullScreen(isFullscreen);
   }
 
   lockApp() {
@@ -405,20 +461,7 @@ class App extends React.Component {
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    var outgoingProjectId = this.props.selectedProjectId;
-    var incomingProjectId = projectSelectorId;
-
-    if (outgoingProjectId !== -1) {
-      // Old Listeners.
-      this.props.dispatch(unsubscribeProjectLayoutsAsync());
-    }
-
-    if (incomingProjectId !== -1 ) {
-      this.props.dispatch(getProjectLayoutsAsync(projectSelectorId));
-    }
-
-    this.props.dispatch(selectProject(projectSelectorId));
-
+    this.props.dispatch(selectProjectAsync(projectSelectorId));
   }
 
   handleLayoutChange(layouts, projectId) {
@@ -500,6 +543,12 @@ const mapStateToProps = state => {
     isLockScreenDisplayed: state.isLockScreenDisplayed,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
     isShuttingDown: state.isShuttingDown,
+    isDexieConfigLoadComplete: state.isDexieConfigLoadComplete,
+    generalConfig: state.generalConfig,
+    isAppSettingsOpen: state.isAppSettingsOpen,
+    accountConfig: state.accountConfig,
+    ignoreFullscreenTrigger: state.ignoreFullscreenTrigger,
+    cssConfig: state.cssConfig,
   }
 }
 

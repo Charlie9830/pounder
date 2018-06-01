@@ -11,20 +11,20 @@ class AppSettingsSidebar extends React.Component {
     render() {
         return (
             <div className="AppSettingsSidebarFlexContainer">
-                { /* Account */}
-                <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("account")}>
-                    <div>
-                        <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "account"}>
-                            Account
-                        </label>
-                    </div>
-                </div>
-
                 { /* General */}
                 <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("general")}>
                     <div>
                         <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "general"}>
                             General
+                        </label>
+                    </div>
+                </div>
+
+                { /* Account */}
+                <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("account")}>
+                    <div>
+                        <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "account"}>
+                            Account
                         </label>
                     </div>
                 </div>

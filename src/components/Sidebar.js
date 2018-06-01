@@ -34,11 +34,13 @@ class Sidebar extends React.Component{
             var isSelected = this.props.selectedProjectId === item.uid;
             var isInputOpen = item.uid === this.state.openProjectSelectorInputId;
             var dueDateDisplay = this.props.projectSelectorDueDateDisplays[item.uid];
+            var isFavouriteProject = this.props.favouriteProjectId === item.uid;
 
             return (
                 <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
                     isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
-                    onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay} />
+                    onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}
+                    isFavouriteProject={isFavouriteProject} />
             )
         })
 

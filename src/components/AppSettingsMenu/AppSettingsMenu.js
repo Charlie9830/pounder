@@ -2,14 +2,15 @@ import React from 'react';
 import Sidebar from 'react-sidebar';
 import GeneralSettingsPage from './GeneralSettingsPage';
 import DatabaseSettingsPage from './DatabaseSettingsPage';
+import AccountSettingsPage from './AccountSettingsPage';
 import AppSettingsSidebar from './AppSettingsSidebar';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
 import electron from 'electron';
 import { connect } from 'react-redux';
-import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync,
-        setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag,
-        setIsRestoreDatabaseCompleteDialogOpen} from 'pounder-redux/action-creators';
+import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
+        setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync,
+        setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen} from 'pounder-redux/action-creators';
 import { validateFileAsync, restoreFirebaseAsync } from '../../utilities/FileHandling';
 import MessageBox from '../MessageBox';
 import { getFirestore } from 'pounder-firebase';
@@ -29,10 +30,14 @@ class AppSettingsMenu extends React.Component {
         this.handleRequestDatabaseRestore = this.handleRequestDatabaseRestore.bind(this);
         this.handleOpenDialogResult = this.handleOpenDialogResult.bind(this);
         this.handleRestoreDatabaseCompleteDialogClosing = this.handleRestoreDatabaseCompleteDialogClosing.bind(this);
+        this.handleStartInFullscreenChange = this.handleStartInFullscreenChange.bind(this);
+        this.handleStartLockedChange = this.handleStartLockedChange.bind(this);
+        this.handleOkButtonClick = this.handleOkButtonClick.bind(this);
+        this.handleFavouriteProjectSelectChange = this.handleFavouriteProjectSelectChange.bind(this);
+        this.handleCSSPropertyChange = this.handleCSSPropertyChange.bind(this);
     }
 
     componentDidMount() {
-        this.props.dispatch(setAppSettingsMenuPage("database"));
     }
 
     render() {
@@ -58,7 +63,7 @@ class AppSettingsMenu extends React.Component {
                                 {/* Footer */}
                                 <div className="AppSettingsMenuFooterContainer">
                                     <div className="AppSettingsMenuFooterFloatContainer">
-                                        <div className="ToolBarButtonContainer">
+                                        <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
                                             <label className="ToolBarButton"> Ok </label>
                                         </div>
                                     </div>
@@ -71,21 +76,45 @@ class AppSettingsMenu extends React.Component {
         )
     }
 
+    handleCSSPropertyChange(propertyName, value) {
+        var newConfig = {...this.props.cssConfig};
+        newConfig[propertyName] = value;
+
+        this.props.dispatch(setCSSConfigAsync(newConfig));
+    }
+
+    handleOkButtonClick() {
+        this.props.dispatch(setIsAppSettingsOpen(false));
+    }
+
+    handleStartLockedChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, startLocked: newValue}));
+    }
+
+    handleStartInFullscreenChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, startInFullscreen: newValue}));
+    }
+
     handleGetDatabaseInfoClick() {
         this.props.dispatch(getDatabaseInfoAsync());
     }
 
     getPageJSX() {
-        switch(this.props.menuPage) {
+        var menuPage = this.props.menuPage === "" ? "general" : this.props.menuPage;
+
+        switch(menuPage) {
             case "general":
                 return (
-                    <GeneralSettingsPage projects={this.props.projects}/>
+                    <GeneralSettingsPage projects={this.props.projects} generalConfig={this.props.generalConfig}
+                    onStartInFullscreenChange={this.handleStartInFullscreenChange} onStartLockedChange={this.handleStartLockedChange}
+                    onFavouriteProjectSelectChange={this.handleFavouriteProjectSelectChange} accountConfig={this.props.accountConfig}
+                    cssConfig={this.props.cssConfig} onCSSPropertyChange={this.handleCSSPropertyChange}/>
                 )
             break;
 
             case "account":
                 return (
-                    <div/>
+                    <AccountSettingsPage/>
                 )
             break;
 
@@ -97,10 +126,15 @@ class AppSettingsMenu extends React.Component {
                         onRequestDatabaseRestore={this.handleRequestDatabaseRestore} isDatabaseRestoring={this.props.isDatabaseRestoring}
                         restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage}
                         isRestoreDatabaseCompleteDialogOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
-                        onRestoreDatabaseCompleteDialogClosing={this.handleRestoreDatabaseCompleteDialogClosing}/>
+                        onRestoreDatabaseCompleteDialogClosing={this.handleRestoreDatabaseCompleteDialogClosing}
+                        />
                 )
             break;
         }
+    }
+
+    handleFavouriteProjectSelectChange(projectId) {
+        this.props.dispatch(setFavouriteProjectIdAsync(projectId));
     }
 
     handleRestoreDatabaseCompleteDialogClosing() {
@@ -154,6 +188,9 @@ const mapStateToProps = state => {
         isDatabaseRestoring: state.isDatabaseRestoring,
         restoreDatabaseStatusMessage: state.restoreDatabaseStatusMessage,
         isRestoreDatabaseCompleteDialogOpen: state.isRestoreDatabaseCompleteDialogOpen,
+        generalConfig: state.generalConfig,
+        accountConfig: state.accountConfig,
+        cssConfig: state.cssConfig
     }
 }
 
