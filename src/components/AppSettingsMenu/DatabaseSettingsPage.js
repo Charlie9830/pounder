@@ -1,6 +1,7 @@
 import React from 'react';
 import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
 import MessageBox from '../MessageBox';
+import Button from '../Button';
 import { setMessageBox } from 'pounder-redux/action-creators';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
@@ -69,9 +70,7 @@ class DatabaseSettingsPage extends React.Component {
 
         else {
             return (
-                <div className="ToolBarButtonContainer" onClick={this.handleRestoreDatabaseButtonClick}>
-                    <label className="ToolBarButton"> Restore </label>
-                </div>
+                <Button text="Restore" onClick={this.handleRestoreDatabaseButtonClick}/>
             )
         }
     }
@@ -94,9 +93,7 @@ class DatabaseSettingsPage extends React.Component {
 
         else {
             return (
-                <div className="ToolBarButtonContainer" onClick={this.handlePurgeCompletedTasksButtonClick}>
-                    <label className="ToolBarButton"> Purge </label>
-                </div>
+                <Button text="Purge" onClick={this.handlePurgeCompletedTasksButtonClick}/>
             )
         }
     }
@@ -104,9 +101,7 @@ class DatabaseSettingsPage extends React.Component {
     getDatabaseInfoPaneJSX() {
         if (this.props.databaseInfo === "") {
             return (
-                <div className="ToolBarButtonContainer" onClick={this.handleGetInfoButtonClick}>
-                    <label className="ToolBarButton"> Get Info </label>
-                </div>
+                <Button text="Get Info" onClick={this.handleGetInfoButtonClick}/>
             )
         }
 
@@ -115,9 +110,7 @@ class DatabaseSettingsPage extends React.Component {
                 <div>
                     <textarea className="DatabaseSettingsPageInfoPane" type='text' value={this.props.databaseInfo} 
                         readOnly="true" />
-                    <div className="ToolBarButtonContainer" onClick={this.handleGetInfoButtonClick}>
-                        <label className="ToolBarButton"> Refresh </label>
-                    </div>
+                    <Button text="Refresh" onClick={this.handleGetInfoButtonClick}/>
                 </div>
             )
         }

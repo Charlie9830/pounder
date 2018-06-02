@@ -65,9 +65,7 @@ class AppSettingsMenu extends React.Component {
                                 {/* Footer */}
                                 <div className="AppSettingsMenuFooterContainer">
                                     <div className="AppSettingsMenuFooterFloatContainer">
-                                        <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
-                                            <label className="ToolBarButton"> Ok </label>
-                                        </div>
+                                        <Button text="Ok" onClick={this.handleOkButtonClick}/>
                                     </div>
                                 </div>
                             </div>

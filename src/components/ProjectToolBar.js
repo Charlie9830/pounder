@@ -6,6 +6,7 @@ import NewTaskListIcon from '../assets/icons/NewTaskListIcon.svg';
 import RemoveTaskListIcon from '../assets/icons/RemoveTaskListIcon.svg';
 import LockIcon from '../assets/icons/LockIcon.svg';
 import SettingsIcon from '../assets/icons/SettingsIcon.svg';
+import Button from './Button';
 
 class ProjectToolBar extends React.Component {
     constructor(props) {
@@ -14,7 +15,7 @@ class ProjectToolBar extends React.Component {
         this.handleAddTaskButtonClick = this.handleAddTaskButtonClick.bind(this);
         this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
         this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
-        this.handleRemoveTaskListButtonCLick = this.handleRemoveTaskListButtonCLick.bind(this);
+        this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
 
@@ -24,28 +25,15 @@ class ProjectToolBar extends React.Component {
         return (
             <div>
                 <div className="ToolBarFlexContainer">
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={NewTaskIcon} onClick={this.handleAddTaskButtonClick} />
-                    </div>
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick} />
-                    </div>
+                    <Button iconSrc={NewTaskIcon} onClick={this.handleAddTaskButtonClick}/>
+                    <Button iconSrc={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick}/>
                     <span className="ToolBarButtonSeparator" />
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick} />
-                    </div>
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonCLick} />
-                    </div>
-                    <div className="ToolBarFlexDivider">
-                    </div>
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={SettingsIcon} onClick={this.handleAppSettingsButtonClick} />
-                    </div>
+                    <Button iconSrc={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick}/>
+                    <Button iconSrc={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonClick}/>
+                    <div className="ToolBarFlexDivider"/>
+                    <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}/>
                     <span className="ToolBarButtonSeparator" />
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={LockIcon} onClick={this.handleLockButtonClick} />
-                    </div>
+                    <Button iconSrc={LockIcon} onClick={this.handleLockButtonClick}/>
                 </div>
             </div>
         )
@@ -71,7 +59,7 @@ class ProjectToolBar extends React.Component {
         this.props.onAddTaskListButtonClick();
     }
 
-    handleRemoveTaskListButtonCLick(e) {
+    handleRemoveTaskListButtonClick(e) {
         this.props.onRemoveTaskListButtonClick();
     }
 }

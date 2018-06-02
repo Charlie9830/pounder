@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
+import Button from './Button';
 import { MessageBoxTypes } from 'pounder-redux';
 import '../assets/css/MessageBox.css';
 import '../assets/css/ToolBarButton.css';
@@ -37,11 +38,7 @@ class MessageBox extends React.Component {
         if (this.props.config.type === MessageBoxTypes.OK_ONLY) {
             return (
                 <div className="MessageBoxButtonFooter">
-                    <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
-                        <div className="ToolBarButton">
-                            Ok
-                        </div>
-                    </div>
+                    <Button text="Ok" onClick={this.handleOkButtonClick}/>
                 </div>
             )
         }
@@ -49,16 +46,8 @@ class MessageBox extends React.Component {
         else {
             return (
                 <div className="MessageBoxButtonFooter">
-                    <div className="ToolBarButtonContainer" onClick={this.handleCancelButtonClick}>
-                        <div className="ToolBarButton">
-                            Cancel
-                            </div>
-                    </div>
-                    <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
-                        <div className="ToolBarButton">
-                            Ok
-                            </div>
-                    </div>
+                    <Button text="Ok" onClick={this.handleOkButtonClick}/>
+                    <Button text="Cancel" onClick={this.handleCancelButtonClick}/>
                 </div>
             )
         }

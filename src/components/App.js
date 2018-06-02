@@ -10,6 +10,7 @@ import AccountScreen from './AccountScreen';
 import ShutdownScreen from './ShutdownScreen';
 import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
 import MessageBox from './MessageBox';
+import Button from './Button';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -22,12 +23,14 @@ lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addN
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, 
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, unsubscribeAccountConfigAsync,
 setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync,
 setMessageBox } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
+
+import SettingsIcon from '../assets/icons/SettingsIcon.svg';
 
 const remote = electron.remote;
 const KEYBOARD_COMBOS = {

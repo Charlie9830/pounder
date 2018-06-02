@@ -1,5 +1,6 @@
 import React from 'react';
 import ProjectSelector from './ProjectSelector';
+import Button from './Button';
 import '../assets/css/Sidebar.css';
 import '../assets/css/ToolBarButton.css';
 import NewProjectIcon from '../assets/icons/NewProjectIcon.svg';
@@ -67,12 +68,8 @@ class Sidebar extends React.Component{
         if (this.state.isCollapsed !== true) {
             return (
                 <div className="SidebarToolbarFlexContainer">
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={NewProjectIcon} onClick={this.handleAddProjectClick} />
-                    </div>
-                    <div className="ToolBarButtonContainer">
-                        <img className="ToolBarButton" src={RemoveProjectIcon} onClick={this.handleRemoveProjectClick} />
-                    </div>
+                    <Button iconSrc={NewProjectIcon} onClick={this.handleAddProjectClick}/>
+                    <Button iconSrc={RemoveProjectIcon} onClick={this.handleRemoveProjectClick}/>
                 </div>
             )     
         }
