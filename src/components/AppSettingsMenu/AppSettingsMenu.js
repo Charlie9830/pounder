@@ -9,9 +9,10 @@ import '../../assets/css/ToolBarButton.css';
 import electron from 'electron';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
-        setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync,
+        setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen} from 'pounder-redux/action-creators';
-import { validateFileAsync, restoreFirebaseAsync } from '../../utilities/FileHandling';
+import { validateFileAsync, restoreFirebaseAsync} from '../../utilities/FileHandling';
+import { MessageBoxTypes } from 'pounder-redux';
 import MessageBox from '../MessageBox';
 import { getFirestore } from 'pounder-firebase';
 
@@ -27,7 +28,6 @@ class AppSettingsMenu extends React.Component {
         this.handleSidebarItemClick = this.handleSidebarItemClick.bind(this);
         this.handleGetDatabaseInfoClick = this.handleGetDatabaseInfoClick.bind(this);
         this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
-        this.handleRequestDatabaseRestore = this.handleRequestDatabaseRestore.bind(this);
         this.handleOpenDialogResult = this.handleOpenDialogResult.bind(this);
         this.handleRestoreDatabaseCompleteDialogClosing = this.handleRestoreDatabaseCompleteDialogClosing.bind(this);
         this.handleStartInFullscreenChange = this.handleStartInFullscreenChange.bind(this);
@@ -35,6 +35,8 @@ class AppSettingsMenu extends React.Component {
         this.handleOkButtonClick = this.handleOkButtonClick.bind(this);
         this.handleFavouriteProjectSelectChange = this.handleFavouriteProjectSelectChange.bind(this);
         this.handleCSSPropertyChange = this.handleCSSPropertyChange.bind(this);
+        this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
+        this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -121,16 +123,43 @@ class AppSettingsMenu extends React.Component {
             case "database":
                 return (
                     <DatabaseSettingsPage databaseInfo={this.props.databaseInfo} isDatabasePurging={this.props.isDatabasePurging} 
-                        onGetDatabaseInfoClick={this.handleGetDatabaseInfoClick}
+                        onGetDatabaseInfoClick={this.handleGetDatabaseInfoClick} onRestoreDatabaseButtonClick={this.handleRestoreDatabaseButtonClick}
                         onPurgeCompletedTasksButtonClick={this.handlePurgeCompletedTasksButtonClick}
                         onRequestDatabaseRestore={this.handleRequestDatabaseRestore} isDatabaseRestoring={this.props.isDatabaseRestoring}
                         restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage}
                         isRestoreDatabaseCompleteDialogOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
-                        onRestoreDatabaseCompleteDialogClosing={this.handleRestoreDatabaseCompleteDialogClosing}
+                        
                         />
                 )
             break;
         }
+    }
+
+    handleRestoreDatabaseButtonClick() {
+        // Defer to Message Box for Confirmation.
+        this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+            (result) => {
+                if (result === "ok") {
+                    // Trigger Electron Dialog.
+                    dialog.showOpenDialog({
+                        filters: [ { name: 'Javascript Object Notation', extensions: ['json']}]
+                    }, this.handleOpenDialogResult)
+                }
+
+                this.props.dispatch(setMessageBox({}));
+            }))
+    }
+
+    handlePurgeCompletedTasksButtonClick() {
+        // Defer to Message Box for Confirmation.
+        this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+            (result) => {
+                if (result === "ok") {
+                    this.props.dispatch(purgeCompleteTasksAsync());
+                }
+
+                this.props.dispatch(setMessageBox({}));
+            }))
     }
 
     handleFavouriteProjectSelectChange(projectId) {
@@ -141,12 +170,6 @@ class AppSettingsMenu extends React.Component {
         this.props.dispatch(setIsRestoreDatabaseCompleteDialogOpen(false));
     }
 
-    handleRequestDatabaseRestore() {
-        dialog.showOpenDialog({
-            filters: [ { name: 'Javascript Object Notation', extensions: ['json']}]
-        }, this.handleOpenDialogResult)
-    }
-
     handleOpenDialogResult(fileNames) {
         if (fileNames === undefined) {
             // User didn't select anything.
@@ -155,23 +178,22 @@ class AppSettingsMenu extends React.Component {
 
         else {
             var fileName = fileNames[0];
+            console.log("DINGUS");
             this.props.dispatch(setIsDatabaseRestoringFlag(true));
-
+            console.log("DINGUS 222222222222222");
             restoreFirebaseAsync(getFirestore, fileName).then(() => {
                 this.props.dispatch(setIsDatabaseRestoringFlag(false));
-                this.props.dispatch(setRestoreDatabaseStatusMessage("Database restored"));
-                this.props.dispatch(setIsRestoreDatabaseCompleteDialogOpen(true));
+                this.props.dispatch(setMessageBox(true, "Database restore complete", MessageBoxTypes.OK_ONLY, null, (result) => {
+                    this.props.dispatch(setMessageBox({}));
+                }))
             }).catch(error => {
                 // Database failed to Restore.
                 this.props.dispatch(setIsDatabaseRestoringFlag(false));
-                this.props.dispatch(setRestoreDatabaseStatusMessage("Database restore failed. Reason: " + error));
-                this.props.dispatch(setIsRestoreDatabaseCompleteDialogOpen(true));
+                this.props.dispatch(setMessageBox(true, "Database restore failed. Reason: " + error, MessageBoxTypes.OK_ONLY, null, (result) => {
+                    this.props.dispatch(setMessageBox({}));
+                }))
             })   
         }
-    }
-
-    handlePurgeCompletedTasksButtonClick() {
-        this.props.dispatch(purgeCompleteTasksAsync());
     }
 
     handleSidebarItemClick(itemName) {

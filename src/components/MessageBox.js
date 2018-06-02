@@ -1,5 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
+import { MessageBoxTypes } from 'pounder-redux';
 import '../assets/css/MessageBox.css';
 import '../assets/css/ToolBarButton.css';
 
@@ -13,14 +14,17 @@ class MessageBox extends React.Component {
     }
 
     render() {
-        var buttonsJSX = this.getButtonsJSX();
+        var buttonsJSX = this.props.config.isOpen === undefined ? (<div/>) : this.getButtonsJSX();
+        var isOpen = typeof this.props.config.isOpen === 'boolean' ? this.props.config.isOpen : false;
+        var message = this.props.config.message === undefined ? "" : this.props.config.message;
+
         return (
-            <Modal portalClassName="ModalPortal" className="ModalContent" overlayClassName="ModalOverlay" isOpen={this.props.isOpen}
+            <Modal portalClassName="ModalPortal" className="ModalContent" overlayClassName="ModalOverlay" isOpen={isOpen}
             ariaHideApp={false}>
                 <div className="MessageBoxVerticalFlexContainer">
                     <div className="MessageBoxMessageContainer">
                         <div className="MessageBoxMessage">
-                            {this.props.message}
+                            {message}
                         </div>
                     </div>
                     {buttonsJSX}
@@ -30,7 +34,7 @@ class MessageBox extends React.Component {
     }
 
     getButtonsJSX() {
-        if (!this.props.okOnly === undefined || this.props.okOnly === true) {
+        if (this.props.config.type === MessageBoxTypes.OK_ONLY) {
             return (
                 <div className="MessageBoxButtonFooter">
                     <div className="ToolBarButtonContainer" onClick={this.handleOkButtonClick}>
@@ -61,12 +65,15 @@ class MessageBox extends React.Component {
     }
 
     handleOkButtonClick() {
-        this.props.onDialogClosing("ok");
-        
+        if (this.props.config.closeCallback !== undefined) {
+            this.props.config.closeCallback("ok");
+        }    
     }
 
     handleCancelButtonClick() {
-        this.props.onDialogClosing("cancel");
+        if (this.props.config.closeCallback !== undefined) {
+            this.props.config.closeCallback("cancel");
+        }  
     }
 }
 

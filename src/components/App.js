@@ -15,6 +15,7 @@ import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
 import Moment from 'moment';
 import { connect } from 'react-redux';
+import { MessageBoxTypes } from 'pounder-redux';
 import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
 unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
@@ -22,13 +23,13 @@ changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskLi
 removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, 
-setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync } from 'pounder-redux/action-creators';
+setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync,
+setMessageBox } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
 
 const remote = electron.remote;
-
 const KEYBOARD_COMBOS = {
   MOD_N: 'mod+n',
   MOD_SHIFT_N: 'mod+shift+n',
@@ -178,6 +179,7 @@ class App extends React.Component {
 
     return (
       <div>
+        <MessageBox config={this.props.messageBox}/>
         {lockScreenJSX}
         {shutdownScreenJSX}
 
@@ -348,8 +350,14 @@ class App extends React.Component {
   }
 
   handleRemoveTaskListButtonClick() {
-    if (this.props.focusedTaskListId !== -1 && confirm("Are you Sure?") === true) {
-      this.removeTaskList(this.props.focusedTaskListId);
+    if (this.props.focusedTaskListId !== -1) {
+      this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+        (result) => {
+          if (result === "ok") {
+            this.removeTaskList(this.props.focusedTaskListId);
+          }
+          this.props.dispatch(setMessageBox({}));
+        }));
     }
   }
 
@@ -475,8 +483,14 @@ class App extends React.Component {
   }
 
   handleRemoveProjectClick(projectId) {
-    if (confirm("Are you sure?") === true) {
-      this.props.dispatch(removeProjectAsync(projectId));
+    if (projectId !== -1) {
+      this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+        (result) => {
+          if (result === "ok") {
+            this.props.dispatch(removeProjectAsync(projectId));
+          }
+          this.props.dispatch(setMessageBox({}));
+        }));
     }
   }
 
@@ -485,9 +499,13 @@ class App extends React.Component {
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
-    if (confirm("Are you Sure?")) {
-      this.removeTaskList(taskListWidgetId);
-    }
+    this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+      (result) => {
+        if (result === "ok") {
+          this.removeTaskList(taskListWidgetId);
+        }
+        this.props.dispatch(setMessageBox({}));
+      }));
   }
 
   removeTaskList(taskListWidgetId) {
@@ -545,6 +563,7 @@ const mapStateToProps = state => {
     accountConfig: state.accountConfig,
     ignoreFullscreenTrigger: state.ignoreFullscreenTrigger,
     cssConfig: state.cssConfig,
+    messageBox: state.messageBox,
   }
 }
 

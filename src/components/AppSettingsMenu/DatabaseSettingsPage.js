@@ -1,33 +1,21 @@
 import React from 'react';
 import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
 import MessageBox from '../MessageBox';
-
+import { setMessageBox } from 'pounder-redux/action-creators';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
 
 class DatabaseSettingsPage extends React.Component {
     constructor(props) {
         super(props);
-
-        // State.
-        this.state = {
-            isPurgeDatabaseMessageBoxOpen: false,
-            isRestoreDatabaseConfirmBoxOpen: false,
-            isRestoringMessageBoxOpen: false,
-            isRestoreDatabaseStatusMessageBoxOpen: false,
-            restoringMessage: "Backing up current Data",
-        }
         
         // Method Bindings.
         this.getDatabaseInfoPaneJSX = this.getDatabaseInfoPaneJSX.bind(this);
         this.handleGetInfoButtonClick = this.handleGetInfoButtonClick.bind(this);
         this.getPurgeButtonJSX = this.getPurgeButtonJSX.bind(this);
         this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
-        this.handlePurgeDatabaseMessageBoxClosing = this.handlePurgeDatabaseMessageBoxClosing.bind(this);
-        this.handleRestoreDatabaseConfirmBoxClosing = this.handleRestoreDatabaseConfirmBoxClosing.bind(this);
         this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
         this.getRestoreButtonJSX = this.getRestoreButtonJSX.bind(this);
-        this.handleRestoreDatabaseCompleteDialogClosing = this.handleRestoreDatabaseCompleteDialogClosing.bind(this);
     }
 
     render() {
@@ -66,25 +54,8 @@ class DatabaseSettingsPage extends React.Component {
                         {restoreButtonJSX}
                     </span>
                 </div>
-
-                { /* Purge Database Message Box */ }
-                <MessageBox isOpen={this.state.isPurgeDatabaseMessageBoxOpen} message="Are you sure?" 
-                onDialogClosing={this.handlePurgeDatabaseMessageBoxClosing}/>
-
-                { /* Restore from Interactive Backup Message Box */ }
-                <MessageBox isOpen={this.state.isRestoreDatabaseConfirmBoxOpen} message="Are you sure?" 
-                onDialogClosing={this.handleRestoreDatabaseConfirmBoxClosing}/>
-
-                { /* Restore Database Complete Dialog   */}
-                <MessageBox isOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
-                 message={this.props.restoreDatabaseStatusMessage} okOnly={true}
-                 onDialogClosing={this.handleRestoreDatabaseCompleteDialogClosing}/>
             </div>
         )
-    }
-
-    handleRestoreDatabaseCompleteDialogClosing() {
-        this.props.onRestoreDatabaseCompleteDialogClosing();
     }
 
     getRestoreButtonJSX() {
@@ -106,49 +77,11 @@ class DatabaseSettingsPage extends React.Component {
     }
 
     handleRestoreDatabaseButtonClick() {
-        this.setState({
-            isRestoreDatabaseConfirmBoxOpen: true
-        })
-    }
-
-    handleRestoreDatabaseConfirmBoxClosing(userChoice) {
-        if (userChoice === "ok") {
-            this.setState({
-                isRestoreDatabaseConfirmBoxOpen: false
-            })
-
-            this.props.onRequestDatabaseRestore();
-        }
-
-        if (userChoice === "cancel") {
-            this.setState({
-                isRestoreDatabaseConfirmBoxOpen: false
-            })
-        }
-
-    } 
-
-    handlePurgeDatabaseMessageBoxClosing(userChoice) {
-        if (userChoice === "ok") {
-            this.setState({
-                isPurgeDatabaseMessageBoxOpen: false,
-            })
-    
-            this.props.onPurgeCompletedTasksButtonClick();
-        }
-
-        if (userChoice === "cancel") {
-            this.setState({
-                isPurgeDatabaseMessageBoxOpen: false,
-            })
-        }
+        this.props.onRestoreDatabaseButtonClick();
     }
 
     handlePurgeCompletedTasksButtonClick() {
-        // Defer to Message Box for Confirmation.
-        this.setState({
-            isPurgeDatabaseMessageBoxOpen: true,
-        })
+        this.props.onPurgeCompletedTasksButtonClick();
     }
 
     getPurgeButtonJSX() {
