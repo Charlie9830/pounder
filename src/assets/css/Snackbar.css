@@ -1,0 +1,43 @@
+.SnackbarContainer {
+    position: fixed;
+    bottom: 0px;
+    right: 3%;
+    left: 3%;
+    background: #bfbfbf;
+    box-shadow: 5px 5px 10px 0px #111;
+    z-index: 21;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    transition: bottom 1s;
+}
+
+.SnackbarContainer[data-isopen*="false"] {
+    bottom: -100%;
+    transition: bottom 1s;
+}
+
+.SnackbarHorizontalFlexContainer {
+    width: 100%;
+    min-height: 50px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
+}
+
+.SnackbarMessageContainer {
+    flex-grow: 1;
+    padding: 5px;
+}
+
+.SnackbarButtonContainer {
+    flex-shrink: 1;
+}
+
+.SnackbarMessage {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+
+}

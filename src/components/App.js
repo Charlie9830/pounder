@@ -6,11 +6,11 @@ import Sidebar from './Sidebar';
 import Project from './Project';
 import VisibleStatusBar from './StatusBar';
 import VisibleLockScreen from './LockScreen';
-import AccountScreen from './AccountScreen';
 import ShutdownScreen from './ShutdownScreen';
 import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
 import MessageBox from './MessageBox';
 import Button from './Button';
+import VisibleSnackbar from './Snackbar';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -24,8 +24,8 @@ changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskLi
 removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, unsubscribeAccountConfigAsync,
-setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync,
-setMessageBox } from 'pounder-redux/action-creators';
+setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setAppSettingsMenuPage,
+setMessageBox, subscribeToDatabaseAsync, unsubscribeFromDatabaseAsync, attachAuthListenerAsync } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -100,8 +100,6 @@ class App extends React.Component {
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
-    this.unsubscribeFromDatabase = this.unsubscribeFromDatabase.bind(this);
-    this.subscribeToDatabase = this.subscribeToDatabase.bind(this);
     this.getShutdownScreenJSX = this.getShutdownScreenJSX.bind(this);
     this.initalizeConfig = this.initalizeConfig.bind(this);
     this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
@@ -118,14 +116,14 @@ class App extends React.Component {
     // Read and Apply Config Values.
     this.initalizeConfig();
 
-    // Pull down Data from Database, will also attach listeners for future changes.
-    this.subscribeToDatabase();
+    // Attaches an Authentication State listener. Will Pull down database when Logged in.
+    this.props.dispatch(attachAuthListenerAsync());
 
     // Computer has resumed from sleep.
     electron.ipcRenderer.on('resume', () => {
       // Refresh Data.
-      this.unsubscribeFromDatabase();
-      this.subscribeToDatabase();
+      this.props.dispatch(unsubscribeFromDatabaseAsync());
+      this.props.dispatch(subscribeToDatabaseAsync())
     })
 
     electron.ipcRenderer.on('window-closing', () => {
@@ -139,6 +137,10 @@ class App extends React.Component {
         this.postFirebaseError(error);
       })
     })
+
+    // this.props.dispatch(setIsAppSettingsOpen(true));
+    // this.props.dispatch(setAppSettingsMenuPage("account"));
+
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -182,6 +184,7 @@ class App extends React.Component {
 
     return (
       <div>
+        <VisibleSnackbar/>
         <MessageBox config={this.props.messageBox}/>
         {lockScreenJSX}
         {shutdownScreenJSX}
@@ -243,30 +246,6 @@ class App extends React.Component {
   initalizeConfig() {
     this.props.dispatch(getGeneralConfigAsync());
     this.props.dispatch(getCSSConfigAsync());
-  }
-
-  subscribeToDatabase() {
-        // Get Projects (Also attaches a Value listener for future changes).
-        this.props.dispatch(getProjectsAsync());
-
-        // Get Task Lists (Also Attaches a value listener for future changes).
-        this.props.dispatch(getTaskListsAsync());  
-         
-        // Get Tasks (Also attaches a Value listener for future changes).
-        this.props.dispatch(getTasksAsync());
-
-        // Get Account Config (Also attaches a Value listener for future changes).
-        this.props.dispatch(getAccountConfigAsync());
-    
-  }
-
-  unsubscribeFromDatabase() {
-    // Stop listening to the Database.
-    this.props.dispatch(unsubscribeProjectsAsync());
-    this.props.dispatch(unsubscribeTaskListsAsync());
-    this.props.dispatch(unsubscribeTasksAsync());
-    this.props.dispatch(unsubscribeProjectLayoutsAsync());
-    this.props.dispatch(unsubscribeAccountConfigAsync());
   }
 
   handleTaskPriorityToggleClick(taskId, newValue) {

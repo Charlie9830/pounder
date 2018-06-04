@@ -1,5 +1,6 @@
 import React from 'react';
 import Sidebar from 'react-sidebar';
+import Button from '../Button';
 import GeneralSettingsPage from './GeneralSettingsPage';
 import DatabaseSettingsPage from './DatabaseSettingsPage';
 import AccountSettingsPage from './AccountSettingsPage';
@@ -10,7 +11,8 @@ import electron from 'electron';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
-        setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen} from 'pounder-redux/action-creators';
+        setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, 
+        logInUserAsync, logOutUserAsync } from 'pounder-redux/action-creators';
 import { validateFileAsync, restoreFirebaseAsync} from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
 import MessageBox from '../MessageBox';
@@ -114,7 +116,10 @@ class AppSettingsMenu extends React.Component {
 
             case "account":
                 return (
-                    <AccountSettingsPage/>
+                    <AccountSettingsPage authStatusMessage={this.props.authStatusMessage} isLoggingIn={this.props.isLoggingIn}
+                    isLoggedIn={this.props.isLoggedIn}
+                    onLogInButtonClick={(email, password) => {this.props.dispatch(logInUserAsync(email,password))}}
+                    onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}/>
                 )
             break;
 
@@ -126,7 +131,6 @@ class AppSettingsMenu extends React.Component {
                         onRequestDatabaseRestore={this.handleRequestDatabaseRestore} isDatabaseRestoring={this.props.isDatabaseRestoring}
                         restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage}
                         isRestoreDatabaseCompleteDialogOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
-                        
                         />
                 )
             break;
@@ -176,9 +180,7 @@ class AppSettingsMenu extends React.Component {
 
         else {
             var fileName = fileNames[0];
-            console.log("DINGUS");
             this.props.dispatch(setIsDatabaseRestoringFlag(true));
-            console.log("DINGUS 222222222222222");
             restoreFirebaseAsync(getFirestore, fileName).then(() => {
                 this.props.dispatch(setIsDatabaseRestoringFlag(false));
                 this.props.dispatch(setMessageBox(true, "Database restore complete", MessageBoxTypes.OK_ONLY, null, (result) => {
@@ -210,7 +212,10 @@ const mapStateToProps = state => {
         isRestoreDatabaseCompleteDialogOpen: state.isRestoreDatabaseCompleteDialogOpen,
         generalConfig: state.generalConfig,
         accountConfig: state.accountConfig,
-        cssConfig: state.cssConfig
+        cssConfig: state.cssConfig,
+        authStatusMessage: state.authStatusMessage,
+        isLoggingIn: state.isLoggingIn,
+        isLoggedIn: state.isLoggedIn,
     }
 }
 

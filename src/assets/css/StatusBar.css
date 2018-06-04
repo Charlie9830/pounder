@@ -9,20 +9,26 @@
     user-select: none;
 }
 
-.AwaitingFirebase {
-    float: left;
-    width: 24px;
-    height: 24px;
-    color: white;
-    animation: spin 0.25s linear infinite;
+.StatusBarAccountIcon {
+    width: 20px;
+    height: 20px;
+    padding: 2px;
 }
 
-.NotAwaitingFirebase {
-    float: left;
-    width: 24px;
-    height: 24px;
-    opacity: 0.75;
+.StatusBarAccountLogoContainer {
+    flex-shrink: 1;
 }
+
+.StatusBarAccountLogo {
+    width: 24px;
+    height: 24px
+}
+
+.StatusBarAccountEmailContainer {
+    flex-grow: 1;
+}
+
+
 
 @keyframes spin {
     0% { transform: rotate(0deg); }

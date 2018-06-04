@@ -79,6 +79,16 @@
     padding: 1px;
 }
 
+.AppSettingsAccountInput {
+    margin: 0px;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    background: var(--surface-color-alternate);
+    color: #FFF;
+    border: gray 1px solid;
+    padding: 1px;
+    width: 220px;
+}
+
 .DatabaseSettingsPageInfoPane {
     width: 500px;
     min-height: 260px;
@@ -118,6 +128,34 @@
     width: 400px;
     height: 200px;
     overflow-y: scroll;
+}
+
+.AppSettingsAccountLogo {
+    width: 90px;
+    height: 90px;
+}
+
+.AppSettingsAccountStatus {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    height: 24px;
+    color: gray;
+}
+
+.AppSettingsAccountEmailContainer {
+    margin-top: 10px;
+}
+
+.AppSettingsAccountPasswordContainer {
+    margin-top: 5px;
+}
+
+.AppSettingsAccountButtonsFlexContainer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 
 /* Centering */

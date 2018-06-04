@@ -1,0 +1,19 @@
+.CenteringContainerOuter {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.CenteringContainerInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.CenteringContainerCentered {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    height: 50%;
+    padding: 1em;
+}
