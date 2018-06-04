@@ -122,8 +122,7 @@ class App extends React.Component {
     // Computer has resumed from sleep.
     electron.ipcRenderer.on('resume', () => {
       // Refresh Data.
-      this.props.dispatch(unsubscribeFromDatabaseAsync());
-      this.props.dispatch(subscribeToDatabaseAsync())
+      // Code here removed because it messes with Auth.. Firebase will re check server it just takes about 15 seconds.
     })
 
     electron.ipcRenderer.on('window-closing', () => {
@@ -137,10 +136,6 @@ class App extends React.Component {
         this.postFirebaseError(error);
       })
     })
-
-    // this.props.dispatch(setIsAppSettingsOpen(true));
-    // this.props.dispatch(setAppSettingsMenuPage("account"));
-
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {

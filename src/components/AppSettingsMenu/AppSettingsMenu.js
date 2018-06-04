@@ -117,7 +117,7 @@ class AppSettingsMenu extends React.Component {
             case "account":
                 return (
                     <AccountSettingsPage authStatusMessage={this.props.authStatusMessage} isLoggingIn={this.props.isLoggingIn}
-                    isLoggedIn={this.props.isLoggedIn}
+                    isLoggedIn={this.props.isLoggedIn} userEmail={this.props.userEmail}
                     onLogInButtonClick={(email, password) => {this.props.dispatch(logInUserAsync(email,password))}}
                     onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}/>
                 )
@@ -216,6 +216,7 @@ const mapStateToProps = state => {
         authStatusMessage: state.authStatusMessage,
         isLoggingIn: state.isLoggingIn,
         isLoggedIn: state.isLoggedIn,
+        userEmail: state.userEmail,
     }
 }
 

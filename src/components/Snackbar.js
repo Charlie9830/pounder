@@ -19,7 +19,7 @@ class Snackbar extends React.Component {
             // Set a Self Dismiss Timer.
             setTimeout( () => {
                 this.props.dispatch(setIsSnackbarOpen(false, false));
-            }, 6 * 1000);
+            }, 10 * 1000);
         }
     }
 

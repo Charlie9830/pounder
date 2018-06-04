@@ -80,7 +80,7 @@
 }
 
 .AppSettingsAccountInput {
-    margin: 0px;
+    margin-top: 5px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     background: var(--surface-color-alternate);
     color: #FFF;
@@ -141,12 +141,26 @@
     color: gray;
 }
 
+.AppSettingsAccountEmailDisplay {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    height: 24px;
+    color: gray;
+} 
+
 .AppSettingsAccountEmailContainer {
     margin-top: 10px;
 }
 
 .AppSettingsAccountPasswordContainer {
-    margin-top: 5px;
+    margin-top: 10px;
+}
+
+.AppSettingsAccountItemLabel {
+    color: #CCC;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    line-height: 10pt;
 }
 
 .AppSettingsAccountButtonsFlexContainer {

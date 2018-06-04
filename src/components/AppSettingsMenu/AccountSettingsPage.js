@@ -13,39 +13,64 @@ class AccountSettingsPage extends React.Component {
         // Method Bindings.
         this.getButtonsJSX = this.getButtonsJSX.bind(this);
         this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
+        this.getInputsJSX = this.getInputsJSX.bind(this);
+        this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
     }
 
     render() {
         var buttonsJSX = this.getButtonsJSX();
-
+        var inputsJSX = this.getInputsJSX()
         return (
-            <div className="AppSettingsVerticalFlexContainer">
-                <div className="AppSettingsVerticalFlexItem">
                     <CenteringContainer>
                         {/* Logo and Status Message  */} 
                         <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
                         <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
 
-                        {/* Email */}
-                        <div className="AppSettingsAccountEmailContainer">
-                            <div className="AppSettingsItemLabel"> Email </div>
-                            <input className="AppSettingsAccountInput" type="text" ref="emailInput" />
-                        </div>
-
-                        {/* Password */}
-                        <div className="AppSettingsAccountPasswordContainer">
-                            <div className="AppSettingsItemLabel"> Password </div>
-                            <input className="AppSettingsAccountInput" type="password" ref="passwordInput" />
-                        </div>
+                        {/* Email and Password Inputs  */} 
+                        {inputsJSX}
 
                         {/* LogInLogOut Button  */}
                         <div className="AppSettingsAccountButtonsFlexContainer">
                             {buttonsJSX}
                         </div>
                     </CenteringContainer>
-                </div>
-            </div>
         )
+    }
+
+    getInputsJSX() {
+        if (this.props.isLoggedIn === false) {
+            return (
+                <div>
+                    {/* Email */}
+                    <div className="AppSettingsAccountEmailContainer">
+                        <div className="AppSettingsAccountItemLabel"> Email </div>
+                        <input className="AppSettingsAccountInput" type="text" ref="emailInput" defaultValue={this.props.userEmail}
+                        onKeyPress={this.handleInputKeyPress}/>
+                    </div>
+
+                    {/* Password  */} 
+                    <div className="AppSettingsAccountPasswordContainer">
+                        <div className="AppSettingsAccountItemLabel"> Password </div>
+                        <input className="AppSettingsAccountInput" type="password" ref="passwordInput"
+                        onKeyPress={this.handleInputKeyPress} />
+                    </div>
+                </div>
+            )
+        }
+
+        else {
+            return (
+                <div className="AppSettingsAccountEmailDisplay">
+                    {this.props.userEmail}
+                </div>
+            )
+        }
+    }
+
+    handleInputKeyPress(e) {
+        if (e.key === "Enter") {
+            this.handleLogInButtonClick();
+        }
     }
 
     getButtonsJSX() {
