@@ -30,6 +30,9 @@
   margin: 10px 0px;
   resize: none;
   vertical-align: middle;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  padding-left: 4px;
   font-size: 12pt;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   color: #FFF;
