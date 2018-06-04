@@ -9,25 +9,6 @@
     z-index: 11;
 }
 
-.ShutdownScreenOuter {
-    display: table;
-    width: 100%;
-    height: 100%;
-}
-
-.ShutdownScreenInner {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.ShutdownScreenCentered {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    padding: 1em;
-}
-
 .ShutdownScreenSpinner {
     border: 6px solid darkgray;
     border-top: 6px solid white;

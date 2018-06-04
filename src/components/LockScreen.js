@@ -1,6 +1,7 @@
 import React from 'react';
 import '../assets/css/LockScreen.css'
 import PinCodeKeypad from './PinCodeKeypad';
+import CenteringContainer from '../containers/CenteringContainer';
 import { connect } from 'react-redux';
 import LockScreenIcon from '../assets/icons/NewLockScreenIcon.svg';
 import QuitIcon from '../assets/icons/QuitIcon.svg';
@@ -38,13 +39,9 @@ class LockScreen extends React.Component {
 
         return (
             <div className="LockScreenContainer">
-                <div className="LockScreenOuter">
-                    <div className="LockScreenInner">
-                        <div className="LockScreenCentered">  
-                            {contentsJSX}     
-                        </div>
-                    </div>
-                </div>
+                <CenteringContainer> 
+                    {contentsJSX}     
+                </CenteringContainer>   
                 <div className="LockScreenBackupMessageContainer">
                     <label className="LockScreenBackupMessage">
                         {this.props.lastBackupMessage}

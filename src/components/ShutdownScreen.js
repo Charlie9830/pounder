@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/ShutdownScreen.css';
+import CenteringContainer from '../containers/CenteringContainer';
 
 
 class ShutdownScreen extends React.Component {
@@ -10,16 +11,12 @@ class ShutdownScreen extends React.Component {
     render() {
         return (
             <div className="ShutdownScreenContainer">
-                <div className="ShutdownScreenOuter">
-                    <div className="ShutdownScreenInner">
-                        <div className="ShutdownScreenCentered">
-                            <div className="ShutdownScreenSpinner"/>
-                            <label className="ShutdownScreenTitle">
-                                Exiting
-                            </label>  
-                        </div>
-                    </div>
-                </div>
+                <CenteringContainer>
+                    <div className="ShutdownScreenSpinner" />
+                    <label className="ShutdownScreenTitle">
+                        Exiting
+                    </label>
+                </CenteringContainer>
             </div>
         )
     }
