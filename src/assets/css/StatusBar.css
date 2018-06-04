@@ -9,62 +9,46 @@
     user-select: none;
 }
 
+.StatusBarFlexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
 .StatusBarAccountIcon {
+    flex-shrink: 1;
     width: 20px;
     height: 20px;
-    padding: 2px;
+    margin: 5px;
 }
 
-.StatusBarAccountLogoContainer {
+.StatusBarDivider {
     flex-shrink: 1;
+    width: 5px;
 }
 
-.StatusBarAccountLogo {
-    width: 24px;
-    height: 24px
+.VersionNumber {
+    flex-shrink: 1;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 8pt;
+    color: #FFF;
+    margin-left: 5px;
+    margin-right: 10px;
+    opacity: 0.5;
 }
 
-.StatusBarAccountEmailContainer {
-    flex-grow: 1;
+.PendingWrites {
+    flex-shrink: 1;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: green;
+    margin-left: 8px;
 }
 
-
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.PendingWrites[data-havependingwrites*="true"] {
+    color: #FF9300;
+    font-weight: 700;
 }
-
-  @keyframes ConnectionPing {
-      0% { background: #000; }
-      100% { background: #FFF; }
-  }
-
-  .ErrorMessage {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 12pt;
-      color: #D00;
-      font-weight: 700;
-  }
-
-  .VersionNumber {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 8pt;
-      color: #FFF;
-      margin-left: 5px;
-      margin-right: 10px;
-      opacity: 0.5;
-  }
-
-  .PendingWrites {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 8pt;
-      font-weight: 600;
-      color: green;
-      margin-left: 3px;
-  }
-
-  .PendingWrites[data-havependingwrites*="true"] {
-      color: #FF9300;
-      font-weight: 700;
-  }

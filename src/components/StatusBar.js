@@ -17,18 +17,20 @@ class StatusBar extends React.Component {
     }
 
     render() {
-        var firebaseStatusClassName = this.props.isAwaitingFirebase ? "AwaitingFirebase" : "NotAwaitingFirebase";
-        var connectionStatusClassName = this.props.isConnectedToFirebase ? "IsConnected" : "IsNotConnected";
         var accountIconSrc = this.getAccountIconSrc();
 
         return (
             <div className="StatusBarContainer">
-                <img className="StatusBarAccountIcon" src={accountIconSrc} onClick={this.handleIconClick}/>
-                <label className="VersionNumber"> Version 1.2.5 </label>
-                <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
-                <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>
-                <label className="PendingWrites" data-havependingwrites={this.props.taskListsHavePendingWrites}> Tl </label>
-                <label className="PendingWrites" data-havependingwrites={this.props.tasksHavePendingWrites}> Ta </label>
+                <div className="StatusBarFlexContainer">
+                    <img className="StatusBarAccountIcon" src={accountIconSrc} onClick={this.handleIconClick} />
+                    <div className="StatusBarDivider"/>
+                    <label className="VersionNumber"> Version 1.3.0 </label>
+                    <div className="StatusBarDivider"/>
+                    <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
+                    <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>
+                    <label className="PendingWrites" data-havependingwrites={this.props.taskListsHavePendingWrites}> Tl </label>
+                    <label className="PendingWrites" data-havependingwrites={this.props.tasksHavePendingWrites}> Ta </label>
+                </div>
             </div>
         )
     }
