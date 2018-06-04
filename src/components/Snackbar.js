@@ -3,7 +3,7 @@ import Button from './Button';
 import CenteringContainer from '../containers/CenteringContainer';
 import '../assets/css/Snackbar.css';
 import { connect } from 'react-redux';
-import { setIsSnackbarOpen } from 'pounder-redux/action-creators';
+import { dismissSnackbar } from 'pounder-redux/action-creators';
 
 class Snackbar extends React.Component {
     constructor(props) {
@@ -18,7 +18,7 @@ class Snackbar extends React.Component {
         if (this.props.isSnackbarSelfDismissing === true && this.props.isSnackbarOpen === true) {
             // Set a Self Dismiss Timer.
             setTimeout( () => {
-                this.props.dispatch(setIsSnackbarOpen(false, false));
+                this.props.dispatch(dismissSnackbar());
             }, 10 * 1000);
         }
     }
@@ -43,7 +43,7 @@ class Snackbar extends React.Component {
         if (this.props.selfDismiss !== true) {
             return (
                 <div className="SnackbarButtonContainer">
-                        <Button text="Dismiss" onClick={() => {this.props.dispatch(setIsSnackbarOpen(false, false))}} />
+                        <Button text="Dismiss" onClick={() => {this.props.dispatch(dismissSnackbar())}} />
                 </div>
             )
         }
