@@ -1,5 +1,7 @@
 .ProjectSelectorContainer {
-  padding-bottom: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  user-select: none;
 }
 
 .ProjectSelectorContainer:hover {
@@ -13,6 +15,16 @@
     font-size: 16pt;
     -webkit-user-select: none;
     user-select: none;
+    cursor: default;
+}
+
+.ProjectSelectorInput {
+  color: #FFF;
+  margin: 8px;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-size: 16pt;
+  background: var(--surface-color-alternate);
+  border: 0px solid #FFF;
 }
 
 .ProjectSelectorText[data-isselected*="true"] {
@@ -88,13 +100,5 @@
   margin: 0px auto;
 }
 
-#projectSelectorInput {
-  color: #FFF;
-  margin: auto 5px;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-  font-size: 16pt;
-  background: var(--surface-color-alternate);
-  border: 0px solid #FFF;
-}
 
 

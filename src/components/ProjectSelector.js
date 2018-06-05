@@ -71,13 +71,13 @@ class ProjectSelector extends React.Component {
     getProjectLabelJSX(props) {
         if (this.props.isInputOpen) {
             return (
-                <input id="projectSelectorInput" type="text" defaultValue={props.projectName} onKeyPress={this.handleKeyPress}/>
+                <input id="projectSelectorInput" className="ProjectSelectorInput" type="text" defaultValue={props.projectName} onKeyPress={this.handleKeyPress}/>
             )
         }
 
         else {
             return (
-                <label className="ProjectSelectorText" data-isselected={this.props.isSelected}>{props.projectName}</label>
+                <div className="ProjectSelectorText" data-isselected={this.props.isSelected}>{props.projectName}</div>
             )
         }
     }
