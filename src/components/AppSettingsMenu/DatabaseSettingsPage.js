@@ -2,6 +2,8 @@ import React from 'react';
 import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
 import MessageBox from '../MessageBox';
 import Button from '../Button';
+import CenteringContainer from '../../containers/CenteringContainer';
+import Spinner from '../Spinner';
 import { setMessageBox } from 'pounder-redux/action-creators';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
@@ -24,46 +26,58 @@ class DatabaseSettingsPage extends React.Component {
         var purgeButtonJSX = this.getPurgeButtonJSX();
         var restoreButtonJSX = this.getRestoreButtonJSX();
 
-        return (
-            <div className="AppSettingsVerticalFlexContainer">
-                {/* Database Info */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <label className="AppSettingsItemLabel"> Database Info </label>
-                    </span>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        {databaseInfoPaneJSX}
-                    </span>
-                </div>
-
-                {/* Purge Database of completed items */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <div className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Purge Database of completed tasks </div>
+        // Only render settings if Logged in.
+        if (this.props.isLoggedIn) {
+            return (
+                <div className="AppSettingsVerticalFlexContainer">
+                    {/* Database Info */}
+                    <div className="AppSettingsVerticalFlexItem">
+                        <span className="AppSettingsHorizontalFlexItem">
+                            <label className="AppSettingsItemLabel"> Database Info </label>
+                        </span>
+                        <span className="AppSettingsHorizontalFlexItem">
+                            {databaseInfoPaneJSX}
+                        </span>
                     </div>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        {purgeButtonJSX}
-                    </span>
-                </div>
 
-                {/* Restore Database from Disk */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <div className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Restore Database from Local backup </div>
+                    {/* Purge Database of completed items */}
+                    <div className="AppSettingsVerticalFlexItem">
+                        <div className="AppSettingsHorizontalFlexItem">
+                            <div className="AppSettingsItemLabel"> Purge Database of completed tasks </div>
+                        </div>
+                        <span className="AppSettingsHorizontalFlexItem">
+                            {purgeButtonJSX}
+                        </span>
                     </div>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        {restoreButtonJSX}
-                    </span>
+
+                    {/* Restore Database from Disk */}
+                    <div className="AppSettingsVerticalFlexItem">
+                        <div className="AppSettingsHorizontalFlexItem">
+                            <div className="AppSettingsItemLabel"> Restore Database from Local backup </div>
+                        </div>
+                        <span className="AppSettingsHorizontalFlexItem">
+                            {restoreButtonJSX}
+                        </span>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
+
+        else {
+            return (
+                <CenteringContainer>
+                    <AppSettingsMenuSubtitle text="Cannot access Database settings when Logged off."/>
+                </CenteringContainer>
+            )
+        }
+
     }
 
     getRestoreButtonJSX() {
         if (this.props.isDatabaseRestoring) {
             return (
                 <div>
-                    <div className="DatabaseWorkingSpinner" />
+                    <Spinner size="medium" />
                 </div>
             )
         }
@@ -86,7 +100,7 @@ class DatabaseSettingsPage extends React.Component {
     getPurgeButtonJSX() {
         if (this.props.isDatabasePurging) {
             return (
-                <div className="DatabaseWorkingSpinner" />
+                <Spinner size={"medium"}/>
             )
 
         }

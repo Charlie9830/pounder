@@ -8,25 +8,10 @@
     height: 100%;
     z-index: 11;
 }
-
-.ShutdownScreenSpinner {
-    border: 6px solid darkgray;
-    border-top: 6px solid white;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    margin: auto;
-    animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
 .ShutdownScreenTitle {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 18pt;
     color: #EEE;
+    padding-top: 10px;
     text-align: center;
 }

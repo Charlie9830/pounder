@@ -2,6 +2,7 @@ import React from 'react';
 import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Button from '../Button';
+import Spinner from '../Spinner';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import AccountIconLoggedIn from '../../assets/icons/AccountIconLoggedIn.svg';
 import AccountIconLoggedOut from '../../assets/icons/AccountIconLoggedOut.svg';
@@ -15,6 +16,13 @@ class AccountSettingsPage extends React.Component {
         this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
         this.getInputsJSX = this.getInputsJSX.bind(this);
         this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+    }
+
+    componentDidMount() {
+        // Component selectively renders, check if it has been rendered first.
+        if (this.refs.emailInput !== undefined) {
+            this.refs.emailInput.focus();
+        }
     }
 
     render() {
@@ -76,7 +84,7 @@ class AccountSettingsPage extends React.Component {
     getButtonsJSX() {
         if (this.props.isLoggingIn) {
             return (
-                <div className="DatabaseWorkingSpinner"/>
+                <Spinner size="medium"/>
             )
         }
 

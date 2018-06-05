@@ -39,6 +39,7 @@ class AppSettingsMenu extends React.Component {
         this.handleCSSPropertyChange = this.handleCSSPropertyChange.bind(this);
         this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
         this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
+        this.handleAppSettingsKeyDown = this.handleAppSettingsKeyDown.bind(this);
     }
 
     componentDidMount() {
@@ -48,7 +49,7 @@ class AppSettingsMenu extends React.Component {
         var contentsJSX = this.getPageJSX()
 
         return (
-            <div className="AppSettingsContainer">
+            <div className="AppSettingsContainer" onKeyDown={this.handleAppSettingsKeyDown}>
                 <div className="AppSettingsOuter">
                     <div className="AppSettingsInner">
                         <div className="AppSettingsCentered">
@@ -76,6 +77,12 @@ class AppSettingsMenu extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handleAppSettingsKeyDown(e) {
+        if (e.key === "Escape") {
+            this.props.dispatch(setIsAppSettingsOpen(false));
+        }
     }
 
     handleCSSPropertyChange(propertyName, value) {
@@ -127,7 +134,7 @@ class AppSettingsMenu extends React.Component {
                 return (
                     <DatabaseSettingsPage databaseInfo={this.props.databaseInfo} isDatabasePurging={this.props.isDatabasePurging} 
                         onGetDatabaseInfoClick={this.handleGetDatabaseInfoClick} onRestoreDatabaseButtonClick={this.handleRestoreDatabaseButtonClick}
-                        onPurgeCompletedTasksButtonClick={this.handlePurgeCompletedTasksButtonClick}
+                        onPurgeCompletedTasksButtonClick={this.handlePurgeCompletedTasksButtonClick} isLoggedIn={this.props.isLoggedIn}
                         onRequestDatabaseRestore={this.handleRequestDatabaseRestore} isDatabaseRestoring={this.props.isDatabaseRestoring}
                         restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage}
                         isRestoreDatabaseCompleteDialogOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
