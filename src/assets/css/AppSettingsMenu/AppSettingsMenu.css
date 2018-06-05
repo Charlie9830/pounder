@@ -111,6 +111,11 @@
     overflow-y: scroll;
 }
 
+.FavouriteProjectSelect {
+    background: var(--surface-color-alternate);
+    color: #FFF;
+}
+
 .AppSettingsAccountLogo {
     width: 90px;
     height: 90px;

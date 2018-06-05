@@ -79,12 +79,13 @@ class GeneralSettingsPage extends React.Component {
             )
         })
 
-        // Build a "None" option.
+        // Append a "None" option.
         optionsJSX.unshift((<option key={0} value="-1"> None </option>))
         
         // Build options into HTML select Element.
         return (
-            <select value={this.props.accountConfig.favouriteProjectId} ref="favourteProjectSelect" onChange={this.handleFavouriteProjectSelectChange}>
+            <select className="FavouriteProjectSelect" value={this.props.accountConfig.favouriteProjectId}
+             ref="favourteProjectSelect" onChange={this.handleFavouriteProjectSelectChange}>
                 {optionsJSX}
             </select>
         )
