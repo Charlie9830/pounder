@@ -19,7 +19,7 @@ class ListToolbar extends React.Component{
         var settingsMenu = this.getSettingsMenu(this.props);
 
         return (
-            <div className="ListToolbar">
+            <div className="ListToolbar" data-isfocused={this.props.isFocused}>
                 <div className="SortingMenu">
                     <img id="ListToolbarSettingsIcon" src={TaskListSettingsIcon} onClick={this.handleSettingsClick}/>
                     {settingsMenu}

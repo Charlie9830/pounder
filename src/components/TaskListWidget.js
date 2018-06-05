@@ -84,7 +84,8 @@ class TaskListWidget extends React.Component {
                  onHeaderDoubleClick={this.handleHeaderDoubleClick} onHeaderSubmit={this.handleTaskListHeaderSubmit}
                  onRemoveButtonClick={this.handleRemoveButtonClick} isSettingsMenuOpen={isSettingsMenuOpen}
                  onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
-                 settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}/>
+                 settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
+                 isFocused={this.props.isFocused}/>
                 <TaskArea>
                     {builtTasks}
                 </TaskArea>
