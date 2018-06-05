@@ -33,7 +33,7 @@ class DatabaseSettingsPage extends React.Component {
                     {/* Database Info */}
                     <div className="AppSettingsVerticalFlexItem">
                         <span className="AppSettingsHorizontalFlexItem">
-                            <label className="AppSettingsItemLabel"> Database Info </label>
+                            <div className="AppSettingsItemLabel"> Database Info </div>
                         </span>
                         <span className="AppSettingsHorizontalFlexItem">
                             {databaseInfoPaneJSX}

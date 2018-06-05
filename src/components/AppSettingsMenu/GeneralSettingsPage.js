@@ -27,7 +27,7 @@ class GeneralSettingsPage extends React.Component {
                     <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref="startInFullscreenCheckbox"
                     checked={this.props.generalConfig.startInFullscreen} onChange={this.handleStartInFullscreenChange}/>
                     <span className="AppSettingsHorizontalFlexItem">
-                        <label className="AppSettingsItemLabel"> Start application in fullscreen </label>
+                        <div className="AppSettingsItemLabel"> Start application in fullscreen </div>
                     </span>
                 </div>
                 
@@ -36,14 +36,14 @@ class GeneralSettingsPage extends React.Component {
                     <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref="startLockedCheckbox"
                     checked={this.props.generalConfig.startLocked} onChange={this.handleStartLockedChange}/>
                     <span className="AppSettingsHorizontalFlexItem">
-                        <label className="AppSettingsItemLabel"> Automaticaly lock application on start up </label>
+                        <div className="AppSettingsItemLabel"> Automaticaly lock application on start up </div>
                     </span>
                 </div>
 
                 {/* Faviourte Project Selection */}
                 <div className="AppSettingsVerticalFlexItem">
                     <span className="AppSettingsHorizontalFlexItem">
-                        <label className="AppSettingsItemLabel"> Favourite project </label>
+                        <div className="AppSettingsItemLabel"> Favourite project </div>
                     </span>
                     <span className="AppSettingsHorizontalFlexItem">
                         {favoriteProjectSelectorJSX}
@@ -117,7 +117,7 @@ class GeneralSettingsPage extends React.Component {
             return (
                 <div key={index} className="AppSettingsVerticalFlexItem">
                     <span className="AppSettingsHorizontalFlexItem">
-                        <label className="AppSettingsItemLabel">{item.property}</label>
+                        <div className="AppSettingsItemLabel">{item.property}</div>
                     </span>
                     <span className="AppSettingsHorizontalFlexItem">
                         <input className="AppSettingsItemInput" type="text" defaultValue={item.value}
