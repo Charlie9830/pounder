@@ -17,6 +17,7 @@ import '../assets/css/Project.css';
 import Moment from 'moment';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
+import { DatabaseStore } from 'pounder-stores';
 import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
 unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
@@ -41,15 +42,6 @@ const KEYBOARD_COMBOS = {
   MOD_F: 'mod+f',
   MOD_DEL: 'mod+del'
 };
-
-// Only Import if running in Electron.
-// var electron = null;
-// var remote = null;
-
-// if (process.versions['electron'] !== undefined) {
-//   remote = require('electron').remote;
-//   electron = require('electron');
-// }
 
 
 class App extends React.Component {
@@ -133,7 +125,10 @@ class App extends React.Component {
         // Send Message back to Main Process once complete.
         electron.ipcRenderer.send('ready-to-close');
       }).catch(error => {
-        this.postFirebaseError(error);
+        let message = "Can't perform independent Database backup when logged off.";
+        this.props.dispatch(setMessageBox(true, message, MessageBoxTypes.OK_ONLY, null, result => {
+          electron.ipcRenderer.send('ready-to-close');
+        }));
       })
     })
   }
@@ -413,7 +408,8 @@ class App extends React.Component {
     backupFirebaseAsync(getFirestore).then(message => {
       this.props.dispatch(setLastBackupMessage(message));
     }).catch(error => {
-      this.postFirebaseError(error);
+      let message = "Can't backup whilst Logged out: " + error.code + " " + error.message; 
+      this.props.dispatch(setLastBackupMessage(message));
     })
   }
 
