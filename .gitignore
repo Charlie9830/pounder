@@ -2,3 +2,4 @@ node_modules/
 builds/
 public/
 firebase_backups/
+dist/
