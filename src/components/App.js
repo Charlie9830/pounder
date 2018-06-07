@@ -134,7 +134,6 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    console.log(this.props.generalConfig);
     // Determine if Fullscreen mode should be triggered.
     if (this.props.ignoreFullscreenTrigger === false && this.props.isDexieConfigLoadComplete &&
       this.props.generalConfig.startInFullscreen) {
