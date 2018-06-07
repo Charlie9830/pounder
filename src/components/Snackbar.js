@@ -40,7 +40,6 @@ class Snackbar extends React.Component {
     }
 
     getButtonJSX() {
-        console.log(this.props.isSnackbarSelfDismissing);
         if (this.props.isSnackbarSelfDismissing !== true) {
             return (
                 <div className="SnackbarButtonContainer">

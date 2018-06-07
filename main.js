@@ -18,6 +18,9 @@ if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) 
 }
 
 function createWindow() {
+  // Disable Security Warnings.
+  process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
+
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1024, height: 768, show: false
