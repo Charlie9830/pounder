@@ -138,6 +138,12 @@ class Project extends React.Component{
     }
 
     getProjectMessageDisplayJSX(taskListWidgetCount) {
+        if (this.props.isLoggedIn === false) {
+            return (
+                <ProjectMessageDisplay message="You are logged out"/>
+            )
+        }
+
         // No Project Selected.
         if (this.props.projectId === -1) {
             return (

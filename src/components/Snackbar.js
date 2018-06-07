@@ -33,17 +33,18 @@ class Snackbar extends React.Component {
                          {this.props.snackbarMessage}
                           </div>
                     </div>
-                    
+                    {buttonJSX}     
                 </div>
             </div>
         )
     }
 
     getButtonJSX() {
+        console.log(this.props.isSnackbarSelfDismissing);
         if (this.props.isSnackbarSelfDismissing !== true) {
             return (
                 <div className="SnackbarButtonContainer">
-                        <Button text="Dismiss" onClick={() => {this.props.dispatch(dismissSnackbar())}} />
+                    <Button text="Dismiss" onClick={() => {this.props.dispatch(dismissSnackbar())}} />
                 </div>
             )
         }

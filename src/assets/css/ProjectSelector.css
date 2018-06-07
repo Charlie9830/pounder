@@ -20,6 +20,7 @@
 
 .ProjectSelectorInput {
   color: #FFF;
+  resize: none;
   margin: 8px;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   font-size: 16pt;

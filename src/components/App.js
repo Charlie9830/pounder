@@ -26,7 +26,7 @@ removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectL
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, unsubscribeAccountConfigAsync,
 setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setAppSettingsMenuPage,
-setMessageBox, subscribeToDatabaseAsync, unsubscribeFromDatabaseAsync, attachAuthListenerAsync } from 'pounder-redux/action-creators';
+setMessageBox, subscribeToDatabaseAsync, unsubscribeFromDatabaseAsync, attachAuthListenerAsync, postSnackbarMessage } from 'pounder-redux/action-creators';
 import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -93,7 +93,7 @@ class App extends React.Component {
     this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
     this.getShutdownScreenJSX = this.getShutdownScreenJSX.bind(this);
-    this.initalizeConfig = this.initalizeConfig.bind(this);
+    this.initalizeLocalConfig = this.initalizeLocalConfig.bind(this);
     this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
     this.getAppSettingsMenuJSX = this.getAppSettingsMenuJSX.bind(this);
   }
@@ -106,7 +106,7 @@ class App extends React.Component {
     MouseTrap.bind("del", this.handleDeleteKeyPress);
 
     // Read and Apply Config Values.
-    this.initalizeConfig();
+    this.initalizeLocalConfig();
 
     // Attaches an Authentication State listener. Will Pull down database when Logged in.
     this.props.dispatch(attachAuthListenerAsync());
@@ -203,7 +203,7 @@ class App extends React.Component {
               movingTaskId={this.props.movingTaskId} sourceTaskListId={this.props.sourceTaskListId}
               onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
               openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
-              onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
+              onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
             />
@@ -233,7 +233,7 @@ class App extends React.Component {
     }
   }
 
-  initalizeConfig() {
+  initalizeLocalConfig() {
     this.props.dispatch(getGeneralConfigAsync());
     this.props.dispatch(getCSSConfigAsync());
   }
@@ -537,6 +537,7 @@ const mapStateToProps = state => {
     ignoreFullscreenTrigger: state.ignoreFullscreenTrigger,
     cssConfig: state.cssConfig,
     messageBox: state.messageBox,
+    isLoggedIn: state.isLoggedIn,
   }
 }
 

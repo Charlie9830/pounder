@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/ProjectMessageDisplay.css';
+import CenteringContainer from '../containers/CenteringContainer';
 
 class ProjectMessageDisplay extends React.Component {
     constructor(props) {
@@ -9,15 +10,11 @@ class ProjectMessageDisplay extends React.Component {
     render() {
         return (
             <div className="ProjectMessageDisplayContainer">
-                <div className="ProjectMessageDisplayOuter">
-                    <div className="ProjectMessageDisplayInner">
-                        <div className="ProjectMessageDisplayCentered">
-                            <label className="ProjectMessageDisplayMessage">
-                                {this.props.message}
-                            </label>  
-                        </div>
-                    </div>
-                </div>
+                <CenteringContainer>
+                    <label className="ProjectMessageDisplayMessage">
+                        {this.props.message}
+                    </label>
+                </CenteringContainer>
             </div>
         )
     }

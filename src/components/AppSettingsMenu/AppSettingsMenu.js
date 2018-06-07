@@ -5,6 +5,7 @@ import GeneralSettingsPage from './GeneralSettingsPage';
 import DatabaseSettingsPage from './DatabaseSettingsPage';
 import AccountSettingsPage from './AccountSettingsPage';
 import AppSettingsSidebar from './AppSettingsSidebar';
+import CenteringContainer from '../../containers/CenteringContainer';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
 import electron from 'electron';
@@ -50,31 +51,27 @@ class AppSettingsMenu extends React.Component {
 
         return (
             <div className="AppSettingsContainer" onKeyDown={this.handleAppSettingsKeyDown}>
-                <div className="AppSettingsOuter">
-                    <div className="AppSettingsInner">
-                        <div className="AppSettingsCentered">
-                            <div className="AppSettingsMenuContainer">
-                                <div className="AppSettingsMenuSidebarContentFlexContainer">
-                                    {/* Sidebar */}
-                                    <div className="AppSettingsMenuSidebarContainer">
-                                        <AppSettingsSidebar menuPage={this.props.menuPage} onItemClick={this.handleSidebarItemClick} />
-                                    </div>
+                <CenteringContainer>
+                    <div className="AppSettingsMenuContainer">
+                        <div className="AppSettingsMenuSidebarContentFlexContainer">
+                            {/* Sidebar */}
+                            <div className="AppSettingsMenuSidebarContainer">
+                                <AppSettingsSidebar menuPage={this.props.menuPage} onItemClick={this.handleSidebarItemClick} />
+                            </div>
 
-                                    {/* Content */}
-                                    <div className="AppSettingsMenuContentContainer">
-                                        {contentsJSX}
-                                    </div>
-                                </div>
-                                {/* Footer */}
-                                <div className="AppSettingsMenuFooterContainer">
-                                    <div className="AppSettingsMenuFooterFloatContainer">
-                                        <Button text="Ok" onClick={this.handleOkButtonClick}/>
-                                    </div>
-                                </div>
+                            {/* Content */}
+                            <div className="AppSettingsMenuContentContainer">
+                                {contentsJSX}
+                            </div>
+                        </div>
+                        {/* Footer */}
+                        <div className="AppSettingsMenuFooterContainer">
+                            <div className="AppSettingsMenuFooterFloatContainer">
+                                <Button text="Ok" onClick={this.handleOkButtonClick} />
                             </div>
                         </div>
                     </div>
-                </div>
+                </CenteringContainer>
             </div>
         )
     }
