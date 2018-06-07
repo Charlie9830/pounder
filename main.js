@@ -75,10 +75,6 @@ function createWindow() {
     if ( dev ) {
       mainWindow.webContents.openDevTools();
     }
-
-    if ( !dev ) {
-      mainWindow.setFullScreen(true);
-    }
   });
 
   // Emitted when the window is closed.

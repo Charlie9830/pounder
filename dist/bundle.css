@@ -5,14 +5,13 @@
 
 #root {
   /* Colors */
+  /* *** MAKE SURE THAT ANYTHING YOU CHANGE HERE IS ALSO REFLECTED IN THE FALLBACK CSS CONFIG *** */
   --primary-color: rgb(27, 27, 27);
   --background-color: #000000; 
   --surface-color:  rgb(17, 17, 17);
   --surface-color-alternate: rgb(27, 27, 27);
 
-  
   background: var(--primary-color);
-  
 }
 
 
@@ -42,7 +41,9 @@
 ::-webkit-scrollbar-thumb {
   background: rgba(77,77,77,255);
 }.ProjectSelectorContainer {
-  padding-bottom: 8px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  user-select: none;
 }
 
 .ProjectSelectorContainer:hover {
@@ -56,6 +57,17 @@
     font-size: 16pt;
     -webkit-user-select: none;
     user-select: none;
+    cursor: default;
+}
+
+.ProjectSelectorInput {
+  color: #FFF;
+  resize: none;
+  margin: 8px;
+  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-size: 16pt;
+  background: var(--surface-color-alternate);
+  border: 0px solid #FFF;
 }
 
 .ProjectSelectorText[data-isselected*="true"] {
@@ -131,17 +143,53 @@
   margin: 0px auto;
 }
 
-#projectSelectorInput {
-  color: #FFF;
-  margin: auto 5px;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-  font-size: 16pt;
-  background: var(--surface-color-alternate);
-  border: 0px solid #FFF;
+
+
+.ButtonContainer {
+    flex-grow: 0;
+    height: 27px;
+    width: 62px;
+    margin: 4px;
+    padding: 4px;
+    background-image: linear-gradient(to bottom,rgba(68,68,68,0.75),rgba(60,60,60,0.75));
+    cursor: pointer;
+    user-select: none;
+    border-radius: 2px;
+    opacity: 0.75;
 }
 
+.ButtonContainer:hover {
+    opacity: 1;
+}
 
-.SidebarToolbarContainer {
+.ButtonContentFlexContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.ButtonContentFlexItemContainer {
+    flex-shrink: 1;
+    width: 100%;
+    height: 100%;
+}
+
+.ButtonIcon {
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+}
+
+.ButtonText {
+    width: 100%;
+    height: 100%;
+    color: #FFF;
+    text-align: center;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+}.SidebarToolbarContainer {
     height: 30px;
 }
 
@@ -202,7 +250,7 @@
 
 .ProjectSelectorsContainerOpen {
     display: block;
-    margin-top: 8px;
+    margin-top: 0px;
 }
 
 .ProjectSelectorsContainerCollapsed {
@@ -255,6 +303,7 @@
     flex-grow: 2;
 }
 
+
 .LockButton {
     width: 36px;
     height: 36px;
@@ -304,6 +353,9 @@
   margin: 10px 0px;
   resize: none;
   vertical-align: middle;
+  padding-bottom: 2px;
+  padding-top: 2px;
+  padding-left: 4px;
   font-size: 12pt;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   color: #FFF;
@@ -904,6 +956,10 @@ div {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
+}
+
+.ListToolbar[data-isfocused*="true"] {
+    background: rgb(42,42,42);
 }.TaskListSettingsMenuPopup {
     position: absolute;
     top: 10px;
@@ -1030,31 +1086,29 @@ div {
     height: 100%;
 }
 
-.ProjectMessageDisplayOuter {
-    display: table;
-    width: 100%;
-    height: 100%;
-}
-
-.ProjectMessageDisplayInner {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.ProjectMessageDisplayCentered {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    padding: 1em;
-}
-
-
 .ProjectMessageDisplayMessage {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 14pt;
     color: #AAA;
     text-align: center;
+}.CenteringContainerOuter {
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+
+.CenteringContainerInner {
+    display: table-cell;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.CenteringContainerCentered {
+    position: relative;
+    display: inline-block;
+    width: 50%;
+    height: 50%;
+    padding: 1em;
 }.ProjectContainer {
     float: left;
     width: 100%;
@@ -1163,59 +1217,49 @@ div {
     user-select: none;
 }
 
-.AwaitingFirebase {
-    float: left;
-    width: 24px;
-    height: 24px;
-    color: white;
-    animation: spin 0.25s linear infinite;
+.StatusBarFlexContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
 }
 
-.NotAwaitingFirebase {
-    float: left;
-    width: 24px;
-    height: 24px;
-    opacity: 0.75;
+.StatusBarAccountIcon {
+    flex-shrink: 1;
+    width: 20px;
+    height: 20px;
+    margin: 5px;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+.StatusBarDivider {
+    flex-shrink: 1;
+    width: 5px;
 }
 
-  @keyframes ConnectionPing {
-      0% { background: #000; }
-      100% { background: #FFF; }
-  }
+.VersionNumber {
+    flex-shrink: 1;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 8pt;
+    color: #FFF;
+    margin-left: 5px;
+    margin-right: 10px;
+    opacity: 0.5;
+}
 
-  .ErrorMessage {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 12pt;
-      color: #D00;
-      font-weight: 700;
-  }
+.PendingWrites {
+    flex-shrink: 1;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 8pt;
+    font-weight: 600;
+    color: green;
+    margin-left: 8px;
+}
 
-  .VersionNumber {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 8pt;
-      color: #FFF;
-      margin-left: 5px;
-      margin-right: 10px;
-      opacity: 0.5;
-  }
-
-  .PendingWrites {
-      font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-      font-size: 8pt;
-      font-weight: 600;
-      color: green;
-      margin-left: 3px;
-  }
-
-  .PendingWrites[data-havependingwrites*="true"] {
-      color: #FF9300;
-      font-weight: 700;
-  }.LockScreenContainer {
+.PendingWrites[data-havependingwrites*="true"] {
+    color: #FF9300;
+    font-weight: 700;
+}.LockScreenContainer {
     display: block;
     position: fixed;
     background: rgba(0,0,0,255);
@@ -1225,25 +1269,6 @@ div {
     height: 100%;
     z-index: 10;
 }
-
-.LockScreenOuter {
-    display: table;
-    width: 100%;
-    height: 90%;
-}
-
-.LockScreenInner {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.LockScreenCentered {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    padding: 1em;
-  }
 
 .PinCodeKeypad {
     display: block;
@@ -1357,102 +1382,7 @@ div {
     background: #999;
 }
 
-.AccountScreenContainer {
-    display: block;
-    position: fixed;
-    background: rgba(27,27,27,255);
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 11;
-  }
-
-.AccountScreenOuter {
-    display: table;
-    width: 100%;
-    height: 90%;
-}
-
-.AccountScreenInner {
-    display: table-cell;
-    vertical-align: middle;
-    text-align: center;
-}
-
-.AccountScreenCentered {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    padding: 1em;
-}
-
-.AccountScreenLabel {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    color: white;
-    font-size: 12pt;
-}
-
-.AccountScreenLogoContainer {
-    margin-bottom: 10px;
-}
-
-.AccountScreenLogo {
-    width: 75px;
-    height: 75px;
-}
-
-.AccountScreenMessageContainer {
-    margin-top: 15px;
-}
-
-.AccountScreenMessage {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    color: lightgray;
-    background: transparent;
-    font-size: 10pt;
-}
-
-.AccountScreenCloseButtonContainer {
-    position: absolute;
-    right: 10px;
-    top: 5px;
-
-}
-
-.AccountScreenCloseButton {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    color: white;
-    font-size: 16pt;
-}
-
-.EmailContainer {
-    margin-bottom: 10px;
-}
-
-.PasswordContainer {
-    margin-bottom: 10px;
-}
-
-.AccountScreenInput {
-    width: 40%;
-    text-align: center;
-    color: #FFF;
-    margin: auto 5px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-size: 12pt;
-    background: rgba(100,100,100,255);
-    border: 0px solid #FFF;
-}
-
-.AccountScreenLogInLogOutButton {
-    background-color: rgba(50,50,50,255);
-    color: white;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-size: 10pt;
-    border: 1px white solid;
-    padding: 5px 15px;
-}.ShutdownScreenContainer {
+.ShutdownScreenContainer {
     display: block;
     position: fixed;
     background: rgba(0, 0, 0, 0.5);
@@ -1462,32 +1392,14 @@ div {
     height: 100%;
     z-index: 11;
 }
-
-.ShutdownScreenOuter {
-    display: table;
-    width: 100%;
-    height: 100%;
-}
-
-.ShutdownScreenInner {
-    display: table-cell;
-    vertical-align: middle;
+.ShutdownScreenTitle {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 18pt;
+    color: #EEE;
+    padding-top: 10px;
     text-align: center;
-}
-
-.ShutdownScreenCentered {
-    position: relative;
-    display: inline-block;
-    width: 50%;
-    padding: 1em;
-}
-
-.ShutdownScreenSpinner {
-    border: 6px solid darkgray;
-    border-top: 6px solid white;
+}.Spinner {
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
     margin: auto;
     animation: spin 0.6s linear infinite;
 }
@@ -1497,12 +1409,32 @@ div {
     100% { transform: rotate(360deg); }
 }
 
-.ShutdownScreenTitle {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-size: 18pt;
-    color: #EEE;
-    text-align: center;
-}.AppSettingsMenuSubtitleContainer {
+.Spinner[data-size="big"] {
+    width: 40px;
+    height: 40px;
+    border: 6px solid darkgrey;
+    border-top: 6px solid white;
+}
+
+.Spinner[data-size="medium"] {
+    width: 20px;
+    height: 20px;
+    border: 4px solid darkgrey;
+    border-top: 4px solid white;
+}
+
+.Spinner[data-size="small"] {
+    width: 12px;
+    height: 12px;
+    border: 3px solid darkgrey;
+    border-top: 3px solid white;
+}
+
+
+
+
+
+.AppSettingsMenuSubtitleContainer {
     width: 100%;
 }
 
@@ -1593,6 +1525,16 @@ div {
     padding: 1px;
 }
 
+.AppSettingsAccountInput {
+    margin-top: 5px;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    background: var(--surface-color-alternate);
+    color: #FFF;
+    border: gray 1px solid;
+    padding: 1px;
+    width: 220px;
+}
+
 .DatabaseSettingsPageInfoPane {
     width: 500px;
     min-height: 260px;
@@ -1607,31 +1549,59 @@ div {
     padding: 5px;
 }
 
-.DatabaseWorkingSpinner {
-    border: 2px solid darkgray;
-    border-top: 2px solid white;
-    border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    margin: auto;
-    animation: spin 0.6s linear infinite;
-}
-
-@keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
-}
-
 .DatabaseRestoringStatusMessage {
     background: var(--surface-color);
     color: #FFF;
     width: 400px;
     height: 200px;
     overflow-y: scroll;
+}
+
+.FavouriteProjectSelect {
+    background: var(--surface-color-alternate);
+    color: #FFF;
+}
+
+.AppSettingsAccountLogo {
+    width: 90px;
+    height: 90px;
+}
+
+.AppSettingsAccountStatus {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    height: 24px;
+    color: gray;
+}
+
+.AppSettingsAccountEmailDisplay {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    height: 24px;
+    color: gray;
+} 
+
+.AppSettingsAccountEmailContainer {
+    margin-top: 10px;
+}
+
+.AppSettingsAccountPasswordContainer {
+    margin-top: 10px;
+}
+
+.AppSettingsAccountItemLabel {
+    color: #CCC;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    line-height: 10pt;
+}
+
+.AppSettingsAccountButtonsFlexContainer {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
 }
 
 /* Centering */
@@ -1668,7 +1638,7 @@ div {
 }/* Layout */
 .ModalPortal {
     position: absolute;
-    z-index: 7;
+    z-index: 25;
 }
 
 .ModalOverlay {
@@ -1760,4 +1730,46 @@ div {
 
 .AppSettingsSidebarItemLabel[data-isselected*="true"] {
     color: #FFF;
+}.SnackbarContainer {
+    position: fixed;
+    bottom: 0px;
+    right: 3%;
+    left: 3%;
+    background: #bfbfbf;
+    box-shadow: 5px 5px 10px 0px #111;
+    z-index: 21;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    transition: bottom 1s;
+}
+
+.SnackbarContainer[data-isopen*="false"] {
+    bottom: -100%;
+    transition: bottom 1s;
+}
+
+.SnackbarHorizontalFlexContainer {
+    width: 100%;
+    min-height: 50px;
+    height: fit-content;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
+}
+
+.SnackbarMessageContainer {
+    flex-grow: 1;
+    padding: 5px;
+}
+
+.SnackbarButtonContainer {
+    flex-shrink: 1;
+}
+
+.SnackbarMessage {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+
 }
