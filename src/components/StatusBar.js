@@ -24,7 +24,7 @@ class StatusBar extends React.Component {
                 <div className="StatusBarFlexContainer">
                     <img className="StatusBarAccountIcon" src={accountIconSrc} onClick={this.handleIconClick} />
                     <div className="StatusBarDivider"/>
-                    <label className="VersionNumber"> Version 1.3.0 </label>
+                    <label className="VersionNumber"> Version 1.3.1 </label>
                     <div className="StatusBarDivider"/>
                     <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
                     <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>
