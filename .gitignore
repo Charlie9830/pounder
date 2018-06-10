@@ -1,5 +1,5 @@
-node_modules/
-builds/
-public/
-firebase_backups/
-dist/
+/node_modules
+/builds
+/public
+/firebase_backups
+/dist
