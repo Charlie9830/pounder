@@ -18,6 +18,7 @@ import Moment from 'moment';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
 import { DatabaseStore } from 'pounder-stores';
+import { hot } from 'react-hot-loader';
 import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
 unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
@@ -542,5 +543,5 @@ const mapStateToProps = state => {
 }
 
 let VisibleApp = connect(mapStateToProps)(App);
-export default VisibleApp;
+export default hot(module)(VisibleApp);
 

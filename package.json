@@ -51,6 +51,7 @@
     "react-autosize-textarea": "^3.0.3",
     "react-day-picker": "^6.2.1",
     "react-grid-layout": "^0.16.6",
+    "react-hot-loader": "^4.3.1",
     "react-modal": "^3.4.5",
     "react-redux": "^5.0.7",
     "react-resizable": "^1.7.5",
