@@ -19,6 +19,7 @@
     margin-top: 30px;
     -webkit-user-select: none;
     user-select: none;
+    transition: width 200ms ease-out;
 }
 
 .SidebarCollapsed {
@@ -30,12 +31,30 @@
     margin-top: 70px;
     -webkit-user-select: none;
     user-select: none;
+    transition: width 200ms ease-in;
 }
+
+.CollapsedProjectTitle {
+    color: #CCC;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 14pt;
+    line-height: 18pt; /* To Push the text away from the Screen Border a little bit */
+    transform: rotate(-90deg);
+    transform-origin: left top 0;
+    word-wrap: none;
+    position: absolute;
+    top: 50vh;
+    width: 60vh;
+    height: fit-content;
+    user-select: none;
+    cursor: default;
+}
+
 
 .SidebarCollapseButtonContainer {
     position: absolute;
     right: 0px;
-    top: 400px;
+    top: 50vh;
 }
 
 .SidebarCollapseButtonOpen {
@@ -45,6 +64,7 @@
 }
 
 .SidebarCollapseButtonCollapsed {
+    display: none;
     height: 50px;
     width: 25px;
     text-align: center;

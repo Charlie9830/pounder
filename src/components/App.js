@@ -1,7 +1,7 @@
 import '../assets/css/App.css';
-import Path from 'path';
-import React, { Component } from 'react';
+import React from 'react';
 import MouseTrap from 'mousetrap';
+import Hammer from 'hammerjs';
 import Sidebar from './Sidebar';
 import Project from './Project';
 import VisibleStatusBar from './StatusBar';
@@ -9,30 +9,24 @@ import VisibleLockScreen from './LockScreen';
 import ShutdownScreen from './ShutdownScreen';
 import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
 import MessageBox from './MessageBox';
-import Button from './Button';
 import VisibleSnackbar from './Snackbar';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
-import Moment from 'moment';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
-import { DatabaseStore } from 'pounder-stores';
 import { hot } from 'react-hot-loader';
-import { setFocusedTaskListId, selectTask, openTask, startTaskMove, getProjectsAsync, getTasksAsync,
-unsubscribeProjectsAsync, unsubscribeProjectLayoutsAsync, unsubscribeTaskListsAsync, unsubscribeTasksAsync,
+import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
-changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, getTaskListsAsync, getProjectLayoutsAsync,
+changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, unsubscribeAccountConfigAsync,
-setIsAppSettingsOpen, getAccountConfigAsync, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setAppSettingsMenuPage,
-setMessageBox, subscribeToDatabaseAsync, unsubscribeFromDatabaseAsync, attachAuthListenerAsync, postSnackbarMessage } from 'pounder-redux/action-creators';
-import { getFirestore, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
+setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync,
+setMessageBox, attachAuthListenerAsync, } from 'pounder-redux/action-creators';
+import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
-
-import SettingsIcon from '../assets/icons/SettingsIcon.svg';
 
 const remote = electron.remote;
 const KEYBOARD_COMBOS = {
@@ -97,6 +91,7 @@ class App extends React.Component {
     this.initalizeLocalConfig = this.initalizeLocalConfig.bind(this);
     this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
     this.getAppSettingsMenuJSX = this.getAppSettingsMenuJSX.bind(this);
+    this.handleRequestIsSidebarOpenChange = this.handleRequestIsSidebarOpenChange.bind(this);
   }
 
   componentDidMount(){
@@ -105,6 +100,7 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
     MouseTrap.bind("del", this.handleDeleteKeyPress);
+
 
     // Read and Apply Config Values.
     this.initalizeLocalConfig();
@@ -131,6 +127,24 @@ class App extends React.Component {
           electron.ipcRenderer.send('ready-to-close');
         }));
       })
+    })
+
+    // Hammer.
+    var hammer = new Hammer(document.getElementById('root'));
+    hammer.on('swipe', event => {
+      if (event.velocityX < 0) {
+        // Swipe Left.
+        if (this.props.isSidebarOpen) {
+          this.props.dispatch(setIsSidebarOpen(false));
+        }
+      }
+
+      else if (event.velocityX > 0) {
+        if (this.props.isSidebarOpen === false) {
+          this.props.dispatch(setIsSidebarOpen(true));
+        }
+      }
+
     })
   }
 
@@ -188,7 +202,8 @@ class App extends React.Component {
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
               projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays}
-              favouriteProjectId={this.props.accountConfig.favouriteProjectId}
+              favouriteProjectId={this.props.accountConfig.favouriteProjectId} isOpen={this.props.isSidebarOpen}
+              onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange}
             />
           </div>
           <div className="ProjectFlexItemContainer">
@@ -212,6 +227,10 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  handleRequestIsSidebarOpenChange(newValue) {
+    this.props.dispatch(setIsSidebarOpen(newValue));
   }
 
   getAppSettingsMenuJSX() {
@@ -539,6 +558,7 @@ const mapStateToProps = state => {
     cssConfig: state.cssConfig,
     messageBox: state.messageBox,
     isLoggedIn: state.isLoggedIn,
+    isSidebarOpen: state.isSidebarOpen,
   }
 }
 

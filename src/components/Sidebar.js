@@ -19,17 +19,18 @@ class Sidebar extends React.Component{
         this.handleProjectNameSubmit = this.handleProjectNameSubmit.bind(this);
         this.handleSidebarCollapseButtonClick = this.handleSidebarCollapseButtonClick.bind(this);
         this.getSidebarToolbarJSX = this.getSidebarToolbarJSX.bind(this);
+        this.getCollapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX.bind(this);
+        this.handleSidebarClick = this.handleSidebarClick.bind(this);
 
         this.state = {
             openProjectSelectorInputId: -1,
-            isCollapsed: false,
         }
     }
 
     render() {
-        var sidebarClassName = this.state.isCollapsed ? "SidebarCollapsed" : "SidebarOpen";
-        var projectSelectorsContainerClassName = this.state.isCollapsed ? "ProjectSelectorsContainerCollapsed" : "ProjectSelectorsContainerOpen";
-        var sidebarCollapseButtonClassName = this.state.isCollapsed ? "SidebarCollapseButtonCollapsed" : "SidebarCollapseButtonOpen";
+        var sidebarClassName = this.props.isOpen ? "SidebarOpen" : "SidebarCollapsed";
+        var projectSelectorsContainerClassName = this.props.isOpen ? "ProjectSelectorsContainerOpen" : "ProjectSelectorsContainerCollapsed";
+        var sidebarCollapseButtonClassName = this.props.isOpen ? "SidebarCollapseButtonOpen" : "SidebarCollapseButtonCollapsed";
 
         var projectSelectorsJSX = this.props.projects.map((item, index) => {
             var isSelected = this.props.selectedProjectId === item.uid;
@@ -46,9 +47,10 @@ class Sidebar extends React.Component{
         })
 
         var sidebarToolbarJSX = this.getSidebarToolbarJSX();
+        var collapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX();
 
         return (
-            <div className={sidebarClassName}>
+            <div className={sidebarClassName} onClick={this.handleSidebarClick}>
                 <div className="sidebarToolbarContainer">
                     {sidebarToolbarJSX}
                 </div>
@@ -60,12 +62,35 @@ class Sidebar extends React.Component{
                         <img className="SidebarCollapseButtonIcon" src={SidebarIcon}/>
                     </div>
                 </div>
+                {collapsedProjectTitleJSX}
             </div>
         )
     }
 
+    handleSidebarClick() {
+        if (!this.props.isOpen) {
+            this.props.onRequestIsSidebarOpenChange(true)
+        }
+    }
+
+    getCollapsedProjectTitleJSX() {
+        if (!this.props.isOpen) {
+            // Determine Selected Project Name.
+            var selectedProject = this.props.projects.find(item => {
+                return item.uid === this.props.selectedProjectId;
+            })
+            var projectTitle = selectedProject === undefined ? "" : selectedProject.projectName;
+
+            return (
+                <div className="CollapsedProjectTitle">
+                    {projectTitle}
+                </div>
+            )
+        }
+    }
+
     getSidebarToolbarJSX() {
-        if (this.state.isCollapsed !== true) {
+        if (this.props.isOpen) {
             return (
                 <div className="SidebarToolbarFlexContainer">
                     <Button iconSrc={NewProjectIcon} onClick={this.handleAddProjectClick}/>
@@ -80,7 +105,7 @@ class Sidebar extends React.Component{
     }
 
     handleSidebarCollapseButtonClick(e) {
-        this.setState({isCollapsed: !this.state.isCollapsed});
+        this.props.onRequestIsSidebarOpenChange(!this.props.isOpen);
     }
 
     handleProjectSelectorClick(e, projectSelectorId) {
