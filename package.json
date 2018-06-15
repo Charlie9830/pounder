@@ -56,6 +56,7 @@
     "react-redux": "^5.0.7",
     "react-resizable": "^1.7.5",
     "react-sidebar": "^2.3.2",
+    "react-sizeme": "^2.4.4",
     "redux": "^4.0.0"
   }
 }

@@ -2,12 +2,10 @@ import React from 'react';
 import TaskListWidget from './TaskListWidget';
 import ProjectMessageDisplay from './ProjectMessageDisplay';
 import MouseTrap from 'mousetrap';
+import TaskListWidgetGrid from './TaskListWidgetGrid';
 import '../assets/css/Project.css';
-var ReactGridLayout = require('react-grid-layout');
 import '../assets/css/react-grid-layout/styles.css';
 import '../assets/css/react-resizable/styles.css';
-import TestComponent from './TestComponent';
-import {Resizable, ResizableBox} from 'react-resizable';
 import ProjectToolBar from './ProjectToolBar';
 
 
@@ -17,7 +15,6 @@ class Project extends React.Component{
 
         this.state = {
             openTaskListWidgetHeaderId: -1,
-            rglWidth: 1280
         }
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
@@ -45,15 +42,7 @@ class Project extends React.Component{
     
     componentDidMount() {
         MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
-        MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
-
-        // Hacky fix for DPI Scaling causing issues with the React Grid Layout width.
-        // saves having to change to a Responsive Grid Layout with a Width Provider HOC.
-        window.addEventListener("resize", () => {
-            this.setState({ rglWidth: this.refs.projectContainer.offsetWidth });
-        })
-        
-        
+        MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');        
     }
 
     componentWillUnmount() {
@@ -124,11 +113,12 @@ class Project extends React.Component{
                     onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}/>
                 </div>
                 {projectMessageDisplayJSX}
-                <ReactGridLayout className={rglClassName} layout={layouts} autoSize={false} draggableCancel=".nonDraggable"
-                    cols={20} rows={11} rowHeight={70} width={this.state.rglWidth}
-                    onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
+
+                <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts} 
+                onLayoutChange={this.handleLayoutChange}>
                     {taskListWidgets}
-                </ReactGridLayout>
+                </TaskListWidgetGrid>
+
             </div>
         )
     }
