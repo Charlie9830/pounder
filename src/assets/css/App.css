@@ -6,10 +6,45 @@
 #root {
   /* Colors */
   /* *** MAKE SURE THAT ANYTHING YOU CHANGE HERE IS ALSO REFLECTED IN THE FALLBACK CSS CONFIG *** */
-  --primary-color: rgb(27, 27, 27);
+  --primary-color: #1b1b1b;
   --background-color: #000000; 
-  --surface-color:  rgb(17, 17, 17);
-  --surface-color-alternate: rgb(27, 27, 27);
+  --surface-color:  #111111;
+  --surface-color-alternate: #1b1b1b;
+
+  /* New */
+  /* General */
+  --primary-active-text-color: #FFF;
+  --primary-inactive-text-color: #808080;
+  --primary-hover-color: #343738;
+  --alternate-active-text-color: #CCC;
+  --alternate-inactive-text-color: #777;
+  --loading-spinner-primary-color: #a9a9a9;
+  --loading-spinner-secondary-color: #ffffff;
+
+  /* Task */
+  --task-checkbox-color: #FFF;
+  --task-text-color: #FFF;
+  --task-selected-color: #373737;
+  --task-hover-color: #282828; 
+  --task-divider-color: #282828;
+
+  /* Due Date and Priority Colors */
+  --overdue-color: #F00;
+  --soon-color: #FF9300;
+  --later-color: #22B30B;
+  --today-color: #1455c0;
+  --important-color: #FF9300;
+  --due-date-text-color: #FFF;
+  --due-date-circle-color: #777;
+
+  /* Task List */
+  --task-list-header-text-color: #FFF;
+  --task-list-selected-border-color: #FFF;
+  --task-list-selected-header-color: #2a2a2a;
+
+  /* Database */
+  --database-synced-color: #008000;
+  --database-updates-pending-color: #FF9300;
 
   background: var(--primary-color);
 }

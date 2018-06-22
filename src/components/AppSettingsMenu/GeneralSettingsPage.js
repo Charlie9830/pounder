@@ -1,24 +1,28 @@
 import React from 'react';
 import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
+import ThemeSettings from './ThemeSettings';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
+
 
 class GeneralSettingsPage extends React.Component {
     constructor(props) {
         super(props);
+
+        // Class Storage.
+        this.highlightValueBuffer = '';
         
         // Method Bindings.
         this.getFavouriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX.bind(this);
-        this.getColorPropertiesJSX = this.getColorPropertiesJSX.bind(this);
         this.handleStartInFullscreenChange = this.handleStartInFullscreenChange.bind(this);
         this.handleStartLockedChange = this.handleStartLockedChange.bind(this);
         this.handleFavouriteProjectSelectChange = this.handleFavouriteProjectSelectChange.bind(this);
-        this.handleCSSPropertyInputBlur = this.handleCSSPropertyInputBlur.bind(this);
-        this.handleCSSPropertyInputKeyPress = this.handleCSSPropertyInputKeyPress.bind(this);
+        this.handleColorPickerClick = this.handleColorPickerClick.bind(this);
+        this.handleColorPickerCloseButtonClick = this.handleColorPickerCloseButtonClick.bind(this);
+        this.handleDefaultAllColorsButtonClick = this.handleDefaultAllColorsButtonClick.bind(this);
     }
 
     render() {
         var favoriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX();
-        var colorPropertiesJSX = this.getColorPropertiesJSX();
 
         return (
             <div className="AppSettingsVerticalFlexContainer">
@@ -56,9 +60,28 @@ class GeneralSettingsPage extends React.Component {
                 </div>
 
                 {/* Color Selection Properties and Inputs */}
-                {colorPropertiesJSX}
+                <div className="AppSettingsVerticalFlexItem">
+                    <ThemeSettings cssConfig={this.props.cssConfig} contentContainerRef={this.props.contentContainerRef}
+                    onCSSPropertyChange={(propertyName, value) => {this.props.onCSSPropertyChange(propertyName, value)}}
+                    onColorPickerClick={this.handleColorPickerClick} colorPicker={this.props.colorPicker}
+                    onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
+                    onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick}
+                    />
+                </div>
             </div>
         )
+    }
+    
+    handleDefaultAllColorsButtonClick() {
+        this.props.onDefaultAllColorsButtonClick();
+    }
+
+    handleColorPickerCloseButtonClick() {
+        this.props.onColorPickerCloseButtonClick();
+    }
+
+    handleColorPickerClick(index, xOffset, yOffset) {
+        this.props.onColorPickerClick(index, xOffset, yOffset);
     }
 
     handleStartLockedChange() {
@@ -94,57 +117,6 @@ class GeneralSettingsPage extends React.Component {
     handleFavouriteProjectSelectChange() {
         var id = this.refs.favourteProjectSelect.value;
         this.props.onFavouriteProjectSelectChange(id);
-    }
-
-    getColorPropertiesJSX() {
-        // Parse the cssConfig object into a "Zero Filled" object. Blanks replaced by current Computed Values.
-        var computedStyle = window.getComputedStyle(document.getElementById('root'));
-        var filledCSSVariables = [];
-
-        for (var property in this.props.cssConfig) {
-            var value = this.props.cssConfig[property];
-            var filledValue = value === "" ? computedStyle.getPropertyValue(property) : value;
-            filledCSSVariables.push({property: property, value: filledValue});
-        }
-
-        var jsx = filledCSSVariables.map((item,index) => {
-            var colorDisplayStyle = {
-                height: '20px',
-                width: '20px',
-                background: item.value,
-                border: 'gray 1px solid'
-            }
-
-            return (
-                <div key={index} className="AppSettingsVerticalFlexItem">
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel">{item.property}</div>
-                    </span>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <input className="AppSettingsItemInput" type="text" defaultValue={item.value}
-                        onBlur={(e) => this.handleCSSPropertyInputBlur(e, item.property)}
-                        onKeyPress={(e) => this.handleCSSPropertyInputKeyPress(e, item.property)}/>
-                    </span>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div style={colorDisplayStyle}>
-                        </div>
-                    </span>
-                </div>
-            )
-        })
-
-        return jsx;
-    }
-
-    handleCSSPropertyInputKeyPress(e, propertyName) {
-        if (e.key === "Enter") {
-            this.props.onCSSPropertyChange(propertyName, e.target.value);
-        }
-
-    }
-
-    handleCSSPropertyInputBlur(e, propertyName) {
-        this.props.onCSSPropertyChange(propertyName, e.target.value);
     }
 }
 

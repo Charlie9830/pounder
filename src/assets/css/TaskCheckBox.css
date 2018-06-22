@@ -9,7 +9,9 @@
   flex-shrink: 1;
   width: 12px;
   height: 12px;
-  border: 1px solid #FFF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--task-checkbox-color);
   margin-left: 5px;
   animation: isDeChecking 0.25s linear 1;
 }

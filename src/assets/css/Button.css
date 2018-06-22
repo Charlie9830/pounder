@@ -11,6 +11,12 @@
     opacity: 0.75;
 }
 
+.ButtonContainer[data-size*="small"] {
+    height: 22px;
+    width: 55px;
+    padding: 2px;
+}
+
 .ButtonContainer:hover {
     opacity: 1;
 }
@@ -42,4 +48,10 @@
     color: #FFF;
     text-align: center;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+}
+
+.ButtonText[data-size*="small"] {
+    font-size: 8pt;
+    line-height: 14pt;
+    vertical-align: middle;
 }

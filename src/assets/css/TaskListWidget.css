@@ -13,7 +13,7 @@
     height: 100%;
     display: flex;
     flex-direction: column;
-    border-color: #FFF;
+    border-color: var(--task-list-selected-border-color);
     border-width: 1px;
     border-style: solid;
     margin: 0px;

@@ -12,7 +12,7 @@ import electron from 'electron';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
-        setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, 
+        setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync } from 'pounder-redux/action-creators';
 import { validateFileAsync, restoreFirebaseAsync} from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
@@ -25,6 +25,18 @@ let dialog = electron.remote.dialog;
 class AppSettingsMenu extends React.Component {
     constructor(props) {
         super(props);
+
+        // State.
+        this.state = {
+            colorPicker: {
+                index: -1,
+                xOffset: 0,
+                yOffset: 0,
+            }
+        }
+
+        // Refs.
+        this.contentContainerRef = React.createRef();
 
         // Method Bindings.
         this.getPageJSX = this.getPageJSX.bind(this);
@@ -41,6 +53,10 @@ class AppSettingsMenu extends React.Component {
         this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
         this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
         this.handleAppSettingsKeyDown = this.handleAppSettingsKeyDown.bind(this);
+        this.handleColorPickerClick = this.handleColorPickerClick.bind(this);
+        this.handleAppSettingsMenuContainerClick = this.handleAppSettingsMenuContainerClick.bind(this);
+        this.handleColorPickerCloseButtonClick = this.handleColorPickerCloseButtonClick.bind(this);
+        this.handleDefaultAllColorsButtonClick = this.handleDefaultAllColorsButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -48,11 +64,10 @@ class AppSettingsMenu extends React.Component {
 
     render() {
         var contentsJSX = this.getPageJSX()
-
         return (
             <div className="AppSettingsContainer" onKeyDown={this.handleAppSettingsKeyDown}>
                 <CenteringContainer>
-                    <div className="AppSettingsMenuContainer">
+                    <div className="AppSettingsMenuContainer" onClick={this.handleAppSettingsMenuContainerClick}>
                         <div className="AppSettingsMenuSidebarContentFlexContainer">
                             {/* Sidebar */}
                             <div className="AppSettingsMenuSidebarContainer">
@@ -60,7 +75,7 @@ class AppSettingsMenu extends React.Component {
                             </div>
 
                             {/* Content */}
-                            <div className="AppSettingsMenuContentContainer">
+                            <div className="AppSettingsMenuContentContainer" ref={this.contentContainerRef}>
                                 {contentsJSX}
                             </div>
                         </div>
@@ -76,6 +91,19 @@ class AppSettingsMenu extends React.Component {
         )
     }
 
+    handleAppSettingsMenuContainerClick() {
+        // Close Color Picker if it's open.
+        if (this.state.colorPicker.index !== -1) {
+            this.setState({
+                colorPicker: {
+                    index: -1,
+                    xOffset: 0,
+                    yOffset: 0,
+                }
+            })
+        }
+    }
+
     handleAppSettingsKeyDown(e) {
         if (e.key === "Escape") {
             this.props.dispatch(setIsAppSettingsOpen(false));
@@ -87,6 +115,17 @@ class AppSettingsMenu extends React.Component {
         newConfig[propertyName] = value;
 
         this.props.dispatch(setCSSConfigAsync(newConfig));
+    }
+
+    handleColorPickerCloseButtonClick() {
+        // Close Color Picker.
+        this.setState({
+            colorPicker: {
+                index: -1,
+                xOffset: 0,
+                yOffset: 0,
+            }
+        })
     }
 
     handleOkButtonClick() {
@@ -107,14 +146,16 @@ class AppSettingsMenu extends React.Component {
 
     getPageJSX() {
         var menuPage = this.props.menuPage === "" ? "general" : this.props.menuPage;
-
         switch(menuPage) {
             case "general":
                 return (
                     <GeneralSettingsPage projects={this.props.projects} generalConfig={this.props.generalConfig}
                     onStartInFullscreenChange={this.handleStartInFullscreenChange} onStartLockedChange={this.handleStartLockedChange}
                     onFavouriteProjectSelectChange={this.handleFavouriteProjectSelectChange} accountConfig={this.props.accountConfig}
-                    cssConfig={this.props.cssConfig} onCSSPropertyChange={this.handleCSSPropertyChange}/>
+                    cssConfig={this.props.cssConfig} onCSSPropertyChange={this.handleCSSPropertyChange} 
+                    contentContainerRef={this.contentContainerRef} onColorPickerClick={this.handleColorPickerClick}
+                    colorPicker={this.state.colorPicker} onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
+                    onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick}/>
                 )
             break;
 
@@ -139,6 +180,29 @@ class AppSettingsMenu extends React.Component {
                 )
             break;
         }
+    }
+
+    handleDefaultAllColorsButtonClick() {
+        this.props.dispatch(setMessageBox(true, "Are you Sure? A restart will be required to apply changes.", MessageBoxTypes.STANDARD,
+            null, result => {
+                if (result === "ok") {
+                    this.props.dispatch(setMessageBox({}));
+                    this.props.dispatch(setAllColorsToDefaultAsync());
+                }
+
+                else {
+                    this.props.dispatch(setMessageBox({}));
+                }
+            }))
+    }
+
+    handleColorPickerClick(index, xOffset, yOffset) {
+        this.setState({
+            colorPicker: {
+                index: index,
+                xOffset: xOffset,
+                yOffset: yOffset,
+            }})
     }
 
     handleRestoreDatabaseButtonClick() {

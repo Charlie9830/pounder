@@ -9,13 +9,16 @@
   border-Radius: 50%;
   width: 30px;
   height: 30px; /* Set line-height of .DueDateText equal to this */
-  color: #FFF;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--due-date-circle-color);
   flex-grow: 1;
   margin-right: 5px;
 }
 
 .DueDateText {
   display: block;
+  color: var(--due-date-text-color);
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   font-size: 7pt;
   font-weight: 700;
@@ -32,19 +35,23 @@
 }
 
 .Overdue {
-  background: #F00;
+  background: var(--overdue-color);
+  border-color: var(--overdue-color);
 }
 
 .Soon {
-  background: #FF9300;
+  background: var(--soon-color);
+  border-color: var(--soon-color);
 }
 
 .Later {
-  background: #22B30B;
+  background: var(--later-color);
+  border-color: var(--later-color);
 }
 
 .Today {
-  background: #00D;
+  background: var(--today-color);
+  border-color: var(--today-color);
 }
 
 .Today .DueDateText {
@@ -54,7 +61,7 @@
 
 .NotSet {
   background: transparent;
-  border: 1px solid #777;
+  border-color: var(--due-date-circle-color);
   height: 20px;
   width: 20px;
 }

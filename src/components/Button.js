@@ -15,7 +15,7 @@ class Button extends React.Component {
         var textJSX = this.getTextJSX();
 
         return (
-            <div className="ButtonContainer" onClick={(e) => {this.props.onClick(e)}}>
+            <div className="ButtonContainer" data-size={this.props.size} onClick={(e) => {this.props.onClick(e)}}>
                 <div className="ButtonContentFlexContainer">
                 {iconJSX}
                 {textJSX}
@@ -38,7 +38,7 @@ class Button extends React.Component {
         if (this.props.text !== undefined) {
             return (
                 <div className="ButtonContentFlexItemContainer">
-                    <div className="ButtonText"> {this.props.text} </div>
+                    <div className="ButtonText" data-size={this.props.size}> {this.props.text} </div>
                 </div>
             )
         }

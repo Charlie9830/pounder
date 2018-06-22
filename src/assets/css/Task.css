@@ -8,20 +8,6 @@
   flex-direction: column;
 }
 
-.TaskPriorityIndicator {
-  background:  rgb(255, 150, 0);
-  flex-grow: 0;
-  width: 5px;
-  min-height: 40px;
-  display: flex;
-  flex-direction: column;
-}
-
-.Dummy {
-  flex-grow: 1;
-  flex-basis: 40px;
-}
-
 .TaskInactiveStyle {
   background: rgba(0,0,0,0);
   color: #FFF;
@@ -35,11 +21,11 @@
 }
 
 .TaskInactiveStyle:hover {
-  background: rgba(40,40,40,255);
+  background: var(--task-hover-color);
 }
 
 .TaskActiveStyle {
-  background: rgba(55,55,55,255);
+  background: var(--task-selected-color);
   color: #FFF;
   width: 100%;
   display: flex;
@@ -53,7 +39,9 @@
 /* Active and Inactive Tasks set to highPriority */
 .TaskActiveStyle[data-ishighpriority*="true"], .TaskInactiveStyle[data-ishighpriority*="true"] {
   box-sizing: border-box;
-  border-left: rgb(255, 150, 0) 6px solid;
+  border-left-width: 6px;
+  border-left-style: solid;
+  border-left-color: var(--important-color);
 }
 
 /* Active and Inactive Tasks set to highPriority whilst also being complete */
@@ -67,7 +55,9 @@
   margin-left: 27px;
   margin-bottom: -1px;
   height: 0px;
-  border-bottom: 1px rgb(50,50,50) solid;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: var(--task-divider-color);
 }
 
 .TaskMovingStyle {

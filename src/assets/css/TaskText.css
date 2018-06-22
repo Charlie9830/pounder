@@ -10,7 +10,7 @@
 .TaskText {
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
   width: 100%;
-  color: #FFF;
+  color: var(--task-text-color);
   font-Size: 12pt;
   margin-left: 8px;
   margin-right: 8px;
@@ -35,7 +35,7 @@
   padding-left: 4px;
   font-size: 12pt;
   font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-  color: #FFF;
+  color: var(--task-text-color);
   background: var(--surface-color-alternate);
   border: 0px solid #FFF;
 }

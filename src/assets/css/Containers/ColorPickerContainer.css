@@ -1,0 +1,14 @@
+.ColorPickerContainer {
+    border: 1px solid #FFF;
+    height: fit-content;
+    width: fit-content;
+    background: var(--surface-color-alternate);
+}
+
+.ColorPickerContainerFooter {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}

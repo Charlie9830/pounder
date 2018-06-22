@@ -46,8 +46,8 @@ class MessageBox extends React.Component {
         else {
             return (
                 <div className="MessageBoxButtonFooter">
-                    <Button text="Ok" onClick={this.handleOkButtonClick}/>
                     <Button text="Cancel" onClick={this.handleCancelButtonClick}/>
+                    <Button text="Ok" onClick={this.handleOkButtonClick}/>
                 </div>
             )
         }

@@ -23,8 +23,9 @@
     width: fit-content;
     background: var(--surface-color);
     padding: 10px;
-    height: 60vh;
+    height: 70vh;
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .AppSettingsMenuFooterContainer {
@@ -64,7 +65,7 @@
 }
 
 .AppSettingsItemLabel {
-    color: #FFF;
+    color: var(--primary-active-text-color);
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 10pt;
     line-height: 10pt;
@@ -74,7 +75,7 @@
     margin: 0px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     background: var(--surface-color-alternate);
-    color: #FFF;
+    color: var(--primary-active-text-color);
     border: gray 1px solid;
     padding: 1px;
 }
@@ -83,7 +84,7 @@
     margin-top: 5px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     background: var(--surface-color-alternate);
-    color: #FFF;
+    color: var(--alternate-active-text-color);;
     border: gray 1px solid;
     padding: 1px;
     width: 220px;
@@ -97,7 +98,7 @@
     vertical-align: middle;
     font-size: 9pt;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    color: #FFF;
+    color: var(--primary-active-text-color);
     background: var(--surface-color-alternate);
     border: 0px solid #FFF;
     padding: 5px;
@@ -105,7 +106,7 @@
 
 .DatabaseRestoringStatusMessage {
     background: var(--surface-color);
-    color: #FFF;
+    color: var(--primary-active-text-color);
     width: 400px;
     height: 200px;
     overflow-y: scroll;
@@ -113,7 +114,7 @@
 
 .FavouriteProjectSelect {
     background: var(--surface-color-alternate);
-    color: #FFF;
+    color: var(--primary-active-text-color);
 }
 
 .AppSettingsAccountLogo {
@@ -124,14 +125,14 @@
 .AppSettingsAccountStatus {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     height: 24px;
-    color: gray;
+    color: var(--alternate-active-text-color);
 }
 
 .AppSettingsAccountEmailDisplay {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 10pt;
     height: 24px;
-    color: gray;
+    color:var(--alternate-active-text-color);;
 } 
 
 .AppSettingsAccountEmailContainer {
@@ -143,7 +144,7 @@
 }
 
 .AppSettingsAccountItemLabel {
-    color: #CCC;
+    color: var(--alternate-active-text-color);
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 10pt;
     line-height: 10pt;
@@ -157,6 +158,53 @@
     align-content: center;
     align-items: center;
 }
+
+.GeneralSettingsHighlightButton {
+    width: 20px;
+    height: 20px;
+    border: 1px solid white;
+}
+
+.CSSSelectorsRowGrid {
+    flex-grow: 0;
+    display: grid;
+    grid-template-columns: [label]2fr [value]1fr [defaultbutton]2fr;
+    grid-column-gap: 10px;
+    margin-bottom: 10px;
+}
+
+.CSSSelectors-label {
+    grid-column: label;
+    justify-self: start;
+    align-self: center;
+}
+
+.CSSSelectors-value {
+    grid-column: value;
+    justify-self: start;
+    align-self: center;
+}
+
+.CSSSelectors-defaultbutton {
+    grid-column: defaultbutton;
+    justify-self: start;
+    align-self: center;
+}
+
+.ResetColorSettingsLink {
+    color: var(--alternate-inactive-text-color);
+    font-size: 10pt;
+    line-height: 10pt;
+    text-decoration-line: underline;
+    cursor: default;
+}
+
+.ResetColorSettingsLink:hover {
+    color: var(--alternate-active-text-color);
+    cursor: default;
+}
+
+
 
 /* Centering */
 
