@@ -2,6 +2,7 @@ import React from 'react';
 import '../assets/css/Calendar.css';
 import '../assets/css/react-day-picker/style.css';
 import DayPicker from 'react-day-picker';
+import Button from './Button';
 import Moment from 'moment';
 import { EnableBodyScroll, DisableBodyScroll } from '../utilities/DOMHelpers';
 import { getDayPickerDate, getClearedDate, getDaysForwardDate, getWeeksForwardDate } from 'pounder-utilities';
@@ -44,35 +45,50 @@ class Calendar extends React.Component {
 
         return (
             <div className="CalendarPopupContainer">
-                <div>
-                    {humanFriendlyDate}
-                    <div className="PriorityToggleContainer" onClick={this.handlePriorityToggleClick}>
-                        <label className="PriorityToggle" data-ishighpriority={this.props.isHighPriority}>
-                            !
-                        </label>
+
+                {/* Header */}
+                <div className="CalendarHeaderContainer">
+                    <div className="PriorityToggle" data-ishighpriority={this.props.isHighPriority}
+                        onClick={this.handlePriorityToggleClick}>
+                        !
                     </div>
+                    {humanFriendlyDate}
                 </div>
-                <div className="CalendarFullBleedDivider"/>
-                <div className="ShortcutItemContainer" onClick={this.handleTodayItemClick}>
-                    <label className="ItemLabel"> Today </label>
-                </div>
-                <div className="ShortcutItemContainer" onClick={this.handleTomorrowItemClick}>
-                    <label className="ItemLabel"> Tomorrow </label>
-                </div>
-                <div className="ShortcutItemContainer" onClick={this.handleOneWeekItemClick}>
-                    <label className="ItemLabel"> One Week </label>
-                </div>
-                <div className="ShortcutItemContainer" onClick={this.handleNoDueDateClick}>
-                    <label className="ItemLabel"> No Due Date </label>
-                </div>
-                <div className="ShortcutItemContainer">
-                    <input ref="DaysInput" id="CalendarPopupDaysInput" type="number" onChange={this.handleDaysChanged}
-                    onKeyPress={this.handleDaysInputKeyPress} />
-                    <label id="DaysLabel" className="ItemLabel"> Days </label>
-                    {daysApplyButton}
-                </div>
-                <div>
-                    <DayPicker enableOutsideDays={true} onDayClick={this.handleDayClick}/>
+
+                <div className="CalendarGrid">
+                    {/* Left Side  */} 
+                    {/* Calendar Shortcuts  */}
+                    <div className="ShortcutsColumn">
+                        <div className="CalendarShortcutsContainer">
+                            <div className="ShortcutItemContainer" onClick={this.handleTodayItemClick}>
+                                <div className="CalendarShortcutItemLabel"> Today </div>
+                            </div>
+                            <div className="ShortcutItemContainer" onClick={this.handleTomorrowItemClick}>
+                                <div className="CalendarShortcutItemLabel"> Tomorrow </div>
+                            </div>
+                            <div className="ShortcutItemContainer" onClick={this.handleOneWeekItemClick}>
+                                <div className="CalendarShortcutItemLabel"> One Week </div>
+                            </div>
+                            <div className="ShortcutItemContainer">
+                                <input className="CalendarShortcutDaysInput" ref="DaysInput" type="number" onChange={this.handleDaysChanged}
+                                    onKeyPress={this.handleDaysInputKeyPress} />
+                                <div className="CalendarShortcutHorizontalSpace" />
+                                <div className="CalendarShortcutItemLabel"> Days </div>
+                                {daysApplyButton}
+                            </div>
+                            <div className="ShortcutItemContainer" onClick={this.handleNoDueDateClick}>
+                                <div className="CalendarShortcutItemLabel"> No Due Date </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Right Side  */}
+                    {/* Day Picker  */}
+                    <div className="DayPickerColumn">
+                        <div>
+                            <DayPicker enableOutsideDays={true} onDayClick={this.handleDayClick} />
+                        </div>
+                    </div>
                 </div>
             </div>
         )
@@ -91,7 +107,7 @@ class Calendar extends React.Component {
     getDaysApplyButton(state) {
         if (state.isApplyButtonVisible) {
             return (
-                <button id="DaysApplyButton" onClick={this.handleDaysApplyButtonClick}> Apply </button>
+                    <Button text="Apply" size="small" onClick={this.handleDaysApplyButtonClick}> Apply </Button>
             )
         }
     }
@@ -99,8 +115,8 @@ class Calendar extends React.Component {
     getHumanFriendlyDate(props) {
         if (props.dueDate === "") {
             return (
-                <div id="DateLabelContainer">
-                    <label id="DateLabel"> No Due Date </label>
+                <div className="DateLabel">
+                    No Due Date
                 </div>
             )
         }
@@ -108,8 +124,8 @@ class Calendar extends React.Component {
         else {
             var date = new Moment(this.props.dueDate);
             return (
-                <div id="DateLabelContainer">
-                    <label id="DateLabel"> {date.date()}/{date.month() + 1}/{date.year()} </label>
+                <div className="DateLabel">
+                    {date.date()}/{date.month() + 1}/{date.year()}
                 </div>
             )
         }

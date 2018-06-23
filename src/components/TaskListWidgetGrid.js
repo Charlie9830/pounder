@@ -14,7 +14,9 @@ class RGLWrapper extends React.Component {
         return (
             <ReactGridLayout className={this.props.rglClassName} layout={this.props.layout} autoSize={false} draggableCancel=".nonDraggable"
                 cols={20} rows={11} rowHeight={70} width={this.props.size.width} /* Size Prop passed from sizeMeHOC */ 
-                onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}>
+                onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}
+                isDraggable={this.props.rglDragEnabled} isResizable={this.props.rglDragEnabled}
+                >
                 {this.props.children}
             </ReactGridLayout>
         )

@@ -104,6 +104,7 @@ class Project extends React.Component{
         var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
         // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
         var rglClassName = projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
+        var rglDragEnabled = this.props.openCalendarId === -1;
 
         return (
             <div className="ProjectContainer" ref="projectContainer">
@@ -115,7 +116,7 @@ class Project extends React.Component{
                 {projectMessageDisplayJSX}
 
                 <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts} 
-                onLayoutChange={this.handleLayoutChange}>
+                onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
                     {taskListWidgets}
                 </TaskListWidgetGrid>
 

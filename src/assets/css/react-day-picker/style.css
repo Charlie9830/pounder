@@ -112,6 +112,10 @@ div {
   color: #FFF;
 }
 
+.DayPicker-Day:hover {
+  background: var(--primary-hover-color);
+}
+
 .DayPicker-WeekNumber {
   display: table-cell;
   padding: .5rem;

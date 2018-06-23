@@ -45,7 +45,8 @@ class DueDate extends React.Component {
   }
 
   handleOverlayMenuOutsideChildBoundsClick(e) {
-    this.props.onNewDateSubmit("");
+    // Revert Due Date.
+    this.props.onNewDateSubmit(this.props.dueDate);
   }
 
   handleClick(e) {

@@ -1,6 +1,5 @@
 .CalendarPopupContainer {
     background: var(--surface-color-alternate);
-    width: 280px;
     height: auto;
     margin: auto;
     padding: 0px;
@@ -10,12 +9,54 @@
     border: 1px solid #FFF;
 }
 
+.CalendarGrid {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: [shortcuts]1fr [daypicker]1fr;
+    grid-column-gap: 10px;
+}
+
+.ShortcutsColumn {
+    grid-column: shortcuts;
+    justify-content: start;
+    align-self: flex-start;
+}
+
+.DayPickerColumn {
+    grid-column: daypicker;
+    justify-self: center;
+    align-self: center;
+}
+
+.CalendarHeaderContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    align-content: center;
+    width: 100%;
+    height: 40px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: gray;
+}
+
+.DateLabel {
+    color: white;
+    flex: 1;
+}
+
 .PriorityToggle {
+    flex-shrink: 1;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     color: #FFF;
     font-weight: 500;
     font-size: 20px;
     vertical-align: middle;
+    padding-left: 15px;
+    padding-right: 5px;
+    cursor: default;
 }
 
 .PriorityToggle[data-ishighpriority*=true] {
@@ -23,100 +64,59 @@
     font-weight: 600;
 }
 
-.PriorityToggleContainer {
-    position: relative;
-    left: 5px;
-    top: 5px;
-    padding-left: 8px;
-    padding-right: 8px;
+.CalendarShortcutsContainers {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
 }
 
-.PriorityToggleContainer:hover {
+.ShortcutItemContainer {
+    flex: 1;
+    height: 40px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    flex-wrap: nowrap;
+    cursor: default;
+    padding: 0px 5px 0px 10px;
+}
+
+.CalendarShortcutHorizontalSpace {
+    flex-shrink: 1;
+    width: 20px;
+}
+
+.ShortcutItemContainer:hover {
     background: rgba(52,52,52,255);
 }
 
-/* Keep the same as .CalenderPopupContainer .ShortcutItemContainerIsSelected */
-.CalendarPopupContainer .ShortcutItemContainer, #DateLabelContainer { 
-    display: table;
-    width: 100%;
-    min-height: 30px;
-    flex-grow: 1;
-    padding: 0px 0px;
-}
 
-#DateLabel {
-    display: table-cell;
-    vertical-align: middle;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    font-weight: 400;
-    font-size: 12pt;
-    color: #BBB;
-    padding: 5px 10px;
-    text-align: center;
-}
-
-
-/* Keep the same as .CalenderPopupCOntainer .ShortcutItemContainer */
-.CalendarPopupContainer .ShortcutItemContainerIsSelected {
-    display: table;
-    width: 100%;
-    min-height: 30px;
-    flex-grow: 1;
-    padding: 0px 0px;
-    background: rgba(63,63,76,255);
-}
-
-.CalendarPopupContainer .ShortcutItemContainer .ItemLabel {
-    display: table-cell;
-    vertical-align: middle;
+.CalendarShortcutItemLabel {
+    flex: 1;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-weight: 400;
     font-size: 12pt;
     color: #FFF;
-    padding: 5px 10px;
+    padding: 5px 0px 5px 0px;
     text-align: left;
 }
 
-
-.CalendarPopupContainer .ShortcutItemContainer:hover {
-    background: rgba(52,52,52,255);
-}
-
-.CalenderPopupContainer .ShortcutItemContainer .SideBySide {
-    float: left;
-}
-
-
-#CalendarPopupDaysInput {
-    background: transparent;
+.CalendarShortcutDaysInput {
+    flex: 1;
+    max-width: 50px;
+    font-family: 'Segoe UI', Lucinda Sans, Geneva, Verdana, sans-serif;
     color: #FFF;
-    border: 1px solid #FFF;
-    width: 40px;
-    float: left;
-    margin: 10px 5px;
+    background: var(--surface-color-alternate);
+    text-align: center;
+    border: 1px solid gray;
 }
 
-#DaysLabel {
-    float: left;
-    margin: 4px 5px;
+.CalendarShortcutApplyButtonContainer {
+    flex: 1;
 }
-
-#DaysApplyButton {
-    float: right;
-    margin: 10px 10px;
-    padding: 2px;
-    background: transparent;
-    color: #FFF;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    border: 1px solid #FFF;
-}
-
-.CalendarFullBleedDivider {
-    height: 0px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-    width: 100%;
-    border-bottom: 1px rgb(65,65,65) solid;
-}
-
 

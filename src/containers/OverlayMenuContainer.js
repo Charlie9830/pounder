@@ -52,8 +52,8 @@ class OverlayMenuContainer extends React.Component {
             if (this.props.onOutsideChildBoundsClick !== undefined) {
                 this.props.onOutsideChildBoundsClick(e);
             }
-        } 
-    }  
+        }
+    }
 }
 
 export default OverlayMenuContainer;
