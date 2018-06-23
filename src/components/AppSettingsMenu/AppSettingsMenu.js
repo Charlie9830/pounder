@@ -6,8 +6,10 @@ import DatabaseSettingsPage from './DatabaseSettingsPage';
 import AccountSettingsPage from './AccountSettingsPage';
 import AppSettingsSidebar from './AppSettingsSidebar';
 import CenteringContainer from '../../containers/CenteringContainer';
+import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
+import { EnableBodyScroll, DisableBodyScroll } from '../../utilities/DOMHelpers';
 import electron from 'electron';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
@@ -60,12 +62,17 @@ class AppSettingsMenu extends React.Component {
     }
 
     componentDidMount() {
+        DisableBodyScroll();
+    }
+
+    componentWillUnmount() {
+        EnableBodyScroll();
     }
 
     render() {
         var contentsJSX = this.getPageJSX()
         return (
-            <div className="AppSettingsContainer" onKeyDown={this.handleAppSettingsKeyDown}>
+            <OverlayMenuContainer onKeyDown={this.handleAppSettingsKeyDown}>
                 <CenteringContainer>
                     <div className="AppSettingsMenuContainer" onClick={this.handleAppSettingsMenuContainerClick}>
                         <div className="AppSettingsMenuSidebarContentFlexContainer">
@@ -87,7 +94,7 @@ class AppSettingsMenu extends React.Component {
                         </div>
                     </div>
                 </CenteringContainer>
-            </div>
+            </OverlayMenuContainer>
         )
     }
 

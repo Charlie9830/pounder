@@ -29,7 +29,6 @@ class ThemeSettings extends React.Component {
 
     render() {
         var zeroFilledCssValues = this.getZeroFilledCssValues();
-        console.log("ThemeSettings Render() " + this.props.contentContainerRef.current);
 
         var jsx = zeroFilledCssValues.map((item,index) => {
             

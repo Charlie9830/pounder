@@ -148,17 +148,6 @@ class App extends React.Component {
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
-    // Determine if Body Scroll should be disabled.
-    if (prevProps.isBodyScrollAllowed !== this.props.isBodyScrollAllowed) {
-      if (this.props.isBodyScrollAllowed) {
-        document.getElementsByTagName('body')[0].style.setProperty('overflow', 'scroll');
-      }
-
-      else {
-        document.getElementsByTagName('body')[0].style.setProperty('overflow', 'hidden');
-      }
-    }
-
     // Determine if Fullscreen mode should be triggered.
     if (this.props.ignoreFullscreenTrigger === false && this.props.isDexieConfigLoadComplete &&
       this.props.generalConfig.startInFullscreen) {
@@ -569,7 +558,6 @@ const mapStateToProps = state => {
     messageBox: state.messageBox,
     isLoggedIn: state.isLoggedIn,
     isSidebarOpen: state.isSidebarOpen,
-    isBodyScrollAllowed: state.isBodyScrollAllowed,
   }
 }
 

@@ -1,8 +1,4 @@
 .CalendarPopupContainer {
-    position: absolute;
-    top: 5px;
-    right: 5px;
-    z-index: 5;
     background: var(--surface-color-alternate);
     width: 280px;
     height: auto;

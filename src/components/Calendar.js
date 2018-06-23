@@ -3,6 +3,7 @@ import '../assets/css/Calendar.css';
 import '../assets/css/react-day-picker/style.css';
 import DayPicker from 'react-day-picker';
 import Moment from 'moment';
+import { EnableBodyScroll, DisableBodyScroll } from '../utilities/DOMHelpers';
 import { getDayPickerDate, getClearedDate, getDaysForwardDate, getWeeksForwardDate } from 'pounder-utilities';
 
 
@@ -27,6 +28,14 @@ class Calendar extends React.Component {
         this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
 
         const dateFormat = "DD-MM-YYYY";
+    }
+
+    componentDidMount() {
+        DisableBodyScroll();
+    }
+
+    componentWillUnmount() {
+        EnableBodyScroll();
     }
 
     render() {

@@ -207,18 +207,6 @@
 
 
 /* Centering */
-
-.AppSettingsContainer {
-    display: block;
-    position: fixed;
-    background: rgba(0, 0, 0, 0.5);
-    margin: 0px;
-    padding: 0px;
-    width: 100%;
-    height: 100%;
-    z-index: 6;
-}
-
 .AppSettingsOuter {
     display: table;
     width: 100%;
