@@ -11,7 +11,10 @@ class CenteringContainer extends React.Component {
             <div className="CenteringContainerOuter">
                 <div className="CenteringContainerInner">
                     <div className="CenteringContainerCentered">
+                        <div className="CenteringContainerFinalCentering">
+
                         {this.props.children}
+                        </div>
                     </div>
                 </div>
             </div>

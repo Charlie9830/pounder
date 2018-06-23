@@ -73,7 +73,6 @@ class AppSettingsMenu extends React.Component {
         var contentsJSX = this.getPageJSX()
         return (
             <OverlayMenuContainer onKeyDown={this.handleAppSettingsKeyDown}>
-                <CenteringContainer>
                     <div className="AppSettingsMenuContainer" onClick={this.handleAppSettingsMenuContainerClick}>
                         <div className="AppSettingsMenuSidebarContentFlexContainer">
                             {/* Sidebar */}
@@ -93,7 +92,6 @@ class AppSettingsMenu extends React.Component {
                             </div>
                         </div>
                     </div>
-                </CenteringContainer>
             </OverlayMenuContainer>
         )
     }

@@ -2,6 +2,8 @@ import React from 'react';
 import '../assets/css/DueDate.css';
 import Calendar from './Calendar';
 import ContextMenuContainer from '../containers/ContextMenuContainer';
+import OverlayMenuContainer from '../containers/OverlayMenuContainer';
+import CenteringContainer from '../containers/CenteringContainer';
 import Moment from 'moment';
 import { ParseDueDate } from 'pounder-utilities';
 
@@ -9,14 +11,11 @@ class DueDate extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = {
-      lastClickPos: {x: 0, y: 0},
-    }
-
     // Method Bindings.
     this.handleClick = this.handleClick.bind(this);
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
+    this.handleOverlayMenuOutsideChildBoundsClick = this.handleOverlayMenuOutsideChildBoundsClick.bind(this);
   }
 
 
@@ -37,17 +36,20 @@ class DueDate extends React.Component {
     if (props.isCalendarOpen) {
       
       return (
-        <ContextMenuContainer offsetX={this.state.lastClickPos.x} offsetY={this.state.lastClickPos.y}>
-          <Calendar dueDate={this.props.dueDate} onNewDateSubmit={this.handleNewDateSubmit}
-          isHighPriority={this.props.isHighPriority} onPriorityToggleClick={this.handlePriorityToggleClick}/>
-        </ContextMenuContainer>
+        <OverlayMenuContainer onOutsideChildBoundsClick={this.handleOverlayMenuOutsideChildBoundsClick}>
+            <Calendar dueDate={this.props.dueDate} onNewDateSubmit={this.handleNewDateSubmit}
+              isHighPriority={this.props.isHighPriority} onPriorityToggleClick={this.handlePriorityToggleClick} />
+        </OverlayMenuContainer>
       )
     }
   }
 
+  handleOverlayMenuOutsideChildBoundsClick(e) {
+    this.props.onNewDateSubmit("");
+  }
+
   handleClick(e) {
     if (!this.props.isCalendarOpen) {
-      this.setState({lastClickPos: {x: e.clientX, y: e.clientY}});
       this.props.onClick();
     }
   }

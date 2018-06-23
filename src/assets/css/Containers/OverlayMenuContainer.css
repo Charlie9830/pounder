@@ -10,3 +10,8 @@
     height: 100%;
     z-index: 6;
 }
+
+.OverlayMenuMeasuringContainer {
+    width: fit-content;
+    height: fit-content;
+}

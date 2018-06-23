@@ -17,3 +17,8 @@
     height: 50%;
     padding: 1em;
 }
+
+.CenteringContainerFinalCentering {
+    width: fit-content;
+    margin: auto;
+}

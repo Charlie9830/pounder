@@ -2,7 +2,7 @@
     background: var(--surface-color-alternate);
     width: 280px;
     height: auto;
-    margin: 0px;
+    margin: auto;
     padding: 0px;
     display: flex;
     flex-direction: column;
@@ -24,7 +24,7 @@
 }
 
 .PriorityToggleContainer {
-    position: absolute;
+    position: relative;
     left: 5px;
     top: 5px;
     padding-left: 8px;
