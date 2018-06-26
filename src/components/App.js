@@ -8,8 +8,10 @@ import VisibleStatusBar from './StatusBar';
 import VisibleLockScreen from './LockScreen';
 import ShutdownScreen from './ShutdownScreen';
 import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
+import OverlayMenuContainer from '../containers/OverlayMenuContainer';
 import MessageBox from './MessageBox';
 import VisibleSnackbar from './Snackbar';
+import VisibleShareMenu from './ShareMenu';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -22,7 +24,7 @@ changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSide
 removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
-setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync,
+setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen,
 setMessageBox, attachAuthListenerAsync, } from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
@@ -92,6 +94,8 @@ class App extends React.Component {
     this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
     this.getAppSettingsMenuJSX = this.getAppSettingsMenuJSX.bind(this);
     this.handleRequestIsSidebarOpenChange = this.handleRequestIsSidebarOpenChange.bind(this);
+    this.getShareMenuJSX = this.getShareMenuJSX.bind(this);
+    this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
   }
 
   componentDidMount(){
@@ -183,6 +187,7 @@ class App extends React.Component {
     var lockScreenJSX = this.getLockScreen();
     var shutdownScreenJSX = this.getShutdownScreenJSX();
     var appSettingsMenuJSX = this.getAppSettingsMenuJSX();
+    var shareMenuJSX = this.getShareMenuJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
 
@@ -192,7 +197,7 @@ class App extends React.Component {
         <MessageBox config={this.props.messageBox}/>
         {lockScreenJSX}
         {shutdownScreenJSX}
-
+        {shareMenuJSX}
         {appSettingsMenuJSX}
         <VisibleStatusBar/>
         <div className="SidebarProjectFlexContainer">
@@ -202,7 +207,8 @@ class App extends React.Component {
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
               projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays}
               favouriteProjectId={this.props.accountConfig.favouriteProjectId} isOpen={this.props.isSidebarOpen}
-              onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange}
+              onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} 
+              onShareMenuButtonClick={this.handleShareMenuButtonClick}
             />
           </div>
           <div className="ProjectFlexItemContainer">
@@ -226,6 +232,20 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  handleShareMenuButtonClick() {
+    this.props.dispatch(setIsShareMenuOpen(true));
+  }
+
+  getShareMenuJSX() {
+    if (this.props.isShareMenuOpen) {
+      return (
+        <OverlayMenuContainer onOutsideChildBoundsClick={() => {this.props.dispatch(setIsShareMenuOpen(false))}}>
+          <VisibleShareMenu />
+        </OverlayMenuContainer>
+      )
+    }
   }
 
   handleRequestIsSidebarOpenChange(newValue) {
@@ -266,7 +286,7 @@ class App extends React.Component {
       return [];
     }
 
-    // TODO: Firebase is return a query ordered by projectID, therefore this could bail out once it's found
+    // TODO: Firebase is returning a query ordered by projectID, therefore this could bail out once it's found
     // the first matching Task and iterated onto a non matching task for a performance gain.
     else {
       var returnList = [];
@@ -558,6 +578,7 @@ const mapStateToProps = state => {
     messageBox: state.messageBox,
     isLoggedIn: state.isLoggedIn,
     isSidebarOpen: state.isSidebarOpen,
+    isShareMenuOpen: state.isShareMenuOpen,
   }
 }
 

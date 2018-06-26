@@ -14,7 +14,7 @@
     position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
     background: var(--primary-color);
     width: 250px;
-    height: 1130px;
+    height: 96vh;
     float: left;
     margin-top: 30px;
     -webkit-user-select: none;
@@ -84,6 +84,19 @@
 
 .ProjectSelectorsContainerCollapsed {
     display: none;
+}
+
+.SidebarFooter {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+    width: 100%;
+    height: 52px;
+    
 }
 
 

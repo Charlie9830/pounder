@@ -1,6 +1,6 @@
 import Path from 'path';
 import fsJetpack from 'fs-jetpack';
-import { TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
+import { getUserUid, USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
 import Electron from 'electron';
 
 let remote = Electron.remote;
@@ -36,34 +36,6 @@ export function restoreFirebaseAsync(getFirestore, importPath) {
     })
 }
 
-// function overwriteFirebase(data) {
-//     // Collect Data from File.
-//     var { projects, projectLayouts, taskLists, tasks } = data;
-//     var batch = getFirestore().batch();
-
-//     // Projects.
-//     projects.forEach(project => {
-//         batch.set(getFirestore().collection(PROJECTS).doc(project.uid), project);
-//     })
-
-//     // Project Layouts.
-//     projectLayouts.forEach(projectLayout => {
-//         batch.set(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid), projectLayout);
-//     })
-
-//     // Task Lists.
-//     taskLists.forEach(taskList => {
-//         batch.set(getFirestore().collection(TASKLISTS).doc(taskList.uid), taskList);
-//     })
-
-//     // Tasks
-//     tasks.forEach(task => {
-//         batch.set(getFirestore().collection(TASKS).doc(task.uid), task);
-//     })
-
-//     batch.commit().then(() => {
-//     })
-// }
 
 function readFileAsync(importPath) {
     return new Promise((resolve, reject) => {
@@ -83,21 +55,21 @@ function importDatabaseFromFileAsync(getFirestore, importPath) {
             // Projects.
             var projects = Object.values(data.projects);
             projects.forEach(item => {
-                let ref = getFirestore().collection(PROJECTS).doc(item.uid);
+                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(item.uid);
                 batch.set(ref, item);
             })
 
             // Project Layouts.
             var projectLayouts = Object.values(data.projectLayouts);
             projectLayouts.forEach(item => {
-                let ref = getFirestore().collection(PROJECTLAYOUTS).doc(item.uid);
+                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).doc(item.uid);
                 batch.set(ref, item);
             })
 
             // Task lists.
             var taskLists = Object.values(data.taskLists);
             taskLists.forEach(item => {
-                let ref = getFirestore().collection(TASKLISTS).doc(item.uid);
+                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).doc(item.uid);
                 batch.set(ref, item);
             })
 
@@ -105,7 +77,7 @@ function importDatabaseFromFileAsync(getFirestore, importPath) {
             var tasks = Object.values(data.tasks);
             tasks.forEach(item => {
                 if (item.uid != undefined) {
-                    let ref = getFirestore().collection(TASKS).doc(item.uid);
+                    let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).doc(item.uid);
                     batch.set(ref, item);
                 }
             })
@@ -130,28 +102,28 @@ function pullDownDatabase(getFirestore) {
         var tasks = [];
 
         // Projects.
-        requests.push(getFirestore().collection(PROJECTS).get().then(snapshot => {
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).get().then(snapshot => {
             snapshot.forEach(doc => {
                 projects.push(doc.data());
             })
         }))
 
         // Project Layouts.
-        requests.push(getFirestore().collection(PROJECTLAYOUTS).get().then(snapshot => {
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).get().then(snapshot => {
             snapshot.forEach(doc => {
                 projectLayouts.push(doc.data());
             })
         }))
 
         // TaskLists.
-        requests.push(getFirestore().collection(TASKLISTS).get().then(snapshot => {
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).get().then(snapshot => {
             snapshot.forEach(doc => {
                 taskLists.push(doc.data());
             })
         }))
 
         // Tasks.
-        requests.push(getFirestore().collection(TASKS).get().then(snapshot => {
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).get().then(snapshot => {
             snapshot.forEach(doc => {
                 tasks.push(doc.data());
             })
@@ -216,23 +188,25 @@ function nukeFirestore(getFirestore) {
 
             // Projects.
             projects.forEach(project => {
-                refs.push(getFirestore().collection(PROJECTS).doc(project.uid));
+                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(project.uid));
             })
 
             // Project Layouts.
             projectLayouts.forEach(projectLayout => {
-                refs.push(getFirestore().collection(PROJECTLAYOUTS).doc(projectLayout.uid));
+                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).doc(projectLayout.uid));
             })
 
             // TaskLists.
             taskLists.forEach(taskList => {
-                refs.push(getFirestore().collection(TASKLISTS).doc(taskList.uid));
+                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).doc(taskList.uid));
             })
 
             // Tasks.
             tasks.forEach(task => {
-                refs.push(getFirestore().collection(TASKS).doc(task.uid));
+                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).doc(task.uid));
             })
+
+            
 
             // Build Delete Batch.
             var batch = getFirestore().batch();

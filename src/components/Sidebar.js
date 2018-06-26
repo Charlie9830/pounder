@@ -6,6 +6,7 @@ import '../assets/css/ToolBarButton.css';
 import NewProjectIcon from '../assets/icons/NewProjectIcon.svg';
 import RemoveProjectIcon from '../assets/icons/RemoveProjectIcon.svg';
 import SidebarIcon from '../assets/icons/SidebarIcon.svg';
+import ShareIcon from '../assets/icons/ShareIcon.svg';
 
 class Sidebar extends React.Component{
     constructor(props) {
@@ -21,6 +22,7 @@ class Sidebar extends React.Component{
         this.getSidebarToolbarJSX = this.getSidebarToolbarJSX.bind(this);
         this.getCollapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX.bind(this);
         this.handleSidebarClick = this.handleSidebarClick.bind(this);
+        this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
 
         this.state = {
             openProjectSelectorInputId: -1,
@@ -57,6 +59,9 @@ class Sidebar extends React.Component{
                 <div className={projectSelectorsContainerClassName}>
                     {projectSelectorsJSX}
                 </div>
+                <div className="SidebarFooter">
+                    <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick}/>
+                </div>
                 <div className="SidebarCollapseButtonContainer">
                     <div className={sidebarCollapseButtonClassName} onClick={this.handleSidebarCollapseButtonClick}>
                         <img className="SidebarCollapseButtonIcon" src={SidebarIcon}/>
@@ -65,6 +70,10 @@ class Sidebar extends React.Component{
                 {collapsedProjectTitleJSX}
             </div>
         )
+    }
+
+    handleShareMenuButtonClick() {
+        this.props.onShareMenuButtonClick();
     }
 
     handleSidebarClick() {
