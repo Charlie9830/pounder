@@ -13,9 +13,10 @@ class Button extends React.Component {
     render() {
         var iconJSX = this.getIconJSX();
         var textJSX = this.getTextJSX();
+        var isEnabled = this.props.isEnabled === undefined ? true : this.props.isEnabled;
 
         return (
-            <div className="ButtonContainer" data-size={this.props.size} onClick={(e) => {this.props.onClick(e)}}>
+            <div className="ButtonContainer" data-isenabled={isEnabled} data-size={this.props.size} onClick={(e) => {this.props.onClick(e)}}>
                 <div className="ButtonContentFlexContainer">
                 {iconJSX}
                 {textJSX}

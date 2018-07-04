@@ -7,6 +7,8 @@ import NewProjectIcon from '../assets/icons/NewProjectIcon.svg';
 import RemoveProjectIcon from '../assets/icons/RemoveProjectIcon.svg';
 import SidebarIcon from '../assets/icons/SidebarIcon.svg';
 import ShareIcon from '../assets/icons/ShareIcon.svg';
+import AcceptIcon from '../assets/icons/AcceptIcon.svg';
+import DenyIcon from '../assets/icons/DenyIcon.svg';
 
 class Sidebar extends React.Component{
     constructor(props) {
@@ -23,6 +25,15 @@ class Sidebar extends React.Component{
         this.getCollapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX.bind(this);
         this.handleSidebarClick = this.handleSidebarClick.bind(this);
         this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
+        this.getSplitProjects = this.getSplitProjects.bind(this);
+        this.projectMapper = this.projectMapper.bind(this);
+        this.getLocalProjectsTitleJSX = this.getLocalProjectsTitleJSX.bind(this);
+        this.getRemoteProjectsTitleJSX = this.getRemoteProjectsTitleJSX.bind(this);
+        this.getProjectInvitesTitleJSX = this.getProjectInvitesTitleJSX.bind(this);
+        this.getSidebarFullBleedDividerJSX = this.getSidebarFullBleedDividerJSX.bind(this);
+        this.getInvitesJSX = this.getInvitesJSX.bind(this);
+        this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
+        this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
 
         this.state = {
             openProjectSelectorInputId: -1,
@@ -31,22 +42,20 @@ class Sidebar extends React.Component{
 
     render() {
         var sidebarClassName = this.props.isOpen ? "SidebarOpen" : "SidebarCollapsed";
-        var projectSelectorsContainerClassName = this.props.isOpen ? "ProjectSelectorsContainerOpen" : "ProjectSelectorsContainerCollapsed";
+        var sidebarSelectablesContainerClassName = this.props.isOpen ? "SidebarSelectablesContainerOpen" : "SidebarSelectablesContainerCollapsed";
         var sidebarCollapseButtonClassName = this.props.isOpen ? "SidebarCollapseButtonOpen" : "SidebarCollapseButtonCollapsed";
-
-        var projectSelectorsJSX = this.props.projects.map((item, index) => {
-            var isSelected = this.props.selectedProjectId === item.uid;
-            var isInputOpen = item.uid === this.state.openProjectSelectorInputId;
-            var dueDateDisplay = this.props.projectSelectorDueDateDisplays[item.uid];
-            var isFavouriteProject = this.props.favouriteProjectId === item.uid;
-
-            return (
-                <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
-                    isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
-                    onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}
-                    isFavouriteProject={isFavouriteProject} />
-            )
-        })
+        var splitProjects = this.getSplitProjects();
+        var localProjectsCount = splitProjects.localProjects.length;
+        var remoteProjectsCount = splitProjects.remoteProjects.length;
+        var localProjectsTitleJSX = this.getLocalProjectsTitleJSX(localProjectsCount > 0 && remoteProjectsCount > 0);
+        var remoteProjectsTitleJSX = this.getRemoteProjectsTitleJSX(splitProjects.remoteProjects.length > 0);
+        var projectInvitesTitleJSX = this.getProjectInvitesTitleJSX(this.props.invites.length > 0);
+        var invitesJSX = this.getInvitesJSX();
+        var localAndRemoteDividerJSX = this.getSidebarFullBleedDividerJSX(localProjectsCount > 0 && remoteProjectsCount > 0);
+        var invitesDividerJSX = this.getSidebarFullBleedDividerJSX((localProjectsCount > 0 || remoteProjectsCount > 0) &&
+            this.props.invites.length > 0);
+        var localProjectSelectorsJSX = splitProjects.localProjects.map(this.projectMapper);
+        var remoteProjectSelectorsJSX = splitProjects.remoteProjects.map(this.projectMapper);
 
         var sidebarToolbarJSX = this.getSidebarToolbarJSX();
         var collapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX();
@@ -56,8 +65,28 @@ class Sidebar extends React.Component{
                 <div className="sidebarToolbarContainer">
                     {sidebarToolbarJSX}
                 </div>
-                <div className={projectSelectorsContainerClassName}>
-                    {projectSelectorsJSX}
+                <div className={sidebarSelectablesContainerClassName}>
+                    {/* Local Projects  */}
+                    {localProjectsTitleJSX}
+                    <div className="LocalProjectSelectorsContainer">
+                        {localProjectSelectorsJSX}
+                    </div>
+
+                    {localAndRemoteDividerJSX}
+
+                    {/* Remote Projects  */}
+                    {remoteProjectsTitleJSX}
+                    <div className="RemoteProjectSelectorsContainer">
+                        {remoteProjectSelectorsJSX}
+                    </div>
+                
+                    {/* Invites */}
+                    {invitesDividerJSX}
+                    {projectInvitesTitleJSX}
+                    <div className="ProjectInvitesContainer">
+                        {invitesJSX}
+                    </div>
+
                 </div>
                 <div className="SidebarFooter">
                     <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick}/>
@@ -70,6 +99,107 @@ class Sidebar extends React.Component{
                 {collapsedProjectTitleJSX}
             </div>
         )
+    }
+
+    handleDenyInviteButtonClick(projectId) {
+        this.props.onDenyInviteButtonClick(projectId);
+    }
+
+    handleAcceptInviteButtonClick(projectId) {
+        this.props.onAcceptInviteButtonClick(projectId);
+    }
+
+
+    getInvitesJSX() {
+        // InviteStore(projectName, targetUserId, sourceUserId, sourceEmail, sourceDisplayName, projectId, role);
+        var jsx = this.props.invites.map((item,index) => {
+            var isEnabled = !this.props.updatingInviteIds.hasOwnProperty(item.projectId);
+            return (
+                <div className="InviteContainer" key={index} data-isenabled={isEnabled}>
+                    {/* Project and Display Name  */}
+                    <div className="InviteProjectAndDisplayName">
+                        <div className="InviteProjectName"> {item.projectName} </div>
+                        <div className="InviteDisplayName"> {item.sourceDisplayName} </div>
+                    </div> 
+                    
+                    {/* Buttons  */}
+                    <div className="InviteButtons">
+                        <Button size='verysmall' iconSrc={AcceptIcon} onClick={() => {this.handleAcceptInviteButtonClick(item.projectId)}}/>
+                        <Button size='verysmall' iconSrc={DenyIcon} onClick={() => {this.handleDenyInviteButtonClick(item.projectId)}}/>
+                    </div> 
+                </div>
+            )
+        })
+
+        return jsx;
+    }
+
+    getSidebarFullBleedDividerJSX(shouldRender) {
+        if (shouldRender) {
+            return (
+                <div className="SidebarFullBleedDivider"/>
+            )
+        }
+    }
+
+    getRemoteProjectsTitleJSX(shouldRender) {
+        if (shouldRender) {
+            return (
+                <div className="SidebarProjectsTitleFlexContainer">
+                    <div className="SidebarProjectsTitle"> Shared </div>
+                </div>
+            )
+        }
+    }
+
+    getProjectInvitesTitleJSX(shouldRender) {
+        if (shouldRender) {
+            return (
+                <div className="SidebarProjectsTitleFlexContainer">
+                    <div className="SidebarProjectsTitle"> Invites </div>
+                </div>
+            )
+        }
+    }
+
+    getLocalProjectsTitleJSX(shouldRender) {
+        if (shouldRender) {
+            return (
+                <div className="SidebarProjectsTitleFlexContainer">
+                    <div className="SidebarProjectsTitle"> Personal </div> 
+                </div>
+            )
+        }
+    }
+
+    projectMapper(item, index) {
+        var isSelected = this.props.selectedProjectId === item.uid;
+        var isInputOpen = item.uid === this.state.openProjectSelectorInputId;
+        var dueDateDisplay = this.props.projectSelectorDueDateDisplays[item.uid];
+        var isFavouriteProject = this.props.favouriteProjectId === item.uid;
+
+        return (
+            <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
+                isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
+                onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}
+                isFavouriteProject={isFavouriteProject} />
+        )
+    }
+
+    getSplitProjects() {
+        var localProjects = [];
+        var remoteProjects = [];
+
+        this.props.projects.forEach(item => {
+            if (item.isRemote) {
+                remoteProjects.push(item);
+            }
+            else {
+                localProjects.push(item);
+            }
+        })
+
+        return { localProjects: localProjects, remoteProjects: remoteProjects }
     }
 
     handleShareMenuButtonClick() {

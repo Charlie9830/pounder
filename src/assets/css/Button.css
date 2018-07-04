@@ -11,9 +11,20 @@
     opacity: 0.75;
 }
 
+.ButtonContainer[data-isenabled*="false"] {
+    opacity: 0.25;
+    pointer-events: none;
+}
+
 .ButtonContainer[data-size*="small"] {
     height: 22px;
     width: 55px;
+    padding: 2px;
+}
+
+.ButtonContainer[data-size*="verysmall"] {
+    height: 22px;
+    width: 32px;
     padding: 2px;
 }
 
@@ -51,6 +62,12 @@
 }
 
 .ButtonText[data-size*="small"] {
+    font-size: 8pt;
+    line-height: 14pt;
+    vertical-align: middle;
+}
+
+.ButtonText[data-size*="verysmall"] {
     font-size: 8pt;
     line-height: 14pt;
     vertical-align: middle;

@@ -181,7 +181,7 @@ function writeDatabaseToFileAsync(json, directoryPath) {
 function nukeFirestore(getFirestore) {
     return new Promise((resolve, reject) => {
         pullDownDatabase(getFirestore).then(data => {
-            var { projects, projectLayouts, taskLists, tasks } = data;
+            var { projects, projectLayouts, taskLists, tasks} = data;
 
             // Build a list of References.
             var refs = [];

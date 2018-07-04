@@ -1,5 +1,4 @@
 import React from 'react';
-import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Button from '../Button';
 import Spinner from '../Spinner';
@@ -11,11 +10,19 @@ class AccountSettingsPage extends React.Component {
     constructor(props) {
         super(props);
 
+        // State.
+        this.state = {
+            isInRegisterMode: false,
+        }
+
         // Method Bindings.
         this.getButtonsJSX = this.getButtonsJSX.bind(this);
         this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
         this.getInputsJSX = this.getInputsJSX.bind(this);
         this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+        this.getDisplayNameInputJSX = this.getDisplayNameInputJSX.bind(this);
+        this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
+        this.handleRegisterLinkClick = this.handleRegisterLinkClick.bind(this);
     }
 
     componentDidMount() {
@@ -29,24 +36,25 @@ class AccountSettingsPage extends React.Component {
         var buttonsJSX = this.getButtonsJSX();
         var inputsJSX = this.getInputsJSX()
         return (
-                    <CenteringContainer>
-                        {/* Logo and Status Message  */} 
-                        <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
-                        <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
+            <CenteringContainer>
+                {/* Logo and Status Message  */}
+                <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
+                <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
 
-                        {/* Email and Password Inputs  */} 
-                        {inputsJSX}
+                {/* Email and Password Inputs  */}
+                {inputsJSX}
 
-                        {/* LogInLogOut Button  */}
-                        <div className="AppSettingsAccountButtonsFlexContainer">
-                            {buttonsJSX}
-                        </div>
-                    </CenteringContainer>
+                {/* LogInLogOut Button  */}
+                <div className="AppSettingsAccountButtonsFlexContainer">
+                    {buttonsJSX}
+                </div>
+            </CenteringContainer>
         )
     }
 
     getInputsJSX() {
         if (this.props.isLoggedIn === false) {
+            var displayNameInputJSX = this.getDisplayNameInputJSX();
             return (
                 <div>
                     {/* Email */}
@@ -55,6 +63,9 @@ class AccountSettingsPage extends React.Component {
                         <input className="AppSettingsAccountInput" type="text" ref="emailInput" defaultValue={this.props.userEmail}
                         onKeyPress={this.handleInputKeyPress}/>
                     </div>
+
+                    {/* Display Name (Only in Register Mode)  */} 
+                    {displayNameInputJSX}
 
                     {/* Password  */} 
                     <div className="AppSettingsAccountPasswordContainer">
@@ -68,16 +79,35 @@ class AccountSettingsPage extends React.Component {
 
         else {
             return (
-                <div className="AppSettingsAccountEmailDisplay">
-                    {this.props.userEmail}
+                <div>
+                    <div className="AppSettingsAccountDisplayName"> {this.props.displayName} </div>
+                    <div className="AppSettingsAccountEmailDisplay"> {this.props.userEmail} </div>
                 </div>
             )
         }
     }
 
+    getDisplayNameInputJSX() {
+        if (this.state.isInRegisterMode) {
+            return (
+                <div className="AppSettingsAccountDisplayNameContainer">
+                    <div className="AppSettingsAccountItemLabel"> Display Name </div>
+                    <input className="AppSettingsAccountInput" type="text" ref="displayNameInput"
+                        onKeyPress={this.handleInputKeyPress} />
+                </div>
+            )
+        } 
+    }
+
     handleInputKeyPress(e) {
         if (e.key === "Enter") {
-            this.handleLogInButtonClick();
+            if (this.state.isInRegisterMode) {
+                this.handleRegisterButtonClick();
+            }
+
+            else {
+                this.handleLogInButtonClick();
+            }
         }
     }
 
@@ -96,11 +126,34 @@ class AccountSettingsPage extends React.Component {
             }
     
             else {
-                return (
-                        <Button text="Log In" onClick={this.handleLogInButtonClick} />                    
-                )
+                if (this.state.isInRegisterMode) {
+                    return (
+                        <Button text="Register" onClick={this.handleRegisterButtonClick}/>
+                    )
+                }
+
+                else {
+                    return (
+                        <div>
+                            <Button text="Log In" onClick={this.handleLogInButtonClick} />  
+                            <div className="RegisterLink" onClick={this.handleRegisterLinkClick}> Register </div>
+                        </div>                  
+                    )
+                }
             }
         }
+    }
+
+    handleRegisterButtonClick() {
+        var email = this.refs.emailInput.value;
+        var password = this.refs.passwordInput.value;
+        var displayName = this.refs.displayNameInput.value;
+
+        this.props.onRegisterButtonClick(email, password, displayName);
+    }
+
+    handleRegisterLinkClick() {
+        this.setState({ isInRegisterMode: true })
     }
 
     handleLogInButtonClick() {

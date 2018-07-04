@@ -1,5 +1,5 @@
 import React from 'react';
-import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
+import MenuSubtitle from '../MenuSubtitle';
 import MessageBox from '../MessageBox';
 import Button from '../Button';
 import CenteringContainer from '../../containers/CenteringContainer';
@@ -66,7 +66,7 @@ class DatabaseSettingsPage extends React.Component {
         else {
             return (
                 <CenteringContainer>
-                    <AppSettingsMenuSubtitle text="Cannot access Database settings when Logged off."/>
+                    <MenuSubtitle text="Cannot access Database settings when Logged off."/>
                 </CenteringContainer>
             )
         }

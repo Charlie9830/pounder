@@ -57,6 +57,7 @@ class Project extends React.Component{
             return taskList.project === this.props.projectId;
         })
 
+
         var taskListWidgets = filteredTaskListWidgets.map((item, index) => {
             // Widget Layer.
             var isFocused = this.props.focusedTaskListId === item.uid;
@@ -100,7 +101,12 @@ class Project extends React.Component{
             )
         });
 
-        var layouts = Array.isArray(this.props.layouts) ? this.props.layouts : [];
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        var selectedProjectLayout = this.props.projectLayouts.find(item => {
+            return item.uid === this.props.projectId;
+        })
+        var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
+
         var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
         // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
         var rglClassName = projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
@@ -115,7 +121,7 @@ class Project extends React.Component{
                 </div>
                 {projectMessageDisplayJSX}
 
-                <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts} 
+                <TaskListWidgetGrid rglClassName={rglClassName} layout={selectedLayouts} 
                 onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
                     {taskListWidgets}
                 </TaskListWidgetGrid>

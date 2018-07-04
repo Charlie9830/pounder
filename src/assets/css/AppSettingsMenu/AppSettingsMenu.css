@@ -4,6 +4,7 @@
     background: var(--primary-color);
     border: gray 1px solid;
     margin-top: -25%;
+    width: 600px;
 }
 
 .AppSettingsMenuSidebarContentFlexContainer {
@@ -128,14 +129,26 @@
     color: var(--alternate-active-text-color);
 }
 
+.AppSettingsAccountDisplayName {
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    margin-top: 10px;
+    height: 20px;
+    color:var(--alternate-inactive-text-color);
+}
+
 .AppSettingsAccountEmailDisplay {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     font-size: 10pt;
-    height: 24px;
-    color:var(--alternate-active-text-color);;
+    height: 20px;
+    color:var(--alternate-inactive-text-color);
 } 
 
 .AppSettingsAccountEmailContainer {
+    margin-top: 10px;
+}
+
+.AppSettingsAccountDisplayNameContainer {
     margin-top: 10px;
 }
 
@@ -197,6 +210,15 @@
     line-height: 10pt;
     text-decoration-line: underline;
     cursor: default;
+}
+
+.RegisterLink {
+    color: var(--alternate-inactive-text-color);
+    font-size: 10pt;
+    line-height: 10pt;
+    text-decoration-line: underline;
+    cursor: default;
+    padding-top: 20px;
 }
 
 .ResetColorSettingsLink:hover {

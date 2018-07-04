@@ -1,5 +1,5 @@
 import React from 'react';
-import AppSettingsMenuSubtitle from './AppSettingsMenuSubtitle';
+import MenuSubtitle from '../MenuSubtitle';
 import ThemeSettings from './ThemeSettings';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 
@@ -56,7 +56,7 @@ class GeneralSettingsPage extends React.Component {
 
                 {/* Color Selection Title */}
                 <div className="AppSettingsVerticalFlexItem">
-                    <AppSettingsMenuSubtitle text="Application Color Selection"/>
+                    <MenuSubtitle text="Application Color Selection"/>
                 </div>
 
                 {/* Color Selection Properties and Inputs */}

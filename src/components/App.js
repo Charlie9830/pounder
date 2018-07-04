@@ -20,12 +20,12 @@ import { MessageBoxTypes } from 'pounder-redux';
 import { hot } from 'react-hot-loader';
 import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
-changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen,
-removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
+changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
+removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen,
-setMessageBox, attachAuthListenerAsync, } from 'pounder-redux/action-creators';
+setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, } from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -96,6 +96,8 @@ class App extends React.Component {
     this.handleRequestIsSidebarOpenChange = this.handleRequestIsSidebarOpenChange.bind(this);
     this.getShareMenuJSX = this.getShareMenuJSX.bind(this);
     this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
+    this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
+    this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
   }
 
   componentDidMount(){
@@ -183,7 +185,6 @@ class App extends React.Component {
   }
 
   render() {
-    var layouts = this.props.projectLayout.layouts;
     var lockScreenJSX = this.getLockScreen();
     var shutdownScreenJSX = this.getShutdownScreenJSX();
     var appSettingsMenuJSX = this.getAppSettingsMenuJSX();
@@ -205,10 +206,11 @@ class App extends React.Component {
             <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays}
+              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} invites={this.props.invites}
               favouriteProjectId={this.props.accountConfig.favouriteProjectId} isOpen={this.props.isSidebarOpen}
               onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} 
-              onShareMenuButtonClick={this.handleShareMenuButtonClick}
+              onAcceptInviteButtonClick={this.handleAcceptInviteButtonClick} onDenyInviteButtonClick={this.handleDenyInviteButtonClick}
+              onShareMenuButtonClick={this.handleShareMenuButtonClick} updatingInviteIds={this.props.updatingInviteIds}
             />
           </div>
           <div className="ProjectFlexItemContainer">
@@ -217,7 +219,7 @@ class App extends React.Component {
               projectId={this.props.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
               onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
               onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
-              layouts={layouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
+              projectLayouts={this.props.projectLayouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
               onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
               onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
               onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
@@ -232,6 +234,14 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  handleDenyInviteButtonClick(projectId) {
+    this.props.dispatch(denyProjectInviteAsync(projectId));
+  }
+
+  handleAcceptInviteButtonClick(projectId) {
+    this.props.dispatch(acceptProjectInviteAsync(projectId));
   }
 
   handleShareMenuButtonClick() {
@@ -479,7 +489,7 @@ class App extends React.Component {
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    this.props.dispatch(selectProjectAsync(projectSelectorId));
+    this.props.dispatch(selectProject(projectSelectorId));
   }
 
   handleLayoutChange(layouts, projectId) {
@@ -556,7 +566,7 @@ const mapStateToProps = state => {
     projects: state.projects,
     taskLists: state.taskLists,
     tasks: state.tasks,
-    projectLayout: state.projectLayout,
+    projectLayouts: state.projectLayouts,
     focusedTaskListId: state.focusedTaskListId,
     selectedTask: state.selectedTask,
     selectedProjectId: state.selectedProjectId,
@@ -579,6 +589,8 @@ const mapStateToProps = state => {
     isLoggedIn: state.isLoggedIn,
     isSidebarOpen: state.isSidebarOpen,
     isShareMenuOpen: state.isShareMenuOpen,
+    invites: state.invites,
+    updatingInviteIds: state.updatingInviteIds,
   }
 }
 

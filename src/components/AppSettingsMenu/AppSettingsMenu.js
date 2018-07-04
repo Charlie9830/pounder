@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
-        logInUserAsync, logOutUserAsync } from 'pounder-redux/action-creators';
+        logInUserAsync, logOutUserAsync, registerNewUserAsync } from 'pounder-redux/action-creators';
 import { validateFileAsync, restoreFirebaseAsync} from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
 import MessageBox from '../MessageBox';
@@ -59,6 +59,7 @@ class AppSettingsMenu extends React.Component {
         this.handleAppSettingsMenuContainerClick = this.handleAppSettingsMenuContainerClick.bind(this);
         this.handleColorPickerCloseButtonClick = this.handleColorPickerCloseButtonClick.bind(this);
         this.handleDefaultAllColorsButtonClick = this.handleDefaultAllColorsButtonClick.bind(this);
+        this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -149,6 +150,10 @@ class AppSettingsMenu extends React.Component {
         this.props.dispatch(getDatabaseInfoAsync());
     }
 
+    handleRegisterButtonClick(email, password, displayName) {
+        this.props.dispatch(registerNewUserAsync(email, password, displayName));
+    }
+
     getPageJSX() {
         var menuPage = this.props.menuPage === "" ? "general" : this.props.menuPage;
         switch(menuPage) {
@@ -169,7 +174,8 @@ class AppSettingsMenu extends React.Component {
                     <AccountSettingsPage authStatusMessage={this.props.authStatusMessage} isLoggingIn={this.props.isLoggingIn}
                     isLoggedIn={this.props.isLoggedIn} userEmail={this.props.userEmail}
                     onLogInButtonClick={(email, password) => {this.props.dispatch(logInUserAsync(email,password))}}
-                    onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}/>
+                    onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}
+                    onRegisterButtonClick={this.handleRegisterButtonClick} displayName={this.props.displayName}/>
                 )
             break;
 
@@ -290,6 +296,7 @@ const mapStateToProps = state => {
         isLoggingIn: state.isLoggingIn,
         isLoggedIn: state.isLoggedIn,
         userEmail: state.userEmail,
+        displayName: state.displayName,
     }
 }
 
