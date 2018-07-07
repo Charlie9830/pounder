@@ -1,7 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import CenteringContainer from './CenteringContainer';
-import { EnableBodyScroll, DisableBodyScroll } from '../utilities/DOMHelpers';
 import '../assets/css/Containers/OverlayMenuContainer.css';
 
 class OverlayMenuContainer extends React.Component {
@@ -15,14 +14,6 @@ class OverlayMenuContainer extends React.Component {
         this.handleContainerKeyPress = this.handleContainerKeyPress.bind(this);
         this.handleContainerClick = this.handleContainerClick.bind(this);
 
-    }
-
-    componentDidMount() {
-        DisableBodyScroll();
-    }
-
-    componentWillUnmount() {
-        EnableBodyScroll();
     }
 
     render() {

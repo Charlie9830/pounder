@@ -3,7 +3,7 @@ import TaskArea from '../components/TaskArea';
 import Task from '../components/Task';
 import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
-import { TaskListSettingsStore } from 'pounder-stores';
+import { TaskMetadataStore } from 'pounder-stores';
 
 
 class TaskListWidget extends React.Component {
@@ -25,6 +25,8 @@ class TaskListWidget extends React.Component {
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleSettingsButtonClick = this.handleSettingsButtonClick.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
+        this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
+        this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
     }
 
     componentDidMount(){
@@ -46,7 +48,7 @@ class TaskListWidget extends React.Component {
                 return item.isNewTask === true;
             })
 
-            if (newTaskIndex > 0) { // Catches -1 and 0 (not Promotion Required)
+            if (newTaskIndex > 0) { // Catches -1 and 0 (no Promotion Required)
                 sortedTasks.unshift(sortedTasks.splice(newTaskIndex, 1)[0]);
             }
 
@@ -61,17 +63,21 @@ class TaskListWidget extends React.Component {
                 var isTaskInputOpen = item.uid === this.props.openTaskInputId;
                 var isTaskMoving = item.uid === this.props.movingTaskId;
                 var isCalendarOpen = item.uid === this.props.openCalendarId;
+                var isMetadataOpen = item.uid === this.props.openMetadataId;
                 var renderBottomBorder = array.length !== 1 && index !== array.length - 1;
+                var metadata = item.metadata === undefined ? Object.assign({}, new TaskMetadataStore("", "", "", "", "")) 
+                : item.metadata; 
 
                 return (
-                    <Task key={index} taskId={item.uid} text={item.taskName} dueDate={item.dueDate}
+                    <Task key={index} taskId={item.uid} text={item.taskName} dueDate={item.dueDate} isMetadataOpen={isMetadataOpen}
                     isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                     handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
-                    OnKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
+                    onKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
                     onInputUnmounting={this.handleTaskInputUnmounting} onDueDateClick={this.handleDueDateClick}
-                    isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
-                    isHighPriority={item.isHighPriority}
-                    onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}/>
+                    isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} onMetadataOpen={this.handleTaskMetadataOpen}
+                    isHighPriority={item.isHighPriority} onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
+                    onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
+                    metadata={metadata}/>
                 )
             })
         }
@@ -93,8 +99,16 @@ class TaskListWidget extends React.Component {
         )
     }
 
-    handleTaskPriorityToggleClick(taskId, newValue) {
-        this.props.onTaskPriorityToggleClick(taskId, newValue);
+    handleTaskMetadataOpen(taskId) {
+        this.props.onTaskMetadataOpen(this.props.taskListWidgetId, taskId);
+    }
+
+    handleTaskMetadataCloseButtonClick() {
+        this.props.onTaskMetadataCloseButtonClick();
+    }
+
+    handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue, currentMetadata);
     }
 
     handleSettingsButtonClick() {
@@ -109,10 +123,10 @@ class TaskListWidget extends React.Component {
         this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
     }
 
-    handleTaskInputUnmounting(data, taskId) {
+    handleTaskInputUnmounting(data, taskId, currentMetadata) {
         // A TaskTextInput is Unmounting. Meaning that the Task has lost focus whilst text was still pending inside an open
         // input. Handle Data Changes.
-        this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, data);
+        this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, data, currentMetadata);
     }
 
     handleTaskTwoFingerTouch(taskId) {
@@ -127,13 +141,11 @@ class TaskListWidget extends React.Component {
         this.props.onTaskClick(element, this.props.taskListWidgetId);
     }
 
-    handleKeyPress(e, taskId, newData) {
-        var _this = this;
-
+    handleKeyPress(e, taskId, newData, currentMetadata) {
         // Enter Key.
         if (e.key == "Enter") {
             // Handle Data Changes.
-            this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newData)
+            this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newData, currentMetadata)
         }   
     }
 
@@ -145,8 +157,8 @@ class TaskListWidget extends React.Component {
         this.props.onHeaderSubmit(this.props.taskListWidgetId, newData);
     }
 
-    handleTaskCheckBoxClick(e, taskId, incomingValue) {
-        this.props.onTaskCheckBoxClick(e, this.props.taskListWidgetId, taskId, incomingValue);
+    handleTaskCheckBoxClick(e, taskId, incomingValue, currentMetadata) {
+        this.props.onTaskCheckBoxClick(e, this.props.taskListWidgetId, taskId, incomingValue, currentMetadata);
     }
 
     handleRemoveButtonClick(e) {
@@ -192,8 +204,8 @@ class TaskListWidget extends React.Component {
         }
     } 
 
-    handleNewDateSubmit(taskId, newDate) {
-        this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate);
+    handleNewDateSubmit(taskId, newDate, currentMetadata) {
+        this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate, currentMetadata);
     }
 
 }

@@ -52,25 +52,35 @@
 
 body {
   background: #1b1b1b;
+  overflow-x: hidden;
 }
 
-.SidebarProjectFlexContainer {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  justify-content: flex-end;
-  align-items: flex-start;
-  width: 100%;
+ .AppGrid {
+  display: grid;
+  grid-template-columns: [Sidebar]min-content [Project]auto;
+  grid-template-rows: [StatusBar]30px [AppContent]auto;
+  width: 100vw;
+  height: 100vh;
+  box-sizing: content-box;
 }
 
-.SidebarFlexItemContainer {
-  flex-shrink: 0.15;
+.StatusBarAppGridItem {
+  grid-column: Sidebar / span 2;
+  grid-row: StatusBar;
+  height: 100%;
 }
 
-.ProjectFlexItemContainer {
-  flex-grow: 1;
+.ProjectAppGridItem {
+  grid-column: Project;
+  grid-row: AppContent;
+  height: 100%;
 }
 
+.SidebarAppGridItem {
+  grid-column: Sidebar;
+  grid-row: AppContent;
+  height: 100%;
+}
 
 ::-webkit-scrollbar {
   background: rgba(51,51,51,255);

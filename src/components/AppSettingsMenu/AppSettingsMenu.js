@@ -9,7 +9,6 @@ import CenteringContainer from '../../containers/CenteringContainer';
 import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
-import { EnableBodyScroll, DisableBodyScroll } from '../../utilities/DOMHelpers';
 import electron from 'electron';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
@@ -60,14 +59,6 @@ class AppSettingsMenu extends React.Component {
         this.handleColorPickerCloseButtonClick = this.handleColorPickerCloseButtonClick.bind(this);
         this.handleDefaultAllColorsButtonClick = this.handleDefaultAllColorsButtonClick.bind(this);
         this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
-    }
-
-    componentDidMount() {
-        DisableBodyScroll();
-    }
-
-    componentWillUnmount() {
-        EnableBodyScroll();
     }
 
     render() {

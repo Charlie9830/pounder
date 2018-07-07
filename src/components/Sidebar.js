@@ -9,8 +9,9 @@ import SidebarIcon from '../assets/icons/SidebarIcon.svg';
 import ShareIcon from '../assets/icons/ShareIcon.svg';
 import AcceptIcon from '../assets/icons/AcceptIcon.svg';
 import DenyIcon from '../assets/icons/DenyIcon.svg';
+import BurgerIcon from '../assets/icons/BurgerIcon.svg';
 
-class Sidebar extends React.Component{
+class Sidebar extends React.Component {
     constructor(props) {
         super(props);
 
@@ -42,8 +43,6 @@ class Sidebar extends React.Component{
 
     render() {
         var sidebarClassName = this.props.isOpen ? "SidebarOpen" : "SidebarCollapsed";
-        var sidebarSelectablesContainerClassName = this.props.isOpen ? "SidebarSelectablesContainerOpen" : "SidebarSelectablesContainerCollapsed";
-        var sidebarCollapseButtonClassName = this.props.isOpen ? "SidebarCollapseButtonOpen" : "SidebarCollapseButtonCollapsed";
         var splitProjects = this.getSplitProjects();
         var localProjectsCount = splitProjects.localProjects.length;
         var remoteProjectsCount = splitProjects.remoteProjects.length;
@@ -56,47 +55,50 @@ class Sidebar extends React.Component{
             this.props.invites.length > 0);
         var localProjectSelectorsJSX = splitProjects.localProjects.map(this.projectMapper);
         var remoteProjectSelectorsJSX = splitProjects.remoteProjects.map(this.projectMapper);
-
         var sidebarToolbarJSX = this.getSidebarToolbarJSX();
         var collapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX();
+        var isShareButtonEnabled = this.props.selectedProjectId !== -1;
 
         return (
             <div className={sidebarClassName} onClick={this.handleSidebarClick}>
-                <div className="sidebarToolbarContainer">
-                    {sidebarToolbarJSX}
-                </div>
-                <div className={sidebarSelectablesContainerClassName}>
-                    {/* Local Projects  */}
-                    {localProjectsTitleJSX}
-                    <div className="LocalProjectSelectorsContainer">
-                        {localProjectSelectorsJSX}
+
+                {/* Collapsed Project Title  */} 
+                {collapsedProjectTitleJSX}    
+
+                { /* Grid - Toolbar, Selectors and Footer */}
+                <div className="SidebarGridContainer" data-isclosed={!this.props.isOpen}>
+                    <div className="SidebarToolbarContainer">
+                        {sidebarToolbarJSX}
+                    </div>
+                    <div className="SidebarSelectablesContainer">
+                        {/* Invites */}
+                        {projectInvitesTitleJSX}
+                        <div className="ProjectInvitesContainer">
+                            {invitesJSX}
+                        </div>
+                        {invitesDividerJSX}
+
+                        {/* Local Projects  */}
+                        {localProjectsTitleJSX}
+                        <div className="LocalProjectSelectorsContainer">
+                            {localProjectSelectorsJSX}
+                        </div>
+
+                        {localAndRemoteDividerJSX}
+
+                        {/* Remote Projects  */}
+                        {remoteProjectsTitleJSX}
+                        <div className="RemoteProjectSelectorsContainer">
+                            {remoteProjectSelectorsJSX}
+                        </div>
                     </div>
 
-                    {localAndRemoteDividerJSX}
-
-                    {/* Remote Projects  */}
-                    {remoteProjectsTitleJSX}
-                    <div className="RemoteProjectSelectorsContainer">
-                        {remoteProjectSelectorsJSX}
+                    {/* Footer  */}
+                    <div className="SidebarFooter">
+                        <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick} isEnabled={isShareButtonEnabled}/>
                     </div>
-                
-                    {/* Invites */}
-                    {invitesDividerJSX}
-                    {projectInvitesTitleJSX}
-                    <div className="ProjectInvitesContainer">
-                        {invitesJSX}
-                    </div>
-
+                    {collapsedProjectTitleJSX}
                 </div>
-                <div className="SidebarFooter">
-                    <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick}/>
-                </div>
-                <div className="SidebarCollapseButtonContainer">
-                    <div className={sidebarCollapseButtonClassName} onClick={this.handleSidebarCollapseButtonClick}>
-                        <img className="SidebarCollapseButtonIcon" src={SidebarIcon}/>
-                    </div>
-                </div>
-                {collapsedProjectTitleJSX}
             </div>
         )
     }
@@ -112,7 +114,7 @@ class Sidebar extends React.Component{
 
     getInvitesJSX() {
         // InviteStore(projectName, targetUserId, sourceUserId, sourceEmail, sourceDisplayName, projectId, role);
-        var jsx = this.props.invites.map((item,index) => {
+        var jsx = this.props.invites.map((item, index) => {
             var isEnabled = !this.props.updatingInviteIds.hasOwnProperty(item.projectId);
             return (
                 <div className="InviteContainer" key={index} data-isenabled={isEnabled}>
@@ -120,13 +122,13 @@ class Sidebar extends React.Component{
                     <div className="InviteProjectAndDisplayName">
                         <div className="InviteProjectName"> {item.projectName} </div>
                         <div className="InviteDisplayName"> {item.sourceDisplayName} </div>
-                    </div> 
-                    
+                    </div>
+
                     {/* Buttons  */}
                     <div className="InviteButtons">
-                        <Button size='verysmall' iconSrc={AcceptIcon} onClick={() => {this.handleAcceptInviteButtonClick(item.projectId)}}/>
-                        <Button size='verysmall' iconSrc={DenyIcon} onClick={() => {this.handleDenyInviteButtonClick(item.projectId)}}/>
-                    </div> 
+                        <Button size='verysmall' iconSrc={AcceptIcon} onClick={() => { this.handleAcceptInviteButtonClick(item.projectId) }} />
+                        <Button size='verysmall' iconSrc={DenyIcon} onClick={() => { this.handleDenyInviteButtonClick(item.projectId) }} />
+                    </div>
                 </div>
             )
         })
@@ -137,7 +139,7 @@ class Sidebar extends React.Component{
     getSidebarFullBleedDividerJSX(shouldRender) {
         if (shouldRender) {
             return (
-                <div className="SidebarFullBleedDivider"/>
+                <div className="SidebarFullBleedDivider" />
             )
         }
     }
@@ -166,7 +168,7 @@ class Sidebar extends React.Component{
         if (shouldRender) {
             return (
                 <div className="SidebarProjectsTitleFlexContainer">
-                    <div className="SidebarProjectsTitle"> Personal </div> 
+                    <div className="SidebarProjectsTitle"> Personal </div>
                 </div>
             )
         }
@@ -232,14 +234,15 @@ class Sidebar extends React.Component{
         if (this.props.isOpen) {
             return (
                 <div className="SidebarToolbarFlexContainer">
-                    <Button iconSrc={NewProjectIcon} onClick={this.handleAddProjectClick}/>
-                    <Button iconSrc={RemoveProjectIcon} onClick={this.handleRemoveProjectClick}/>
+                    <Button iconSrc={NewProjectIcon} onClick={this.handleAddProjectClick} />
+                    <Button iconSrc={RemoveProjectIcon} onClick={this.handleRemoveProjectClick}
+                    isEnabled={!this.props.isSelectedProjectRemote}/>
                 </div>
-            )     
+            )
         }
 
         else {
-            return (<div/>)
+            return (<div />)
         }
     }
 
@@ -252,7 +255,7 @@ class Sidebar extends React.Component{
     }
 
     handleProjectSelectorDoubleClick(e, projectSelectorId) {
-        this.setState({openProjectSelectorInputId: projectSelectorId});
+        this.setState({ openProjectSelectorInputId: projectSelectorId });
     }
 
     handleAddProjectClick(e) {
@@ -265,7 +268,7 @@ class Sidebar extends React.Component{
 
     handleProjectNameSubmit(projectSelectorId, newProjectName) {
         // Close Input and Forward on Event.
-        this.setState({openProjectSelectorInputId: -1})
+        this.setState({ openProjectSelectorInputId: -1 })
         this.props.onProjectNameSubmit(projectSelectorId, newProjectName);
     }
 }

@@ -1,7 +1,6 @@
 import React from 'react';
 import TaskListWidget from './TaskListWidget';
 import ProjectMessageDisplay from './ProjectMessageDisplay';
-import MouseTrap from 'mousetrap';
 import TaskListWidgetGrid from './TaskListWidgetGrid';
 import '../assets/css/Project.css';
 import '../assets/css/react-grid-layout/styles.css';
@@ -38,16 +37,8 @@ class Project extends React.Component{
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
-    }
-    
-    componentDidMount() {
-        MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
-        MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');        
-    }
-
-    componentWillUnmount() {
-        MouseTrap.unBind("mod", this.handleCtrlKeyDown);
-        MouseTrap.unBind("mod", this.handleCtrlKeyUp);
+        this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
+        this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
     }
 
     render() {
@@ -71,15 +62,21 @@ class Project extends React.Component{
 
             var selectedTaskId = -1;
             var openTaskInputId = -1;
+            var openMetadataId = -1;
             if (this.props.selectedTask.taskListWidgetId === item.uid) {
                 selectedTaskId = this.props.selectedTask.taskId;
 
                 if (this.props.selectedTask.isInputOpen) {
                     openTaskInputId = selectedTaskId;
                 }
+
+                if (this.props.selectedTask.isMetadataOpen) {
+                    openMetadataId = selectedTaskId
+                }
             }
 
             var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
+
             return (
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
 
@@ -87,7 +84,7 @@ class Project extends React.Component{
                     <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
                      tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
                      onTaskSubmit={this.handleTaskSubmit} onWidgetClick={this.handleWidgetClick} movingTaskId = {movingTaskId}
-                     onRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
+                     onRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick} openMetadataId={openMetadataId}
                      onHeaderDoubleClick={this.handleWidgetHeaderDoubleClick} onHeaderSubmit={this.handleTaskListWidgetHeaderSubmit}
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
                      onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
@@ -95,7 +92,8 @@ class Project extends React.Component{
                      openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
-                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick}
+                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
+                     onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
                      />   
                 </div>
             )
@@ -109,25 +107,40 @@ class Project extends React.Component{
 
         var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
         // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
-        var rglClassName = projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
+        var rglClassName = "ProjectRGL" // projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
         var rglDragEnabled = this.props.openCalendarId === -1;
 
         return (
-            <div className="ProjectContainer" ref="projectContainer">
-                <div className="ProjectToolBar">
+            <div className="ProjectGrid">
+                <div className="ProjectToolBarGridItem">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
                     onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}/>
                 </div>
-                {projectMessageDisplayJSX}
 
-                <TaskListWidgetGrid rglClassName={rglClassName} layout={selectedLayouts} 
-                onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
-                    {taskListWidgets}
-                </TaskListWidgetGrid>
+                <div className="ProjectGridItem">
+                    <div className="ProjectContent">
+                    
+                        {projectMessageDisplayJSX}
 
+                        <TaskListWidgetGrid rglClassName={rglClassName} layout={selectedLayouts}
+                            onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
+                            {taskListWidgets}
+                        </TaskListWidgetGrid>
+
+                    
+                    </div>
+                </div>
             </div>
         )
+    }
+
+    handleTaskMetadataOpen(taskListWidgetId, taskId) {
+        this.props.onTaskMetadataOpen(taskListWidgetId, taskId);
+    }
+
+    handleTaskMetadataCloseButtonClick() {
+        this.props.onTaskMetadataCloseButtonClick();
     }
 
     handleAppSettingsButtonClick() {
@@ -156,8 +169,8 @@ class Project extends React.Component{
         }
     }
 
-    handleTaskPriorityToggleClick(taskId, newValue) {
-        this.props.onTaskPriorityToggleClick(taskId, newValue);
+    handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue, currentMetadata);
     }
 
     handleLockButtonClick() {
@@ -192,8 +205,8 @@ class Project extends React.Component{
         this.props.onRemoveTaskButtonClick();
     }
 
-    handleTaskSubmit(taskListWidgetId, taskId, newData) {
-        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newData)
+    handleTaskSubmit(taskListWidgetId, taskId, newData, currentMetadata) {
+        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newData, currentMetadata)
     }
 
     handleWidgetClick(taskListWidgetId, isFocused) {
@@ -218,8 +231,8 @@ class Project extends React.Component{
         this.props.onLayoutChange(layouts, this.props.projectId);
     }
 
-    handleTaskCheckBoxClick(e, taskListWidgetId, taskId, incomingValue) {
-        this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, incomingValue)
+    handleTaskCheckBoxClick(e, taskListWidgetId, taskId, incomingValue, currentMetadata) {
+        this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, incomingValue, currentMetadata)
     }
 
     handleTaskListWidgetRemoveButtonClick(taskListWidgetId) {
@@ -230,8 +243,8 @@ class Project extends React.Component{
         this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings);
     }
 
-    handleNewDateSubmit(taskListWidgetId, taskId, newDate) {
-        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate);
+    handleNewDateSubmit(taskListWidgetId, taskId, newDate, currentMetadata) {
+        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate, currentMetadata);
     }
 }
 

@@ -19,7 +19,7 @@ class Snackbar extends React.Component {
             // Set a Self Dismiss Timer.
             setTimeout( () => {
                 this.props.dispatch(dismissSnackbar());
-            }, 10 * 1000);
+            }, this.getDisplayDuration());
         }
     }
 
@@ -37,6 +37,22 @@ class Snackbar extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    getDisplayDuration() {
+        var wordCount = this.props.snackbarMessage.split(' ').length;
+
+        if (wordCount <= 4) {
+            return 4 * 1000;
+        }
+
+        if (wordCount <= 10) {
+            return 6 * 1000;
+        }
+
+        else {
+            return 10 * 1000;
+        }
     }
 
     getButtonJSX() {

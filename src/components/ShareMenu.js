@@ -5,7 +5,8 @@ import MenuSubtitle from './MenuSubtitle';
 import Spinner from './Spinner';
 import CenteringContainer from '../containers/CenteringContainer';
 import '../assets/css/ShareMenu.css';
-import { inviteUserToProjectAsync, kickUserFromProjectAsync, updateMemberRoleAsync, setMessageBox, setIsShareMenuOpen } from 'pounder-redux/action-creators';
+import { inviteUserToProjectAsync, kickUserFromProjectAsync, updateMemberRoleAsync, setMessageBox, setIsShareMenuOpen,
+removeRemoteProjectAsync, migrateProjectBackToLocalAsync } from 'pounder-redux/action-creators';
 import { MessageBoxTypes } from 'pounder-redux';
 import { getUserUid } from 'pounder-firebase';
 
@@ -32,38 +33,60 @@ class ShareMenu extends React.Component {
         this.handleDoneButtonClick = this.handleDoneButtonClick.bind(this);
         this.handleDoneButtonClick = this.handleDoneButtonClick.bind(this);
         this.isUserAlreadyAMember = this.isUserAlreadyAMember.bind(this);
+        this.handleMakePersonalButtonClick = this.handleMakePersonalButtonClick.bind(this);
+        this.handleEmailInputKeyPress = this.handleEmailInputKeyPress.bind(this);
     }
 
     render() {
-        var membersJSX = this.getMembersJSX();
-        var inviteButtonJSX = this.getInviteButtonJSX();
+        var filteredMembers = this.getFilteredMembers();
+        var membersJSX = this.getMembersJSX(filteredMembers);
+        var waitingOverlay = this.getWaitingOverlay();
+        var isLeaveButtonEnabled = this.props.isSelectedProjectRemote;
+        var isMakePersonalButtonEnabled = this.props.isSelectedProjectRemote && this.isCurrentUserAnOwner(filteredMembers);
 
         return (
             <div className="ShareMenu">
+                {waitingOverlay}
+
                 <div className="ShareMenuVerticalFlexContainer">
                     {/* Invite  */}
                     <MenuSubtitle text="Invite" showDivider={false}/>
                     <div className="ShareMenuInviteContainer">
                         <div className="EmailRoleContainer">
-                            <input className="InviteEmail" type='email' placeholder="Email" ref={this.emailInputRef} />
+                            <input className="InviteEmail" type='email' placeholder="Email" ref={this.emailInputRef} 
+                            onKeyPress={this.handleEmailInputKeyPress}/>
                             <select className="InviteRoleSelect" defaultValue='member' ref={this.roleSelectRef}>
                                 <option value='owner'> Owner </option>
                                 <option value='member'> Member </option>
                             </select>
                         </div>
                         <div className="InviteButtonContainer">
-                            {inviteButtonJSX}
-                        </div>
-                        <div className="InviteUserMessage">
-                            {this.props.inviteUserMessage}
+                            <Button text="Invite" onClick={this.handleInviteButtonClick} />
                         </div>
                     </div>
 
-                    {/* Leave Project  */} 
-                    <MenuSubtitle text="Leave Project"/>
-                    <div className="LeaveProjectContainer">
-                        <Button text='Leave' size='small' onClick={this.handleLeaveButtonClick}/>
+                    {/* Project Actions  */} 
+                    <MenuSubtitle text="Actions"/>
+                    <div className="ShareMenuActionsContainer">
+
+                        {/* Leave */}
+                        <div className="ActionItemContainer">
+                            <div className="ActionLabel"> Leave Project </div>
+                            <Button text='Leave' size='small' onClick={this.handleLeaveButtonClick} 
+                            isEnabled={isLeaveButtonEnabled} />
+                        </div>
+
+                        {/* Divider  */} 
+                        <div className="ActionItemDivider"/>
+
+                        {/* Make Personal  */} 
+                        <div className="ActionItemContainer">
+                            <div className="ActionLabel"> Make Personal </div>
+                            <Button text='Go' size='small' onClick={this.handleMakePersonalButtonClick}
+                            isEnabled={isMakePersonalButtonEnabled}/>
+                        </div>
                     </div>
+     
 
                     {/* Members List  */}
                     <MenuSubtitle text="Project Contributors" />
@@ -82,11 +105,10 @@ class ShareMenu extends React.Component {
         )
     }
 
-    getMembersJSX() {
+    getMembersJSX(filteredMembers) {
         var membersJSX = [];
         
         if (this.props.selectedProjectId !== -1) {
-            var filteredMembers = this.getFilteredMembers();
             var isCurrentUserOwner = this.isCurrentUserAnOwner(filteredMembers);
 
             var sortedMembers = filteredMembers.sort((a,b) => {
@@ -136,27 +158,45 @@ class ShareMenu extends React.Component {
                 )
             })
 
+            if (filteredMembers.length === 0) {
+                return (
+                    <div>
+                        <CenteringContainer>
+                            <div className="NoMembersMessage">
+                                No project contributors
+                            </div>
+                        </CenteringContainer>
+                    </div>
+                )
+            }
+    
+            else {
+                return (
+                    <div>
+                        {membersJSX}
+                    </div>
+                )
+            }
         }
+    }
 
-        if (filteredMembers.length === 0) {
-            return (
-                <div>
-                    <CenteringContainer>
-                        <div className="NoMembersMessage">
-                            No project contributors
-                        </div>
-                    </CenteringContainer>
-                </div>
-            )
+    handleEmailInputKeyPress(e) {
+        if (e.key === 'Enter') {
+            this.handleInviteButtonClick();
         }
+    }
 
-        else {
-            return (
-                <div>
-                    {membersJSX}
-                </div>
-            )
-        }
+    handleMakePersonalButtonClick() {
+        var message  = "This will kick all users from the Project and return it to being Personal only. " +
+        "Are you sure you want to continue?";
+        this.props.dispatch(setMessageBox(true, message, MessageBoxTypes.STANDARD, null,
+        result => {
+            if (result === 'ok') {
+                this.props.dispatch(migrateProjectBackToLocalAsync(this.props.selectedProjectId, this.getProjectName()));
+            }
+
+            this.props.dispatch(setMessageBox(false));
+        } ))
     }
 
     handleDoneButtonClick() {
@@ -166,7 +206,7 @@ class ShareMenu extends React.Component {
     getInviteButtonJSX() {
         if (this.props.isInvitingUser) {
             return (
-                <Spinner size="medium"/>
+                <Spinner size="big"/>
             )
         }
 
@@ -178,15 +218,59 @@ class ShareMenu extends React.Component {
         
     }
 
+    getWaitingOverlay() {
+        if (this.props.isShareMenuWaiting) {
+            return (
+                <div className="ShareMenuOverlay">
+                    <CenteringContainer>
+                        <div className="ShareMenuOverlayContentContainer">
+                            <Spinner size="medium"/>
+                            <div className="ShareMenuMessage">
+                                {this.props.shareMenuMessage}
+                            </div>
+                            <div className="ShareMenuSubMessage">
+                                {this.props.shareMenuSubMessage}
+                            </div>
+                        </div>
+                    </CenteringContainer>
+                </div>
+            )
+        }
+    }
+
     handleLeaveButtonClick() {
         var filteredMembers = this.getFilteredMembers();
-        if (filteredMembers.length > 1 && this.isCurrentUserTheOnlyOwner(filteredMembers)) {
+        if (filteredMembers.length === 1) {
+            // User is last Member.
+            var message = "You are the sole contributor to this project, if you leave the project, it will be deleted forever. " +
+            "Are you sure you want to leave?";
+            this.props.dispatch(setMessageBox(true, message, MessageBoxTypes.STANDARD, null, result => {
+                this.props.dispatch(setMessageBox(false));
+                if (result === "ok") {
+                    this.props.dispatch(removeRemoteProjectAsync(this.props.selectedProjectId));
+                }
+            }))
+        }
+        
+        else if (filteredMembers.length > 1 && this.isCurrentUserTheOnlyOwner(filteredMembers)) {
+            // User is the only Owner.
             this.props.dispatch(setMessageBox(true, 'You must promote another user to Owner before you can leave the project.',
-        MessageBoxTypes.OK_ONLY, null, result => {this.props.dispatch(setMessageBox(false))}))
+                MessageBoxTypes.OK_ONLY, null, result => {
+                    this.props.dispatch(setMessageBox(false))
+                }
+            ))
         }
 
         else {
-            this.props.dispatch(kickUserFromProjectAsync(this.props.selectedProjectId, getUserUid()));
+            this.props.dispatch(setMessageBox(true, 'Are you sure you want to Leave?', MessageBoxTypes.STANDARD, null,
+        result => {
+            if (result === "ok") {
+                this.props.dispatch(kickUserFromProjectAsync(this.props.selectedProjectId, getUserUid()));
+            }
+
+            this.props.dispatch(setMessageBox(false));
+        }))
+            
         }
     }
 
@@ -342,9 +426,11 @@ class ShareMenu extends React.Component {
 
 let mapStateToProps = state => {
     return {
-        inviteUserMessage: state.inviteUserMessage,
-        isInvitingUser: state.isInvitingUser,
+        shareMenuMessage: state.shareMenuMessage,
+        shareMenuSubMessage: state.shareMenuSubMessage,
+        isShareMenuWaiting: state.isShareMenuWaiting,
         selectedProjectId: state.selectedProjectId,
+        isSelectedProjectRemote: state.isSelectedProjectRemote,
         projects: state.projects,
         members: state.members,
         userEmail: state.userEmail,

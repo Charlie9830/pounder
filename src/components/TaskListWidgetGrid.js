@@ -13,7 +13,7 @@ class RGLWrapper extends React.Component {
     render() {
         return (
             <ReactGridLayout className={this.props.rglClassName} layout={this.props.layout} autoSize={false} draggableCancel=".nonDraggable"
-                cols={20} rows={11} rowHeight={70} width={this.props.size.width} /* Size Prop passed from sizeMeHOC */ 
+                cols={20} rows={11} rowHeight={60} width={this.props.size.width} /* Size Prop passed from sizeMeHOC */ 
                 onDragStop={this.handleLayoutChange} onResizeStop={this.handleLayoutChange}
                 isDraggable={this.props.rglDragEnabled} isResizable={this.props.rglDragEnabled}
                 >
@@ -27,7 +27,8 @@ class RGLWrapper extends React.Component {
     }
 }
 
-const sizeMeHOC = sizeMe();
+const sizeMeHOC = sizeMe({ refreshMode: "debounce", noPlaceholder: true}); // refreshMode set to debounce other Sidebar anitations dont trigger 
+// width changes correctly.
 const TaskListWidgetGrid = sizeMeHOC(RGLWrapper);
 
 export default TaskListWidgetGrid;

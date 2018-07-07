@@ -24,11 +24,12 @@ changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSide
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
-setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen,
+setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, } from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
+import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
 
 const remote = electron.remote;
 const KEYBOARD_COMBOS = {
@@ -52,7 +53,8 @@ class App extends React.Component {
     };
 
     // Class Storage.
-    this.isCtrlKeyDown = false;
+    this.isShiftKeyDown = false;
+    this.isModKeyDown = false;
     
     // Method Bindings.
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
@@ -75,8 +77,8 @@ class App extends React.Component {
     this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
     this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
     this.handleTaskClick = this.handleTaskClick.bind(this);
-    this.handleCtrlKeyDown = this.handleCtrlKeyDown.bind(this);
-    this.handleCtrlKeyUp = this.handleCtrlKeyUp.bind(this);
+    this.handleShiftKeyDown = this.handleShiftKeyDown.bind(this);
+    this.handleShiftKeyUp = this.handleShiftKeyUp.bind(this);
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
     this.lockApp = this.lockApp.bind(this);
@@ -98,13 +100,19 @@ class App extends React.Component {
     this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
     this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
     this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
+    this.handleModKeyDown = this.handleModKeyDown.bind(this);
+    this.handleModKeyUp = this.handleModKeyUp.bind(this);
+    this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
+    this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
   }
 
   componentDidMount(){
     // MouseTrap.
     MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
-    MouseTrap.bind("mod", this.handleCtrlKeyDown, 'keydown');
-    MouseTrap.bind("mod", this.handleCtrlKeyUp, 'keyup');
+    MouseTrap.bind("shift", this.handleShiftKeyDown, 'keydown');
+    MouseTrap.bind("shift", this.handleShiftKeyUp, 'keyup');
+    MouseTrap.bind("mod", this.handleModKeyDown, 'keydown');
+    MouseTrap.bind("mod", this.handleModKeyUp, 'keyup');
     MouseTrap.bind("del", this.handleDeleteKeyPress);
 
 
@@ -136,18 +144,21 @@ class App extends React.Component {
     })
 
     // Hammer.
-    var hammer = new Hammer(document.getElementById('root'));
+    var hammer = new Hammer(document.getElementById('root'), { domEvents: true });
     hammer.on('swipe', event => {
-      if (event.velocityX < 0) {
-        // Swipe Left.
-        if (this.props.isSidebarOpen) {
-          this.props.dispatch(setIsSidebarOpen(false));
+      if (event.pointerType === "touch") {
+        if (event.velocityX < 0) {
+          // Swipe Left.
+          if (this.props.isSidebarOpen) {
+            this.props.dispatch(setIsSidebarOpen(false));
+          }
         }
-      }
-
-      else if (event.velocityX > 0) {
-        if (this.props.isSidebarOpen === false) {
-          this.props.dispatch(setIsSidebarOpen(true));
+  
+        else if (event.velocityX > 0) {
+          if (this.props.isSidebarOpen === false) {
+            // Swipe Right
+            this.props.dispatch(setIsSidebarOpen(true));
+          }
         }
       }
     })
@@ -177,8 +188,8 @@ class App extends React.Component {
 
   componentWillUnmount(){
     MouseTrap.unBind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
-    MouseTrap.unBind("mod", this.handleCtrlKeyDown);
-    MouseTrap.unBind("mod", this.handleCtrlKeyUp);
+    MouseTrap.unBind("shift", this.handleShiftKeyDown);
+    MouseTrap.unBind("shift", this.handleShiftKeyUp);
     MouseTrap.unbind("del", this.handleDeleteKeyPress);
 
     this.unsubscribeFromDatabase();
@@ -200,20 +211,23 @@ class App extends React.Component {
         {shutdownScreenJSX}
         {shareMenuJSX}
         {appSettingsMenuJSX}
-        <VisibleStatusBar/>
-        <div className="SidebarProjectFlexContainer">
-          <div className="SidebarFlexItemContainer">
+        
+        <div className="AppGrid">
+          <div className="StatusBarAppGridItem">
+            <VisibleStatusBar/>
+          </div>
+          <div className="SidebarAppGridItem">
             <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
               projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} invites={this.props.invites}
               favouriteProjectId={this.props.accountConfig.favouriteProjectId} isOpen={this.props.isSidebarOpen}
-              onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} 
+              onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} isSelectedProjectRemote={this.props.isSelectedProjectRemote}
               onAcceptInviteButtonClick={this.handleAcceptInviteButtonClick} onDenyInviteButtonClick={this.handleDenyInviteButtonClick}
               onShareMenuButtonClick={this.handleShareMenuButtonClick} updatingInviteIds={this.props.updatingInviteIds}
             />
           </div>
-          <div className="ProjectFlexItemContainer">
+          <div className="ProjectAppGridItem">
             <Project className="Project" taskLists={this.props.taskLists} tasks={this.props.tasks} selectedTask={this.props.selectedTask}
               movingTaskId={this.props.movingTaskId} focusedTaskListId={this.props.focusedTaskListId}
               projectId={this.props.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
@@ -229,11 +243,20 @@ class App extends React.Component {
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
+              onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
             />
           </div>
         </div>
       </div>
     );
+  }
+
+  handleTaskMetadataOpen(taskListWidgetId, taskId) {
+    this.props.dispatch(selectTask(taskListWidgetId, taskId, true));
+  }
+
+  handleTaskMetadataCloseButtonClick() {
+    this.props.dispatch(closeMetadata());
   }
 
   handleDenyInviteButtonClick(projectId) {
@@ -287,8 +310,8 @@ class App extends React.Component {
     this.props.dispatch(getCSSConfigAsync());
   }
 
-  handleTaskPriorityToggleClick(taskId, newValue) {
-    this.props.dispatch(updateTaskPriority(taskId, newValue));
+  handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
+    this.props.dispatch(updateTaskPriority(taskId, newValue, currentMetadata));
   }
 
   getSelectedProjectTasks() {
@@ -320,21 +343,24 @@ class App extends React.Component {
     this.props.dispatch(openCalendar(taskListWidgetId, taskId));
   }
 
-  exerciseFirebase() {
-    // Pull down some blank data from Firebase to keep the Websocket Open.
-    // var ref = Firebase.database().ref("websocketTimeoutFix").once('value', () => {});
-  }
-
   handleLockScreenAccessGranted() {
     this.props.dispatch(unlockApp());
   }
 
-  handleCtrlKeyDown(mouseTrap) {
-    this.isCtrlKeyDown = true;
+  handleShiftKeyDown(mouseTrap) {
+    this.isShiftKeyDown = true;
   }
 
-  handleCtrlKeyUp(mouseTrap) {
-    this.isCtrlKeyDown = false;
+  handleShiftKeyUp(mouseTrap) {
+    this.isShiftKeyDown = false;
+  }
+
+  handleModKeyDown(mouseTrap) {
+    this.isModKeyDown = true;
+  }
+
+  handleModKeyUp(moustrap) {
+    this.isModKeyDown = false;
   }
 
   handleDeleteKeyPress(mouseTrap) {
@@ -346,7 +372,7 @@ class App extends React.Component {
     var selectedTask = this.props.selectedTask;
     var openCalendarId = this.props.openCalendarId === element.props.taskId ? this.props.openCalendarId : -1; // Keep calendar Open if it already Open.
 
-      if (this.isCtrlKeyDown) {
+      if (this.isShiftKeyDown) {
         this.props.dispatch(startTaskMove(element.props.taskId, taskListWidgetId));
       }
 
@@ -354,16 +380,20 @@ class App extends React.Component {
       // causes problems.
       else if (this.props.isATaskMoving === false) {
         if (selectedTask.taskListWidgetId === taskListWidgetId &&
-          selectedTask.taskId === element.props.taskId) {
-          // Task Already Selected. Exclusively open it's Text Input.
-          this.props.dispatch(openTask(taskListWidgetId, element.props.taskId));
+          selectedTask.taskId === element.props.taskId && this.isModKeyDown !== true) { // If task is already selected and the Mod Key isn't down.
+
+            // Task Already Selected. Exclusively open it's Text Input.
+            this.props.dispatch(openTask(taskListWidgetId, element.props.taskId));          
         }
 
         else {
           // Otherwise just Select it.
-          this.props.dispatch(selectTask(taskListWidgetId, element.props.taskId));
+          this.props.dispatch(selectTask(taskListWidgetId, element.props.taskId, this.isModKeyDown));
         }
       }
+
+      // Force Mod Key Up.
+      this.isModKeyDown = false;
   }
 
   handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
@@ -395,8 +425,8 @@ class App extends React.Component {
     this.props.dispatch(removeSelectedTaskAsync());
   }
 
-  handleTaskChanged(projectId, taskListWidgetId, taskId, newData) {
-    this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newData));
+  handleTaskChanged(projectId, taskListWidgetId, taskId, newData, currentMetadata) {
+    this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newData, currentMetadata));
   }
 
   handleKeyDown(e) {
@@ -440,7 +470,7 @@ class App extends React.Component {
     }
 
     // Force Control Key up.
-    this.isCtrlKeyDown = false;
+    this.isModKeyDown = false;
   }
 
   setFullscreenFlag(isFullscreen) {
@@ -496,8 +526,8 @@ class App extends React.Component {
     this.props.dispatch(updateProjectLayoutAsync(layouts, projectId));
   }
   
-  handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue) {
-    this.props.dispatch(updateTaskCompleteAsync(taskListWidgetId, taskId, incomingValue));
+  handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue, currentMetadata) {
+    this.props.dispatch(updateTaskCompleteAsync(taskListWidgetId, taskId, incomingValue, currentMetadata));
   }
 
   handleAddProjectClick() {
@@ -542,8 +572,8 @@ class App extends React.Component {
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
-  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate) {
-    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate));
+  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate, currentMetadata) {
+    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate, currentMetadata));
   }
 
   getLockScreen() {
@@ -570,6 +600,7 @@ const mapStateToProps = state => {
     focusedTaskListId: state.focusedTaskListId,
     selectedTask: state.selectedTask,
     selectedProjectId: state.selectedProjectId,
+    isSelectedProjectRemote: state.isSelectedProjectRemote,
     isATaskMoving: state.isATaskMoving,
     movingTaskId: state.movingTaskId,
     sourceTaskListId: state.sourceTaskListId,

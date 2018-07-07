@@ -1,25 +1,34 @@
-.ProjectContainer {
-    float: left;
-    width: 100%;
-    height: 1080px;
-    margin: 0px;
+.ProjectGrid {
+    display: grid;
+    grid-template-rows: [Toolbar]min-content [Content]auto;
+    height: 100%;
 }
 
-.Project {
+.ProjectGridItem {
+    width: 100%;
+    height: 100%;
+}
+
+.ProjectContent {
     background: var(--background-color);
     width: 100%;
     height: 100%;
+}
+
+.ProjectRGL {
+    width: 100%;
+    background: purple;
 }
 
 .ProjectHidden {
     visibility: hidden;
 }
 
-.ProjectToolBar {
+.ProjectToolBarGridItem {
+    grid-row: Toolbar;
     background: var(--primary-color);
     width: 100%;
     -webkit-user-select: none;
     user-select: none;
-    padding-top: 30px;
 }
 

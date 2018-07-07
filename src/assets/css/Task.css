@@ -1,11 +1,59 @@
 /* TODO: Clean up these Selectors, shift the Position and Sizing up to .TaskContainer */
 .TaskContainer {
   height: auto;
+  position: relative; 
   overflow: visible;
   min-height: 40px;
   max-height: 240px; /* Same as .TaskClickContainer max-height */
   display: flex;
   flex-direction: column;
+}
+.TaskTransitionArea {
+  width: 100%;
+  height: 100%;
+}
+
+.MetadataTransitionItem-enter {
+  position: absolute;
+  top: -100%;
+  opacity: 0.01;
+  width: 100%;
+  z-index: 5;
+}
+
+.MetadataTransitionItem-enter-active {
+  position: absolute;
+  top: 0px;
+  opacity: 1;
+  width: 100%;
+  transition: top 250ms ease, opacity 200ms ease;
+  z-index: 5;
+}
+
+.MetadataTransitionItem-enter-done {
+  position: static;
+  width: 100%;
+}
+
+.MetadataTransitionItem-exit {
+  position: absolute;
+  top: 0px;
+  opacity: 1;
+  width: 100%;
+  z-index: 5;
+}
+
+.MetadataTransitionItem-exit-active {
+  position: absolute;
+  top: -100%;
+  opacity: 0.01;
+  width: 100%;
+  z-index: 5;
+  transition: top 250ms ease, opacity 200ms ease;
+}
+
+.MetadataTransitionItem-exit-done {
+  display: none;
 }
 
 .TaskInactiveStyle {
