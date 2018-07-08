@@ -3,5 +3,7 @@
     "transform-object-rest-spread",
     "react-hot-loader/babel"
   ],
-  "presets": ["react"]
+  "presets": [["env", {"targets": {
+    "node": "current"
+  }}],"react"]
 }

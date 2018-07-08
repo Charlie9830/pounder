@@ -1,89 +1,21 @@
 import Path from 'path';
 import fsJetpack from 'fs-jetpack';
-import { getUserUid, USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, } from 'pounder-firebase';
+import { getUserUid, USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from 'pounder-firebase';
 import Electron from 'electron';
+import Moment from 'moment';
 
 let remote = Electron.remote;
 const BACKUP_DIRECTORY = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
 
-export function backupFirebaseAsync(getFirestore) {
+export const BACKUP_VALIDATION_KEY = "validation key";
+
+export function backupFirebaseAsync(getFirestore, remoteIds) {
     return new Promise((resolve, reject) => {
-        pullDownDatabase(getFirestore).then(data => {
-            writeDatabaseToFileAsync(JSON.stringify(data), BACKUP_DIRECTORY).then((message) => {
+
+        pullDownDatabase(getFirestore, remoteIds).then( data => {
+            var packagedData = packageUpData(data);
+            writeDatabaseToFileAsync(JSON.stringify(packagedData), BACKUP_DIRECTORY).then((message) => {
                 resolve(message);
-            });
-        }).catch(error => {
-            reject(error);
-        })
-    })
-}
-
-export function restoreFirebaseAsync(getFirestore, importPath) {
-    return new Promise((resolve, reject) => {
-        backupFirebaseAsync(getFirestore).then((message) => {
-            nukeFirestore(getFirestore).then(() => {
-                importDatabaseFromFileAsync(getFirestore, importPath).then(() => {
-                    resolve();
-                }).catch(error => {
-                    reject(error)
-                })
-            }).catch(error => {
-                reject(error);
-            })
-        }).catch(error => {
-            reject(error);
-        })
-    })
-}
-
-
-function readFileAsync(importPath) {
-    return new Promise((resolve, reject) => {
-        fsJetpack.readAsync(importPath, 'json').then(data => {
-            resolve(data);
-        }).catch(error => {
-            reject(error);
-        })
-    })
-}
-
-function importDatabaseFromFileAsync(getFirestore, importPath) {
-    return new Promise((resolve, reject) => {
-        readFileAsync(importPath).then(data => {
-            var batch = getFirestore().batch();
-
-            // Projects.
-            var projects = Object.values(data.projects);
-            projects.forEach(item => {
-                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(item.uid);
-                batch.set(ref, item);
-            })
-
-            // Project Layouts.
-            var projectLayouts = Object.values(data.projectLayouts);
-            projectLayouts.forEach(item => {
-                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).doc(item.uid);
-                batch.set(ref, item);
-            })
-
-            // Task lists.
-            var taskLists = Object.values(data.taskLists);
-            taskLists.forEach(item => {
-                let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).doc(item.uid);
-                batch.set(ref, item);
-            })
-
-            // Tasks
-            var tasks = Object.values(data.tasks);
-            tasks.forEach(item => {
-                if (item.uid != undefined) {
-                    let ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).doc(item.uid);
-                    batch.set(ref, item);
-                }
-            })
-
-            batch.commit().then(() => {
-                resolve();
             }).catch(error => {
                 reject(error);
             })
@@ -91,8 +23,114 @@ function importDatabaseFromFileAsync(getFirestore, importPath) {
     })
 }
 
+function pullDownDatabase(getFirestore, remoteIds) {
+    return new Promise((resolve, reject) => {
+        var requests = [];
+        var localProjectData = {};
+        var remoteProjects = [];
 
-function pullDownDatabase(getFirestore) {
+        requests.push(pullDownLocalProjectData(getFirestore).then( data => {
+            localProjectData = data;
+        }));
+
+        requests.push(pullDownRemoteProjects(getFirestore, remoteIds).then( data => {
+            remoteProjects = data;
+        }))
+
+        Promise.all(requests).then( () => {
+            resolve({ localProjectData: localProjectData, remoteProjects: remoteProjects });
+        }).catch(error => {
+            reject(error);
+        })
+    })
+}
+
+function pullDownRemoteProjects(getFirestore, remoteIds) {
+    return new Promise((resolve, reject) => {
+        // Pull Data down from Firestore.
+        var requests = [];
+        var remoteProjects = [];
+        
+        remoteIds.forEach(id => {
+            requests.push(getRemoteProject(getFirestore, id).then( project => {
+                remoteProjects.push(project);
+            }).catch(error => {
+                reject(error)
+            }))
+        })
+        
+
+        Promise.all(requests).then(() => {
+            resolve(remoteProjects);
+        }).catch(error => {
+            reject(error);
+        })
+    })
+}
+
+function getRemoteProject(getFirestore, projectId) {
+    return new Promise((resolve, reject) => {
+        var requests = [];
+        var project = {};
+        var projectLayouts = [];
+        var taskLists = [];
+        var tasks = [];
+        var members = [];
+
+        var initialRef = getFirestore().collection(REMOTES).doc(projectId);
+
+        // Project
+        requests.push(initialRef.get().then(snapshot => {
+            if (snapshot.exists) {
+                project = snapshot.data();
+            }
+        }))
+
+        // ProjectLayouts
+        requests.push(initialRef.collection(PROJECTLAYOUTS).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                projectLayouts.push(doc.data());
+            })
+        }))
+
+        // Task Lists.
+        requests.push(initialRef.collection(TASKLISTS).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                taskLists.push(doc.data());
+            })
+        }))
+
+        // Tasks
+        requests.push(initialRef.collection(TASKS).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                tasks.push(doc.data());
+            })
+        }))
+
+        // Members
+        requests.push(initialRef.collection(MEMBERS).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                members.push(doc.data());
+            })
+        }))
+
+        Promise.all(requests).then(() => {
+            var preCombinated = {
+                projectLayouts: projectLayouts,
+                taskLists: taskLists,
+                tasks: tasks,
+                members: members,
+            }
+            var combined = {...project, ...preCombinated};
+            resolve(combined);
+        }).catch(error => {
+            reject(error);
+        })
+    })
+}
+
+
+function pullDownLocalProjectData(getFirestore) {
     return new Promise((resolve, reject) => {
         // Pull Data down from Firestore.
         var requests = [];
@@ -137,12 +175,269 @@ function pullDownDatabase(getFirestore) {
                 taskLists: taskLists,
                 tasks: tasks
             }
+            resolve(combined);
+        }).catch(error => {
+            reject(error);
+        })
+    })
+}
+
+
+export async function readBackupFileAsync(filePath) {
+    try {
+        var data = await fsJetpack.readAsync(filePath, 'json');
+    }
+    
+    catch (error) {
+        throw error;
+    }
+
+    return data;
+}
+
+export async function restoreProjectsAsync(getFirestore, localProjectIds, remoteProjectIds, localData, currentLocalProjectIds) {
+    var requests = [];
+    var remoteBatch = getFirestore().batch();
+    var localBatches = [];
+    var localProjectIdsNeedingCleanup = [];
+
+    // Remote Projects
+    remoteProjectIds.forEach(id => {
+        // Extract the project from the Local backup.
+        var remoteProject = localData.remoteProjects.find(project => {
+            return project.uid === id;
+        });
+
+        if (remoteProject !== undefined) {
+            var topLevelData = {
+                isRemote: true,
+                projectName: remoteProject.projectName,
+                uid: remoteProject.uid,
+            }
+            
+            var initialRef = getFirestore().collection(REMOTES).doc(id);
+            remoteBatch.set(initialRef, topLevelData);
+
+            // Project Layouts.
+            remoteProject.projectLayouts.forEach(item => {
+                remoteBatch.set(initialRef.collection(PROJECTLAYOUTS).doc(item.uid), item);
+            })
+
+            // TaskLists
+            remoteProject.taskLists.forEach(item => {
+                remoteBatch.set(initialRef.collection(TASKLISTS).doc(item.uid), item);
+            })
+
+            // Tasks
+            remoteProject.tasks.forEach(item => {
+                remoteBatch.set(initialRef.collection(TASKS).doc(item.uid), item);
+            })
+
+            // Members
+            remoteProject.members.forEach(item => {
+                remoteBatch.set(initialRef.collection(MEMBERS).doc(item.userId), item);
+            })
+
+            // Set the users remoteId just in case.
+            var remoteIdRef = getFirestore().collection(USERS).doc(getUserUid()).collection(REMOTE_IDS).doc(id);
+            remoteBatch.set(remoteIdRef, { projectId: id });
+
+            // Set the other contributors remoteId collections just in case.
+            if (remoteProject.members !== undefined) {
+                remoteProject.members.forEach(item => {
+                    if (item.status === 'added') {
+                        var otherUserRemoteIdRef = getFirestore().collection(USERS).doc(item.userId).collection(REMOTE_IDS).doc(id);
+                        remoteBatch.set(otherUserRemoteIdRef, { projectId: id });
+                    }
+                })
+            }
+
+            
+            if (currentLocalProjectIds.includes(id)) {
+                // Project has been migrated back to Local. Which means it exists in both Local and Remote locations.
+                // Mark it for deletion later as it is an Async operation, and doing that inside this foreach loop will
+                // convolute things.
+                localProjectIdsNeedingCleanup.push(id);
+            }
+        }
+    })
+
+    // Local Projects.
+    // Iterate through localProjectIds, build Project Replacement Batches.
+    localProjectIds.forEach(id => {
+        requests.push(buildLocalProjectReplacementBatchesAsync(getFirestore, id, localData).then(batchWrapper => {
+            localBatches.push(batchWrapper.deleteBatch);
+            localBatches.push(batchWrapper.setBatch);
+        }));
+    })
+
+    // Local Projects Cleanup.
+    // Whilst building the remoteProject batch, a project with the same ID was found in local. Delete it here instead of
+    // trying to perform an async operation inside the remoteProjectIds.foreach() loop and convoluting it.
+    var cleanupRequests = [];
+    var cleanupBatches = [];
+    cleanupRequests = localProjectIdsNeedingCleanup.map(id => {
+        return buildLocalProjectDeleteBatchAsync(getFirestore, id).then( batch => {
+            cleanupBatches.push(batch);
+        })
+    })
+
+    var concatedRequests = [...requests, ...cleanupRequests];
+
+    await Promise.all(concatedRequests);
+    var outgoingRequests = [];
+    // Remote Batch.
+    outgoingRequests.push(remoteBatch.commit());
+
+    // Cleanup Batch.
+    cleanupBatches.forEach(batch => {
+        outgoingRequests.push(batch.commit());
+    })
+
+    // Local Batch.
+    localBatches.forEach(batch => {
+        outgoingRequests.push(batch.commit());
+    })
+
+    var result = await Promise.all(outgoingRequests);
+    return result;
+}
+
+async function buildLocalProjectReplacementBatchesAsync(getFirestore, projectId, localData) {
+    // Build Delete Requests.
+    var deleteBatch = await buildLocalProjectDeleteBatchAsync(getFirestore, projectId);
+    var setBatch = buildLocalProjectSetBatch(getFirestore, projectId, localData);
+
+    return { deleteBatch: deleteBatch, setBatch: setBatch };
+}
+
+
+function buildLocalProjectSetBatch(getFirestore, projectId, localData) {
+    // Build Set Requests.
+    var batch = getFirestore().batch();
+
+    // Project.
+    var project = localData.localProjectData.projects.find(item => {
+        return item.uid === projectId;
+    })
+
+    var projectRef = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(project.uid);
+    batch.set(projectRef, Object.assign({}, project));
+
+    // ProjectLayouts
+    var projectLayouts = localData.localProjectData.projectLayouts.filter(item => {
+        return item.project === projectId;
+    })
+
+    projectLayouts.forEach(layout => {
+        var ref = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).doc(layout.uid);
+        batch.set(ref, Object.assign({}, layout));
+    })
+
+    // TaskLists.
+    var taskLists = localData.localProjectData.taskLists.filter(item => {
+        return item.project === projectId;
+    })
+
+    taskLists.forEach(taskList => {
+        var ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).doc(taskList.uid);
+        batch.set(ref, Object.assign({}, taskList));
+    })
+
+    // Tasks
+    var tasks = localData.localProjectData.tasks.filter(item => {
+        return item.project === projectId;
+    })
+
+    tasks.forEach(task => {
+        var ref = getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).doc(task.uid);
+        batch.set(ref, Object.assign({}, task));
+    })
+
+    return batch;
+}
+
+async function buildLocalProjectDeleteBatchAsync(getFirestore, projectId) {
+    var batch = getFirestore().batch();
+    var refs = await pullDownProjectRelatedItemRefs(getFirestore, projectId);
+    // Project.
+    batch.delete(refs.projectRef);
+
+    // Project Layouts.
+    refs.projectLayoutRefs.forEach(ref => {
+        batch.delete(ref);
+    })
+
+    // TaskLists.
+    refs.taskListRefs.forEach(ref => {
+        batch.delete(ref);
+    })
+
+    // Tasks.
+    refs.taskRefs.forEach(ref => {
+        batch.delete(ref);
+    })
+
+    return batch;
+}
+
+function pullDownProjectRelatedItemRefs(getFirestore, projectId) {
+    return new Promise((resolve, reject) => {
+        var requests = [];
+        var projectLayoutRefs = [];
+        var taskListRefs = [];
+        var taskRefs = [];
+
+        // Project Layouts.
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS)
+        .where('project', '==', projectId).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                projectLayoutRefs.push(doc.ref);
+            })
+        }))
+
+        // TaskLists.
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS)
+        .where('project', '==', projectId).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                taskListRefs.push(doc.ref);
+            })
+        }))
+
+        // Tasks.
+        requests.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS)
+        .where('project', '==', projectId).get().then(snapshot => {
+            snapshot.forEach(doc => {
+                taskRefs.push(doc.ref);
+            })
+        }))
+
+        Promise.all(requests).then(() => {
+            var projectRef = getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(projectId);
+            var combined = {
+                projectRef: projectRef,
+                projectLayoutRefs: projectLayoutRefs,
+                taskListRefs: taskListRefs,
+                taskRefs: taskRefs,
+            }
 
             resolve(combined);
         }).catch(error => {
             reject(error);
         })
     })
+}
+
+
+function packageUpData(data) {
+    var date = new Date().toISOString();
+    return {
+        userId: getUserUid(),
+        validationKey: BACKUP_VALIDATION_KEY,
+        createdAt: date,
+        localProjectData: data.localProjectData,
+        remoteProjects: data.remoteProjects,
+    }
 }
 
 
@@ -160,12 +455,8 @@ function writeDatabaseToFileAsync(json, directoryPath) {
 
             // Write to File.
             fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
-                var message = "Last backup created at " +
-                    currentDate.getHours() + ":" +
-                    currentDate.getMinutes() + ":" +
-                    currentDate.getSeconds() + " in " +
-                    directoryPath;
-
+                var fromNow = Moment(currentDate).fromNow();
+                var message = "Last backup saved " + fromNow + " in " + directoryPath;
                 resolve(message);
             }).catch(error => {
                 reject(error);
@@ -178,51 +469,7 @@ function writeDatabaseToFileAsync(json, directoryPath) {
     })
 }
 
-function nukeFirestore(getFirestore) {
-    return new Promise((resolve, reject) => {
-        pullDownDatabase(getFirestore).then(data => {
-            var { projects, projectLayouts, taskLists, tasks} = data;
 
-            // Build a list of References.
-            var refs = [];
-
-            // Projects.
-            projects.forEach(project => {
-                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTS).doc(project.uid));
-            })
-
-            // Project Layouts.
-            projectLayouts.forEach(projectLayout => {
-                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(PROJECTLAYOUTS).doc(projectLayout.uid));
-            })
-
-            // TaskLists.
-            taskLists.forEach(taskList => {
-                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKLISTS).doc(taskList.uid));
-            })
-
-            // Tasks.
-            tasks.forEach(task => {
-                refs.push(getFirestore().collection(USERS).doc(getUserUid()).collection(TASKS).doc(task.uid));
-            })
-
-            
-
-            // Build Delete Batch.
-            var batch = getFirestore().batch();
-            refs.forEach(ref => {
-                batch.delete(ref);
-            })
-
-            // Execute Batch.
-            batch.commit().then(() => {
-                resolve();
-            }).catch(error => {
-                reject(error);
-            });
-        })
-    })
-}
 
 function getNormalizedDate(date) {
     var array = [];

@@ -14,12 +14,36 @@ import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
-        logInUserAsync, logOutUserAsync, registerNewUserAsync } from 'pounder-redux/action-creators';
-import { validateFileAsync, restoreFirebaseAsync} from '../../utilities/FileHandling';
+        logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
+        subscribeToDatabaseAsync, selectProject } from 'pounder-redux/action-creators';
+import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY } from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
+import { getUserUid } from 'pounder-firebase';
 import MessageBox from '../MessageBox';
 import { getFirestore } from 'pounder-firebase';
 
+import TestData from '../../testdata/data';
+import Spinner from '../Spinner';
+
+// backupData: {
+//     "createdAt": "2018-07-07T11:31:04.385Z",
+//     "userId": "hh8QeWiAQvhK5FC2eVPvGNXNKC53",
+//     projects: [
+//         { projectName: 'Evita', uid: '1', isRemote: false },
+//         { projectName: 'Harry Potter', uid: '2', isRemote: false},
+//         { projectName: 'Wizard of Oz', uid: '3', isRemote: false},
+//         { projectName: 'Jersey Boys', uid: '4', isRemote: true},
+//         { projectName: 'The Hobbit', uid: '5', isRemote: true},
+//         { projectName: 'Wicked The Reckoning', uid: '6' , isRemote: true},
+//         { projectName: 'The Two Towers', uid: '7' , isRemote: true},
+//         { projectName: 'Die Hard', uid: '8' , isRemote: true},
+//         { projectName: 'Die Hard with Vengence', uid: '9' , isRemote: true},
+//         { projectName: 'Annie', uid: '10' , isRemote: true},
+//         { projectName: 'War Horse', uid: '11' , isRemote: true},
+//         { projectName: 'War Pig', uid: '12' , isRemote: true},
+//         { projectName: 'Harry Plopper Pants', uid: '13' , isRemote: true},
+//     ],
+// }
 
 let dialog = electron.remote.dialog;
 
@@ -33,7 +57,9 @@ class AppSettingsMenu extends React.Component {
                 index: -1,
                 xOffset: 0,
                 yOffset: 0,
-            }
+            },
+            backupData: null,
+            isReadingBackupFile: false,
         }
 
         // Refs.
@@ -59,13 +85,17 @@ class AppSettingsMenu extends React.Component {
         this.handleColorPickerCloseButtonClick = this.handleColorPickerCloseButtonClick.bind(this);
         this.handleDefaultAllColorsButtonClick = this.handleDefaultAllColorsButtonClick.bind(this);
         this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
+        this.handleSelectFileClick = this.handleSelectFileClick.bind(this);
+        this.getWaitingOnDatabaseOverlayJSX = this.getWaitingOnDatabaseOverlayJSX.bind(this);
     }
 
     render() {
-        var contentsJSX = this.getPageJSX()
+        var contentsJSX = this.getPageJSX();
+        var waitingOnDatabaseOverlayJSX = this.getWaitingOnDatabaseOverlayJSX();
         return (
             <OverlayMenuContainer onKeyDown={this.handleAppSettingsKeyDown}>
                     <div className="AppSettingsMenuContainer" onClick={this.handleAppSettingsMenuContainerClick}>
+                        {waitingOnDatabaseOverlayJSX}
                         <div className="AppSettingsMenuSidebarContentFlexContainer">
                             {/* Sidebar */}
                             <div className="AppSettingsMenuSidebarContainer">
@@ -80,12 +110,24 @@ class AppSettingsMenu extends React.Component {
                         {/* Footer */}
                         <div className="AppSettingsMenuFooterContainer">
                             <div className="AppSettingsMenuFooterFloatContainer">
-                                <Button text="Ok" onClick={this.handleOkButtonClick} />
+                                <Button text="Close" onClick={this.handleOkButtonClick} />
                             </div>
                         </div>
                     </div>
             </OverlayMenuContainer>
         )
+    }
+
+    getWaitingOnDatabaseOverlayJSX() {
+        if (this.props.isDatabaseRestoring) {
+            return (
+                <div className="WaitingOnDatabaseOverlay">
+                    <CenteringContainer>
+                        <Spinner size="big"/>
+                    </CenteringContainer>
+                </div>
+            )
+        }
     }
 
     handleAppSettingsMenuContainerClick() {
@@ -176,8 +218,9 @@ class AppSettingsMenu extends React.Component {
                         onGetDatabaseInfoClick={this.handleGetDatabaseInfoClick} onRestoreDatabaseButtonClick={this.handleRestoreDatabaseButtonClick}
                         onPurgeCompletedTasksButtonClick={this.handlePurgeCompletedTasksButtonClick} isLoggedIn={this.props.isLoggedIn}
                         onRequestDatabaseRestore={this.handleRequestDatabaseRestore} isDatabaseRestoring={this.props.isDatabaseRestoring}
-                        restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage}
+                        restoreDatabaseStatusMessage={this.props.restoreDatabaseStatusMessage} onSelectFileClick={this.handleSelectFileClick}
                         isRestoreDatabaseCompleteDialogOpen={this.props.isRestoreDatabaseCompleteDialogOpen}
+                        backupData={this.state.backupData} isReadingBackupFile={this.state.isReadingBackupFile}
                         />
                 )
             break;
@@ -207,19 +250,82 @@ class AppSettingsMenu extends React.Component {
             }})
     }
 
-    handleRestoreDatabaseButtonClick() {
+    handleRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds) {
         // Defer to Message Box for Confirmation.
         this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
             (result) => {
                 if (result === "ok") {
-                    // Trigger Electron Dialog.
-                    dialog.showOpenDialog({
-                        filters: [ { name: 'Javascript Object Notation', extensions: ['json']}]
-                    }, this.handleOpenDialogResult)
+                    this.props.dispatch(setIsDatabaseRestoringFlag(true));
+                    
+
+                    var currentLocalProjectIds = this.props.projects.map(project => {
+                        if (project.isRemote === false) {
+                            return project.uid;
+                        }
+                    })
+
+                    // Unsubscribe after collecting currentLocalProjectIds.
+                    this.props.dispatch(unsubscribeFromDatabaseAsync());
+                    this.props.dispatch(selectProject(-1));
+                    
+                    restoreProjectsAsync(getFirestore, localProjectIds, remoteProjectIds,
+                        this.state.backupData, currentLocalProjectIds).then(() => {
+                            this.props.dispatch(setIsDatabaseRestoringFlag(false));
+                            this.props.dispatch(subscribeToDatabaseAsync());
+                        })
                 }
 
                 this.props.dispatch(setMessageBox({}));
             }))
+    }
+
+    handleSelectFileClick() {
+        // Trigger Electron Dialog.
+        dialog.showOpenDialog({
+            filters: [ { name: 'Javascript Object Notation', extensions: ['json']}]
+        }, this.handleOpenDialogResult);
+    }
+
+    handleOpenDialogResult(fileNames) {
+        if (fileNames === undefined) {
+            // User didn't select anything.
+            return;
+        }
+
+        else {
+            this.setState({ isReadingBackupFile: true })
+
+            var fileName = fileNames[0];
+
+            readBackupFileAsync(fileName).then(data => {
+                // Validate file by checking if the Validation key exists and is correct.
+                if (data.validationKey === undefined || data.validationKey !== BACKUP_VALIDATION_KEY) {
+                    var message = "File has missing or incorrect validation key, are you sure you selected the correct file?";
+                    this.props.dispatch(postSnackbarMessage(message, false));
+                    this.setState({ isReadingBackupFile: false });
+                }
+
+                // Check that the current User created this backup.
+                else if (data.userId !== getUserUid()) {     
+                    var message = "You cannot restore from another user's backup file.";               
+                    this.props.dispatch(postSnackbarMessage(message, false));
+                    this.setState({ isReadingBackupFile: false });
+                }
+
+                // All Good, pass the Data on.
+                else {
+                    this.setState({ 
+                        backupData: data,
+                        isReadingBackupFile: false 
+                    });
+                }
+
+            }).catch(error => {
+                var message = "Error while reading File. Code: " + error.code;
+                this.dispatch(postSnackbarMessage(message, false));
+                this.setState({ isReadingBackupFile: false });
+            })
+        }
     }
 
     handlePurgeCompletedTasksButtonClick() {
@@ -242,29 +348,7 @@ class AppSettingsMenu extends React.Component {
         this.props.dispatch(setIsRestoreDatabaseCompleteDialogOpen(false));
     }
 
-    handleOpenDialogResult(fileNames) {
-        if (fileNames === undefined) {
-            // User didn't select anything.
-            return;
-        }
-
-        else {
-            var fileName = fileNames[0];
-            this.props.dispatch(setIsDatabaseRestoringFlag(true));
-            restoreFirebaseAsync(getFirestore, fileName).then(() => {
-                this.props.dispatch(setIsDatabaseRestoringFlag(false));
-                this.props.dispatch(setMessageBox(true, "Database restore complete", MessageBoxTypes.OK_ONLY, null, (result) => {
-                    this.props.dispatch(setMessageBox({}));
-                }))
-            }).catch(error => {
-                // Database failed to Restore.
-                this.props.dispatch(setIsDatabaseRestoringFlag(false));
-                this.props.dispatch(setMessageBox(true, "Database restore failed. Reason: " + error, MessageBoxTypes.OK_ONLY, null, (result) => {
-                    this.props.dispatch(setMessageBox({}));
-                }))
-            })   
-        }
-    }
+    
 
     handleSidebarItemClick(itemName) {
         this.props.dispatch(setAppSettingsMenuPage(itemName));

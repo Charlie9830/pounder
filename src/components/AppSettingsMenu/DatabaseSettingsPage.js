@@ -1,5 +1,6 @@
 import React from 'react';
 import MenuSubtitle from '../MenuSubtitle';
+import DatabaseRestore from './DatabaseRestore';
 import MessageBox from '../MessageBox';
 import Button from '../Button';
 import CenteringContainer from '../../containers/CenteringContainer';
@@ -51,13 +52,11 @@ class DatabaseSettingsPage extends React.Component {
                     </div>
 
                     {/* Restore Database from Disk */}
+                    <MenuSubtitle text="Restore projects from Backup"/>
                     <div className="AppSettingsVerticalFlexItem">
-                        <div className="AppSettingsHorizontalFlexItem">
-                            <div className="AppSettingsItemLabel"> Restore Database from Local backup </div>
-                        </div>
-                        <span className="AppSettingsHorizontalFlexItem">
-                            {restoreButtonJSX}
-                        </span>
+                        <DatabaseRestore onSelectFileClick={() => {this.props.onSelectFileClick()}}
+                        backupData={this.props.backupData} isReadingBackupFile={this.props.isReadingBackupFile}
+                        onRestoreButtonClick={this.handleRestoreDatabaseButtonClick}/>
                     </div>
                 </div>
             )
@@ -89,8 +88,8 @@ class DatabaseSettingsPage extends React.Component {
         }
     }
 
-    handleRestoreDatabaseButtonClick() {
-        this.props.onRestoreDatabaseButtonClick();
+    handleRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds) {
+        this.props.onRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds);
     }
 
     handlePurgeCompletedTasksButtonClick() {

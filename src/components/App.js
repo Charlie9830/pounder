@@ -132,7 +132,7 @@ class App extends React.Component {
       this.props.dispatch(setIsShuttingDownFlag(true));
 
       // Backup Data to Disk.
-      backupFirebaseAsync(getFirestore).then(() => {
+      backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(() => {
         // Send Message back to Main Process once complete.
         electron.ipcRenderer.send('ready-to-close');
       }).catch(error => {
@@ -484,7 +484,7 @@ class App extends React.Component {
     // Trigger Firebase Backup.
     this.props.dispatch(setLastBackupMessage("Writing to File..."));
 
-    backupFirebaseAsync(getFirestore).then(message => {
+    backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(message => {
       this.props.dispatch(setLastBackupMessage(message));
     }).catch(error => {
       let message = "Can't backup whilst Logged out: " + error.code + " " + error.message; 
@@ -622,6 +622,8 @@ const mapStateToProps = state => {
     isShareMenuOpen: state.isShareMenuOpen,
     invites: state.invites,
     updatingInviteIds: state.updatingInviteIds,
+    members: state.members,
+    remoteProjectIds: state.remoteProjectIds,
   }
 }
 
