@@ -19,7 +19,6 @@ class LockScreen extends React.Component {
         }
 
         // Class Storage.
-        this.pinCode = "2709";
         this.pinCodeTimeout = -1;
         this.updateLastBackupMessageInterval = -1;
 
@@ -99,7 +98,8 @@ class LockScreen extends React.Component {
 
         else {
             return (
-                <img className="LockScreenIcon" src={LockScreenIcon} onClick={this.handleLogoClick} />
+                <img className="LockScreenIcon" 
+                src={LockScreenIcon} onClick={this.handleLogoClick} />
             )
         }
     }
@@ -109,28 +109,40 @@ class LockScreen extends React.Component {
     }
 
     handleLogoClick() {
-        this.setState({ pinCodeDisplayed: true });
+        if (this.props.generalConfig.pinCode === undefined || this.props.generalConfig.pinCode === "") {
+            this.props.onAccessGranted();
+        }
 
-        // Set a Timeout to set screen back to Logo if no User interaction is detected.
-        this.pinCodeTimeout = setTimeout(() => {
-            this.setState({ pinCodeDisplayed: false });
-        }, 10000);
+        else {
+            this.setState({ pinCodeDisplayed: true });
+
+            // Set a Timeout to set screen back to Logo if no User interaction is detected.
+            this.pinCodeTimeout = setTimeout(() => {
+                this.setState({ pinCodeDisplayed: false });
+            }, 10 * 1000);
+        }
+
     }
 
     handleKeypadButtonPress(number) {
         var newValue = this.state.currentValue + number;
 
+        this.validatePinCode(newValue);
+
         if (newValue.length >= 4) {
-            this.validatePinCode(newValue);
+            this.setState({currentValue: ""});
         }
 
         else {
             this.setState({currentValue: newValue});
         }
+        
     }
 
     validatePinCode(value) {
-        if (value === this.pinCode) {
+        var pinCode = this.props.generalConfig.pinCode === undefined ? "" : this.props.generalConfig.pinCode;
+
+        if (value === pinCode) {
             // Access Granted.
             this.props.onAccessGranted();
         }
@@ -142,7 +154,8 @@ class LockScreen extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        lastBackupDate: state.lastBackupDate
+        lastBackupDate: state.lastBackupDate,
+        generalConfig: state.generalConfig,
     }
 }
 

@@ -9,6 +9,10 @@
     transition: width 200ms ease-out;
 }
 
+.SidebarOpen[data-disableanimations*="true"] {
+    transition: unset;
+}
+
 .SidebarCollapsed {
     position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
     background: var(--primary-color);
@@ -17,6 +21,10 @@
     -webkit-user-select: none;
     user-select: none;
     transition: width 200ms ease-in;
+}
+
+.SidebarCollapsed[data-disableanimations*="true"] {
+    transition: unset;
 }
 
 .SidebarGridContainer {

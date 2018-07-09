@@ -11,7 +11,7 @@ class TaskCheckBox extends React.Component {
         var currentStyle = this.props.isChecked ? "TaskCheckBoxIsChecked" : "TaskCheckBoxIsNotChecked";
 
         return (
-            <div className={currentStyle} onClick={this.handleClick}>
+            <div className={currentStyle} data-disableanimations={this.props.disableAnimations} onClick={this.handleClick}>
             </div>
         )
     }

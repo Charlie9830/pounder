@@ -16,6 +16,10 @@
   animation: isDeChecking 0.25s linear 1;
 }
 
+.TaskCheckBoxIsNotChecked[data-disableanimations*="true"] {
+  animation: unset;
+}
+
 @keyframes isDeChecking {
   0% { background: #EEE; }
   100% { background: transparent; }
@@ -29,6 +33,10 @@
   background: rgba(40,40,40,255);
   margin-left: 5px;
   animation: isChecking 0.25s linear 1;
+}
+
+.TaskCheckBoxIsChecked[data-disableanimations*="true"] {
+  animation: unset;
 }
 
 @keyframes isChecking {

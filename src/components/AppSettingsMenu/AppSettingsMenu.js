@@ -26,26 +26,6 @@ import { getFirestore } from 'pounder-firebase';
 import TestData from '../../testdata/data';
 import Spinner from '../Spinner';
 
-// backupData: {
-//     "createdAt": "2018-07-07T11:31:04.385Z",
-//     "userId": "hh8QeWiAQvhK5FC2eVPvGNXNKC53",
-//     projects: [
-//         { projectName: 'Evita', uid: '1', isRemote: false },
-//         { projectName: 'Harry Potter', uid: '2', isRemote: false},
-//         { projectName: 'Wizard of Oz', uid: '3', isRemote: false},
-//         { projectName: 'Jersey Boys', uid: '4', isRemote: true},
-//         { projectName: 'The Hobbit', uid: '5', isRemote: true},
-//         { projectName: 'Wicked The Reckoning', uid: '6' , isRemote: true},
-//         { projectName: 'The Two Towers', uid: '7' , isRemote: true},
-//         { projectName: 'Die Hard', uid: '8' , isRemote: true},
-//         { projectName: 'Die Hard with Vengence', uid: '9' , isRemote: true},
-//         { projectName: 'Annie', uid: '10' , isRemote: true},
-//         { projectName: 'War Horse', uid: '11' , isRemote: true},
-//         { projectName: 'War Pig', uid: '12' , isRemote: true},
-//         { projectName: 'Harry Plopper Pants', uid: '13' , isRemote: true},
-//     ],
-// }
-
 let dialog = electron.remote.dialog;
 
 class AppSettingsMenu extends React.Component {
@@ -88,6 +68,10 @@ class AppSettingsMenu extends React.Component {
         this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
         this.handleSelectFileClick = this.handleSelectFileClick.bind(this);
         this.getWaitingOnDatabaseOverlayJSX = this.getWaitingOnDatabaseOverlayJSX.bind(this);
+        this.handleDisableAnimationsChange = this.handleDisableAnimationsChange.bind(this);
+        this.handleHideLockButtonChange = this.handleHideLockButtonChange.bind(this);
+        this.handlePinCodeChange = this.handlePinCodeChange.bind(this);
+        this.handleAutoBackupIntervalChange = this.handleAutoBackupIntervalChange.bind(this);
     }
 
     render() {
@@ -172,6 +156,10 @@ class AppSettingsMenu extends React.Component {
         this.props.dispatch(setIsAppSettingsOpen(false));
     }
 
+    handleHideLockButtonChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, hideLockButton: newValue}));
+    }
+
     handleStartLockedChange(newValue) {
         this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, startLocked: newValue}));
     }
@@ -199,7 +187,9 @@ class AppSettingsMenu extends React.Component {
                     cssConfig={this.props.cssConfig} onCSSPropertyChange={this.handleCSSPropertyChange} 
                     contentContainerRef={this.contentContainerRef} onColorPickerClick={this.handleColorPickerClick}
                     colorPicker={this.state.colorPicker} onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
-                    onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick}/>
+                    onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick} onPinCodeChange={this.handlePinCodeChange}
+                    onDisableAnimationsChange={this.handleDisableAnimationsChange} onHideLockButtonChange={this.handleHideLockButtonChange}
+                    onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange}/>
                 )
             break;
 
@@ -226,6 +216,18 @@ class AppSettingsMenu extends React.Component {
                 )
             break;
         }
+    }
+
+    handleAutoBackupIntervalChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, autoBackupInterval: newValue }));
+    }
+
+    handlePinCodeChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, pinCode: newValue}));
+    }
+
+    handleDisableAnimationsChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, disableAnimations: newValue}));
     }
 
     handleDefaultAllColorsButtonClick() {

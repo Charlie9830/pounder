@@ -93,7 +93,7 @@ class Project extends React.Component{
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
                      onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
-                     onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
+                     onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
                      />   
                 </div>
             )
@@ -115,7 +115,8 @@ class Project extends React.Component{
                 <div className="ProjectToolBarGridItem">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
-                    onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}/>
+                    onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
+                    hideLockButton={this.props.hideLockButton}/>
                 </div>
 
                 <div className="ProjectGridItem">

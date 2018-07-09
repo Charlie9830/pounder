@@ -61,7 +61,7 @@ class Task extends React.Component {
         return (
             <div ref={this.taskContainerRef} className="TaskContainer" data-ismetadataopen={this.props.isMetadataOpen}>
                 <div className="TaskTransitionArea">
-                    <TransitionGroup>
+                    <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {taskOrMetadata}
                     </TransitionGroup>
                     
@@ -87,7 +87,8 @@ class Task extends React.Component {
                 <div>
                     <div className={currentClassName} data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
                         <div className={"TaskCheckBox"} >
-                            <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick} />
+                            <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}
+                            disableAnimations={this.props.disableAnimations} />
                         </div>
                         <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
                             <div className="TaskTextContainer">

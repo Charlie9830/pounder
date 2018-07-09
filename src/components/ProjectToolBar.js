@@ -18,10 +18,13 @@ class ProjectToolBar extends React.Component {
         this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
+        this.getLockButtonJSX = this.getLockButtonJSX.bind(this);
 
     }
 
     render() {
+        var lockButtonJSX = this.getLockButtonJSX();
+
         return (
             <div>
                 <div className="ToolBarFlexContainer">
@@ -32,11 +35,23 @@ class ProjectToolBar extends React.Component {
                     <Button iconSrc={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonClick}/>
                     <div className="ToolBarFlexDivider"/>
                     <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}/>
-                    <span className="ToolBarButtonSeparator" />
-                    <Button iconSrc={LockIcon} onClick={this.handleLockButtonClick}/>
+                    {lockButtonJSX}
                 </div>
             </div>
         )
+    }
+
+    getLockButtonJSX() {
+        var hideLockButton = this.props.hideLockButton === undefined ? false : this.props.hideLockButton;
+
+        if (!hideLockButton) {
+            return (
+                <React.Fragment>
+                    <span className="ToolBarButtonSeparator" />
+                    <Button iconSrc={LockIcon} onClick={this.handleLockButtonClick}/>
+                </React.Fragment>
+            )
+        }
     }
 
     handleAppSettingsButtonClick() {

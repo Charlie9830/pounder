@@ -54,6 +54,7 @@ class App extends React.Component {
     // Class Storage.
     this.isShiftKeyDown = false;
     this.isModKeyDown = false;
+    this.autoBackupInterval = -1;
     
     // Method Bindings.
     this.handleTaskChanged = this.handleTaskChanged.bind(this);
@@ -103,6 +104,7 @@ class App extends React.Component {
     this.handleModKeyUp = this.handleModKeyUp.bind(this);
     this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
     this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+    this.autoBackupIntervalCallback = this.autoBackupIntervalCallback.bind(this);
   }
 
   componentDidMount(){
@@ -183,6 +185,24 @@ class App extends React.Component {
         }
       }
     }
+
+    // Set Auto Backup Interval.
+    if (prevProps.generalConfig.autoBackupInterval !== this.props.generalConfig.autoBackupInterval) {
+      if (this.props.generalConfig.autoBackupInterval !== undefined) {
+        // Clear interval if needed.
+        if (this.autoBackupInterval !== -1) {
+          clearInterval(this.autoBackupInterval);
+        }
+
+        // Dexie returns everything as a string. Parse into into a Number here.
+        var newMinutes = Number.parseInt(this.props.generalConfig.autoBackupInterval, 10);
+
+        // Set the new interval.
+        if (newMinutes !== 0 && Number.isNaN(newMinutes) !== true) {
+          this.autoBackupInterval = setInterval(this.autoBackupIntervalCallback, newMinutes * 60000)
+        }
+      }
+    }
   }
 
   componentWillUnmount(){
@@ -216,7 +236,8 @@ class App extends React.Component {
             <VisibleStatusBar/>
           </div>
           <div className="SidebarAppGridItem">
-            <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId}
+            <Sidebar className="Sidebar" projects={projects} selectedProjectId={this.props.selectedProjectId} 
+              disableAnimations={this.props.generalConfig.disableAnimations}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
               projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} invites={this.props.invites}
@@ -243,11 +264,22 @@ class App extends React.Component {
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
               onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
-            />
+              disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  autoBackupIntervalCallback() {
+    console.warn('Triggering Auto Back Up');
+    // Trigger Firebase Backup.
+    backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(isoDateSaved => {
+      this.props.dispatch(setLastBackupDate(isoDateSaved));
+    }).catch(error => {
+      let message = "Can't backup whilst Logged out: " + error.code + " " + error.message;
+      this.props.dispatch(postSnackbarMessage(message, true));
+    })
   }
 
   handleTaskMetadataOpen(taskListWidgetId, taskId) {

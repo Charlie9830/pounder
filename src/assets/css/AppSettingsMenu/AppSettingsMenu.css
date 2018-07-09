@@ -83,13 +83,39 @@
     line-height: 10pt;
 }
 
+.AppSettingsItemHint {
+    color: var(--alternate-active-text-color);
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-size: 10pt;
+    line-height: 10pt;
+}
+
 .AppSettingsItemInput {
     margin: 0px;
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     border: gray 1px solid;
-    padding: 1px;
+    padding: 2px;
+}
+
+.AppSettingsItemInput {
+    margin: 0px;
+    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    background: var(--surface-color-alternate);
+    color: var(--primary-active-text-color);
+    border: gray 1px solid;
+    padding: 2px;
+}
+
+input.AppSettingsItemInput[type*="number"] {
+    width: 40px;
+    text-align: center;
+}
+
+.AppSettingsItemInput[data-isvalid*="false"] {
+    border: red 1px solid;
+    user-select: none;
 }
 
 .AppSettingsAccountInput {

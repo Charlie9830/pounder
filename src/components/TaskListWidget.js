@@ -78,7 +78,7 @@ class TaskListWidget extends React.Component {
                                 isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} onMetadataOpen={this.handleTaskMetadataOpen}
                                 isHighPriority={item.isHighPriority} onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
                                 onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
-                                metadata={metadata} />
+                                metadata={metadata} disableAnimations={this.props.disableAnimations} />
                     </CSSTransition>
                 )
             })
@@ -95,7 +95,7 @@ class TaskListWidget extends React.Component {
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
                  isFocused={this.props.isFocused}/>
                 <TaskArea>
-                    <TransitionGroup>
+                    <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {builtTasks}
                     </TransitionGroup>
                 </TaskArea>

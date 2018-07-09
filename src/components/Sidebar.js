@@ -60,7 +60,7 @@ class Sidebar extends React.Component {
         var isShareButtonEnabled = this.props.selectedProjectId !== -1;
 
         return (
-            <div className={sidebarClassName} onClick={this.handleSidebarClick}>
+            <div className={sidebarClassName} data-disableanimations={this.props.disableAnimations} onClick={this.handleSidebarClick}>
 
                 {/* Collapsed Project Title  */} 
                 {collapsedProjectTitleJSX}    
@@ -74,7 +74,7 @@ class Sidebar extends React.Component {
                         {/* Invites */}
                         {projectInvitesTitleJSX}
                         <div className="ProjectInvitesContainer">
-                            <TransitionGroup>
+                            <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                                 {invitesJSX}
                             </TransitionGroup>
                         </div>
@@ -83,7 +83,7 @@ class Sidebar extends React.Component {
                         {/* Local Projects  */}
                         {localProjectsTitleJSX}
                         <div className="LocalProjectSelectorsContainer">
-                        <TransitionGroup>
+                        <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                             {localProjectSelectorsJSX}
                         </TransitionGroup>
                         </div>
@@ -93,7 +93,9 @@ class Sidebar extends React.Component {
                         {/* Remote Projects  */}
                         {remoteProjectsTitleJSX}
                         <div className="RemoteProjectSelectorsContainer">
+                        <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                             {remoteProjectSelectorsJSX}
+                        </TransitionGroup>
                         </div>
                     </div>
 
