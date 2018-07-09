@@ -1,15 +1,15 @@
 import React from 'react';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import ProjectSelector from './ProjectSelector';
 import Button from './Button';
 import '../assets/css/Sidebar.css';
 import '../assets/css/ToolBarButton.css';
 import NewProjectIcon from '../assets/icons/NewProjectIcon.svg';
 import RemoveProjectIcon from '../assets/icons/RemoveProjectIcon.svg';
-import SidebarIcon from '../assets/icons/SidebarIcon.svg';
 import ShareIcon from '../assets/icons/ShareIcon.svg';
 import AcceptIcon from '../assets/icons/AcceptIcon.svg';
 import DenyIcon from '../assets/icons/DenyIcon.svg';
-import BurgerIcon from '../assets/icons/BurgerIcon.svg';
+
 
 class Sidebar extends React.Component {
     constructor(props) {
@@ -74,14 +74,18 @@ class Sidebar extends React.Component {
                         {/* Invites */}
                         {projectInvitesTitleJSX}
                         <div className="ProjectInvitesContainer">
-                            {invitesJSX}
+                            <TransitionGroup>
+                                {invitesJSX}
+                            </TransitionGroup>
                         </div>
                         {invitesDividerJSX}
 
                         {/* Local Projects  */}
                         {localProjectsTitleJSX}
                         <div className="LocalProjectSelectorsContainer">
+                        <TransitionGroup>
                             {localProjectSelectorsJSX}
+                        </TransitionGroup>
                         </div>
 
                         {localAndRemoteDividerJSX}
@@ -117,19 +121,21 @@ class Sidebar extends React.Component {
         var jsx = this.props.invites.map((item, index) => {
             var isEnabled = !this.props.updatingInviteIds.hasOwnProperty(item.projectId);
             return (
-                <div className="InviteContainer" key={index} data-isenabled={isEnabled}>
-                    {/* Project and Display Name  */}
-                    <div className="InviteProjectAndDisplayName">
-                        <div className="InviteProjectName"> {item.projectName} </div>
-                        <div className="InviteDisplayName"> {item.sourceDisplayName} </div>
-                    </div>
+                <CSSTransition key={index} classNames="InviteContainer" timeout={250}>
+                    <div className="InviteContainer" key={index} data-isenabled={isEnabled}>
+                        {/* Project and Display Name  */}
+                        <div className="InviteProjectAndDisplayName">
+                            <div className="InviteProjectName"> {item.projectName} </div>
+                            <div className="InviteDisplayName"> {item.sourceDisplayName} </div>
+                        </div>
 
-                    {/* Buttons  */}
-                    <div className="InviteButtons">
-                        <Button size='verysmall' iconSrc={AcceptIcon} onClick={() => { this.handleAcceptInviteButtonClick(item.projectId) }} />
-                        <Button size='verysmall' iconSrc={DenyIcon} onClick={() => { this.handleDenyInviteButtonClick(item.projectId) }} />
+                        {/* Buttons  */}
+                        <div className="InviteButtons">
+                            <Button size='verysmall' iconSrc={AcceptIcon} onClick={() => { this.handleAcceptInviteButtonClick(item.projectId) }} />
+                            <Button size='verysmall' iconSrc={DenyIcon} onClick={() => { this.handleDenyInviteButtonClick(item.projectId) }} />
+                        </div>
                     </div>
-                </div>
+                </CSSTransition>
             )
         })
 
@@ -181,10 +187,12 @@ class Sidebar extends React.Component {
         var isFavouriteProject = this.props.favouriteProjectId === item.uid;
 
         return (
-            <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
-                isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
-                onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}
-                isFavouriteProject={isFavouriteProject} />
+            <CSSTransition key={item.uid} timeout={250} classNames="ProjectSelectorContainer">
+                <ProjectSelector key={index} projectSelectorId={item.uid} projectName={item.projectName} isSelected={isSelected}
+                    isInputOpen={isInputOpen} onClick={this.handleProjectSelectorClick} onDoubleClick={this.handleProjectSelectorDoubleClick}
+                    onProjectNameSubmit={this.handleProjectNameSubmit} dueDateDisplay={dueDateDisplay}
+                    isFavouriteProject={isFavouriteProject} />
+            </CSSTransition>
         )
     }
 

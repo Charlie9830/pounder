@@ -4,6 +4,50 @@
   user-select: none;
 }
 
+.ProjectSelectorContainer-enter {
+  max-height: 0px;
+  opacity: 0.01;
+  overflow: hidden;
+}
+
+.ProjectSelectorContainer-enter-active {
+  max-height: 240px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 250ms ease, opacity 250ms ease;
+}
+
+.ProjectSelectorContainer-enter-done {
+  height: auto;
+  position: relative; 
+  overflow: visible;
+  max-height: 240px; /* Arbirtralily larger then the container will ever get */
+  display: flex;
+  flex-direction: column;
+}
+
+.ProjectSelectorContainer-exit {
+  height: auto;
+  position: relative; 
+  overflow: visible;
+  max-height: 240px; /* Arbirtralily larger then the container will ever get */
+  opacity: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ProjectSelectorContainer-exit-active {
+  max-height: 0px;
+  opacity: 0.01;
+  overflow: hidden;
+  transition: max-height 350ms ease, opacity 150ms ease;
+}
+
+.ProjectSelectorContainer-exit-done {
+  min-height: 0px;
+  max-height: 0px;
+}
+
 .ProjectSelectorContainer:hover {
   background: var(--primary-hover-color);
 }

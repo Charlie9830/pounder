@@ -51,10 +51,15 @@ class Task extends React.Component {
         Hammer.off(this.taskContainerRef.current, 'swipe');
     }
 
+    /* className="TaskContainer" */
+
     render() {
         var taskOrMetadata = this.getTaskOrMetadata();
+        
+
+
         return (
-            <div className="TaskContainer" ref={this.taskContainerRef}>
+            <div ref={this.taskContainerRef} className="TaskContainer" data-ismetadataopen={this.props.isMetadataOpen}>
                 <div className="TaskTransitionArea">
                     <TransitionGroup>
                         {taskOrMetadata}

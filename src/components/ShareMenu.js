@@ -35,6 +35,7 @@ class ShareMenu extends React.Component {
         this.isUserAlreadyAMember = this.isUserAlreadyAMember.bind(this);
         this.handleMakePersonalButtonClick = this.handleMakePersonalButtonClick.bind(this);
         this.handleEmailInputKeyPress = this.handleEmailInputKeyPress.bind(this);
+        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
     }
 
     render() {
@@ -83,6 +84,16 @@ class ShareMenu extends React.Component {
                         <div className="ActionItemContainer">
                             <div className="ActionLabel"> Make Personal </div>
                             <Button text='Go' size='small' onClick={this.handleMakePersonalButtonClick}
+                            isEnabled={isMakePersonalButtonEnabled}/>
+                        </div>
+
+                        {/* Divider  */} 
+                        <div className="ActionItemDivider"/>
+
+                        {/* Delete  */} 
+                        <div className="ActionItemContainer">
+                            <div className="ActionLabel"> Delete Project </div>
+                            <Button text='Go' size='small' onClick={this.handleDeleteButtonClick}
                             isEnabled={isMakePersonalButtonEnabled}/>
                         </div>
                     </div>
@@ -199,6 +210,18 @@ class ShareMenu extends React.Component {
         } ))
     }
 
+    handleDeleteButtonClick() {
+        var message  = "Deleting this project will remove it from all other contributors accounts as well. Are you sure you want to continue?"
+        this.props.dispatch(setMessageBox(true, message, MessageBoxTypes.STANDARD, null,
+        result => {
+            if (result === 'ok') {
+                this.props.dispatch(removeRemoteProjectAsync(this.props.selectedProjectId));
+            }
+
+            this.props.dispatch(setMessageBox(false));
+        } ))
+    }
+
     handleDoneButtonClick() {
         this.props.dispatch(setIsShareMenuOpen(false));
     }
@@ -242,7 +265,7 @@ class ShareMenu extends React.Component {
         var filteredMembers = this.getFilteredMembers();
         if (filteredMembers.length === 1) {
             // User is last Member.
-            var message = "You are the sole contributor to this project, if you leave the project, it will be deleted forever. " +
+            var message = "You are the sole contributor to this project, if you leave the project, it will be deleted from the database. " +
             "Are you sure you want to leave?";
             this.props.dispatch(setMessageBox(true, message, MessageBoxTypes.STANDARD, null, result => {
                 this.props.dispatch(setMessageBox(false));

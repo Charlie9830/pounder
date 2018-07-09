@@ -16,7 +16,6 @@ class DatabaseRestore extends React.Component {
         }
 
         // Method Bindings.
-        this.getButtonsJSX = this.getButtonsJSX.bind(this);
         this.getRestoreButtonJSX = this.getRestoreButtonJSX.bind(this);
         this.handleSelectFileClick = this.handleSelectFileClick.bind(this);
         this.getProjectsTableJSX = this.getProjectsTableJSX.bind(this);
@@ -26,9 +25,9 @@ class DatabaseRestore extends React.Component {
     }
 
     render() {
-        var buttonsJSX = this.getButtonsJSX();
         var projectsTableJSX = this.getProjectsTableJSX();
         var dateJSX = this.getDateJSX();
+        var restoreButtonJSX = this.getRestoreButtonJSX();
 
         if (this.props.isReadingBackupFile === true) {
             return (
@@ -38,12 +37,23 @@ class DatabaseRestore extends React.Component {
             )
         }
 
+
         else {
             return (
                 <div className="DatabaseRestore">
-                    {buttonsJSX}
+                    <div className="DatabaseRestoreHeaderContainer">
+                        <div className="DatabaseRestoreButtonGroup">
+                            <div className="DatabaseRestoreButtonLabel"> Select file </div>
+                            <Button text="Go" size="small" onClick={this.handleSelectFileClick} />
+                        </div>
+                    </div>
+                    
                     {dateJSX}
                     {projectsTableJSX}
+                    <div className="DatabaseRestoreFooterContainer">
+                        {restoreButtonJSX}
+                    </div>
+                    
                 </div>
             )
         }
@@ -65,28 +75,16 @@ class DatabaseRestore extends React.Component {
 
     }
 
-    getButtonsJSX() {
-        var restoreButtonJSX = this.getRestoreButtonJSX();
-
-        return (
-            <div className="DatabaseRestoreButtonsContainer">
-                <div className="DatabaseRestoreButtonGroup">
-                    <div className="DatabaseRestoreButtonLabel"> Select file </div>
-                    <Button text="Go" size="small" onClick={this.handleSelectFileClick} />
-                    {restoreButtonJSX}
-                </div>
-            </div>
-        )
-    }
-
     getRestoreButtonJSX() {
         if (this.props.backupData !== null) {
+            var isEnabled = this.state.localProjectIds.length > 0 || this.state.remoteProjectIds.length > 0;
             return (
-                <div className="DatabaseRestoreButtonGroup">
-                    <div className="DatabaseRestoreButtonGroupDivider"/>
-                    <div className="DatabaseRestoreButtonLabel"> Restore </div>
-                    <Button text="Go" size="small" onClick={this.handleRestoreButtonClick} />
-                </div>
+                <React.Fragment>
+                    <div className="DatabaseRestoreButtonGroup">
+                        <div className="DatabaseRestoreButtonLabel"> Restore </div>
+                        <Button text="Go" size="small" isEnabled={isEnabled} onClick={this.handleRestoreButtonClick} />
+                    </div>
+                </React.Fragment>
             )
         }
     }
@@ -109,19 +107,21 @@ class DatabaseRestore extends React.Component {
 
             var remoteProjects = this.getFilteredRemoteProjects(data.remoteProjects)
 
-            var localProjectsJSX = localProjects.map((item, index) => {
+            var localProjectsJSX = localProjects.map((item, index, array) => {
+                var showDivider = array.length !== 1 && index !== (array.length - 1);
+
                 return (
                     <React.Fragment key={index}>
                         <tbody>
                             <tr>
                                 <td>
-                                    <div className="DatabaseRestoreCheckboxContainer">
+                                    <div className="DatabaseRestoreCheckboxContainer" data-showdivider={showDivider}>
                                         <input type="checkbox" className="DatabaseRestoreCheckbox" defaultChecked={false}
                                             onClick={(event) => { this.handleRestoreProjectChanged(event, 'local', item.uid) }} />
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="DatabaseRestoreProjectNameContainer">
+                                    <div className="DatabaseRestoreProjectNameContainer" data-showdivider={showDivider}>
                                         <div className="DatabaseRestoreProjectName"> {item.projectName} </div>
                                     </div>
                                 </td>
@@ -131,19 +131,21 @@ class DatabaseRestore extends React.Component {
                 )
             })
 
-            var remoteProjectsJSX = remoteProjects.map((item, index) => {
+            var remoteProjectsJSX = remoteProjects.map((item, index, array) => {
+                var showDivider = array.length !== 1 && index !== (array.length - 1);
+
                 return (
                     <React.Fragment key={index}>
                         <tbody>
                             <tr>
                                 <td>
-                                    <div className="DatabaseRestoreCheckboxContainer">
+                                    <div className="DatabaseRestoreCheckboxContainer" data-showdivider={showDivider}>
                                     <input type="checkbox" className="DatabaseRestoreCheckbox" defaultChecked={false}
                                     onClick={(event) => { this.handleRestoreProjectChanged(event, 'remote', item.uid) }}/>
                                     </div>
                                 </td>
                                 <td>
-                                    <div className="DatabaseRestoreProjectNameContainer">
+                                    <div className="DatabaseRestoreProjectNameContainer" data-showdivider={showDivider}>
                                     <div className="DatabaseRestoreProjectName"> {item.projectName} </div>
                                     </div>
                                 </td>

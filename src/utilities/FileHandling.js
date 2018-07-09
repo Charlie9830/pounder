@@ -2,20 +2,26 @@ import Path from 'path';
 import fsJetpack from 'fs-jetpack';
 import { getUserUid, USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from 'pounder-firebase';
 import Electron from 'electron';
-import Moment from 'moment';
-
+import sanitize from 'sanitize-filename';
 let remote = Electron.remote;
-const BACKUP_DIRECTORY = Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups");
+
 
 export const BACKUP_VALIDATION_KEY = "validation key";
 
+export function getCurrentBackupDirectory() {
+    // Sanitize UserID to be used as a file directory.
+    var sanitizedUserId = sanitize(getUserUid());
+    sanitizedUserId = sanitizedUserId === "" ? "UnknownUser" : sanitizedUserId;
+
+    return Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups", `/${sanitizedUserId}`);
+}
+
 export function backupFirebaseAsync(getFirestore, remoteIds) {
     return new Promise((resolve, reject) => {
-
         pullDownDatabase(getFirestore, remoteIds).then( data => {
             var packagedData = packageUpData(data);
-            writeDatabaseToFileAsync(JSON.stringify(packagedData), BACKUP_DIRECTORY).then((message) => {
-                resolve(message);
+            writeDatabaseToFileAsync(JSON.stringify(packagedData), getCurrentBackupDirectory()).then((isoDateSaved) => {
+                resolve(isoDateSaved);
             }).catch(error => {
                 reject(error);
             })
@@ -455,9 +461,8 @@ function writeDatabaseToFileAsync(json, directoryPath) {
 
             // Write to File.
             fsJetpack.writeAsync(filePath, json, { atomic: true }).then(() => {
-                var fromNow = Moment(currentDate).fromNow();
-                var message = "Last backup saved " + fromNow + " in " + directoryPath;
-                resolve(message);
+                var isoDateSaved = currentDate.toISOString();
+                resolve(isoDateSaved);
             }).catch(error => {
                 reject(error);
             })

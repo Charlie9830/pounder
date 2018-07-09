@@ -19,17 +19,16 @@ import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
 import { hot } from 'react-hot-loader';
 import {selectTask, openTask, startTaskMove,
-lockApp, setLastBackupMessage, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
+lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata,
-setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, } from 'pounder-redux/action-creators';
+setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, } from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
-import { ENGINE_METHOD_PKEY_ASN1_METHS } from 'constants';
 
 const remote = electron.remote;
 const KEYBOARD_COMBOS = {
@@ -482,13 +481,11 @@ class App extends React.Component {
     this.props.dispatch(lockApp());
 
     // Trigger Firebase Backup.
-    this.props.dispatch(setLastBackupMessage("Writing to File..."));
-
-    backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(message => {
-      this.props.dispatch(setLastBackupMessage(message));
+    backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(isoDateSaved => {
+      this.props.dispatch(setLastBackupDate(isoDateSaved));
     }).catch(error => {
       let message = "Can't backup whilst Logged out: " + error.code + " " + error.message; 
-      this.props.dispatch(setLastBackupMessage(message));
+      this.props.dispatch(postSnackbarMessage(message, true));
     })
   }
 

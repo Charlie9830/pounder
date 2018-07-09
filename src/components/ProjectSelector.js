@@ -20,16 +20,14 @@ class ProjectSelector extends React.Component {
         var heartJSX = this.getHeartJSX();
 
         return (
-            <div>
-                <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
-                    <div className="ProjectSelectorFlexContainer">
-                        {heartJSX}
-                        <div className="ProjectSelectorLabelContainer">
-                            {projectLabelJSX}
-                        </div>
-                        <div className="ProjectSelectorIconContainer">
-                            {dueDateCounts}
-                        </div>
+            <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
+                <div className="ProjectSelectorFlexContainer">
+                    {heartJSX}
+                    <div className="ProjectSelectorLabelContainer">
+                        {projectLabelJSX}
+                    </div>
+                    <div className="ProjectSelectorIconContainer">
+                        {dueDateCounts}
                     </div>
                 </div>
             </div>

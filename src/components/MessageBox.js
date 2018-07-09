@@ -33,7 +33,7 @@ class MessageBox extends React.Component {
             </Modal>
         )
     }
- 
+
     getButtonsJSX() {
         if (this.props.config.type === MessageBoxTypes.OK_ONLY) {
             return (

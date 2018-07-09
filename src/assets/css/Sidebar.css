@@ -121,6 +121,7 @@
     font-family: 'Segoe UI', Lucinda Sans, Geneva, Verdana, sans-serif;
     font-size: 10pt;
     font-weight: 400;
+    cursor: default;
 }
 
 .SidebarFullBleedDivider {
@@ -139,15 +140,60 @@
 .InviteContainer {
     width: 100%;
     display: grid;
-    grid-template-columns: 3fr[ProjectAndDisplayName] 1fr[Buttons];
+    grid-template-columns: auto[ProjectAndDisplayName] 1fr[Buttons];
     justify-content: start; 
     cursor: default;
+    padding: 5px 0px 5px 0px;
 }
 
 .InviteContainer[data-isenabled*="false"] {
     opacity: 0.25;
     pointer-events: none;
 }
+
+.InviteContainer-enter {
+    max-height: 0px;
+    opacity: 0.01;
+    overflow: hidden;
+  }
+  
+  .InviteContainer-enter-active {
+    max-height: 240px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 250ms ease, opacity 250ms ease;
+  }
+  
+  .InviteContainer-enter-done {
+    height: auto;
+    position: relative; 
+    overflow: visible;
+    max-height: 240px; /* Arbirtralily larger then the container will ever get */
+  }
+  
+  .InviteContainer-exit {
+    height: auto;
+    position: relative; 
+    overflow: visible;
+    max-height: 240px; /* Arbirtralily larger then the container will ever get */
+    opacity: 1;
+  }
+  
+  .InviteContainer-exit-active {
+    max-height: 0px;
+    opacity: 0.01;
+    overflow: hidden;
+    transition: max-height 350ms ease, opacity 150ms ease;
+  }
+  
+  .InviteContainer-exit-done {
+    min-height: 0px;
+    max-height: 0px;
+  }
+  
+  .InviteContainer:hover {
+    background: var(--primary-hover-color);
+  }
 
 .InviteProjectAndDisplayNameContainer {
     grid-column: ProjectAndDisplayName;

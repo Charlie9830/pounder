@@ -1,5 +1,6 @@
 import React from 'react';
 import '../assets/css/LockScreen.css'
+import Moment from 'moment';
 import PinCodeKeypad from './PinCodeKeypad';
 import CenteringContainer from '../containers/CenteringContainer';
 import { connect } from 'react-redux';
@@ -13,12 +14,14 @@ class LockScreen extends React.Component {
         // State.
         this.state = {
             currentValue: "",
-            pinCodeDisplayed: false
+            pinCodeDisplayed: false,
+            lastBackupMessage: "",
         }
 
         // Class Storage.
         this.pinCode = "2709";
         this.pinCodeTimeout = -1;
+        this.updateLastBackupMessageInterval = -1;
 
         // Method Bindings.
         this.validatePinCode = this.validatePinCode.bind(this);
@@ -26,17 +29,31 @@ class LockScreen extends React.Component {
         this.getLogoOrPincode = this.getLogoOrPincode.bind(this);
         this.handleLogoClick = this.handleLogoClick.bind(this);
         this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
+        this.updateLastBackupMessage = this.updateLastBackupMessage.bind(this);
+    }
+
+    componentDidMount() {
+        this.updateLastBackupMessageInterval = setInterval( () => {
+            if (this.props.lastBackupDate !== "") {
+                this.updateLastBackupMessage();
+            }
+        }, 180 * 1000);
+
+        this.updateLastBackupMessage();
     }
 
     componentWillUnmount() {
         if (this.pinCodeTimeout != -1) {
             clearTimeout(this.pinCodeTimeout);
         }
+
+        if (this.updateLastBackupMessageInterval != -1) {
+            clearTimeout(this.updateLastBackupMessageInterval);
+        }
     }
 
     render() {
         var contentsJSX = this.getLogoOrPincode();
-
         return (
             <div className="LockScreenContainer">
                 <CenteringContainer> 
@@ -44,12 +61,23 @@ class LockScreen extends React.Component {
                 </CenteringContainer>   
                 <div className="LockScreenBackupMessageContainer">
                     <label className="LockScreenBackupMessage">
-                        {this.props.lastBackupMessage}
+                        {this.state.lastBackupMessage}
                     </label>
                     <img className="LockScreenQuitButton" src={QuitIcon} onClick={this.handleQuitButtonClick}/> 
                 </div>
             </div>
         )
+    }
+
+    updateLastBackupMessage() {
+        var moment = Moment(this.props.lastBackupDate);
+        if (moment.isValid()) {
+            var fromNow = moment.fromNow();
+            var humanFriendlyTime = moment.format("dddd, MMMM Do YYYY, h:mm a");
+            var message = `Last backup performed ${fromNow} at ${humanFriendlyTime}`;
+    
+            this.setState({ lastBackupMessage: message });
+        }
     }
 
     getLogoOrPincode() {
@@ -114,7 +142,7 @@ class LockScreen extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        lastBackupMessage: state.lastBackupMessage
+        lastBackupDate: state.lastBackupDate
     }
 }
 

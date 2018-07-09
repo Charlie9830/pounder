@@ -10,13 +10,14 @@ import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
 import electron from 'electron';
+import Path from 'path';
 import { connect } from 'react-redux';
 import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, setFavouriteProjectIdAsync,
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
         subscribeToDatabaseAsync, selectProject } from 'pounder-redux/action-creators';
-import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY } from '../../utilities/FileHandling';
+import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY, getCurrentBackupDirectory } from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
 import { getUserUid } from 'pounder-firebase';
 import MessageBox from '../MessageBox';
@@ -281,8 +282,11 @@ class AppSettingsMenu extends React.Component {
 
     handleSelectFileClick() {
         // Trigger Electron Dialog.
+        var defaultPath = Path.join(getCurrentBackupDirectory(),"/");
+
         dialog.showOpenDialog({
-            filters: [ { name: 'Javascript Object Notation', extensions: ['json']}]
+            filters: [ { name: 'Javascript Object Notation', extensions: ['json']}],
+            defaultpath: defaultPath,
         }, this.handleOpenDialogResult);
     }
 
