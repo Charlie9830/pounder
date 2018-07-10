@@ -38,7 +38,7 @@ class GeneralSettingsPage extends React.Component {
 
     componentDidMount() {
         var pinCode = this.props.generalConfig.pinCode === undefined ? "" : this.props.generalConfig.pinCode;
-        this.setState({isPinCodeEntryValid: this.validatePinCodeEntry(pinCode)});
+        this.setState({ isPinCodeEntryValid: this.validatePinCodeEntry(pinCode) });
     }
 
     render() {
@@ -46,10 +46,10 @@ class GeneralSettingsPage extends React.Component {
 
         // Zero Fill any undefined values.
         var disableAnimations = this.props.generalConfig.disableAnimations === undefined ?
-         false : this.props.generalConfig.disableAnimations;
+            false : this.props.generalConfig.disableAnimations;
 
         var hideLockButton = this.props.generalConfig.hideLockButton === undefined ?
-            false : this.props.generalConfig.hideLockButton; 
+            false : this.props.generalConfig.hideLockButton;
 
         var autoBackupInterval = this.props.generalConfig.autoBackupInterval === undefined ?
             0 : this.props.generalConfig.autoBackupInterval;
@@ -59,69 +59,69 @@ class GeneralSettingsPage extends React.Component {
                 {/* Application startup Fullscreen Mode*/}
                 <div className="AppSettingsVerticalFlexItem">
                     <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref="startInFullscreenCheckbox"
-                    checked={this.props.generalConfig.startInFullscreen} onChange={this.handleStartInFullscreenChange}/>
+                        checked={this.props.generalConfig.startInFullscreen} onChange={this.handleStartInFullscreenChange} />
                     <span className="AppSettingsHorizontalFlexItem">
                         <div className="AppSettingsItemLabel"> Start application in fullscreen </div>
-                    </span>
-                </div>
-                
-                {/* Application Startup Locked Mode */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref="startLockedCheckbox"
-                    checked={this.props.generalConfig.startLocked} onChange={this.handleStartLockedChange}/>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Automaticaly lock application on start up </div>
-                    </span>
-                </div>
-
-                {/* Hide Lock Button */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.hideLockButtonCheckboxRef}
-                    checked={hideLockButton} onChange={this.handleHideLockButtonChange}/>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Hide Lock Button </div>
-                    </span>
-                </div>
-
-                {/* Pin Code */}
-                <div className="AppSettingsVerticalFlexItem">
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Pin Code </div>
-                    </span>
-                    <div className="AppSettingsHorizontalFlexItem">
-                        <input className="AppSettingsItemInput" data-isvalid={this.state.isPinCodeEntryValid} type="text" 
-                        ref={this.pinCodeEntryRef} checked={disableAnimations} onChange={this.handlePinCodeInputChange}
-                        onBlur={this.handlePinCodeInputBlur} />
-                    </div>
-                    <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemHint"> Max 4 digits or 0 digits to skip pin code access </div>
                     </span>
                 </div>
 
                 {/* Disable Animations */}
                 <div className="AppSettingsVerticalFlexItem">
                     <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.disableAnimationsCheckboxRef}
-                    onChange={this.handleDisableAnimationsChange}/>
+                        onChange={this.handleDisableAnimationsChange} />
                     <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Disable Animations </div>
+                        <div className="AppSettingsItemLabel"> Disable animations </div>
+                    </span>
+                </div>
+
+                {/* Application Startup Locked Mode */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref="startLockedCheckbox"
+                        checked={this.props.generalConfig.startLocked} onChange={this.handleStartLockedChange} />
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel">  Lock application on start up </div>
+                    </span>
+                </div>
+
+                {/* Hide Lock Button */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.hideLockButtonCheckboxRef}
+                        checked={hideLockButton} onChange={this.handleHideLockButtonChange} />
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel"> Hide lock button </div>
+                    </span>
+                </div>
+
+                {/* Pin Code */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel"> Pin code </div>
+                    </span>
+                    <div className="AppSettingsHorizontalFlexItem">
+                        <input className="AppSettingsItemInput" data-isvalid={this.state.isPinCodeEntryValid} type="text"
+                            ref={this.pinCodeEntryRef} checked={disableAnimations} onChange={this.handlePinCodeInputChange}
+                            onBlur={this.handlePinCodeInputBlur} />
+                    </div>
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemHint"> Max 4 digits or 0 digits to skip pin code access </div>
                     </span>
                 </div>
 
                 {/* Auto Backup Interval */}
                 <div className="AppSettingsVerticalFlexItem">
                     <span className="AppSettingsHorizontalFlexItem">
-                        <div className="AppSettingsItemLabel"> Auto Backup Interval </div>
+                        <div className="AppSettingsItemLabel"> Auto backup interval </div>
                     </span>
                     <div className="AppSettingsHorizontalFlexItem">
                         <input className="AppSettingsItemInput" type="number" ref={this.autoBackupIntervalEntryRef}
-                        onBlur={this.handleAutoBackupIntervalInputBlur} defaultValue={autoBackupInterval}/>
+                            onBlur={this.handleAutoBackupIntervalInputBlur} defaultValue={autoBackupInterval} />
                     </div>
                     <span className="AppSettingsHorizontalFlexItem">
                         <div className="AppSettingsItemHint"> In minutes. 0 to disable auto backup </div>
                     </span>
                 </div>
 
-                
+
                 {/* Faviourte Project Selection */}
                 <div className="AppSettingsVerticalFlexItem">
                     <span className="AppSettingsHorizontalFlexItem">
@@ -134,16 +134,16 @@ class GeneralSettingsPage extends React.Component {
 
                 {/* Color Selection Title */}
                 <div className="AppSettingsVerticalFlexItem">
-                    <MenuSubtitle text="Application Color Selection"/>
+                    <MenuSubtitle text="Application Color Selection" />
                 </div>
 
                 {/* Color Selection Properties and Inputs */}
                 <div className="AppSettingsVerticalFlexItem">
                     <ThemeSettings cssConfig={this.props.cssConfig} contentContainerRef={this.props.contentContainerRef}
-                    onCSSPropertyChange={(propertyName, value) => {this.props.onCSSPropertyChange(propertyName, value)}}
-                    onColorPickerClick={this.handleColorPickerClick} colorPicker={this.props.colorPicker}
-                    onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
-                    onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick}
+                        onCSSPropertyChange={(propertyName, value) => { this.props.onCSSPropertyChange(propertyName, value) }}
+                        onColorPickerClick={this.handleColorPickerClick} colorPicker={this.props.colorPicker}
+                        onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
+                        onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick}
                     />
                 </div>
             </div>
@@ -156,7 +156,7 @@ class GeneralSettingsPage extends React.Component {
         var currentValue = currentValue < 0 ? 0 : currentValue;
 
         this.props.onAutoBackupIntervalChange(currentValue);
-        
+
     }
 
     handlePinCodeInputBlur() {
@@ -173,12 +173,12 @@ class GeneralSettingsPage extends React.Component {
 
     handlePinCodeInputChange() {
         var currentValue = this.pinCodeEntryRef.current.value;
-        this.setState({ isPinCodeEntryValid: this.validatePinCodeEntry(currentValue)})
+        this.setState({ isPinCodeEntryValid: this.validatePinCodeEntry(currentValue) })
     }
 
     validatePinCodeEntry(entry) {
         var regex = /^[0-9]{0,4}$/gm;
-        
+
         if (entry === "") {
             return true;
         }
@@ -191,7 +191,7 @@ class GeneralSettingsPage extends React.Component {
             return false;
         }
     }
-    
+
     handleDefaultAllColorsButtonClick() {
         this.props.onDefaultAllColorsButtonClick();
     }
@@ -226,7 +226,7 @@ class GeneralSettingsPage extends React.Component {
 
     getFavouriteProjectSelectorJSX() {
         // Build Projects into HTML Option Elements.
-        var optionsJSX = this.props.projects.map((project,index) => {
+        var optionsJSX = this.props.projects.map((project, index) => {
             return (
                 <option key={index + 1} value={project.uid}> {project.projectName} </option>
             )
@@ -234,11 +234,11 @@ class GeneralSettingsPage extends React.Component {
 
         // Append a "None" option.
         optionsJSX.unshift((<option key={0} value="-1"> None </option>))
-        
+
         // Build options into HTML select Element.
         return (
             <select className="FavouriteProjectSelect" value={this.props.accountConfig.favouriteProjectId}
-             ref="favourteProjectSelect" onChange={this.handleFavouriteProjectSelectChange}>
+                ref="favourteProjectSelect" onChange={this.handleFavouriteProjectSelectChange}>
                 {optionsJSX}
             </select>
         )

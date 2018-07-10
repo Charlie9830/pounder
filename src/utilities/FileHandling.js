@@ -1,6 +1,7 @@
 import Path from 'path';
 import fsJetpack from 'fs-jetpack';
-import { getUserUid, USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from 'pounder-firebase';
+import { getUserUid } from 'pounder-firebase';
+import { USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from 'pounder-firebase/paths';
 import Electron from 'electron';
 import sanitize from 'sanitize-filename';
 let remote = Electron.remote;
@@ -25,6 +26,8 @@ export function backupFirebaseAsync(getFirestore, remoteIds) {
             }).catch(error => {
                 reject(error);
             })
+        }).catch(error => {
+            reject(error);
         })
     })
 }

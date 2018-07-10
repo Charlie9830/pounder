@@ -2,6 +2,7 @@ import React from 'react';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Button from '../Button';
 import Spinner from '../Spinner';
+import MenuSubtitle from '../MenuSubtitle';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import AccountIconLoggedIn from '../../assets/icons/AccountIconLoggedIn.svg';
 import AccountIconLoggedOut from '../../assets/icons/AccountIconLoggedOut.svg';
@@ -22,7 +23,11 @@ class AccountSettingsPage extends React.Component {
         this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
         this.getDisplayNameInputJSX = this.getDisplayNameInputJSX.bind(this);
         this.handleRegisterButtonClick = this.handleRegisterButtonClick.bind(this);
-        this.handleRegisterLinkClick = this.handleRegisterLinkClick.bind(this);
+        this.handleRegisterActionButtonClick = this.handleRegisterActionButtonClick.bind(this);
+        this.getActionsJSX = this.getActionsJSX.bind(this);
+        this.getPasswordResetActionJSX = this.getPasswordResetActionJSX.bind(this);
+        this.getRegisterActionJSX = this.getRegisterActionJSX.bind(this);
+        this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -32,24 +37,89 @@ class AccountSettingsPage extends React.Component {
         }
     }
 
+    
+
     render() {
         var buttonsJSX = this.getButtonsJSX();
-        var inputsJSX = this.getInputsJSX()
+        var inputsJSX = this.getInputsJSX();
+        var actionsJSX = this.getActionsJSX();
+
         return (
-            <CenteringContainer>
-                {/* Logo and Status Message  */}
-                <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
-                <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
+            <div className="AccountSettingsContainer">
+                <div className="LogInContainer">
+                    {/* Log In / Log Out Control  */}
+                    <CenteringContainer>
+                        {/* Logo and Status Message  */}
+                        <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
+                        <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
 
-                {/* Email and Password Inputs  */}
-                {inputsJSX}
+                        {/* Email and Password Inputs  */}
+                        {inputsJSX}
 
-                {/* LogInLogOut Button  */}
-                <div className="AppSettingsAccountButtonsFlexContainer">
-                    {buttonsJSX}
+                        {/* LogInLogOut Button  */}
+                        <div className="AppSettingsAccountButtonsFlexContainer">
+                            {buttonsJSX}
+                        </div>
+                    </CenteringContainer>
+
+                    {/* Account Actions  */}
+                    <div className="AccountSettingsActionsContainer">
+                        <MenuSubtitle text="Actions" />
+                        {actionsJSX}
+                    </div>
                 </div>
-            </CenteringContainer>
+            </div>
+            
         )
+    }
+
+    getRegisterActionJSX() {
+        return (
+            <div className="AppSettingsVerticalFlexItem">
+                <span className="AppSettingsHorizontalFlexItem">
+                    <div className="AppSettingsItemLabel"> Sign up </div>
+                </span>
+                <div className="AppSettingsHorizontalFlexItem">
+                    <Button size="small" text="Go" onClick={this.handleRegisterActionButtonClick} />
+                </div>
+            </div>
+        )
+    }
+
+    getPasswordResetActionJSX() {
+        return (
+            <div className="AppSettingsVerticalFlexItem">
+                <span className="AppSettingsHorizontalFlexItem">
+                    <div className="AppSettingsItemLabel"> Send password reset email </div>
+                </span>
+                <div className="AppSettingsHorizontalFlexItem">
+                    <Button size="small" text="Send" onClick={this.handlePasswordResetButtonClick} />
+                </div>
+            </div>
+
+        )
+    }
+
+    getActionsJSX() {
+        var registerActionJSX = this.getRegisterActionJSX();
+        var passwordResetActionJSX = this.getPasswordResetActionJSX();
+
+        if (this.props.isLoggedIn) {
+            return (
+                <React.Fragment>
+                    {passwordResetActionJSX}
+                </React.Fragment>
+            )
+
+        }
+
+        else {
+            return (
+                <React.Fragment>
+                    {registerActionJSX}
+                </React.Fragment>
+            )
+        }
     }
 
     getInputsJSX() {
@@ -96,7 +166,15 @@ class AccountSettingsPage extends React.Component {
                         onKeyPress={this.handleInputKeyPress} />
                 </div>
             )
-        } 
+        }
+    }
+
+    handleDeleteAccountButtonClick() {
+        this.props.onDeleteAccountButtonClick();
+    }
+
+    handlePasswordResetButtonClick() {
+        this.props.onPasswordResetButtonClick();
     }
 
     handleInputKeyPress(e) {
@@ -136,7 +214,6 @@ class AccountSettingsPage extends React.Component {
                     return (
                         <div>
                             <Button text="Log In" onClick={this.handleLogInButtonClick} />  
-                            <div className="RegisterLink" onClick={this.handleRegisterLinkClick}> Register </div>
                         </div>                  
                     )
                 }
@@ -152,7 +229,7 @@ class AccountSettingsPage extends React.Component {
         this.props.onRegisterButtonClick(email, password, displayName);
     }
 
-    handleRegisterLinkClick() {
+    handleRegisterActionButtonClick() {
         this.setState({ isInRegisterMode: true })
     }
 

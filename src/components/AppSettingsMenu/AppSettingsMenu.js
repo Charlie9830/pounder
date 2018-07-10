@@ -16,7 +16,7 @@ import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, 
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
-        subscribeToDatabaseAsync, selectProject } from 'pounder-redux/action-creators';
+        subscribeToDatabaseAsync, selectProject, sendPasswordResetEmailAsync } from 'pounder-redux/action-creators';
 import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY, getCurrentBackupDirectory } from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
 import { getUserUid } from 'pounder-firebase';
@@ -72,6 +72,7 @@ class AppSettingsMenu extends React.Component {
         this.handleHideLockButtonChange = this.handleHideLockButtonChange.bind(this);
         this.handlePinCodeChange = this.handlePinCodeChange.bind(this);
         this.handleAutoBackupIntervalChange = this.handleAutoBackupIntervalChange.bind(this);
+        this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
     }
 
     render() {
@@ -199,7 +200,8 @@ class AppSettingsMenu extends React.Component {
                     isLoggedIn={this.props.isLoggedIn} userEmail={this.props.userEmail}
                     onLogInButtonClick={(email, password) => {this.props.dispatch(logInUserAsync(email,password))}}
                     onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}
-                    onRegisterButtonClick={this.handleRegisterButtonClick} displayName={this.props.displayName}/>
+                    onRegisterButtonClick={this.handleRegisterButtonClick} displayName={this.props.displayName}
+                    onPasswordResetButtonClick={this.handlePasswordResetButtonClick}/>
                 )
             break;
 
@@ -216,6 +218,10 @@ class AppSettingsMenu extends React.Component {
                 )
             break;
         }
+    }
+
+    handlePasswordResetButtonClick() {
+        this.props.dispatch(sendPasswordResetEmailAsync());
     }
 
     handleAutoBackupIntervalChange(newValue) {
@@ -378,6 +384,7 @@ const mapStateToProps = state => {
         isLoggedIn: state.isLoggedIn,
         userEmail: state.userEmail,
         displayName: state.displayName,
+        remoteProjectIds: state.remoteProjectIds,
     }
 }
 
