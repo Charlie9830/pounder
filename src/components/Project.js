@@ -12,9 +12,9 @@ class Project extends React.Component{
     constructor(props){
         super(props);
 
-        this.state = {
-            openTaskListWidgetHeaderId: -1,
-        }
+        this.layoutBuffer = [];
+        this.isReLayoutPassNeeded = false;
+        this.isInReLayoutPass = false;
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
         this.handleWidgetClick = this.handleWidgetClick.bind(this);
@@ -39,7 +39,17 @@ class Project extends React.Component{
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
         this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+        this.handleAssignToMember = this.handleAssignToMember.bind(this);
     }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (this.isReLayoutPassNeeded) {
+            this.props.onLayoutChange(this.layoutBuffer, this.props.projectId);
+            this.isInReLayoutPass = true;
+            this.forceUpdate();
+        }
+    }
+
 
     render() {
         // Build a list of TaskListWidgets to Render out here.
@@ -48,11 +58,11 @@ class Project extends React.Component{
             return taskList.project === this.props.projectId;
         })
 
-
         var taskListWidgets = filteredTaskListWidgets.map((item, index) => {
+
             // Widget Layer.
             var isFocused = this.props.focusedTaskListId === item.uid;
-            var isHeaderOpen = this.state.openTaskListWidgetHeaderId === item.uid;
+            var isHeaderOpen = this.props.openTaskListWidgetHeaderId === item.uid;
             var taskListSettings = item.settings;    
 
             // Task Layer.
@@ -76,10 +86,8 @@ class Project extends React.Component{
             }
 
             var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
-
             return (
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
-
                 <div key={item.uid}>
                     <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
                      tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
@@ -91,24 +99,45 @@ class Project extends React.Component{
                      onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
                      openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
+                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} projectMembers={this.props.projectMembers}
                      onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
                      onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
+                     onAssignToMember={this.handleAssignToMember}
                      />   
                 </div>
             )
         });
 
-        // Extract correct Layouts array from ProjectLayouts wrapper.
-        var selectedProjectLayout = this.props.projectLayouts.find(item => {
-            return item.uid === this.props.projectId;
-        })
-        var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
 
         var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
         // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
         var rglClassName = "ProjectRGL" // projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
         var rglDragEnabled = this.props.openCalendarId === -1;
+
+         // Extract correct Layouts array from ProjectLayouts wrapper.
+         var selectedProjectLayout = this.props.projectLayouts.find(item => {
+            return item.uid === this.props.projectId;
+        })
+
+        var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
+        var newTaskListId = this.findNewTaskListId(selectedLayouts, filteredTaskListWidgets);
+        if (newTaskListId !== undefined) {
+            // Push a new non stubby Layout Item into the next Render Cycle.
+            var layoutBuffer = [...selectedLayouts];
+            layoutBuffer.push( {i: newTaskListId, x: 0, y: 0, w: 6, h: 4} );
+
+            this.layoutBuffer = layoutBuffer;
+            this.isReLayoutPassNeeded = true;
+
+            console.warn("New Task List Detected. Re Render Required.");
+        }
+
+        if (this.isInReLayoutPass) {
+            console.warn("Re Rendering");
+            selectedLayouts = this.layoutBuffer;
+            this.isReLayoutPassNeeded = false;
+            this.isInReLayoutPass = false;
+        }
 
         return (
             <div className="ProjectGrid">
@@ -129,11 +158,37 @@ class Project extends React.Component{
                             {taskListWidgets}
                         </TaskListWidgetGrid>
 
-                    
+
                     </div>
                 </div>
             </div>
         )
+    }
+
+    findNewTaskListId(selectedLayouts, filteredTaskListWidgets) {
+        // Compares the current TaskListIds with the current Layout array. Finds the index of a taskList that doesnt have a matching
+        // entry in the layouts array.
+
+        // Build an Associative array of the layout Ids.
+        var layoutIds = {};
+        selectedLayouts.forEach(item => {
+            layoutIds[item.i] = item;
+        })
+
+        // Build an array of just taskListIds.
+        var taskListIds = filteredTaskListWidgets.map(item => {
+            return item.uid;
+        })
+
+        // Compare each taskListId until it doesn't match anything in LayoutIds.
+        return taskListIds.find(id => {
+            return layoutIds[id] === undefined;
+        })
+    }
+
+
+    handleAssignToMember(userId, taskId) {
+        this.props.onAssignToMember(userId, taskId);
     }
 
     handleTaskMetadataOpen(taskListWidgetId, taskId) {
@@ -215,11 +270,10 @@ class Project extends React.Component{
     }
 
     handleWidgetHeaderDoubleClick(taskListWidgetId) {
-        this.setState({openTaskListWidgetHeaderId: taskListWidgetId});
+        this.props.onTaskListWidgetHeaderDoubleClick(taskListWidgetId);
     }
 
     handleTaskListWidgetHeaderSubmit(taskListWidgetId, newData) {
-        this.setState({openTaskListWidgetHeaderId: -1});
         // Raise it up to Parent.
         this.props.onTaskListWidgetHeaderChanged(taskListWidgetId, newData);
     }

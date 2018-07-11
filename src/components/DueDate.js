@@ -16,6 +16,7 @@ class DueDate extends React.Component {
     this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
     this.handleOverlayMenuOutsideChildBoundsClick = this.handleOverlayMenuOutsideChildBoundsClick.bind(this);
+    this.handleAssignToMember = this.handleAssignToMember.bind(this);
   }
 
 
@@ -37,11 +38,16 @@ class DueDate extends React.Component {
       
       return (
         <OverlayMenuContainer onOutsideChildBoundsClick={this.handleOverlayMenuOutsideChildBoundsClick}>
-            <Calendar dueDate={this.props.dueDate} onNewDateSubmit={this.handleNewDateSubmit}
-              isHighPriority={this.props.isHighPriority} onPriorityToggleClick={this.handlePriorityToggleClick} />
+            <Calendar dueDate={this.props.dueDate} onNewDateSubmit={this.handleNewDateSubmit} projectMembers={this.props.projectMembers}
+              isHighPriority={this.props.isHighPriority} onPriorityToggleClick={this.handlePriorityToggleClick} 
+              onAssignToMember={this.handleAssignToMember} assignedTo={this.props.assignedTo} />
         </OverlayMenuContainer>
       )
     }
+  }
+
+  handleAssignToMember(userId) {
+    this.props.onAssignToMember(userId);
   }
 
   handleOverlayMenuOutsideChildBoundsClick(e) {

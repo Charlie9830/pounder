@@ -7,11 +7,29 @@ class ListToolbar extends React.Component{
     constructor(props) {
         super(props);
 
+        // Refs.
+        this.headerInputRef = React.createRef();
+
+        // Method Bindings.
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
         this.handleSettingsClick = this.handleSettingsClick.bind(this);
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isHeaderOpen !== this.props.isHeaderOpen) {
+            if (this.props.isHeaderOpen) {
+                this.headerInputRef.current.focus();
+            }
+        }
+    }
+
+    componentDidMount() {
+        if (this.props.isHeaderOpen) {
+            this.headerInputRef.current.focus();
+        }
     }
 
     render() {
@@ -50,7 +68,8 @@ class ListToolbar extends React.Component{
     getListToolbarHeader(props) {
         if (props.isHeaderOpen) {
             return (
-                <input id="headerInput" className="ListToolbarHeaderInput nonDraggable" type='text' defaultValue={props.headerText} onKeyPress={this.handleKeyPress}/>
+                <input id="headerInput" className="ListToolbarHeaderInput nonDraggable" ref={this.headerInputRef}
+                 type='text' defaultValue={props.headerText} onKeyPress={this.handleKeyPress}/>
             )
         }
 

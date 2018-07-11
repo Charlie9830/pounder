@@ -25,7 +25,8 @@ removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayout
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata,
-setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, } from 'pounder-redux/action-creators';
+setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
+updateTaskAssignedToAsync } from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -105,6 +106,9 @@ class App extends React.Component {
     this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
     this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
     this.autoBackupIntervalCallback = this.autoBackupIntervalCallback.bind(this);
+    this.getProjectMembers = this.getProjectMembers.bind(this);
+    this.handleAssignToMember = this.handleAssignToMember.bind(this);
+    this.handleTaskListWidgetHeaderDoubleClick = this.handleTaskListWidgetHeaderDoubleClick.bind(this);
   }
 
   componentDidMount(){
@@ -221,6 +225,7 @@ class App extends React.Component {
     var shareMenuJSX = this.getShareMenuJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
+    var projectMembers = this.getProjectMembers();
 
     return (
       <div>
@@ -230,7 +235,7 @@ class App extends React.Component {
         {shutdownScreenJSX}
         {shareMenuJSX}
         {appSettingsMenuJSX}
-        
+      
         <div className="AppGrid">
           <div className="StatusBarAppGridItem">
             <VisibleStatusBar/>
@@ -264,11 +269,35 @@ class App extends React.Component {
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
               onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
-              disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}/>
+              disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
+              projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
+              openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId}
+              onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleAssignToMember(userId, taskId) {
+    this.props.dispatch(updateTaskAssignedToAsync(userId, taskId));
+  }
+
+  getProjectMembers() {
+    if (this.props.isSelectedProjectRemote) {
+      // Filter Members.
+      return this.props.members.filter(item => {
+        return item.project === this.props.selectedProjectId;
+      })
+    }
+
+    else {
+      return [];
+    }
+  }
+
+  handleTaskListWidgetHeaderDoubleClick(taskListWidgetId) {
+    this.props.dispatch(setOpenTaskListWidgetHeaderId(taskListWidgetId));
   }
 
   autoBackupIntervalCallback() {
@@ -627,6 +656,7 @@ const mapStateToProps = state => {
     tasks: state.tasks,
     projectLayouts: state.projectLayouts,
     focusedTaskListId: state.focusedTaskListId,
+    openTaskListWidgetHeaderId: state.openTaskListWidgetHeaderId,
     selectedTask: state.selectedTask,
     selectedProjectId: state.selectedProjectId,
     isSelectedProjectRemote: state.isSelectedProjectRemote,

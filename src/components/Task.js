@@ -30,6 +30,10 @@ class Task extends React.Component {
         this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
         this.getTaskOrMetadata = this.getTaskOrMetadata.bind(this);
         this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
+        this.handleAssignToMember = this.handleAssignToMember.bind(this);
+        this.getTaskAssigneeJSX = this.getTaskAssigneeJSX.bind(this);
+        this.getAssigneeDisplayName = this.getAssigneeDisplayName.bind(this);
+        this.handleTaskAssigneeClick = this.handleTaskAssigneeClick.bind(this);
     }
 
     componentDidMount() {
@@ -51,41 +55,56 @@ class Task extends React.Component {
         Hammer.off(this.taskContainerRef.current, 'swipe');
     }
 
-    /* className="TaskContainer" */
-
     render() {
         var taskOrMetadata = this.getTaskOrMetadata();
-        
-
 
         return (
-            <div ref={this.taskContainerRef} className="TaskContainer" data-ismetadataopen={this.props.isMetadataOpen}>
+            <div ref={this.taskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
+             data-ismetadataopen={this.props.isMetadataOpen}>
                 <div className="TaskTransitionArea">
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {taskOrMetadata}
                     </TransitionGroup>
-                    
                 </div>
                 {this.getBottomBorderJSX(this.props)}
             </div>
         )
     }
 
+    getTaskAssigneeJSX() {
+        if (this.props.assignedTo !== -1) {
+            var displayName = this.getAssigneeDisplayName(this.props.assignedTo);
+
+            return (
+                <div className="TaskAssigneeContainer" data-ishighpriority={this.props.isHighPriority}
+                    onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
+                    <div className="TaskAssignee" onClick={this.handleTaskAssigneeClick}>
+                        <div className="TaskAssigneeDisplayName"> {displayName} </div>
+                    </div>
+                </div>
+            )
+        }
+    }
+
+    getAssigneeDisplayName(userId) {
+        var member = this.props.projectMembers.find(item => {
+            return item.userId === userId;
+        })
+
+        if (member !== undefined) {
+            return member.displayName;
+        }
+    }
+
     getTaskOrMetadata() {
         if (this.props.isMetadataOpen !== true) {
-            var currentClassName = "";
-            if (this.props.isMoving) {
-                currentClassName = "TaskMovingStyle"
-            }
-            else {
-                currentClassName = this.props.isSelected ? 'TaskActiveStyle' : 'TaskInactiveStyle';
-            }
+            var taskAssigneeJSX = this.getTaskAssigneeJSX();
 
             return (
                 <CSSTransition classNames="TaskTransitionItem" timeout={250} mountOnEnter={true} unmountOnExit={true}
                  key="task">
                 <div>
-                    <div className={currentClassName} data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
+                    <div className="Task" data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
                         <div className={"TaskCheckBox"} >
                             <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}
                             disableAnimations={this.props.disableAnimations} />
@@ -100,9 +119,12 @@ class Task extends React.Component {
                         <div className="DueDateContainer">
                             <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
                                 isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
-                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority} />
+                                projectMembers={this.props.projectMembers} onAssignToMember={this.handleAssignToMember}
+                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority}
+                                assignedTo={this.props.assignedTo} />
                         </div>
                     </div>
+                    {taskAssigneeJSX}
                 </div>
                 </CSSTransition>
             )
@@ -118,6 +140,15 @@ class Task extends React.Component {
                 </CSSTransition>
             )
         }
+    }
+
+    handleTaskAssigneeClick(e) {
+        e.stopPropagation();
+        this.handleDueDateClick();
+    }
+
+    handleAssignToMember(userId) {
+        this.props.onAssignToMember(userId, this.props.taskId);
     }
 
     handleTaskMetadataCloseButtonClick() {

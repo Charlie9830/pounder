@@ -4,8 +4,8 @@ import '../assets/css/react-day-picker/style.css';
 import DayPicker from 'react-day-picker';
 import Button from './Button';
 import Moment from 'moment';
-import { EnableBodyScroll, DisableBodyScroll } from '../utilities/DOMHelpers';
 import { getDayPickerDate, getClearedDate, getDaysForwardDate, getWeeksForwardDate } from 'pounder-utilities';
+import { getUserUid } from 'pounder-firebase';
 
 
 class Calendar extends React.Component {
@@ -27,21 +27,15 @@ class Calendar extends React.Component {
         this.submitDays = this.submitDays.bind(this);
         this.handleDaysInputKeyPress = this.handleDaysInputKeyPress.bind(this);
         this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
-
-        const dateFormat = "DD-MM-YYYY";
-    }
-
-    componentDidMount() {
-        DisableBodyScroll();
-    }
-
-    componentWillUnmount() {
-        EnableBodyScroll();
+        this.getMembersJSX = this.getMembersJSX.bind(this);
+        this.getAssignToJSX = this.getAssignToJSX.bind(this);
+        this.handleMemberClick = this.handleMemberClick.bind(this);
     }
 
     render() {
         var humanFriendlyDate = this.getHumanFriendlyDate(this.props);
         var daysApplyButton = this.getDaysApplyButton(this.state);
+        var assignToJSX = this.getAssignToJSX();
 
         return (
             <div className="CalendarPopupContainer">
@@ -90,8 +84,66 @@ class Calendar extends React.Component {
                         </div>
                     </div>
                 </div>
+
+                {/* Assign To  */} 
+                {assignToJSX}
+                
             </div>
         )
+    }
+
+    getAssignToJSX() {
+        if (this.props.projectMembers.length > 0) {
+            var membersJSX = this.getMembersJSX();
+
+            return (
+                <div className="CalendarAssignToContainer">
+                    {/* Header  */}
+                    <div className="CalendarAssignToHeaderContainer">
+                        <div className="CalendarAssignToHeader"> Assign To </div>
+                    </div>
+    
+                    {/* Members  */}
+                    <div className="CalendarMembersContainer">
+                        {membersJSX}
+                    </div>
+    
+                </div>
+            )
+        }
+    }
+    
+    getMembersJSX() {
+        var members = [...this.props.projectMembers];
+        members.sort(function(a, b) {
+            if(a.displayName < b.displayName) return -1;
+            if(a.displayName > b.displayName) return 1;
+            return 0;
+        })
+
+        members.unshift({displayName: "Nobody", userId: -1 })
+        var currentUserUid = getUserUid();
+
+        var jsx = members.map((item, index) => {
+            var isSelected = item.userId === this.props.assignedTo;
+            var displayName = item.userId === currentUserUid ? "Myself" : item.displayName;
+
+            return (
+                <div className="CalendarMember" key={index} onClick={() => {this.handleMemberClick(item.userId)}}>
+                    <div className="CalendarMemberName" data-isselected={isSelected}> {displayName} </div>
+                </div>
+            )
+        })
+
+        return (
+            <React.Fragment>
+                {jsx}
+            </React.Fragment>
+        )
+    }
+
+    handleMemberClick(userId) {
+        this.props.onAssignToMember(userId);
     }
 
     handlePriorityToggleClick(e) {

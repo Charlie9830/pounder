@@ -28,12 +28,12 @@ class TaskListWidget extends React.Component {
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+        this.handleAssignToMember = this.handleAssignToMember.bind(this);
     }
 
     componentDidMount(){
         var _this = this;
     }
-    
 
     render(){
         var builtTasks = [];
@@ -67,6 +67,7 @@ class TaskListWidget extends React.Component {
                 var renderBottomBorder = array.length !== 1 && index !== array.length - 1;
                 var metadata = item.metadata === undefined ? Object.assign({}, new TaskMetadataStore("", "", "", "", "")) 
                 : item.metadata; 
+                var assignedTo = item.assignedTo === undefined ? -1 : item.assignedTo;
 
                 return (
                     <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true}>
@@ -78,7 +79,8 @@ class TaskListWidget extends React.Component {
                                 isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} onMetadataOpen={this.handleTaskMetadataOpen}
                                 isHighPriority={item.isHighPriority} onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
                                 onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
-                                metadata={metadata} disableAnimations={this.props.disableAnimations} />
+                                metadata={metadata} disableAnimations={this.props.disableAnimations} projectMembers={this.props.projectMembers}
+                                onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo} />
                     </CSSTransition>
                 )
             })
@@ -101,6 +103,10 @@ class TaskListWidget extends React.Component {
                 </TaskArea>
             </div>
         )
+    }
+
+    handleAssignToMember(userId, taskId) {
+        this.props.onAssignToMember(userId, taskId);
     }
 
     handleTaskMetadataOpen(taskId) {
@@ -189,6 +195,14 @@ class TaskListWidget extends React.Component {
         return dateAddedA - dateAddedB;
     }
 
+    taskSortAssigneeHelper(a,b) {
+        var a = a.assignedTo === undefined || a.assignedTo === -1 ? "z".charCodeAt(0) : a.assignedTo.charCodeAt(0);
+        var b = b.assignedTo === undefined || b.assignedTo === -1 ? "z".charCodeAt(0) : b.assignedTo.charCodeAt(0);
+
+        return a - b;
+        
+    }
+
     getTaskSorter(props) {
         var sortBy = props.settings.sortBy;
         if (sortBy === "completed") {
@@ -205,6 +219,10 @@ class TaskListWidget extends React.Component {
 
         if (sortBy === "priority") {
             return this.taskSortPriorityHelper;
+        }
+
+        if (sortBy === "assignee") {
+            return this.taskSortAssigneeHelper;
         }
     } 
 

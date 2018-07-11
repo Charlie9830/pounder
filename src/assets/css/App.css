@@ -37,6 +37,8 @@
   --important-color: #FF9300;
   --due-date-text-color: #FFF;
   --due-date-circle-color: #777;
+  --assignee-background-color: #236c76;
+  --assignee-text-color: #FFF;
 
   /* Task List */
   --task-list-header-text-color: #FFF;
