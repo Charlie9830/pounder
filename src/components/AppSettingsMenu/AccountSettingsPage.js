@@ -35,6 +35,12 @@ class AccountSettingsPage extends React.Component {
         if (this.refs.emailInput !== undefined) {
             this.refs.emailInput.focus();
         }
+
+        if (this.props.isFirstTimeBoot) {
+            // First time boot. Jump to Register Screen.
+            this.setState({ isInRegisterMode: true });
+            this.props.onIsFirstTimeBootChange(false);
+        }
     }
 
     

@@ -199,9 +199,6 @@
     max-height: 0px;
   }
   
-  .InviteContainer:hover {
-    background: var(--primary-hover-color);
-  }
 
 .InviteProjectAndDisplayNameContainer {
     grid-column: ProjectAndDisplayName;

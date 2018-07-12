@@ -29,6 +29,7 @@ class TaskListWidget extends React.Component {
         this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
+        this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
     }
 
     componentDidMount(){
@@ -95,7 +96,7 @@ class TaskListWidget extends React.Component {
                  onRemoveButtonClick={this.handleRemoveButtonClick} isSettingsMenuOpen={isSettingsMenuOpen}
                  onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
-                 isFocused={this.props.isFocused}/>
+                 isFocused={this.props.isFocused} onSettingsMenuClose={this.handleSettingsMenuClose}/>
                 <TaskArea>
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {builtTasks}
@@ -103,6 +104,10 @@ class TaskListWidget extends React.Component {
                 </TaskArea>
             </div>
         )
+    }
+
+    handleSettingsMenuClose() {
+        this.props.onSettingsMenuClose();
     }
 
     handleAssignToMember(userId, taskId) {

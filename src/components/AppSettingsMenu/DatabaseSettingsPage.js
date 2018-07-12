@@ -12,47 +12,15 @@ import '../../assets/css/ToolBarButton.css';
 class DatabaseSettingsPage extends React.Component {
     constructor(props) {
         super(props);
-        
-        // Method Bindings.
-        this.getDatabaseInfoPaneJSX = this.getDatabaseInfoPaneJSX.bind(this);
-        this.handleGetInfoButtonClick = this.handleGetInfoButtonClick.bind(this);
-        this.getPurgeButtonJSX = this.getPurgeButtonJSX.bind(this);
-        this.handlePurgeCompletedTasksButtonClick = this.handlePurgeCompletedTasksButtonClick.bind(this);
-        this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
-        this.getRestoreButtonJSX = this.getRestoreButtonJSX.bind(this);
     }
 
     render() {
-        var databaseInfoPaneJSX = this.getDatabaseInfoPaneJSX()
-        var purgeButtonJSX = this.getPurgeButtonJSX();
-        var restoreButtonJSX = this.getRestoreButtonJSX();
-
         // Only render settings if Logged in.
         if (this.props.isLoggedIn) {
             return (
                 <div className="AppSettingsVerticalFlexContainer">
-                    {/* Database Info */}
-                    <div className="AppSettingsVerticalFlexItem">
-                        <span className="AppSettingsHorizontalFlexItem">
-                            <div className="AppSettingsItemLabel"> Database Info </div>
-                        </span>
-                        <span className="AppSettingsHorizontalFlexItem">
-                            {databaseInfoPaneJSX}
-                        </span>
-                    </div>
-
-                    {/* Purge Database of completed items */}
-                    <div className="AppSettingsVerticalFlexItem">
-                        <div className="AppSettingsHorizontalFlexItem">
-                            <div className="AppSettingsItemLabel"> Purge Database of completed tasks </div>
-                        </div>
-                        <span className="AppSettingsHorizontalFlexItem">
-                            {purgeButtonJSX}
-                        </span>
-                    </div>
-
                     {/* Restore Database from Disk */}
-                    <MenuSubtitle text="Restore projects from Backup"/>
+                    <MenuSubtitle text="Restore projects from Backup" showDivider={false}/>
                     <div className="AppSettingsVerticalFlexItem">
                         <DatabaseRestore onSelectFileClick={() => {this.props.onSelectFileClick()}}
                         backupData={this.props.backupData} isReadingBackupFile={this.props.isReadingBackupFile}
@@ -70,67 +38,6 @@ class DatabaseSettingsPage extends React.Component {
             )
         }
 
-    }
-
-    getRestoreButtonJSX() {
-        if (this.props.isDatabaseRestoring) {
-            return (
-                <div>
-                    <Spinner size="medium" />
-                </div>
-            )
-        }
-
-        else {
-            return (
-                <Button text="Restore" onClick={this.handleRestoreDatabaseButtonClick}/>
-            )
-        }
-    }
-
-    handleRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds) {
-        this.props.onRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds);
-    }
-
-    handlePurgeCompletedTasksButtonClick() {
-        this.props.onPurgeCompletedTasksButtonClick();
-    }
-
-    getPurgeButtonJSX() {
-        if (this.props.isDatabasePurging) {
-            return (
-                <Spinner size={"medium"}/>
-            )
-
-        }
-
-        else {
-            return (
-                <Button text="Purge" onClick={this.handlePurgeCompletedTasksButtonClick}/>
-            )
-        }
-    }
-
-    getDatabaseInfoPaneJSX() {
-        if (this.props.databaseInfo === "") {
-            return (
-                <Button text="Get Info" onClick={this.handleGetInfoButtonClick}/>
-            )
-        }
-
-        else {
-            return (
-                <div>
-                    <textarea className="DatabaseSettingsPageInfoPane" type='text' value={this.props.databaseInfo} 
-                        readOnly="true" />
-                    <Button text="Refresh" onClick={this.handleGetInfoButtonClick}/>
-                </div>
-            )
-        }
-    }
-
-    handleGetInfoButtonClick(e) {
-        this.props.onGetDatabaseInfoClick();
     }
 }
 

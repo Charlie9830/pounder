@@ -1,5 +1,6 @@
 import React from 'react'; 
 import ReactDOM from 'react-dom';
+import '../assets/css/Containers/ContextMenuContainer.css';
 
 // window.innerWidth and window.innerHeight will give you the Parent container size.
 // this.containerRef.current.getBoundingClientRect() will give you the Children Size.
@@ -17,6 +18,9 @@ class ContextMenuContainer extends React.Component {
         // Refs.
         this.containerRef = React.createRef();
         this.adjustOffsets = this.adjustOffsets.bind(this);
+
+        // Method Bindings.
+        this.handleContainerClick = this.handleContainerClick.bind(this);
     }
     
     componentDidMount() {
@@ -47,20 +51,31 @@ class ContextMenuContainer extends React.Component {
             left: this.state.actualOffsetX,
             top: this.state.actualOffsetY,
             zIndex: 50,
+            background: 'purple,'
         }
 
         var contentJSX = (
-            <div style={containerStyle} ref={this.containerRef}>
-                {this.props.children}
+            <div className="ContextMenuContainerOverlay" onClick={(e) => { this.handleContainerClick(e, 'outside') }}>
+                <div style={containerStyle} ref={this.containerRef} onClick={(e) => { this.handleContainerClick(e, 'inside') }}>
+                    {this.props.children}
+                </div>
             </div>
         )
 
         return ReactDOM.createPortal(contentJSX, document.getElementById('root'));
     }
 
+    handleContainerClick(e, location) {
+        e.stopPropagation();
+        if (location === 'outside') {
+            if (this.props.onOutsideChildBoundsClick !== undefined) {
+                this.props.onOutsideChildBoundsClick(e);
+            }
+        }
+    }
+
     adjustOffsets() {
         // Calculate if the Child elements are rendering outside the Screen area. If so, adjust their position.
-        
         var updateRequired = false;
         var windowHeight = Math.floor(window.innerHeight);
         var windowWidth = Math.floor(window.innerWidth);

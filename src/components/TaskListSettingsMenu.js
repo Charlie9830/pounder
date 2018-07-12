@@ -19,16 +19,14 @@ class TaskListSettingsMenu extends React.Component {
         var selectableItems = this.getSelectableMenuItems(this.props);
 
         return (
-            <div className="TaskListSettingsMenuPopup">
-                <div className="TaskListSettingMenuContainer">
-                    <div className="ShowCompletedTasksSelection">
-                        <input className="ShowCompletedTasksCheckBox" ref="showCompleteTasksCheckbox" type="checkbox"
-                            defaultChecked={this.props.settings.isCompleteTasksShown}
-                            onClick={this.handleShowCompletedTasksCheckboxClick} />
-                        <label className="ShowCompletedTasksLabel"> Show Completed Tasks </label>
-                    </div>
-                    {selectableItems}
+            <div className="TaskListSettingsMenuContainer">
+                <div className="ShowCompletedTasksSelection">
+                    <input className="ShowCompletedTasksCheckBox" ref="showCompleteTasksCheckbox" type="checkbox"
+                        defaultChecked={this.props.settings.isCompleteTasksShown}
+                        onClick={this.handleShowCompletedTasksCheckboxClick} />
+                    <label className="ShowCompletedTasksLabel"> Show Completed Tasks </label>
                 </div>
+                {selectableItems}
             </div>
         )
     }

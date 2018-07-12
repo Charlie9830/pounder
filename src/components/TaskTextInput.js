@@ -10,6 +10,7 @@ class TaskTextInput extends React.Component {
 
         // Method Bindings
         this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleInputBlur = this.handleInputBlur.bind(this);
     }
 
     componentDidMount() {
@@ -27,7 +28,7 @@ class TaskTextInput extends React.Component {
     render() {
         return (
             <TextareaAutosize className="TaskTextInput" innerRef={ref => this.textarea = ref} type='text' defaultValue={this.props.defaultValue}
-             onKeyPress={this.handleKeyPress}/>
+             onKeyPress={this.handleKeyPress} onBlur={this.handleInputBlur}/>
         )
     }
 
@@ -35,11 +36,12 @@ class TaskTextInput extends React.Component {
         if (e.key === "Enter") {
             this.hasEnterKeyBeenPressed = true;
         }
-
         this.props.onKeyPress(e, this.textarea.value);
     }
 
-
+    handleInputBlur() {
+        this.props.onComponentUnmounting(this.textarea.value);
+    }
 }
 
 export default TaskTextInput;

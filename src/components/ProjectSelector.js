@@ -2,25 +2,55 @@ import React from 'react';
 import '../assets/css/ProjectSelector.css';
 import FavoriteIcon from '../assets/icons/HeartIcon.svg';
 import TextareaAutosize from 'react-autosize-textarea';
+import Hammer from 'hammerjs';
 
 class ProjectSelector extends React.Component {
     constructor(props) {
         super(props);
 
+        this.hammer = {};
+
+        // Refs.
+        this.containerRef = React.createRef();
+
+        // Method Bindings.
         this.handleClick = this.handleClick.bind(this);
         this.handleDoubleClick = this.handleDoubleClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
         this.getDueDateCountsJSX = this.getDueDateCountsJSX.bind(this);
         this.getHeartJSX = this.getHeartJSX.bind(this);
+        this.handleInputBlur = this.handleInputBlur.bind(this);
     }
 
-    render(){
+    componentDidMount() {
+        if (this.props.isInputOpen) {
+            this.textarea.focus();
+        }
+
+        this.hammer = new Hammer(this.containerRef.current);
+        this.hammer.on('tap', this.handleDoubleClick);
+        this.hammer.get('tap').set({taps: 2});
+    }
+
+    componentWillUnmount() {
+        this.hammer.off('tap', this.containerRef.current, this.handleDoubleClick);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isInputOpen !== this.props.isInputOpen) {
+            if (this.props.isInputOpen) {
+                this.textarea.focus();
+            }
+        }
+    }
+
+    render() {
         var projectLabelJSX = this.getProjectLabelJSX(this.props);
         var dueDateCounts = this.getDueDateCountsJSX(this.props);
         var heartJSX = this.getHeartJSX();
 
         return (
-            <div className="ProjectSelectorContainer" onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
+            <div className="ProjectSelectorContainer" ref={this.containerRef} onClick={this.handleClick} onDoubleClick={this.handleDoubleClick}>
                 <div className="ProjectSelectorFlexContainer">
                     {heartJSX}
                     <div className="ProjectSelectorLabelContainer">
@@ -71,7 +101,7 @@ class ProjectSelector extends React.Component {
         if (this.props.isInputOpen) {
             return (
                 <TextareaAutosize className="ProjectSelectorInput" innerRef={ref => this.textarea = ref} type='text' defaultValue={this.props.projectName}
-                onKeyPress={this.handleKeyPress}/>
+                onKeyPress={this.handleKeyPress} onBlur={this.handleInputBlur}/>
             )
         }
 
@@ -94,6 +124,10 @@ class ProjectSelector extends React.Component {
         if (e.key === "Enter") {
             this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value);
         }
+    }
+
+    handleInputBlur() {
+        this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value);
     }
 
 

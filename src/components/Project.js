@@ -12,9 +12,8 @@ class Project extends React.Component{
     constructor(props){
         super(props);
 
-        this.layoutBuffer = [];
-        this.isReLayoutPassNeeded = false;
-        this.isInReLayoutPass = false;
+        this.layoutSyncRequired = false;
+        this.layoutsToSync = null;
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
         this.handleWidgetClick = this.handleWidgetClick.bind(this);
@@ -40,13 +39,14 @@ class Project extends React.Component{
         this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
+        this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.isReLayoutPassNeeded) {
-            this.props.onLayoutChange(this.layoutBuffer, this.props.projectId);
-            this.isInReLayoutPass = true;
-            this.forceUpdate();
+        if (this.layoutSyncRequired) {
+            this.props.onLayoutChange([...this.layoutsToSync], this.props.projectId);
+            this.layoutSyncRequired = false;
+            this.layoutsToSync = null;
         }
     }
 
@@ -102,7 +102,7 @@ class Project extends React.Component{
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} projectMembers={this.props.projectMembers}
                      onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
                      onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
-                     onAssignToMember={this.handleAssignToMember}
+                     onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
                      />   
                 </div>
             )
@@ -120,24 +120,18 @@ class Project extends React.Component{
         })
 
         var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
-        var newTaskListId = this.findNewTaskListId(selectedLayouts, filteredTaskListWidgets);
-        if (newTaskListId !== undefined) {
-            // Push a new non stubby Layout Item into the next Render Cycle.
-            var layoutBuffer = [...selectedLayouts];
-            layoutBuffer.push( {i: newTaskListId, x: 0, y: 0, w: 6, h: 4} );
 
-            this.layoutBuffer = layoutBuffer;
-            this.isReLayoutPassNeeded = true;
+        var freshIds = this.findFreshTaskListIds(filteredTaskListWidgets);
+        freshIds.forEach(id => {
+            selectedLayouts.push({i: id, x: 0, y: 0, w: 6, h: 4 });
+        })
 
-            console.warn("New Task List Detected. Re Render Required.");
+        if (freshIds.length > 0) {
+            this.layoutSyncRequired = true;
+            this.layoutsToSync = selectedLayouts;
         }
-
-        if (this.isInReLayoutPass) {
-            console.warn("Re Rendering");
-            selectedLayouts = this.layoutBuffer;
-            this.isReLayoutPassNeeded = false;
-            this.isInReLayoutPass = false;
-        }
+        
+        var layouts = JSON.parse(JSON.stringify(selectedLayouts));
 
         return (
             <div className="ProjectGrid">
@@ -153,7 +147,7 @@ class Project extends React.Component{
                     
                         {projectMessageDisplayJSX}
 
-                        <TaskListWidgetGrid rglClassName={rglClassName} layout={selectedLayouts}
+                        <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts}
                             onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
                             {taskListWidgets}
                         </TaskListWidgetGrid>
@@ -165,25 +159,19 @@ class Project extends React.Component{
         )
     }
 
-    findNewTaskListId(selectedLayouts, filteredTaskListWidgets) {
-        // Compares the current TaskListIds with the current Layout array. Finds the index of a taskList that doesnt have a matching
-        // entry in the layouts array.
+    handleSettingsMenuClose() {
+        this.props.onSettingsMenuClose();
+    }
 
-        // Build an Associative array of the layout Ids.
-        var layoutIds = {};
-        selectedLayouts.forEach(item => {
-            layoutIds[item.i] = item;
+    findFreshTaskListIds(filteredTaskListWidgets) {
+        var freshIds = [];
+        filteredTaskListWidgets.forEach(item => {
+            if (item.isFresh !== undefined && item.isFresh === true) {
+                freshIds.push(item.uid);
+            }
         })
 
-        // Build an array of just taskListIds.
-        var taskListIds = filteredTaskListWidgets.map(item => {
-            return item.uid;
-        })
-
-        // Compare each taskListId until it doesn't match anything in LayoutIds.
-        return taskListIds.find(id => {
-            return layoutIds[id] === undefined;
-        })
+        return freshIds;
     }
 
 

@@ -158,6 +158,46 @@
     cursor: default;
 }
 
+.ProjectMemberContainer-enter {
+    max-height: 0px;
+    opacity: 0.01;
+    overflow: hidden;
+  }
+  
+  .ProjectMemberContainer-enter-active {
+    max-height: 240px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 250ms ease, opacity 250ms ease;
+  }
+  
+  .ProjectMemberContainer-enter-done {
+    height: auto;
+    position: relative; 
+    overflow: visible;
+    max-height: 240px; /* Arbirtralily larger then the container will ever get */
+  }
+  
+  .ProjectMemberContainer-exit {
+    height: auto;
+    position: relative; 
+    overflow: visible;
+    max-height: 240px; /* Arbirtralily larger then the container will ever get */
+    opacity: 0.5;
+  }
+  
+  .ProjectMemberContainer-exit-active {
+    max-height: 0px;
+    opacity: 0.01;
+    overflow: hidden;
+    transition: max-height 350ms ease, opacity 150ms ease;
+  }
+  
+  .ProjectMemberContainer-exit-done {
+    min-height: 0px;
+    max-height: 0px;
+  }
+
 .ProjectMember[data-isupdating*='true'] {
     opacity: 0.5;
     user-select: none;
@@ -243,6 +283,10 @@
 
 .ProjectMemberStatus[data-status*='added'] {
     color: #008000;
+}
+
+.ProjectMemberStatus[data-status*='rejected invite'] {
+    color: rgb(206, 36, 36);
 }
 
 .ProjectMemberDivider {

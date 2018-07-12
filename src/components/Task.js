@@ -52,7 +52,7 @@ class Task extends React.Component {
     }
 
     componentWillUnmount() {
-        Hammer.off(this.taskContainerRef.current, 'swipe');
+        Hammer.off(this.taskContainerRef.current, 'press');
     }
 
     render() {

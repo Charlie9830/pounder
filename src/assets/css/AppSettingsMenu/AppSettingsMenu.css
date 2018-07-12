@@ -183,7 +183,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AppSettingsAccountStatus {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
-    height: 24px;
+    min-height: 42px;
     color: var(--alternate-active-text-color);
 }
 
@@ -203,7 +203,7 @@ input.AppSettingsItemInput[type*="number"] {
 } 
 
 .AppSettingsAccountEmailContainer {
-    margin-top: 10px;
+    margin-top: 25px;
 }
 
 .AppSettingsAccountDisplayNameContainer {

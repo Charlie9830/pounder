@@ -23,10 +23,11 @@ lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewT
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync,
-setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata,
+updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
+setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
-updateTaskAssignedToAsync } from 'pounder-redux/action-creators';
+updateTaskAssignedToAsync, 
+setAppSettingsMenuPage} from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -109,6 +110,8 @@ class App extends React.Component {
     this.getProjectMembers = this.getProjectMembers.bind(this);
     this.handleAssignToMember = this.handleAssignToMember.bind(this);
     this.handleTaskListWidgetHeaderDoubleClick = this.handleTaskListWidgetHeaderDoubleClick.bind(this);
+    this.handleProjectSelectorInputDoubleClick = this.handleProjectSelectorInputDoubleClick.bind(this);
+    this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
   }
 
   componentDidMount(){
@@ -250,6 +253,8 @@ class App extends React.Component {
               onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} isSelectedProjectRemote={this.props.isSelectedProjectRemote}
               onAcceptInviteButtonClick={this.handleAcceptInviteButtonClick} onDenyInviteButtonClick={this.handleDenyInviteButtonClick}
               onShareMenuButtonClick={this.handleShareMenuButtonClick} updatingInviteIds={this.props.updatingInviteIds}
+              onProjectSelectorInputDoubleClick={this.handleProjectSelectorInputDoubleClick} 
+              openProjectSelectorId={this.props.openProjectSelectorId}
             />
           </div>
           <div className="ProjectAppGridItem">
@@ -271,12 +276,20 @@ class App extends React.Component {
               onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
               disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
               projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
-              openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId}
+              openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleSettingsMenuClose() {
+    this.props.dispatch(setOpenTaskListSettingsMenuId(-1));
+  }
+
+  handleProjectSelectorInputDoubleClick(projectSelectorId) {
+    this.props.dispatch(setOpenProjectSelectorId(projectSelectorId));
   }
 
   handleAssignToMember(userId, taskId) {
@@ -659,6 +672,7 @@ const mapStateToProps = state => {
     openTaskListWidgetHeaderId: state.openTaskListWidgetHeaderId,
     selectedTask: state.selectedTask,
     selectedProjectId: state.selectedProjectId,
+    openProjectSelectorId: state.openProjectSelectorId,
     isSelectedProjectRemote: state.isSelectedProjectRemote,
     isATaskMoving: state.isATaskMoving,
     movingTaskId: state.movingTaskId,

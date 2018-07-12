@@ -9,6 +9,7 @@ import RemoveProjectIcon from '../assets/icons/RemoveProjectIcon.svg';
 import ShareIcon from '../assets/icons/ShareIcon.svg';
 import AcceptIcon from '../assets/icons/AcceptIcon.svg';
 import DenyIcon from '../assets/icons/DenyIcon.svg';
+import { ANGULARJS_BATARANG } from 'electron-devtools-installer';
 
 
 class Sidebar extends React.Component {
@@ -35,10 +36,6 @@ class Sidebar extends React.Component {
         this.getInvitesJSX = this.getInvitesJSX.bind(this);
         this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
         this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
-
-        this.state = {
-            openProjectSelectorInputId: -1,
-        }
     }
 
     render() {
@@ -58,6 +55,7 @@ class Sidebar extends React.Component {
         var sidebarToolbarJSX = this.getSidebarToolbarJSX();
         var collapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX();
         var isShareButtonEnabled = this.props.selectedProjectId !== -1;
+        this.getIsInviteUpdating = this.getIsInviteUpdating.bind(this);
 
         return (
             <div className={sidebarClassName} data-disableanimations={this.props.disableAnimations} onClick={this.handleSidebarClick}>
@@ -119,9 +117,10 @@ class Sidebar extends React.Component {
 
 
     getInvitesJSX() {
-        // InviteStore(projectName, targetUserId, sourceUserId, sourceEmail, sourceDisplayName, projectId, role);
         var jsx = this.props.invites.map((item, index) => {
-            var isEnabled = !this.props.updatingInviteIds.hasOwnProperty(item.projectId);
+            
+            var isEnabled = !this.getIsInviteUpdating(item.projectId);
+            console.warn("value is " + isEnabled);
             return (
                 <CSSTransition key={index} classNames="InviteContainer" timeout={250}>
                     <div className="InviteContainer" key={index} data-isenabled={isEnabled}>
@@ -142,6 +141,10 @@ class Sidebar extends React.Component {
         })
 
         return jsx;
+    }
+
+    getIsInviteUpdating(inviteId) {
+        return this.props.updatingInviteIds.includes(inviteId);
     }
 
     getSidebarFullBleedDividerJSX(shouldRender) {
@@ -184,7 +187,7 @@ class Sidebar extends React.Component {
 
     projectMapper(item, index) {
         var isSelected = this.props.selectedProjectId === item.uid;
-        var isInputOpen = item.uid === this.state.openProjectSelectorInputId;
+        var isInputOpen = item.uid === this.props.openProjectSelectorId;
         var dueDateDisplay = this.props.projectSelectorDueDateDisplays[item.uid];
         var isFavouriteProject = this.props.favouriteProjectId === item.uid;
 
@@ -265,7 +268,7 @@ class Sidebar extends React.Component {
     }
 
     handleProjectSelectorDoubleClick(e, projectSelectorId) {
-        this.setState({ openProjectSelectorInputId: projectSelectorId });
+        this.props.onProjectSelectorInputDoubleClick(projectSelectorId);
     }
 
     handleAddProjectClick(e) {
@@ -277,8 +280,6 @@ class Sidebar extends React.Component {
     }
 
     handleProjectNameSubmit(projectSelectorId, newProjectName) {
-        // Close Input and Forward on Event.
-        this.setState({ openProjectSelectorInputId: -1 })
         this.props.onProjectNameSubmit(projectSelectorId, newProjectName);
     }
 }

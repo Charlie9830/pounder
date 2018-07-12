@@ -73,7 +73,7 @@ class LockScreen extends React.Component {
         if (moment.isValid()) {
             var fromNow = moment.fromNow();
             var humanFriendlyTime = moment.format("dddd, MMMM Do YYYY, h:mm a");
-            var message = `Last backup performed ${fromNow} at ${humanFriendlyTime}`;
+            var message = `Last backup performed ${fromNow} on ${humanFriendlyTime}`;
     
             this.setState({ lastBackupMessage: message });
         }

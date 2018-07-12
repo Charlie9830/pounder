@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import Button from './Button';
 import MenuSubtitle from './MenuSubtitle';
 import Spinner from './Spinner';
@@ -36,6 +37,7 @@ class ShareMenu extends React.Component {
         this.handleMakePersonalButtonClick = this.handleMakePersonalButtonClick.bind(this);
         this.handleEmailInputKeyPress = this.handleEmailInputKeyPress.bind(this);
         this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
+        this.getIsMemberUpdating = this.getIsMemberUpdating.bind(this);
     }
 
     render() {
@@ -122,50 +124,47 @@ class ShareMenu extends React.Component {
         if (this.props.selectedProjectId !== -1) {
             var isCurrentUserOwner = this.isCurrentUserAnOwner(filteredMembers);
 
-            var sortedMembers = filteredMembers.sort((a,b) => {
-                if (a.role === 'owner' && b.role === 'member') {
-                    return -1;
-                }
-
-                return 1;
-            })
-
-            membersJSX = sortedMembers.map((item, index) => {
-                var isUpdating = item.userId === this.props.updatingUserId;
+            membersJSX = filteredMembers.map((item, index) => {
+                var isUpdating = this.getIsMemberUpdating(item.userId, this.props.selectedProjectId);
 
                 return (
-                    <div key={index} className="ProjectMember" data-isupdating={isUpdating}>
-                        <div className="ProjectMemberGrid">
-                            {/* DisplayName and Email  */}
-                            <div className="ProjectMemberNameAndEmailContainer">
-                                <div className="ProjectMemberDisplayName">
-                                    {item.displayName}
+                    <CSSTransition key={item.userId} classNames="ProjectMemberContainer" timeout={250} >
+                        <div>
+                            <div key={index} className="ProjectMember" data-isupdating={isUpdating}>
+                                <div className="ProjectMemberGrid">
+                                    {/* DisplayName and Email  */}
+                                    <div className="ProjectMemberNameAndEmailContainer">
+                                        <div className="ProjectMemberDisplayName">
+                                            {item.displayName}
+                                        </div>
+                                        <div className="ProjectMemberEmail">
+                                            {item.email}
+                                        </div>
+                                    </div>
+
+                                    {/* Role  */}
+                                    <div className="ProjectMemberRole">
+                                        {this.toTitleCase(item.role)}
+                                    </div>
+
+                                    {/* Buttons  */}
+                                    <div className="ProjectMemberButtonsContainer" data-isenabled={isCurrentUserOwner}>
+                                        {this.getRoleButtonJSX(item)}
+                                        {this.getKickButtonJSX(item)}
+                                    </div>
+
+                                    {/* Status  */}
+                                    <div className="ProjectMemberStatus" data-status={item.status}>
+                                        {this.toTitleCase(item.status)}
+                                    </div>
+
+                                    {/* Half Bleed Divider */}
+                                    <div className="ProjectMemberDivider" />
                                 </div>
-                                <div className="ProjectMemberEmail">
-                                    {item.email}
-                                </div>
                             </div>
-
-                            {/* Role  */}
-                            <div className="ProjectMemberRole">
-                                {this.toTitleCase(item.role)}
-                            </div>
-
-                            {/* Buttons  */}
-                            <div className="ProjectMemberButtonsContainer" data-isenabled={isCurrentUserOwner}>
-                                {this.getRoleButtonJSX(item)}
-                                {this.getKickButtonJSX(item)}
-                            </div>
-
-                            {/* Status  */}
-                            <div className="ProjectMemberStatus" data-status={item.status}>
-                                {this.toTitleCase(item.status)}
-                            </div>
-
-                            {/* Half Bleed Divider */}
-                            <div className="ProjectMemberDivider" />
                         </div>
-                    </div>
+
+                    </CSSTransition>
                 )
             })
 
@@ -182,13 +181,22 @@ class ShareMenu extends React.Component {
             }
     
             else {
+                var disableAnimations = this.props.generalConfig.disableAnimations === undefined ?
+                 false : this.props.generalConfig.disableAnimations;
+
                 return (
-                    <div>
+                    <TransitionGroup enter={!disableAnimations} exit={!disableAnimations}>
                         {membersJSX}
-                    </div>
+                    </TransitionGroup>
                 )
             }
         }
+    }
+
+    getIsMemberUpdating(userId, projectId) {
+        return this.props.updatingUserIds.some(item => {
+            return item.userId === userId && item.projectId === projectId;
+        })
     }
 
     handleEmailInputKeyPress(e) {
@@ -289,6 +297,7 @@ class ShareMenu extends React.Component {
         result => {
             if (result === "ok") {
                 this.props.dispatch(kickUserFromProjectAsync(this.props.selectedProjectId, getUserUid()));
+                this.props.dispatch(setIsShareMenuOpen(false));
             }
 
             this.props.dispatch(setMessageBox(false));
@@ -458,7 +467,8 @@ let mapStateToProps = state => {
         members: state.members,
         userEmail: state.userEmail,
         displayName: state.displayName,
-        updatingUserId: state.updatingUserId,
+        updatingUserIds: state.updatingUserIds,
+        generalConfig: state.generalConfig,
     }
 }
 

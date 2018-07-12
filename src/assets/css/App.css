@@ -42,8 +42,10 @@
 
   /* Task List */
   --task-list-header-text-color: #FFF;
-  --task-list-selected-border-color: #FFF;
-  --task-list-selected-header-color: #2a2a2a;
+  --task-list-header-selected-text-color: #FFF;   /* NEW */
+  --task-list-header-selected-border-color: #FFF; /* REMOVE */
+  --task-list-header-background-color: #332d38;      /* NEW */
+  --task-list-header-background-selected-color: #665b70; /* CHANGED */
 
   /* Database */
   --database-synced-color: #008000;

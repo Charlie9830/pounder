@@ -68,7 +68,7 @@ class GeneralSettingsPage extends React.Component {
                 {/* Disable Animations */}
                 <div className="AppSettingsVerticalFlexItem">
                     <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.disableAnimationsCheckboxRef}
-                        onChange={this.handleDisableAnimationsChange} />
+                        onChange={this.handleDisableAnimationsChange} checked={disableAnimations} />
                     <span className="AppSettingsHorizontalFlexItem">
                         <div className="AppSettingsItemLabel"> Disable animations </div>
                     </span>
