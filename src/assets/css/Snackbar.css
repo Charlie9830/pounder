@@ -1,9 +1,7 @@
 .SnackbarContainer {
     position: fixed;
     bottom: 0px;
-    right: 3%;
-    left: 3%;
-    background: #bfbfbf;
+    left: 250px;
     box-shadow: 5px 5px 10px 0px #111;
     z-index: 21;
     border-top-left-radius: 2px;
@@ -14,6 +12,20 @@
 .SnackbarContainer[data-isopen*="false"] {
     bottom: -100%;
     transition: bottom 1s;
+}
+
+.SnackbarContainer[data-type*="affirmative-notification"],
+.SnackbarContainer[data-type*="negative-notification"],
+.SnackbarContainer[data-type*="infomation"]  {
+    width: fit-content;
+    background: #666666
+}
+
+.SnackbarContainer[data-type*="error"] {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+    background: #b31500
 }
 
 .SnackbarHorizontalFlexContainer {
@@ -31,6 +43,17 @@
 .SnackbarMessageContainer {
     flex-grow: 1;
     padding: 5px;
+    margin-left: 5px;
+    margin-right: 10px;
+}
+
+.SnackbarIcon {
+    flex-shrink: 1;
+    fill: #000;
+    width: 32px;
+    height: 32px;
+    margin-left: 10px;
+
 }
 
 .SnackbarButtonContainer {
@@ -39,5 +62,10 @@
 
 .SnackbarMessage {
     font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    color: #FFF;
+}
+
+.SnackbarMessage[data-type*="error"] {
+    color: #FFF;
 
 }

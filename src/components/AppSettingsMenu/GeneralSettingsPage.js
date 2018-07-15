@@ -20,6 +20,7 @@ class GeneralSettingsPage extends React.Component {
         this.hideLockButtonCheckboxRef = React.createRef();
         this.pinCodeEntryRef = React.createRef();
         this.autoBackupIntervalEntryRef = React.createRef();
+        this.useLargeFontsCheckboxRef = React.createRef();
 
         // Method Bindings.
         this.getFavouriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX.bind(this);
@@ -34,6 +35,7 @@ class GeneralSettingsPage extends React.Component {
         this.handlePinCodeInputChange = this.handlePinCodeInputChange.bind(this);
         this.handlePinCodeInputBlur = this.handlePinCodeInputBlur.bind(this);
         this.handleAutoBackupIntervalInputBlur = this.handleAutoBackupIntervalInputBlur.bind(this);
+        this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
     }
 
     componentDidMount() {
@@ -92,6 +94,15 @@ class GeneralSettingsPage extends React.Component {
                     </span>
                 </div>
 
+                {/* Large Fonts Toggle */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.useLargeFontsCheckboxRef}
+                        checked={this.props.generalConfig.useLargeFonts} onChange={this.handleUseLargeFontsChange} />
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel"> Use large font display </div>
+                    </span>
+                </div>
+
                 {/* Pin Code */}
                 <div className="AppSettingsVerticalFlexItem">
                     <span className="AppSettingsHorizontalFlexItem">
@@ -132,6 +143,7 @@ class GeneralSettingsPage extends React.Component {
                     </span>
                 </div>
 
+
                 {/* Color Selection Title */}
                 <div className="AppSettingsVerticalFlexItem">
                     <MenuSubtitle text="Application Color Selection" />
@@ -148,6 +160,11 @@ class GeneralSettingsPage extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handleUseLargeFontsChange() {
+        var value = this.useLargeFontsCheckboxRef.current.checked;
+        this.props.onUseLargeFontsChange(value);
     }
 
     handleAutoBackupIntervalInputBlur() {

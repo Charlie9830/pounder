@@ -9,7 +9,6 @@ import RemoveProjectIcon from '../assets/icons/RemoveProjectIcon.svg';
 import ShareIcon from '../assets/icons/ShareIcon.svg';
 import AcceptIcon from '../assets/icons/AcceptIcon.svg';
 import DenyIcon from '../assets/icons/DenyIcon.svg';
-import { ANGULARJS_BATARANG } from 'electron-devtools-installer';
 
 
 class Sidebar extends React.Component {
@@ -36,6 +35,7 @@ class Sidebar extends React.Component {
         this.getInvitesJSX = this.getInvitesJSX.bind(this);
         this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
         this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
+        this.getIsInviteUpdating = this.getIsInviteUpdating.bind(this);
     }
 
     render() {
@@ -55,7 +55,6 @@ class Sidebar extends React.Component {
         var sidebarToolbarJSX = this.getSidebarToolbarJSX();
         var collapsedProjectTitleJSX = this.getCollapsedProjectTitleJSX();
         var isShareButtonEnabled = this.props.selectedProjectId !== -1;
-        this.getIsInviteUpdating = this.getIsInviteUpdating.bind(this);
 
         return (
             <div className={sidebarClassName} data-disableanimations={this.props.disableAnimations} onClick={this.handleSidebarClick}>

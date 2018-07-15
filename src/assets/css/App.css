@@ -4,7 +4,16 @@
 }
 
 
-#root {
+body {
+  overflow-x: hidden;
+
+  /* Font Size Toggle */
+  --task-font-size: 11pt;
+  --task-assignee-font-size: 10pt;
+  --task-list-header-font-size: 12pt;
+  --project-selector-font-size: 11pt;
+
+
   /* Colors */
   /* *** MAKE SURE THAT ANYTHING YOU CHANGE HERE IS ALSO REFLECTED IN THE FALLBACK CSS CONFIG *** */
   --primary-color: #1b1b1b;
@@ -21,6 +30,8 @@
   --alternate-inactive-text-color: #777;
   --loading-spinner-primary-color: #a9a9a9;
   --loading-spinner-secondary-color: #ffffff;
+  --button-background-top-color: #333333;
+  --button-background-bottom-color: #2d2d2d;
 
   /* Task */
   --task-checkbox-color: #FFF;
@@ -54,10 +65,6 @@
   background: var(--primary-color);
 }
 
-body {
-  background: #1b1b1b;
-  overflow-x: hidden;
-}
 
  .AppGrid {
   display: grid;

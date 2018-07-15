@@ -16,7 +16,7 @@ class TaskText extends React.Component {
             return (
                 <div className='TaskText'>
                     <TaskTextInput defaultValue={this.props.text} onKeyPress={this.forwardKeyPress}
-                    onComponentUnmounting={this.handleInputUnmounting}/>  
+                    onComponentUnmounting={this.handleInputUnmounting} onCancel={this.handleInputCancel}/>  
                 </div>
             )
         }

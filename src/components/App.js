@@ -188,7 +188,7 @@ class App extends React.Component {
       for (var property in this.props.cssConfig) {
         let value = this.props.cssConfig[property];
         if (value !== "") {
-          document.getElementById("root").style.setProperty(property, value);
+          document.getElementsByTagName("body")[0].style.setProperty(property, value);
         }
       }
     }
@@ -208,6 +208,25 @@ class App extends React.Component {
         if (newMinutes !== 0 && Number.isNaN(newMinutes) !== true) {
           this.autoBackupInterval = setInterval(this.autoBackupIntervalCallback, newMinutes * 60000)
         }
+      }
+    }
+
+    // Set Font Sizes.
+    if (prevProps.generalConfig.useLargeFonts !== this.props.generalConfig.useLargeFonts) {
+      if (this.props.generalConfig.useLargeFonts) {
+        // Set Font sizes larger than default.
+        document.getElementsByTagName("body")[0].style.setProperty('--task-font-size', '13pt');
+        document.getElementsByTagName("body")[0].style.setProperty('--task-assignee-font-size', '12pt');
+        document.getElementsByTagName("body")[0].style.setProperty('--task-list-header-font-size', '14pt');
+        document.getElementsByTagName("body")[0].style.setProperty('--project-selector-font-size', '14pt');
+      }
+
+      else {
+        // Fall back to CSS Stylesheet.
+        document.getElementsByTagName("body")[0].style.removeProperty('--task-font-size');
+        document.getElementsByTagName("body")[0].style.removeProperty('--task-assignee-font-size');
+        document.getElementsByTagName("body")[0].style.removeProperty('--task-list-header-font-size');
+        document.getElementsByTagName("body")[0].style.removeProperty('--project-selector-font-size');
       }
     }
   }

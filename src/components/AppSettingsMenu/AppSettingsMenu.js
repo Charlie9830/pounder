@@ -75,6 +75,7 @@ class AppSettingsMenu extends React.Component {
         this.handleAutoBackupIntervalChange = this.handleAutoBackupIntervalChange.bind(this);
         this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
         this.handleIsFirstTimeBootChange = this.handleIsFirstTimeBootChange.bind(this);
+        this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
     }
 
     render() {
@@ -192,7 +193,7 @@ class AppSettingsMenu extends React.Component {
                     colorPicker={this.state.colorPicker} onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
                     onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick} onPinCodeChange={this.handlePinCodeChange}
                     onDisableAnimationsChange={this.handleDisableAnimationsChange} onHideLockButtonChange={this.handleHideLockButtonChange}
-                    onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange}/>
+                    onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange} onUseLargeFontsChange={this.handleUseLargeFontsChange}/>
                 )
             break;
 
@@ -244,6 +245,10 @@ class AppSettingsMenu extends React.Component {
 
     handlePinCodeChange(newValue) {
         this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, pinCode: newValue}));
+    }
+
+    handleUseLargeFontsChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, useLargeFonts: newValue}));
     }
 
     handleDisableAnimationsChange(newValue) {

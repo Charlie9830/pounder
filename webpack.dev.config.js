@@ -10,7 +10,6 @@ const OUTPUT_DIR = path.resolve(__dirname, 'dist');
 const defaultInclude = [SRC_DIR];
 
 module.exports = {
-  mode: 'development',
   entry: SRC_DIR + '/index.js',
   output: {
     path: OUTPUT_DIR,

@@ -16,8 +16,6 @@ class ThemeSettings extends React.Component {
         }
 
         // Method Bindings.
-        this.handleHighlightButtonMouseDown = this.handleHighlightButtonMouseDown.bind(this);
-        this.handleHighlightButtonMouseUp = this.handleHighlightButtonMouseUp.bind(this);
         this.getZeroFilledCssValues = this.getZeroFilledCssValues.bind(this);
         this.handleColorPickerClick = this.handleColorPickerClick.bind(this);
         this.getColorPicker = this.getColorPicker.bind(this);
@@ -85,9 +83,9 @@ class ThemeSettings extends React.Component {
         // Determine default Value. Instead of having to deal directly with the CSS Stylesheet from here. We just remove the
         // rule (which removes it from the inline style), then read the Computed Style. This means the browser does the work of
         // falling back to the Stylesheet for us.
-        var appRoot = document.getElementById('root')
-        appRoot.style.removeProperty(propertyName);
-        var value = window.getComputedStyle(appRoot).getPropertyValue(propertyName);
+        var body = document.getElementsByTagName('body')[0];
+        body.style.removeProperty(propertyName);
+        var value = window.getComputedStyle(body).getPropertyValue(propertyName);
 
         this.props.onCSSPropertyChange(propertyName, value);
     }
@@ -130,7 +128,7 @@ class ThemeSettings extends React.Component {
 
     getZeroFilledCssValues() {
         // Parse the cssConfig object into a "Zero Filled" object. Blanks replaced by current Computed Values.
-        var computedStyle = window.getComputedStyle(document.getElementById('root'));
+        var computedStyle = window.getComputedStyle(document.getElementsByTagName('body')[0]);
         var filledCSSVariables = [];
 
         for (var property in this.props.cssConfig) {
@@ -140,15 +138,6 @@ class ThemeSettings extends React.Component {
         }
 
         return filledCSSVariables;
-    }
-
-    handleHighlightButtonMouseDown(propertyName) {
-        this.highlightValueBuffer = window.getComputedStyle(document.getElementById('root')).getPropertyValue(propertyName);
-        document.getElementById('root').style.setProperty(propertyName, "red");
-    }
-
-    handleHighlightButtonMouseUp(propertyName) {
-        document.getElementById('root').style.setProperty(propertyName, this.highlightValueBuffer);
     }
 
     parsePropertyName(propertyName) {

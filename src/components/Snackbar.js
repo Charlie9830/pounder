@@ -1,9 +1,12 @@
 import React from 'react';
 import Button from './Button';
-import CenteringContainer from '../containers/CenteringContainer';
 import '../assets/css/Snackbar.css';
 import { connect } from 'react-redux';
 import { dismissSnackbar } from 'pounder-redux/action-creators';
+import TickIcon from '../assets/icons/TickIcon.svg';
+import CrossIcon from '../assets/icons/CrossIcon.svg';
+import InfomationIcon from '../assets/icons/InfomationIcon.svg'
+import ErrorIcon from '../assets/icons/ErrorIcon.svg';
 
 class Snackbar extends React.Component {
     constructor(props) {
@@ -11,6 +14,7 @@ class Snackbar extends React.Component {
 
         // Method Bindings.
         this.getButtonJSX = this.getButtonJSX.bind(this);
+        this.getIconJSX = this.getIconJSX.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -25,11 +29,14 @@ class Snackbar extends React.Component {
 
     render() {
         var buttonJSX = this.getButtonJSX();
+        var iconJSX = this.getIconJSX();
+
         return (
-            <div className="SnackbarContainer" data-isopen={this.props.isSnackbarOpen}>
+            <div className="SnackbarContainer" data-type={this.props.snackbarType} data-isopen={this.props.isSnackbarOpen}>
                 <div className="SnackbarHorizontalFlexContainer">
+                    {iconJSX}
                     <div className="SnackbarMessageContainer">
-                        <div className="SnackbarMessage">
+                        <div className="SnackbarMessage" data-type={this.props.snackbarType}>
                          {this.props.snackbarMessage}
                           </div>
                     </div>
@@ -55,11 +62,37 @@ class Snackbar extends React.Component {
         }
     }
 
+    getIconJSX() {
+        if (this.props.snackbarType === "affirmative-notification") {
+            return (
+                <img className="SnackbarIcon" src={TickIcon} />
+            )
+        }
+
+        if (this.props.snackbarType === "negative-notification") {
+            return (
+                <img className="SnackbarIcon" src={CrossIcon} />
+            )
+        }
+
+        if (this.props.snackbarType === "infomation") {
+            return (
+                <img className="SnackbarIcon" src={InfomationIcon}/>
+            )
+        }
+
+        if (this.props.snackbarType === "error") {
+            return (
+                <img className="SnackbarIcon" src={ErrorIcon}/>
+            )
+        }
+    }
+
     getButtonJSX() {
         if (this.props.isSnackbarSelfDismissing !== true) {
             return (
                 <div className="SnackbarButtonContainer">
-                    <Button text="Dismiss" onClick={() => {this.props.dispatch(dismissSnackbar())}} />
+                    <Button text="Dismiss" onClick={() => { this.props.dispatch(dismissSnackbar()) }} />
                 </div>
             )
         }
@@ -69,6 +102,7 @@ class Snackbar extends React.Component {
 let mapStateToProps = state => {
     return {
         isSnackbarOpen: state.isSnackbarOpen,
+        snackbarType: state.snackbarType,
         snackbarMessage: state.snackbarMessage,
         isSnackbarSelfDismissing: state.isSnackbarSelfDismissing,
     }
