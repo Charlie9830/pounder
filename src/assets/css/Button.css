@@ -43,32 +43,37 @@
 
 .ButtonContentFlexItemContainer {
     flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     width: 100%;
     height: 100%;
 }
 
 .ButtonIcon {
+    flex-shrink: 1;
     width: 100%;
     height: 100%;
     color: #FFF;
 }
 
 .ButtonText {
+    flex-shrink: 1;
     width: 100%;
-    height: 100%;
     color: #FFF;
+    font-size: 11pt;
     text-align: center;
     font-family: var(--primary-font-family);
 }
 
 .ButtonText[data-size*="small"] {
+    flex-shrink: 1;
     font-size: 8pt;
-    line-height: 14pt;
-    vertical-align: middle;
 }
 
 .ButtonText[data-size*="verysmall"] {
+    flex-shrink: 1;
     font-size: 8pt;
-    line-height: 14pt;
-    vertical-align: middle;
 }
