@@ -51,7 +51,7 @@
     position: absolute;
     bottom: 15px;
     left: 5px;
-    color: #DDD;
+    color: var(--primary-inactive-text-color);
     font-family: var(--primary-font-family);
     font-size: 12pt;
 }
