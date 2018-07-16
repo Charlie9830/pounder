@@ -11,9 +11,9 @@ body {
   --primary-font-family: 'Open Sans';
 
   /* Font Size Toggle */
-  --task-font-size: 11pt;
-  --task-assignee-font-size: 10pt;
-  --task-list-header-font-size: 12pt;
+  --task-font-size: 10pt;
+  --task-assignee-font-size: 9pt;
+  --task-list-header-font-size: 11pt;
   --project-selector-font-size: 11pt;
 
 
@@ -38,10 +38,10 @@ body {
 
   /* Task */
   --task-checkbox-color: #FFF;
-  --task-text-color: #FFF;
+  --task-text-color: #EEE;
   --task-selected-color: #373737;
   --task-hover-color: #282828; 
-  --task-divider-color: #282828;
+  --task-divider-color: #3D3D3D;
 
   /* Due Date and Priority Colors */
   --overdue-color: #F00;
