@@ -12,6 +12,9 @@ import '../../assets/css/ToolBarButton.css';
 class DatabaseSettingsPage extends React.Component {
     constructor(props) {
         super(props);
+
+        // Method Bindings.
+        this.handleRestoreDatabaseButtonClick = this.handleRestoreDatabaseButtonClick.bind(this);
     }
 
     render() {
@@ -38,6 +41,10 @@ class DatabaseSettingsPage extends React.Component {
             )
         }
 
+    }
+
+    handleRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds) {
+        this.props.onRestoreDatabaseButtonClick(localProjectIds, remoteProjectIds);
     }
 }
 
