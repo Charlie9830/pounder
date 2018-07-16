@@ -32,7 +32,7 @@
 
 .ShowCompletedTasksLabel {
     width: 100%;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-weight: 400;
     font-size: 10pt;
     padding-left: 15px;
@@ -61,7 +61,7 @@
 
 .TaskListSettingsMenuItemLabel {
     flex-grow: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     font-weight: 400;
     color: var(--primary-active-text-color);

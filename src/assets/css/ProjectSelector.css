@@ -55,7 +55,7 @@
 .ProjectSelectorText {
     color: var(--primary-inactive-text-color);
     margin: 5px 5px 5px 10px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--project-selector-font-size);
     -webkit-user-select: none;
     user-select: none;
@@ -67,7 +67,7 @@
   width: 75%;
   resize: none;
   margin: 5px;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 11pt;
   background: var(--surface-color);
   border: 0px solid #FFF;
@@ -138,7 +138,7 @@
 
 .ProjectSelectorIconText {
   display: block;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 8pt;
   color: var(--due-date-text-color);
   text-align: center;

@@ -17,7 +17,7 @@
 
 .PinCodeButton {
     display: table-cell;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     font-weight: 300;
     border-radius: 50%;
@@ -36,7 +36,7 @@
 }
 
 #PinCodeZeroButton {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     font-weight: 300;
     border-radius: 50%;

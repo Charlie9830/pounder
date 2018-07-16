@@ -19,7 +19,7 @@
 .DueDateText {
   display: block;
   color: var(--due-date-text-color);
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 7pt;
   font-weight: 700;
   text-align: center;

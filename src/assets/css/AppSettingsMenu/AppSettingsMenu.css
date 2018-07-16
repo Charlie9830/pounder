@@ -99,21 +99,21 @@
 
 .AppSettingsItemLabel {
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }
 
 .AppSettingsItemHint {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }
 
 .AppSettingsItemInput {
     margin: 0px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     border: gray 1px solid;
@@ -122,7 +122,7 @@
 
 .AppSettingsItemInput {
     margin: 0px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     border: gray 1px solid;
@@ -141,7 +141,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AppSettingsAccountInput {
     margin-top: 5px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--alternate-active-text-color);;
     border: gray 1px solid;
@@ -156,7 +156,7 @@ input.AppSettingsItemInput[type*="number"] {
     resize: none;
     vertical-align: middle;
     font-size: 9pt;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: var(--primary-active-text-color);
     background: var(--surface-color-alternate);
     border: 0px solid #FFF;
@@ -182,13 +182,13 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .AppSettingsAccountStatus {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     min-height: 42px;
     color: var(--alternate-active-text-color);
 }
 
 .AppSettingsAccountDisplayName {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     margin-top: 10px;
     height: 20px;
@@ -196,7 +196,7 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .AppSettingsAccountEmailDisplay {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     height: 20px;
     color:var(--alternate-inactive-text-color);
@@ -216,7 +216,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AppSettingsAccountItemLabel {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }

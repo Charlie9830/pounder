@@ -23,7 +23,7 @@
 .AppSettingsSidebarItemLabel {
     flex: 1;
     color: gray;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 12pt;
     padding-left: 5px;
 }

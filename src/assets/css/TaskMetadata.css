@@ -24,7 +24,7 @@
     opacity: 0.6;
     width: 24px;
     height: 24px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     user-select: none;
     cursor: default;
 }
@@ -42,7 +42,7 @@
     align-self: stretch;
     height: 100%;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     vertical-align: middle;
     margin-right: 5px;
@@ -55,7 +55,7 @@
     align-self: stretch;
     height: 100%;
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     vertical-align: middle;
     margin-top: 5px;

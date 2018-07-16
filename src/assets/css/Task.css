@@ -112,7 +112,7 @@
 .TaskAssigneeDisplayName {
   flex-shrink: 1;
   color: var(--assignee-text-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: var(--task-assignee-font-size);
   text-align: right;
   cursor: default;

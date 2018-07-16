@@ -60,7 +60,7 @@
 
 .VersionNumber {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     color: var(--primary-active-text-color);
     margin-left: 5px;
@@ -70,7 +70,7 @@
 
 .StatusBarDisplayName {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     color: var(--primary-inactive-text-color);
     padding-left: 20px;
@@ -79,7 +79,7 @@
 
 .PendingWrites {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     font-weight: 600;
     color: var(--database-synced-color);

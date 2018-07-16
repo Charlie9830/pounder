@@ -68,7 +68,7 @@
     flex-shrink: 1;
     width: 280px;
     margin: 5px 5px 5px 5px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--alternate-active-text-color);
     border: gray 1px solid;
@@ -125,7 +125,7 @@
     flex-shrink: 1;
     width: fit-content;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 9pt;
     vertical-align: middle;
     padding-left: 4px;
@@ -301,7 +301,7 @@
 
 .NoMembersMessage {
     color: #FFF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 

@@ -24,7 +24,7 @@
     height: 100px;
     margin: auto;
     font-size: 24pt;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
 }
 
@@ -52,7 +52,7 @@
     bottom: 15px;
     left: 5px;
     color: #DDD;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 12pt;
 }
 

@@ -59,7 +59,7 @@
 .ListToolbarHeader {
     flex-shrink: 1;
     color: var(--task-list-header-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--task-list-header-font-size);
     min-height: 30px;
     width: 100%;
@@ -78,7 +78,7 @@
 
 .ListToolbarHeaderInput {
     color: var(--task-list-header-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--task-list-header-font-size);
     width: 100%;
     overflow: hidden;
@@ -93,7 +93,7 @@
     color: #FFF;
     flex-shrink: 1;
     opacity: 0.50;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     height: 22px;
     width: 22px;
     -webkit-user-select: none;

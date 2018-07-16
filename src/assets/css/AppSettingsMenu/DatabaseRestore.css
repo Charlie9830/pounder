@@ -18,7 +18,7 @@
 
 .DatabaseRestoreDate {
     color: var(--alternate-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
@@ -32,7 +32,7 @@
 
 .DatabaseRestoreButtonLabel {
     color: var(--primary-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     flex-shrink: 1;
     margin: auto 0px;
@@ -60,7 +60,7 @@
     flex-shrink: 1;
     width: fit-content;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     padding-bottom: 15px;
     padding-top: 10px;
@@ -110,13 +110,13 @@
     flex-shrink: 1;
     color: var(--alternate-active-text-color);
     font-size: 10pt;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     vertical-align: middle;
     text-align: left;
 }
 
 .DatabaseRestoreTableHeader {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 11pt;
     color: var(--alternate-active-text-color);
     text-align: center;
@@ -134,7 +134,7 @@
 .DatabaseRestoreTime {
     color: var(--alternate-inactive-text-color);
     font-size: 10pt;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
 }
 
 .DatabaseRestoreFooterContainer {

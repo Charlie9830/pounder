@@ -9,7 +9,7 @@
     z-index: 11;
 }
 .ShutdownScreenTitle {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     color: #EEE;
     padding-top: 10px;

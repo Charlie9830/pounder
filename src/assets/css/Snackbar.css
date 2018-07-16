@@ -61,7 +61,7 @@
 }
 
 .SnackbarMessage {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
 }
 

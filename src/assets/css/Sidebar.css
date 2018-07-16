@@ -82,7 +82,7 @@
 
 .CollapsedProjectTitle {
     color: #CCC;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 14pt;
     line-height: 18pt; /* To Push the text away from the Screen Border a little bit */
     transform: rotate(-90deg);
@@ -212,14 +212,14 @@
 .InviteProjectName {
     flex-shrink: 1;
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
 .InviteDisplayName {
     flex-shrink: 1;
     color: var(--alternate-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 

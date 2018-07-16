@@ -49,7 +49,7 @@
 
 .PriorityToggle {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
     font-weight: 500;
     font-size: 20px;
@@ -98,7 +98,7 @@
 
 .CalendarShortcutItemLabel {
     flex: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-weight: 400;
     font-size: 12pt;
     color: #FFF;
@@ -156,7 +156,7 @@
 .CalendarMemberName {
     flex-shrink: 1;
     color: var(--primary-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 11pt;
     font-weight: 500;
     vertical-align: middle;
@@ -171,6 +171,6 @@
 
 .CalendarAssignToHeader {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
