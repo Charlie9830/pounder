@@ -7,6 +7,9 @@
 body {
   overflow-x: hidden;
 
+  /* Font */
+  --primary-font-family: 'Open Sans';
+
   /* Font Size Toggle */
   --task-font-size: 11pt;
   --task-assignee-font-size: 10pt;
@@ -157,7 +160,7 @@ body {
 .ProjectSelectorText {
     color: var(--primary-inactive-text-color);
     margin: 5px 5px 5px 10px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--project-selector-font-size);
     -webkit-user-select: none;
     user-select: none;
@@ -169,7 +172,7 @@ body {
   width: 75%;
   resize: none;
   margin: 5px;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 11pt;
   background: var(--surface-color);
   border: 0px solid #FFF;
@@ -240,7 +243,7 @@ body {
 
 .ProjectSelectorIconText {
   display: block;
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 8pt;
   color: var(--due-date-text-color);
   text-align: center;
@@ -295,34 +298,39 @@ body {
 
 .ButtonContentFlexItemContainer {
     flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     width: 100%;
     height: 100%;
 }
 
 .ButtonIcon {
+    flex-shrink: 1;
     width: 100%;
     height: 100%;
     color: #FFF;
 }
 
 .ButtonText {
+    flex-shrink: 1;
     width: 100%;
-    height: 100%;
     color: #FFF;
+    font-size: 11pt;
     text-align: center;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
 }
 
 .ButtonText[data-size*="small"] {
+    flex-shrink: 1;
     font-size: 8pt;
-    line-height: 14pt;
-    vertical-align: middle;
 }
 
 .ButtonText[data-size*="verysmall"] {
+    flex-shrink: 1;
     font-size: 8pt;
-    line-height: 14pt;
-    vertical-align: middle;
 }.SidebarOpen {
     position: relative; /* So .SidebarCollapseButtonContainer absolute position Works */
     background: var(--primary-color);
@@ -407,7 +415,7 @@ body {
 
 .CollapsedProjectTitle {
     color: #CCC;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 14pt;
     line-height: 18pt; /* To Push the text away from the Screen Border a little bit */
     transform: rotate(-90deg);
@@ -537,14 +545,14 @@ body {
 .InviteProjectName {
     flex-shrink: 1;
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
 .InviteDisplayName {
     flex-shrink: 1;
     color: var(--alternate-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
@@ -631,7 +639,7 @@ body {
 }
 
 .TaskText {
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   width: 100%;
   color: var(--task-text-color);
   font-Size: var(--task-font-size);
@@ -657,7 +665,7 @@ body {
   padding-top: 2px;
   padding-left: 4px;
   font-size: var(--task-font-size);
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   color: var(--task-text-color);
   background: var(--surface-color-alternate);
   border: 0px solid #FFF;
@@ -682,7 +690,7 @@ body {
 .DueDateText {
   display: block;
   color: var(--due-date-text-color);
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: 7pt;
   font-weight: 700;
   text-align: center;
@@ -778,7 +786,7 @@ body {
 
 .PriorityToggle {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
     font-weight: 500;
     font-size: 20px;
@@ -827,7 +835,7 @@ body {
 
 .CalendarShortcutItemLabel {
     flex: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-weight: 400;
     font-size: 12pt;
     color: #FFF;
@@ -885,7 +893,7 @@ body {
 .CalendarMemberName {
     flex-shrink: 1;
     color: var(--primary-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 11pt;
     font-weight: 500;
     vertical-align: middle;
@@ -900,12 +908,12 @@ body {
 
 .CalendarAssignToHeader {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 /* DayPicker styles */
 div {
-  font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
 }
 
 .DayPicker {
@@ -1177,7 +1185,7 @@ div {
     opacity: 0.6;
     width: 24px;
     height: 24px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     user-select: none;
     cursor: default;
 }
@@ -1195,7 +1203,7 @@ div {
     align-self: stretch;
     height: 100%;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     vertical-align: middle;
     margin-right: 5px;
@@ -1208,7 +1216,7 @@ div {
     align-self: stretch;
     height: 100%;
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     vertical-align: middle;
     margin-top: 5px;
@@ -1333,7 +1341,7 @@ div {
 .TaskAssigneeDisplayName {
   flex-shrink: 1;
   color: var(--assignee-text-color);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: var(--primary-font-family);
   font-size: var(--task-assignee-font-size);
   text-align: right;
   cursor: default;
@@ -1557,7 +1565,7 @@ div {
 .ListToolbarHeader {
     flex-shrink: 1;
     color: var(--task-list-header-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--task-list-header-font-size);
     min-height: 30px;
     width: 100%;
@@ -1576,7 +1584,7 @@ div {
 
 .ListToolbarHeaderInput {
     color: var(--task-list-header-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: var(--task-list-header-font-size);
     width: 100%;
     overflow: hidden;
@@ -1591,7 +1599,7 @@ div {
     color: #FFF;
     flex-shrink: 1;
     opacity: 0.50;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     height: 22px;
     width: 22px;
     -webkit-user-select: none;
@@ -1635,7 +1643,7 @@ div {
 
 .ShowCompletedTasksLabel {
     width: 100%;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-weight: 400;
     font-size: 10pt;
     padding-left: 15px;
@@ -1664,7 +1672,7 @@ div {
 
 .TaskListSettingsMenuItemLabel {
     flex-grow: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     font-weight: 400;
     color: var(--primary-active-text-color);
@@ -1723,7 +1731,7 @@ div {
 }
 
 .ProjectMessageDisplayMessage {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 14pt;
     color: var(--alternate-active-text-color);
     text-align: center;
@@ -1897,7 +1905,7 @@ div {
 
 .VersionNumber {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     color: var(--primary-active-text-color);
     margin-left: 5px;
@@ -1907,7 +1915,7 @@ div {
 
 .StatusBarDisplayName {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     color: var(--primary-inactive-text-color);
     padding-left: 20px;
@@ -1916,7 +1924,7 @@ div {
 
 .PendingWrites {
     flex-shrink: 1;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 8pt;
     font-weight: 600;
     color: var(--database-synced-color);
@@ -1952,7 +1960,7 @@ div {
     height: 100px;
     margin: auto;
     font-size: 24pt;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
 }
 
@@ -1979,8 +1987,8 @@ div {
     position: absolute;
     bottom: 15px;
     left: 5px;
-    color: #DDD;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    color: var(--primary-inactive-text-color);
+    font-family: var(--primary-font-family);
     font-size: 12pt;
 }
 
@@ -2010,7 +2018,7 @@ div {
 
 .PinCodeButton {
     display: table-cell;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     font-weight: 300;
     border-radius: 50%;
@@ -2029,7 +2037,7 @@ div {
 }
 
 #PinCodeZeroButton {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     font-weight: 300;
     border-radius: 50%;
@@ -2060,7 +2068,7 @@ div {
     z-index: 11;
 }
 .ShutdownScreenTitle {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 18pt;
     color: #EEE;
     padding-top: 10px;
@@ -2119,7 +2127,7 @@ div {
 
 .MenuSubtitle {
     color: #CCC;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     text-align: left;
     margin-left: 15px;
@@ -2246,21 +2254,21 @@ div {
 
 .AppSettingsItemLabel {
     color: var(--primary-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }
 
 .AppSettingsItemHint {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }
 
 .AppSettingsItemInput {
     margin: 0px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     border: gray 1px solid;
@@ -2269,7 +2277,7 @@ div {
 
 .AppSettingsItemInput {
     margin: 0px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     border: gray 1px solid;
@@ -2288,7 +2296,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AppSettingsAccountInput {
     margin-top: 5px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--alternate-active-text-color);;
     border: gray 1px solid;
@@ -2303,7 +2311,7 @@ input.AppSettingsItemInput[type*="number"] {
     resize: none;
     vertical-align: middle;
     font-size: 9pt;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: var(--primary-active-text-color);
     background: var(--surface-color-alternate);
     border: 0px solid #FFF;
@@ -2329,13 +2337,13 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .AppSettingsAccountStatus {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     min-height: 42px;
     color: var(--alternate-active-text-color);
 }
 
 .AppSettingsAccountDisplayName {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     margin-top: 10px;
     height: 20px;
@@ -2343,7 +2351,7 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .AppSettingsAccountEmailDisplay {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     height: 20px;
     color:var(--alternate-inactive-text-color);
@@ -2363,7 +2371,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AppSettingsAccountItemLabel {
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
 }
@@ -2463,7 +2471,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .DatabaseRestoreDate {
     color: var(--alternate-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
@@ -2477,7 +2485,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .DatabaseRestoreButtonLabel {
     color: var(--primary-inactive-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     flex-shrink: 1;
     margin: auto 0px;
@@ -2505,7 +2513,7 @@ input.AppSettingsItemInput[type*="number"] {
     flex-shrink: 1;
     width: fit-content;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
     padding-bottom: 15px;
     padding-top: 10px;
@@ -2555,13 +2563,13 @@ input.AppSettingsItemInput[type*="number"] {
     flex-shrink: 1;
     color: var(--alternate-active-text-color);
     font-size: 10pt;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     vertical-align: middle;
     text-align: left;
 }
 
 .DatabaseRestoreTableHeader {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 11pt;
     color: var(--alternate-active-text-color);
     text-align: center;
@@ -2579,7 +2587,7 @@ input.AppSettingsItemInput[type*="number"] {
 .DatabaseRestoreTime {
     color: var(--alternate-inactive-text-color);
     font-size: 10pt;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
 }
 
 .DatabaseRestoreFooterContainer {
@@ -2690,7 +2698,7 @@ input.AppSettingsItemInput[type*="number"] {
 .AppSettingsSidebarItemLabel {
     flex: 1;
     color: gray;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 12pt;
     padding-left: 5px;
 }
@@ -2760,7 +2768,7 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .SnackbarMessage {
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     color: #FFF;
 }
 
@@ -2837,7 +2845,7 @@ input.AppSettingsItemInput[type*="number"] {
     flex-shrink: 1;
     width: 280px;
     margin: 5px 5px 5px 5px;
-    font-family: 'Segoe UI', Lucinda Grande, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     background: var(--surface-color-alternate);
     color: var(--alternate-active-text-color);
     border: gray 1px solid;
@@ -2894,7 +2902,7 @@ input.AppSettingsItemInput[type*="number"] {
     flex-shrink: 1;
     width: fit-content;
     color: var(--alternate-active-text-color);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 9pt;
     vertical-align: middle;
     padding-left: 4px;
@@ -3070,7 +3078,7 @@ input.AppSettingsItemInput[type*="number"] {
 
 .NoMembersMessage {
     color: #FFF;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: var(--primary-font-family);
     font-size: 10pt;
 }
 
@@ -3083,5 +3091,135 @@ input.AppSettingsItemInput[type*="number"] {
     justify-content: flex-start;
     align-content: center;
     align-items: center;
+}
+
+/* open-sans-300normal - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src:
+    local('Open Sans Light '),
+    local('Open Sans-Light'),
+    url(./font/open-sans-latin-300__2NIpp.woff2) format('woff2'), 
+    url(./font/open-sans-latin-300__3Im-n.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-300italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 300;
+  src:
+    local('Open Sans Light italic'),
+    local('Open Sans-Lightitalic'),
+    url(./font/open-sans-latin-300italic__1nrME.woff2) format('woff2'), 
+    url(./font/open-sans-latin-300italic__3joFR.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-400normal - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    local('Open Sans Regular '),
+    local('Open Sans-Regular'),
+    url(./font/open-sans-latin-400__9rytd.woff2) format('woff2'), 
+    url(./font/open-sans-latin-400__RchLw.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-400italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 400;
+  src:
+    local('Open Sans Regular italic'),
+    local('Open Sans-Regularitalic'),
+    url(./font/open-sans-latin-400italic__26eWW.woff2) format('woff2'), 
+    url(./font/open-sans-latin-400italic__2bqTl.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-600normal - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src:
+    local('Open Sans SemiBold '),
+    local('Open Sans-SemiBold'),
+    url(./font/open-sans-latin-600__3RRgH.woff2) format('woff2'), 
+    url(./font/open-sans-latin-600__EuVTf.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-600italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 600;
+  src:
+    local('Open Sans SemiBold italic'),
+    local('Open Sans-SemiBolditalic'),
+    url(./font/open-sans-latin-600italic__SUAr3.woff2) format('woff2'), 
+    url(./font/open-sans-latin-600italic__3HtME.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-700normal - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src:
+    local('Open Sans Bold '),
+    local('Open Sans-Bold'),
+    url(./font/open-sans-latin-700__2Qr6f.woff2) format('woff2'), 
+    url(./font/open-sans-latin-700__pnjfV.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-700italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 700;
+  src:
+    local('Open Sans Bold italic'),
+    local('Open Sans-Bolditalic'),
+    url(./font/open-sans-latin-700italic__TPADZ.woff2) format('woff2'), 
+    url(./font/open-sans-latin-700italic__34PB9.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-800normal - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 800;
+  src:
+    local('Open Sans ExtraBold '),
+    local('Open Sans-ExtraBold'),
+    url(./font/open-sans-latin-800__3EWtI.woff2) format('woff2'), 
+    url(./font/open-sans-latin-800__3RTVi.woff) format('woff'); /* Modern Browsers */
+}
+
+/* open-sans-800italic - latin */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: italic;
+  font-display: swap;
+  font-weight: 800;
+  src:
+    local('Open Sans ExtraBold italic'),
+    local('Open Sans-ExtraBolditalic'),
+    url(./font/open-sans-latin-800italic__OM6Vg.woff2) format('woff2'), 
+    url(./font/open-sans-latin-800italic__U4nZG.woff) format('woff'); /* Modern Browsers */
 }
 
