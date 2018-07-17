@@ -114,7 +114,7 @@ class App extends React.Component {
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
   }
 
-  componentDidMount(){
+  componentDidMount() { 
     // MouseTrap.
     MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
     MouseTrap.bind("shift", this.handleShiftKeyDown, 'keydown');

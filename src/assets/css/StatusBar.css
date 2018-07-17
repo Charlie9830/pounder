@@ -1,6 +1,6 @@
 .StatusBarContainer {
     width: 100%;
-    height: 30px;
+    height: 30px; /* If you change this, make sure you also change the offset in Sidebar - setAppGridContainerHeight(). */
     margin: 0px;
     padding: 0px;
     background: var(--primary-color);

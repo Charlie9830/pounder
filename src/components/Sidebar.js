@@ -15,6 +15,9 @@ class Sidebar extends React.Component {
     constructor(props) {
         super(props);
 
+        // Refs
+        this.sidebarGridContainerRef = React.createRef();
+
         // Method Bindings.
         this.handleProjectSelectorClick = this.handleProjectSelectorClick.bind(this);
         this.handleProjectSelectorDoubleClick = this.handleProjectSelectorDoubleClick.bind(this);
@@ -36,6 +39,16 @@ class Sidebar extends React.Component {
         this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
         this.handleAcceptInviteButtonClick = this.handleAcceptInviteButtonClick.bind(this);
         this.getIsInviteUpdating = this.getIsInviteUpdating.bind(this);
+        this.handleWindowResize = this.handleWindowResize.bind(this);
+        this.setSidebarGridContainerHeight = this.setSidebarGridContainerHeight.bind(this);
+    }
+
+    componentDidMount() {
+        window.addEventListener('resize', this.handleWindowResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleWindowResize);
     }
 
     render() {
@@ -63,7 +76,7 @@ class Sidebar extends React.Component {
                 {collapsedProjectTitleJSX}    
 
                 { /* Grid - Toolbar, Selectors and Footer */}
-                <div className="SidebarGridContainer" data-isclosed={!this.props.isOpen}>
+                <div className="SidebarGridContainer" ref={this.sidebarGridContainerRef} data-isclosed={!this.props.isOpen}>
                     <div className="SidebarToolbarContainer">
                         {sidebarToolbarJSX}
                     </div>
@@ -104,6 +117,14 @@ class Sidebar extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handleWindowResize(event) {
+        this.setSidebarGridContainerHeight(event.target.innerHeight);
+    }
+
+    setSidebarGridContainerHeight(newHeight) {
+        this.sidebarGridContainerRef.current.style.height = `${newHeight - 30 - 1}px`; // newHeight - StatusBar Height - 1 (Flooring).
     }
 
     handleDenyInviteButtonClick(projectId) {
