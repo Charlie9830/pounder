@@ -4,7 +4,7 @@ import Moment from 'moment';
 import PinCodeKeypad from './PinCodeKeypad';
 import CenteringContainer from '../containers/CenteringContainer';
 import { connect } from 'react-redux';
-import LockScreenIcon from '../assets/icons/NewLockScreenIcon.svg';
+import LockScreenIcon from '../assets/icons/Handball-Icon-Desktop-Draft.svg';
 import QuitIcon from '../assets/icons/QuitIcon.svg';
 
 class LockScreen extends React.Component {
