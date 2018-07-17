@@ -14,7 +14,7 @@
     "build": "webpack --config webpack.build.config.js",
     "packageWeb": "webpack --config webpack.build.web.config.js",
     "package": "webpack --config webpack.build.config.js",
-    "postpackage": "electron-packager ./ --overwrite --icon=./src/assets/icons/icon.ico --platform=win32 --arch=x64 --out=./builds",
+    "postpackage": "electron-packager ./ --overwrite --asar --icon=./src/assets/icons/icon.ico --platform=win32 --arch=x64 --out=./builds",
     "buildInstaller": "node build-windows-installer.js",
     "packagemac": "electron-packager ./ --asar --icon=./src/assets/icons/icon.icns --out=./builds",
     "postpackagemac": "electron-installer-dmg ./builds/Pounder-darwin-x64/ Handball"
@@ -48,6 +48,7 @@
     "webpack": "^2.7.0",
     "webpack-dev-server": "^2.11.2"
   },
+  
   "dependencies": {
     "dexie": "^2.0.4",
     "fs-jetpack": "^1.3.0",

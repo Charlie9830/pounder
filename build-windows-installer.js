@@ -2,7 +2,7 @@ var electronInstaller = require('electron-winstaller');
 
 resultPromise = electronInstaller.createWindowsInstaller({
     appDirectory: './builds/Pounder-win32-x64/',
-    outputDirectory: './installers/windows/',
+    outputDirectory: './builds/installers/windows/',
     authors: 'Charlie Hall',
     exe: 'pounder.exe',
     noMsi: true,
