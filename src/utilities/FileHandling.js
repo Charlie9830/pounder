@@ -14,7 +14,7 @@ export function getCurrentBackupDirectory() {
     var sanitizedUserId = sanitize(getUserUid());
     sanitizedUserId = sanitizedUserId === "" ? "UnknownUser" : sanitizedUserId;
 
-    return Path.join(remote.app.getPath('documents'), "/Pounder", "/Backups", `/${sanitizedUserId}`);
+    return Path.join(remote.app.getPath('documents'), "/Handball", "/Backups", `/${sanitizedUserId}`);
 }
 
 export function backupFirebaseAsync(getFirestore, remoteIds) {
