@@ -14,6 +14,7 @@ class Project extends React.Component{
 
         this.layoutSyncRequired = false;
         this.layoutsToSync = null;
+        this.taskListIdsToFoul = [];
 
         this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
         this.handleWidgetClick = this.handleWidgetClick.bind(this);
@@ -44,7 +45,8 @@ class Project extends React.Component{
 
     componentDidUpdate(prevProps, prevState) {
         if (this.layoutSyncRequired) {
-            this.props.onLayoutChange([...this.layoutsToSync], this.props.projectId);
+            this.props.onLayoutChange([...this.layoutsToSync], this.props.projectId, this.taskListIdsToFoul);
+            this.taskListIdsToFoul = null;
             this.layoutSyncRequired = false;
             this.layoutsToSync = null;
         }
@@ -121,14 +123,23 @@ class Project extends React.Component{
 
         var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
 
+        // Fresh Ids are Ids of Task lists that have not yet had a corresponding Project Layout entity created for them.
+        // This could mean they are newly created, or were previously created on Mobile (which doesn't support RGL).
+        // The layouts collection needs to be coerced to include these Fresh items and render them at a sane size.
+        // RGL will not trigger the layoutsChanged callback when new stuff is added, it will only trigger on human
+        // interaction, Therefore we need to queue up our own layout change Update to the DB. We provide the new
+        // layouts, as well as the ids of Task Lists that should no longer be marked as fresh. If we don't 'foul' these
+        // tasklists, then a render loop will be caused that will continously call out to the Database.
         var freshIds = this.findFreshTaskListIds(filteredTaskListWidgets);
         freshIds.forEach(id => {
             selectedLayouts.push({i: id, x: 0, y: 0, w: 6, h: 4 });
         })
 
+        // Queue up the Database update for when this render is finished.
         if (freshIds.length > 0) {
             this.layoutSyncRequired = true;
             this.layoutsToSync = selectedLayouts;
+            this.taskListIdsToFoul = freshIds;
         }
         
         var layouts = JSON.parse(JSON.stringify(selectedLayouts));
