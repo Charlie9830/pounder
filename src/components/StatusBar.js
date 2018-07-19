@@ -28,7 +28,7 @@ class StatusBar extends React.Component {
                     <div className="StatusBarLeftContainer">
                         <img className="StatusBarBurgerIcon" src={BurgerIcon} onClick={this.handleBurgerButtonClick} />
                         <div className="StatusBarDivider" />
-                        <label className="VersionNumber"> Version 2.0.0 RC </label>
+                        <label className="VersionNumber"> Version 2.0.1 RC </label>
                         
                     </div>
                     
