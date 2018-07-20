@@ -40,6 +40,7 @@ class Project extends React.Component{
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
+        this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -143,13 +144,16 @@ class Project extends React.Component{
         
         var layouts = JSON.parse(JSON.stringify(selectedLayouts));
 
+        var toolbarButtonEnableStates = this.getToolbarButtonEnableStates();
+
         return (
             <div className="ProjectGrid">
                 <div className="ProjectToolBarGridItem">
                     <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
                     onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
-                    hideLockButton={this.props.hideLockButton}/>
+                    hideLockButton={this.props.hideLockButton} buttonEnableStates={toolbarButtonEnableStates}
+                    />
                 </div>
 
                 <div className="ProjectGridItem">
@@ -167,6 +171,22 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    getToolbarButtonEnableStates() {
+        var overide = this.props.projectId !== -1;
+
+        var isAddTaskButtonEnabled = overide && this.props.focusedTaskListId !== -1;
+        var isRemoveTaskButtonEnabled = overide && this.props.selectedTask.taskId !== -1;
+        var isAddTaskListButtonEnabled = overide;
+        var isRemoveTaskListButtonEnabled = overide && this.props.focusedTaskListId !== -1;
+
+        return {
+            isAddTaskButtonEnabled: isAddTaskButtonEnabled,
+            isRemoveTaskButtonEnabled: isRemoveTaskButtonEnabled,
+            isAddTaskListButtonEnabled: isAddTaskListButtonEnabled,
+            isRemoveTaskListButtonEnabled: isRemoveTaskListButtonEnabled,
+        }
     }
 
     handleSettingsMenuClose() {

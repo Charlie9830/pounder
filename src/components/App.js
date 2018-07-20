@@ -273,7 +273,7 @@ class App extends React.Component {
               onAcceptInviteButtonClick={this.handleAcceptInviteButtonClick} onDenyInviteButtonClick={this.handleDenyInviteButtonClick}
               onShareMenuButtonClick={this.handleShareMenuButtonClick} updatingInviteIds={this.props.updatingInviteIds}
               onProjectSelectorInputDoubleClick={this.handleProjectSelectorInputDoubleClick} 
-              openProjectSelectorId={this.props.openProjectSelectorId}
+              openProjectSelectorId={this.props.openProjectSelectorId} isLoggedIn={this.props.isLoggedIn}
             />
           </div>
           <div className="ProjectAppGridItem">

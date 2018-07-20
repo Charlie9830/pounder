@@ -28,12 +28,22 @@ class ProjectToolBar extends React.Component {
         return (
             <div>
                 <div className="ToolBarFlexContainer">
-                    <Button iconSrc={NewTaskIcon} onClick={this.handleAddTaskButtonClick}/>
-                    <Button iconSrc={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick}/>
+                    <Button iconSrc={NewTaskIcon} onClick={this.handleAddTaskButtonClick}
+                    isEnabled={this.props.buttonEnableStates.isAddTaskButtonEnabled}/>
+
+                    <Button iconSrc={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick}
+                    isEnabled={this.props.buttonEnableStates.isRemoveTaskButtonEnabled}/>
+
                     <span className="ToolBarButtonSeparator" />
-                    <Button iconSrc={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick}/>
-                    <Button iconSrc={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonClick}/>
+
+                    <Button iconSrc={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick}
+                    isEnabled={this.props.buttonEnableStates.isAddTaskListButtonEnabled}/>
+
+                    <Button iconSrc={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonClick}
+                    isEnabled={this.props.buttonEnableStates.isRemoveTaskListButtonEnabled}/>
+
                     <div className="ToolBarFlexDivider"/>
+
                     <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}/>
                     {lockButtonJSX}
                 </div>

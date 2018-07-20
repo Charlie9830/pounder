@@ -265,11 +265,13 @@ class Sidebar extends React.Component {
 
     getSidebarToolbarJSX() {
         if (this.props.isOpen) {
+            var isRemoveProjectButtonEnabled = this.props.selectedProjectId !== -1 && this.props.projects.length > 0 &&
+            this.props.isSelectedProjectRemote !== true;
+
             return (
                 <div className="SidebarToolbarFlexContainer">
-                    <Button iconSrc={NewProjectIcon} onClick={this.handleAddProjectClick} />
-                    <Button iconSrc={RemoveProjectIcon} onClick={this.handleRemoveProjectClick}
-                    isEnabled={!this.props.isSelectedProjectRemote}/>
+                    <Button iconSrc={NewProjectIcon} isEnabled={this.props.isLoggedIn} onClick={this.handleAddProjectClick} />
+                    <Button iconSrc={RemoveProjectIcon} isEnabled={isRemoveProjectButtonEnabled} onClick={this.handleRemoveProjectClick}/>
                 </div>
             )
         }
