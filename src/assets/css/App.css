@@ -24,7 +24,6 @@ body {
   --surface-color:  #111111;
   --surface-color-alternate: #1b1b1b;
 
-  /* New */
   /* General */
   --primary-active-text-color: #FFF;
   --primary-inactive-text-color: #808080;
@@ -56,10 +55,14 @@ body {
 
   /* Task List */
   --task-list-header-text-color: #FFF;
-  --task-list-header-selected-text-color: #FFF;   /* NEW */
-  --task-list-header-selected-border-color: #FFF; /* REMOVE */
-  --task-list-header-background-color: #332d38;      /* NEW */
-  --task-list-header-background-selected-color: #665b70; /* CHANGED */
+  --task-list-header-selected-text-color: #FFF;  
+  --task-list-header-selected-border-color: #FFF;
+  --task-list-header-background-color: #332d38;   
+  --task-list-header-background-selected-color: #665b70;
+
+  /* Scroll Bar */
+  --scrollbar-track-color: #444;
+  --scrollbar-thumb-color: #666;
 
   /* Database */
   --database-synced-color: #008000;
@@ -97,10 +100,10 @@ body {
 }
 
 ::-webkit-scrollbar {
-  background: rgba(51,51,51,255);
-  width: 5px;
+  background: var(--scrollbar-track-color);
+  width: 8px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(77,77,77,255);
+  background: var(--scrollbar-thumb-color);
 }
