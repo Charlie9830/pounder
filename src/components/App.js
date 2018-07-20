@@ -494,7 +494,7 @@ class App extends React.Component {
 
   handleRemoveTaskListButtonClick() {
     if (this.props.focusedTaskListId !== -1) {
-      this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+      this.props.dispatch(setMessageBox(true, "Are you sure you want to delete this Task List?", MessageBoxTypes.STANDARD, null,
         (result) => {
           if (result === "ok") {
             this.removeTaskList(this.props.focusedTaskListId);
@@ -626,7 +626,7 @@ class App extends React.Component {
 
   handleRemoveProjectClick(projectId) {
     if (projectId !== -1) {
-      this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+      this.props.dispatch(setMessageBox(true, "Are you sure you want to delete this Project?", MessageBoxTypes.STANDARD, null,
         (result) => {
           if (result === "ok") {
             this.props.dispatch(removeProjectAsync(projectId));
@@ -641,7 +641,7 @@ class App extends React.Component {
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
-    this.props.dispatch(setMessageBox(true, "Are you sure?", MessageBoxTypes.STANDARD, null,
+    this.props.dispatch(setMessageBox(true, "Are you sure you want to delete this Task List?", MessageBoxTypes.STANDARD, null,
       (result) => {
         if (result === "ok") {
           this.removeTaskList(taskListWidgetId);
