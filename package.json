@@ -64,6 +64,7 @@
     "react-resizable": "^1.7.5",
     "react-sidebar": "^2.3.2",
     "react-sizeme": "^2.5.2",
+    "react-tooltip": "^3.6.1",
     "react-transition-group": "^2.4.0",
     "redux": "^4.0.0",
     "sanitize-filename": "^1.6.1",

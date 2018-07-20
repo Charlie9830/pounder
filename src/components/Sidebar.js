@@ -111,7 +111,8 @@ class Sidebar extends React.Component {
 
                     {/* Footer  */}
                     <div className="SidebarFooter">
-                        <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick} isEnabled={isShareButtonEnabled}/>
+                        <Button iconSrc={ShareIcon} onClick={this.handleShareMenuButtonClick} isEnabled={isShareButtonEnabled}
+                        tooltip="Invite users to selected project"/>
                     </div>
                     {collapsedProjectTitleJSX}
                 </div>
@@ -270,8 +271,10 @@ class Sidebar extends React.Component {
 
             return (
                 <div className="SidebarToolbarFlexContainer">
-                    <Button iconSrc={NewProjectIcon} isEnabled={this.props.isLoggedIn} onClick={this.handleAddProjectClick} />
-                    <Button iconSrc={RemoveProjectIcon} isEnabled={isRemoveProjectButtonEnabled} onClick={this.handleRemoveProjectClick}/>
+                    <Button iconSrc={NewProjectIcon} isEnabled={this.props.isLoggedIn} onClick={this.handleAddProjectClick}
+                    tooltip="Create new Project" />
+                    <Button iconSrc={RemoveProjectIcon} isEnabled={isRemoveProjectButtonEnabled} onClick={this.handleRemoveProjectClick}
+                    tooltip="Remove personal project"/>
                 </div>
             )
         }

@@ -77,3 +77,8 @@
     flex-shrink: 1;
     font-size: 8pt;
 }
+
+.ButtonTooltipContainer {
+    width: fit-content;
+    height: fit-content;
+}

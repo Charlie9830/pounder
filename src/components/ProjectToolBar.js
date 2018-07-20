@@ -29,22 +29,27 @@ class ProjectToolBar extends React.Component {
             <div>
                 <div className="ToolBarFlexContainer">
                     <Button iconSrc={NewTaskIcon} onClick={this.handleAddTaskButtonClick}
-                    isEnabled={this.props.buttonEnableStates.isAddTaskButtonEnabled}/>
+                    isEnabled={this.props.buttonEnableStates.isAddTaskButtonEnabled}
+                    tooltip="Add new Task"/>
 
                     <Button iconSrc={RemoveTaskIcon} onClick={this.handleRemoveTaskButtonClick}
-                    isEnabled={this.props.buttonEnableStates.isRemoveTaskButtonEnabled}/>
+                    isEnabled={this.props.buttonEnableStates.isRemoveTaskButtonEnabled}
+                    tooltip="Delete selected Task"/>
 
                     <span className="ToolBarButtonSeparator" />
 
                     <Button iconSrc={NewTaskListIcon} onClick={this.handleAddTaskListButtonClick}
-                    isEnabled={this.props.buttonEnableStates.isAddTaskListButtonEnabled}/>
+                    isEnabled={this.props.buttonEnableStates.isAddTaskListButtonEnabled}
+                    tooltip="Add new Task List"/>
 
                     <Button iconSrc={RemoveTaskListIcon} onClick={this.handleRemoveTaskListButtonClick}
-                    isEnabled={this.props.buttonEnableStates.isRemoveTaskListButtonEnabled}/>
+                    isEnabled={this.props.buttonEnableStates.isRemoveTaskListButtonEnabled}
+                    tooltip="Delete selected Task List"/>
 
                     <div className="ToolBarFlexDivider"/>
 
-                    <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}/>
+                    <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}
+                    tooltip="Settings"/>
                     {lockButtonJSX}
                 </div>
             </div>
@@ -58,7 +63,8 @@ class ProjectToolBar extends React.Component {
             return (
                 <React.Fragment>
                     <span className="ToolBarButtonSeparator" />
-                    <Button iconSrc={LockIcon} onClick={this.handleLockButtonClick}/>
+                    <Button iconSrc={LockIcon} onClick={this.handleLockButtonClick}
+                    tooltip="Lock Application"/>
                 </React.Fragment>
             )
         }
