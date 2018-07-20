@@ -11,11 +11,6 @@ class AccountSettingsPage extends React.Component {
     constructor(props) {
         super(props);
 
-        // State.
-        this.state = {
-            isInRegisterMode: false,
-        }
-
         // Method Bindings.
         this.getButtonsJSX = this.getButtonsJSX.bind(this);
         this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
@@ -28,6 +23,10 @@ class AccountSettingsPage extends React.Component {
         this.getPasswordResetActionJSX = this.getPasswordResetActionJSX.bind(this);
         this.getRegisterActionJSX = this.getRegisterActionJSX.bind(this);
         this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
+        this.getSignInActionJSX = this.getSignInActionJSX.bind(this);
+        this.handleSignInActionButtonClick = this.handleSignInActionButtonClick.bind(this);
+        this.getRegisterScreenJSX = this.getRegisterScreenJSX.bind(this);
+        this.getLogInScreenJSX = this.getLogInScreenJSX.bind(this);
     }
 
     componentDidMount() {
@@ -35,42 +34,39 @@ class AccountSettingsPage extends React.Component {
         if (this.refs.emailInput !== undefined) {
             this.refs.emailInput.focus();
         }
-
-        if (this.props.isFirstTimeBoot) {
-            // First time boot. Jump to Register Screen.
-            this.setState({ isInRegisterMode: true });
-            this.props.onIsFirstTimeBootChange(false);
-        }
     }
 
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isInRegisterMode !== this.props.isInRegisterMode) {
+            if (this.props.isInRegisterMode && this.refs.emailInput !== undefined) {
+                this.refs.emailInput.focus();
+            }
+        }
+    }
     
 
     render() {
-        var buttonsJSX = this.getButtonsJSX();
-        var inputsJSX = this.getInputsJSX();
         var actionsJSX = this.getActionsJSX();
+        var contentsJSX = [];
+        if (this.props.isInRegisterMode !== true) {
+            contentsJSX = this.getLogInScreenJSX();
+        }
+
+        else {
+            contentsJSX = this.getRegisterScreenJSX();
+        }
 
         return (
             <div className="AccountSettingsContainer">
                 <div className="LogInContainer">
-                    {/* Log In / Log Out Control  */}
+                    {/* Log In / Log out / Register  */}
                     <CenteringContainer>
-                        {/* Logo and Status Message  */}
-                        <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
-                        <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
-
-                        {/* Email and Password Inputs  */}
-                        {inputsJSX}
-
-                        {/* LogInLogOut Button  */}
-                        <div className="AppSettingsAccountButtonsFlexContainer">
-                            {buttonsJSX}
-                        </div>
+                        {contentsJSX}
                     </CenteringContainer>
 
                     {/* Account Actions  */}
                     <div className="AccountSettingsActionsContainer">
-                        <MenuSubtitle text="Actions" />
+                        <MenuSubtitle text="" />
                         {actionsJSX}
                     </div>
                 </div>
@@ -79,36 +75,112 @@ class AccountSettingsPage extends React.Component {
         )
     }
 
-    getRegisterActionJSX() {
+    getLogInScreenJSX() {
+        var inputsJSX = this.getInputsJSX();
+        var buttonsJSX = this.getButtonsJSX();
+
         return (
-            <div className="AppSettingsVerticalFlexItem">
-                <span className="AppSettingsHorizontalFlexItem">
-                    <div className="AppSettingsItemLabel"> Sign up </div>
-                </span>
-                <div className="AppSettingsHorizontalFlexItem">
-                    <Button size="small" text="Go" onClick={this.handleRegisterActionButtonClick} />
+            <div className="AccountSettingsContentsContainer">
+                {/* Logo and Status Message  */}
+                <img className="AppSettingsAccountLogo" src={AccountIconLoggedIn} />
+                <div className="AppSettingsAccountStatus"> {this.props.authStatusMessage} </div>
+
+                {/* Email and Password Inputs  */}
+                {inputsJSX}
+
+                {/* LogInLogOut Button  */}
+                <div className="AppSettingsAccountButtonsFlexContainer">
+                    {buttonsJSX}
                 </div>
             </div>
+        )
+    }
+
+    getRegisterScreenJSX() {
+        if (this.props.isLoggingIn === false) {
+            return (
+                <div className="AccountSettingsContentsContainer">
+                    {/* Title */}
+                    <div className="AccountSettingsRegisterTitle"> Let's get started </div>
+                    <div className="AccountSettingsRegisterSubtitle"> Create Account  </div>
+    
+                    {/* Email */}
+                    <div className="AppSettingsAccountEmailContainer">
+                        <input className="AppSettingsAccountInput" type="text" ref="emailInput" defaultValue={this.props.userEmail}
+                            onKeyPress={this.handleInputKeyPress} placeholder="Your email" />
+                    </div>
+    
+                    {/* Display Name */}
+                    <div className="AppSettingsAccountDisplayNameContainer">
+                        <input className="AppSettingsAccountInput" type="text" ref="displayNameInput"
+                            onKeyPress={this.handleInputKeyPress} placeholder="Display name" />
+                    </div>
+    
+                    {/* Password  */}
+                    <div className="AppSettingsAccountPasswordContainer">
+                        <input className="AppSettingsAccountInput" type="password" ref="passwordInput"
+                            onKeyPress={this.handleInputKeyPress} placeholder="Password" />
+                    </div>
+    
+                    {/* Button */}
+                    <div className="AppSettingsAccountButtonsFlexContainer">
+                        <Button text="Sign Up" onClick={this.handleRegisterButtonClick}/>
+                    </div>
+                </div>
+            )
+        }
+
+        else {
+            return (
+                <div className="AccountSettingsContentsContainer">
+                    <CenteringContainer>
+                        <Spinner  size="big"/>
+                    </CenteringContainer>
+                </div>
+            )
+        }
+        
+    }
+
+    getRegisterActionJSX() {
+        return (
+            <div className="AccountSettingsActionContainer">
+                <span className="AppSettingsItemLabel"> New to Handball? </span>
+                <span className="AccountSettingsActionLink" onClick={this.handleRegisterActionButtonClick}> Register here. </span>
+            </div>
+        )
+    }
+
+    getSignInActionJSX() {
+        return (
+                <div className="AccountSettingsActionContainer">
+                    <span className="AppSettingsItemLabel"> Have an account? </span>
+                    <span className="AccountSettingsActionLink" onClick={this.handleSignInActionButtonClick}> Sign in. </span>
+                </div>
         )
     }
 
     getPasswordResetActionJSX() {
         return (
-            <div className="AppSettingsVerticalFlexItem">
-                <span className="AppSettingsHorizontalFlexItem">
-                    <div className="AppSettingsItemLabel"> Send password reset email </div>
-                </span>
-                <div className="AppSettingsHorizontalFlexItem">
-                    <Button size="small" text="Send" onClick={this.handlePasswordResetButtonClick} />
+                <div className="AccountSettingsActionContainer">
+                    <div className="AppSettingsItemLabel"> Want to change your password? </div>
+                    <span className="AccountSettingsActionLink" onClick={this.handlePasswordResetButtonClick}> Send a reset email </span>
                 </div>
-            </div>
-
         )
     }
 
     getActionsJSX() {
         var registerActionJSX = this.getRegisterActionJSX();
+        var signInActionJSX = this.getSignInActionJSX();
         var passwordResetActionJSX = this.getPasswordResetActionJSX();
+
+        if (this.props.isInRegisterMode) {
+            return (
+                <React.Fragment>
+                    {signInActionJSX}
+                </React.Fragment>
+            )
+        }
 
         if (this.props.isLoggedIn) {
             return (
@@ -130,24 +202,18 @@ class AccountSettingsPage extends React.Component {
 
     getInputsJSX() {
         if (this.props.isLoggedIn === false) {
-            var displayNameInputJSX = this.getDisplayNameInputJSX();
             return (
                 <div>
                     {/* Email */}
                     <div className="AppSettingsAccountEmailContainer">
-                        <div className="AppSettingsAccountItemLabel"> Email </div>
                         <input className="AppSettingsAccountInput" type="text" ref="emailInput" defaultValue={this.props.userEmail}
-                        onKeyPress={this.handleInputKeyPress}/>
+                        onKeyPress={this.handleInputKeyPress} placeholder="Email"/>
                     </div>
-
-                    {/* Display Name (Only in Register Mode)  */} 
-                    {displayNameInputJSX}
 
                     {/* Password  */} 
                     <div className="AppSettingsAccountPasswordContainer">
-                        <div className="AppSettingsAccountItemLabel"> Password </div>
                         <input className="AppSettingsAccountInput" type="password" ref="passwordInput"
-                        onKeyPress={this.handleInputKeyPress} />
+                        onKeyPress={this.handleInputKeyPress} placeholder="Password" />
                     </div>
                 </div>
             )
@@ -164,7 +230,7 @@ class AccountSettingsPage extends React.Component {
     }
 
     getDisplayNameInputJSX() {
-        if (this.state.isInRegisterMode) {
+        if (this.props.isInRegisterMode) {
             return (
                 <div className="AppSettingsAccountDisplayNameContainer">
                     <div className="AppSettingsAccountItemLabel"> Display Name </div>
@@ -185,7 +251,7 @@ class AccountSettingsPage extends React.Component {
 
     handleInputKeyPress(e) {
         if (e.key === "Enter") {
-            if (this.state.isInRegisterMode) {
+            if (this.props.isInRegisterMode) {
                 this.handleRegisterButtonClick();
             }
 
@@ -198,32 +264,20 @@ class AccountSettingsPage extends React.Component {
     getButtonsJSX() {
         if (this.props.isLoggingIn) {
             return (
-                <Spinner size="medium"/>
+                <Spinner size="medium" />
             )
         }
 
-        else {
-            if (this.props.isLoggedIn) {
-                return (
-                    <Button text="Log Out" onClick={() => {this.props.onLogOutButtonClick()}}/>
-                )
-            }
-    
-            else {
-                if (this.state.isInRegisterMode) {
-                    return (
-                        <Button text="Register" onClick={this.handleRegisterButtonClick}/>
-                    )
-                }
+        if (this.props.isLoggedIn) {
+            return (
+                <Button text="Log Out" onClick={() => { this.props.onLogOutButtonClick() }} />
+            )
+        }
 
-                else {
-                    return (
-                        <div>
-                            <Button text="Log In" onClick={this.handleLogInButtonClick} />  
-                        </div>                  
-                    )
-                }
-            }
+        if (this.props.isLoggedIn === false) {
+            return (
+                <Button text="Log In" onClick={this.handleLogInButtonClick}/>
+            )
         }
     }
 
@@ -236,7 +290,11 @@ class AccountSettingsPage extends React.Component {
     }
 
     handleRegisterActionButtonClick() {
-        this.setState({ isInRegisterMode: true })
+        this.props.onRegisterModeChanged(true);
+    }
+
+    handleSignInActionButtonClick() {
+        this.props.onRegisterModeChanged(false);
     }
 
     handleLogInButtonClick() {

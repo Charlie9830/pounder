@@ -17,7 +17,8 @@ import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, 
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
-        subscribeToDatabaseAsync, selectProject, sendPasswordResetEmailAsync, setAuthStatusMessage } from 'pounder-redux/action-creators';
+        subscribeToDatabaseAsync, selectProject, sendPasswordResetEmailAsync, setAuthStatusMessage,
+        setIsInRegisterMode } from 'pounder-redux/action-creators';
 import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY, getCurrentBackupDirectory } from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
 import { getUserUid } from 'pounder-firebase';
@@ -74,8 +75,8 @@ class AppSettingsMenu extends React.Component {
         this.handlePinCodeChange = this.handlePinCodeChange.bind(this);
         this.handleAutoBackupIntervalChange = this.handleAutoBackupIntervalChange.bind(this);
         this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
-        this.handleIsFirstTimeBootChange = this.handleIsFirstTimeBootChange.bind(this);
         this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
+        this.handleRegisterModeChanged = this.handleRegisterModeChanged.bind(this);
     }
 
     render() {
@@ -105,6 +106,10 @@ class AppSettingsMenu extends React.Component {
                     </div>
             </OverlayMenuContainer>
         )
+    }
+
+    handleRegisterModeChanged(newValue) {
+        this.props.dispatch(setIsInRegisterMode(newValue));
     }
 
     getWaitingOnDatabaseOverlayJSX() {
@@ -204,8 +209,8 @@ class AppSettingsMenu extends React.Component {
                     onLogInButtonClick={(email, password) => {this.props.dispatch(logInUserAsync(email,password))}}
                     onLogOutButtonClick={() => {this.props.dispatch(logOutUserAsync())}}
                     onRegisterButtonClick={this.handleRegisterButtonClick} displayName={this.props.displayName}
-                    onPasswordResetButtonClick={this.handlePasswordResetButtonClick} 
-                    isFirstTimeBoot={this.props.generalConfig.isFirstTimeBoot} onIsFirstTimeBootChange={this.handleIsFirstTimeBootChange}/>
+                    onPasswordResetButtonClick={this.handlePasswordResetButtonClick}
+                    isInRegisterMode={this.props.isInRegisterMode} onRegisterModeChanged={this.handleRegisterModeChanged}/>
                 )
             break;
 
@@ -227,12 +232,6 @@ class AppSettingsMenu extends React.Component {
                 <HelpPage/>
             )
         }
-    }
-
-    handleIsFirstTimeBootChange(value) {
-        var generalConfig = this.props.generalConfig;
-        generalConfig.isFirstTimeBoot = false;
-        this.props.dispatch(setGeneralConfigAsync(generalConfig));
     }
 
     handlePasswordResetButtonClick() {
@@ -404,6 +403,7 @@ const mapStateToProps = state => {
         userEmail: state.userEmail,
         displayName: state.displayName,
         remoteProjectIds: state.remoteProjectIds,
+        isInRegisterMode: state.isInRegisterMode,
     }
 }
 

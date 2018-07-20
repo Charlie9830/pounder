@@ -97,6 +97,18 @@
     width: 100%;
 }
 
+.AccountSettingsActionContainer {
+
+}
+
+.AccountSettingsActionLink {
+    color: var(--alternate-active-text-color);
+    font-family: var(--primary-font-family);
+    font-weight: 500;
+    font-size: 10pt;
+    cursor: pointer;
+}
+
 .AppSettingsItemLabel {
     color: var(--primary-active-text-color);
     font-family: var(--primary-font-family);
@@ -142,12 +154,17 @@ input.AppSettingsItemInput[type*="number"] {
 .AppSettingsAccountInput {
     margin-top: 5px;
     font-family: var(--primary-font-family);
-    background: var(--surface-color-alternate);
-    color: var(--alternate-active-text-color);;
-    border: gray 1px solid;
-    padding: 1px;
-    width: 220px;
+    background: transparent;
+    color: var(--alternate-active-text-color);
+    border: 0px solid gray;
+    border-bottom: 1px solid gray;
+    outline: none;
+    padding: 2px;
+    width: 250px;
+    height: 24px;
 }
+
+
 
 .DatabaseSettingsPageInfoPane {
     width: 500px;
@@ -207,11 +224,12 @@ input.AppSettingsItemInput[type*="number"] {
 }
 
 .AppSettingsAccountDisplayNameContainer {
-    margin-top: 10px;
+    margin-top: 25px;
 }
 
 .AppSettingsAccountPasswordContainer {
-    margin-top: 10px;
+    margin-top: 25px;
+    margin-bottom: 25px;
 }
 
 .AppSettingsAccountItemLabel {
@@ -219,6 +237,11 @@ input.AppSettingsItemInput[type*="number"] {
     font-family: var(--primary-font-family);
     font-size: 10pt;
     line-height: 10pt;
+}
+
+.AccountSettingsContentsContainer {
+    min-height: 325px;
+    width: 100%;
 }
 
 .AppSettingsAccountButtonsFlexContainer {
@@ -273,6 +296,19 @@ input.AppSettingsItemInput[type*="number"] {
 .ResetColorSettingsLink:hover {
     color: var(--alternate-active-text-color);
     cursor: default;
+}
+
+.AccountSettingsRegisterTitle {
+    font-family: var(--primary-font-family);
+    color: var(--primary-active-text-color);
+    font-size: 12pt;
+}
+
+.AccountSettingsRegisterSubtitle {
+    font-family: var(--primary-font-family);
+    color: var(--alternate-active-text-color);
+    margin-top: 10px;
+    font-size: 10pt;
 }
 
 
