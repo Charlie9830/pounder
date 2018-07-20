@@ -1,7 +1,7 @@
 
 .TaskListSettingsMenuContainer {
     display: flex;
-    width: 180px;
+    width: 200px;
     height: fit-content;
     flex-direction: column;
     flex-basis: auto;
@@ -43,7 +43,7 @@
 
 .TaskListSettingsMenuItemContainer {
     flex-grow: 1;
-    width: 175px;
+    width: 195px;
     padding-left: 5px;
 }
 
