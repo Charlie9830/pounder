@@ -148,9 +148,9 @@ class ShareMenu extends React.Component {
                                     </div>
 
                                     {/* Buttons  */}
-                                    <div className="ProjectMemberButtonsContainer" data-isenabled={isCurrentUserOwner}>
-                                        {this.getRoleButtonJSX(item)}
-                                        {this.getKickButtonJSX(item)}
+                                    <div className="ProjectMemberButtonsContainer">
+                                        {this.getRoleButtonJSX(item, isCurrentUserOwner)}
+                                        {this.getKickButtonJSX(item, isCurrentUserOwner)}
                                     </div>
 
                                     {/* Status  */}
@@ -394,25 +394,29 @@ class ShareMenu extends React.Component {
         this.props.dispatch(kickUserFromProjectAsync(this.props.selectedProjectId, userId));
     }
 
-    getRoleButtonJSX(member) {
+    getRoleButtonJSX(member, isCurrentUserOwner) {
         if (member.role === 'member') {
             return (
-                <Button text="Promote" size="small" onClick={() => { this.handleRoleButtonClick('promote', member.userId) }} />
+                <Button text="Promote" size="small" isEnabled={isCurrentUserOwner}
+                 onClick={() => { this.handleRoleButtonClick('promote', member.userId) }} />
             )
         }
 
         else {
             return (
-                <Button text="Demote" size="small" onClick={() => { this.handleRoleButtonClick('demote', member.userId) }} />
+                <Button text="Demote" size="small" isEnabled={isCurrentUserOwner}
+                 onClick={() => { this.handleRoleButtonClick('demote', member.userId) }} />
             )
         }
     }
 
-    getKickButtonJSX(member) {
+    getKickButtonJSX(member, isCurrentUserOwner) {
         var isCurrentUser = member.userId === getUserUid();
+        var isEnabled = !isCurrentUser && isCurrentUserOwner;
+
         var text = this.parseStatusIntoKickButtonText(member.status);
         return (
-            <Button text={text} size="small" isEnabled={!isCurrentUser}
+            <Button text={text} size="small" isEnabled={isEnabled}
              onClick={() => { this.handleKickButtonClick(member.displayName, member.userId) }} />
         )
     }
