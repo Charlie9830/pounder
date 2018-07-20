@@ -77,6 +77,7 @@ class AppSettingsMenu extends React.Component {
         this.handlePasswordResetButtonClick = this.handlePasswordResetButtonClick.bind(this);
         this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
         this.handleRegisterModeChanged = this.handleRegisterModeChanged.bind(this);
+        this.handleSortProjectsBySelectorChange = this.handleSortProjectsBySelectorChange.bind(this);
     }
 
     render() {
@@ -198,7 +199,8 @@ class AppSettingsMenu extends React.Component {
                     colorPicker={this.state.colorPicker} onColorPickerCloseButtonClick={this.handleColorPickerCloseButtonClick}
                     onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick} onPinCodeChange={this.handlePinCodeChange}
                     onDisableAnimationsChange={this.handleDisableAnimationsChange} onHideLockButtonChange={this.handleHideLockButtonChange}
-                    onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange} onUseLargeFontsChange={this.handleUseLargeFontsChange}/>
+                    onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange} onUseLargeFontsChange={this.handleUseLargeFontsChange}
+                    onSortProjectsBySelectorChange={this.handleSortProjectsBySelectorChange}/>
                 )
             break;
 
@@ -232,6 +234,10 @@ class AppSettingsMenu extends React.Component {
                 <HelpPage/>
             )
         }
+    }
+
+    handleSortProjectsBySelectorChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, sortProjectsBy: newValue}))
     }
 
     handlePasswordResetButtonClick() {

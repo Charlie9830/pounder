@@ -205,8 +205,8 @@ class Project extends React.Component{
     }
 
 
-    handleAssignToMember(userId, taskId) {
-        this.props.onAssignToMember(userId, taskId);
+    handleAssignToMember(newUserId, oldUserId, taskId) {
+        this.props.onAssignToMember(newUserId, oldUserId, taskId);
     }
 
     handleTaskMetadataOpen(taskListWidgetId, taskId) {
@@ -243,8 +243,8 @@ class Project extends React.Component{
         }
     }
 
-    handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
-        this.props.onTaskPriorityToggleClick(taskId, newValue, currentMetadata);
+    handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata);
     }
 
     handleLockButtonClick() {
@@ -279,8 +279,8 @@ class Project extends React.Component{
         this.props.onRemoveTaskButtonClick();
     }
 
-    handleTaskSubmit(taskListWidgetId, taskId, newData, currentMetadata) {
-        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newData, currentMetadata)
+    handleTaskSubmit(taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
+        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata)
     }
 
     handleWidgetClick(taskListWidgetId, isFocused) {
@@ -291,9 +291,9 @@ class Project extends React.Component{
         this.props.onTaskListWidgetHeaderDoubleClick(taskListWidgetId);
     }
 
-    handleTaskListWidgetHeaderSubmit(taskListWidgetId, newData) {
+    handleTaskListWidgetHeaderSubmit(taskListWidgetId, newData, oldValue) {
         // Raise it up to Parent.
-        this.props.onTaskListWidgetHeaderChanged(taskListWidgetId, newData);
+        this.props.onTaskListWidgetHeaderChanged(taskListWidgetId, newData, oldValue);
     }
 
     handleTaskClick(element, taskListWidgetId) {
@@ -304,8 +304,8 @@ class Project extends React.Component{
         this.props.onLayoutChange(layouts, this.props.projectId);
     }
 
-    handleTaskCheckBoxClick(e, taskListWidgetId, taskId, incomingValue, currentMetadata) {
-        this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, incomingValue, currentMetadata)
+    handleTaskCheckBoxClick(e, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
+        this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata)
     }
 
     handleTaskListWidgetRemoveButtonClick(taskListWidgetId) {
@@ -316,8 +316,8 @@ class Project extends React.Component{
         this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings);
     }
 
-    handleNewDateSubmit(taskListWidgetId, taskId, newDate, currentMetadata) {
-        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate, currentMetadata);
+    handleNewDateSubmit(taskListWidgetId, taskId, newDate, oldDate, currentMetadata) {
+        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate, oldDate, currentMetadata);
     }
 }
 

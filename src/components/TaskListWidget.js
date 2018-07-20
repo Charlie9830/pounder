@@ -110,8 +110,8 @@ class TaskListWidget extends React.Component {
         this.props.onSettingsMenuClose();
     }
 
-    handleAssignToMember(userId, taskId) {
-        this.props.onAssignToMember(userId, taskId);
+    handleAssignToMember(newUserId, oldUserId, taskId) {
+        this.props.onAssignToMember(newUserId, oldUserId, taskId);
     }
 
     handleTaskMetadataOpen(taskId) {
@@ -122,8 +122,8 @@ class TaskListWidget extends React.Component {
         this.props.onTaskMetadataCloseButtonClick();
     }
 
-    handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
-        this.props.onTaskPriorityToggleClick(taskId, newValue, currentMetadata);
+    handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {
+        this.props.onTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata);
     }
 
     handleSettingsButtonClick() {
@@ -138,10 +138,10 @@ class TaskListWidget extends React.Component {
         this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
     }
 
-    handleTaskInputUnmounting(data, taskId, currentMetadata) {
+    handleTaskInputUnmounting(newValue, oldValue, taskId, currentMetadata) {
         // A TaskTextInput is Unmounting. Meaning that the Task has lost focus whilst text was still pending inside an open
         // input. Handle Data Changes.
-        this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, data, currentMetadata);
+        this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newValue, oldValue, currentMetadata);
     }
 
     handleTaskTwoFingerTouch(taskId) {
@@ -169,11 +169,11 @@ class TaskListWidget extends React.Component {
     }
 
     handleTaskListHeaderSubmit(newData) {
-        this.props.onHeaderSubmit(this.props.taskListWidgetId, newData);
+        this.props.onHeaderSubmit(this.props.taskListWidgetId, newData, this.props.taskListName);
     }
 
-    handleTaskCheckBoxClick(e, taskId, incomingValue, currentMetadata) {
-        this.props.onTaskCheckBoxClick(e, this.props.taskListWidgetId, taskId, incomingValue, currentMetadata);
+    handleTaskCheckBoxClick(e, taskId, newValue, oldValue, currentMetadata) {
+        this.props.onTaskCheckBoxClick(e, this.props.taskListWidgetId, taskId, newValue, oldValue, currentMetadata);
     }
 
     handleRemoveButtonClick(e) {
@@ -231,8 +231,8 @@ class TaskListWidget extends React.Component {
         }
     } 
 
-    handleNewDateSubmit(taskId, newDate, currentMetadata) {
-        this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate, currentMetadata);
+    handleNewDateSubmit(taskId, newDate, oldDate, currentMetadata) {
+        this.props.onNewDateSubmit(this.props.taskListWidgetId, taskId, newDate, oldDate, currentMetadata);
     }
 
 }

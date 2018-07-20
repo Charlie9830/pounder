@@ -21,6 +21,7 @@ class GeneralSettingsPage extends React.Component {
         this.pinCodeEntryRef = React.createRef();
         this.autoBackupIntervalEntryRef = React.createRef();
         this.useLargeFontsCheckboxRef = React.createRef();
+        this.sortProjectsBySelectorRef = React.createRef();
 
         // Method Bindings.
         this.getFavouriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX.bind(this);
@@ -36,6 +37,8 @@ class GeneralSettingsPage extends React.Component {
         this.handlePinCodeInputBlur = this.handlePinCodeInputBlur.bind(this);
         this.handleAutoBackupIntervalInputBlur = this.handleAutoBackupIntervalInputBlur.bind(this);
         this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
+        this.getSortProjectsBySelectorJSX = this.getSortProjectsBySelectorJSX.bind(this);
+        this.handleSortProjectsBySelectorChange = this.handleSortProjectsBySelectorChange.bind(this);
     }
 
     componentDidMount() {
@@ -45,6 +48,7 @@ class GeneralSettingsPage extends React.Component {
 
     render() {
         var favoriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX();
+        var sortProjectsBySelectorJSX = this.getSortProjectsBySelectorJSX();
 
         // Zero Fill any undefined values.
         var disableAnimations = this.props.generalConfig.disableAnimations === undefined ?
@@ -143,6 +147,16 @@ class GeneralSettingsPage extends React.Component {
                     </span>
                 </div>
 
+                {/* Sort projects by */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel"> Sort Projects by </div>
+                    </span>
+                    <span className="AppSettingsHorizontalFlexItem">
+                        {sortProjectsBySelectorJSX}
+                    </span>
+                </div>
+
 
                 {/* Color Selection Title */}
                 <div className="AppSettingsVerticalFlexItem">
@@ -160,6 +174,10 @@ class GeneralSettingsPage extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handleSortProjectsBySelectorChange() {
+        this.props.onSortProjectsBySelectorChange(this.sortProjectsBySelectorRef.current.value);
     }
 
     handleUseLargeFontsChange() {
@@ -257,6 +275,19 @@ class GeneralSettingsPage extends React.Component {
             <select className="FavouriteProjectSelect" value={this.props.accountConfig.favouriteProjectId}
                 ref="favourteProjectSelect" onChange={this.handleFavouriteProjectSelectChange}>
                 {optionsJSX}
+            </select>
+        )
+    }
+
+    getSortProjectsBySelectorJSX() {
+        var sortProjectsBy = this.props.generalConfig.sortProjectsBy === undefined ? 'alphabetically' : this.props.generalConfig.sortProjectsBy;
+
+        return (
+            <select className="FavouriteProjectSelect" ref={this.sortProjectsBySelectorRef} defaultValue={sortProjectsBy}
+            onChange={this.handleSortProjectsBySelectorChange}>
+                <option key={0} value='alphabetically'> Alphabetically </option>
+                <option key={1} value='created'> Date created </option>
+                <option key={2} value='updated'> Updated </option>
             </select>
         )
     }

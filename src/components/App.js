@@ -311,8 +311,8 @@ class App extends React.Component {
     this.props.dispatch(setOpenProjectSelectorId(projectSelectorId));
   }
 
-  handleAssignToMember(userId, taskId) {
-    this.props.dispatch(updateTaskAssignedToAsync(userId, taskId));
+  handleAssignToMember(newUserId, oldUserId, taskId) {
+    this.props.dispatch(updateTaskAssignedToAsync(newUserId, oldUserId, taskId));
   }
 
   getProjectMembers() {
@@ -402,8 +402,8 @@ class App extends React.Component {
     this.props.dispatch(getCSSConfigAsync());
   }
 
-  handleTaskPriorityToggleClick(taskId, newValue, currentMetadata) {
-    this.props.dispatch(updateTaskPriority(taskId, newValue, currentMetadata));
+  handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {
+    this.props.dispatch(updateTaskPriority(taskId, newValue, oldValue, currentMetadata));
   }
 
   getSelectedProjectTasks() {
@@ -517,8 +517,8 @@ class App extends React.Component {
     this.props.dispatch(removeSelectedTaskAsync());
   }
 
-  handleTaskChanged(projectId, taskListWidgetId, taskId, newData, currentMetadata) {
-    this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newData, currentMetadata));
+  handleTaskChanged(projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
+    this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newValue, oldValue, currentMetadata));
   }
 
   handleKeyDown(e) {
@@ -604,8 +604,8 @@ class App extends React.Component {
     }
   }
 
-  handleTaskListWidgetHeaderChanged(taskListWidgetId, newData) {
-    this.props.dispatch(updateTaskListWidgetHeaderAsync(taskListWidgetId, newData));
+  handleTaskListWidgetHeaderChanged(taskListWidgetId, newData, oldData) {
+    this.props.dispatch(updateTaskListWidgetHeaderAsync(taskListWidgetId, newData, oldData));
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
@@ -616,8 +616,8 @@ class App extends React.Component {
     this.props.dispatch(updateProjectLayoutAsync(layouts, projectId, taskListIdsToFoul));
   }
   
-  handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, incomingValue, currentMetadata) {
-    this.props.dispatch(updateTaskCompleteAsync(taskListWidgetId, taskId, incomingValue, currentMetadata));
+  handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
+    this.props.dispatch(updateTaskCompleteAsync(taskListWidgetId, taskId, newValue, oldValue, currentMetadata));
   }
 
   handleAddProjectClick() {
@@ -636,8 +636,8 @@ class App extends React.Component {
     }
   }
 
-  handleProjectNameSubmit(projectSelectorId, newName) {
-    this.props.dispatch(updateProjectNameAsync(projectSelectorId, newName));
+  handleProjectNameSubmit(projectSelectorId, newName, oldName) {
+    this.props.dispatch(updateProjectNameAsync(projectSelectorId, newName, oldName));
   }
 
   handleTaskListWidgetRemoveButtonClick(projectId, taskListWidgetId) {
@@ -662,8 +662,8 @@ class App extends React.Component {
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
-  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate, currentMetadata) {
-    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate, currentMetadata));
+  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate, oldDate, currentMetadata) {
+    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate, oldDate, currentMetadata));
   }
 
   getLockScreen() {

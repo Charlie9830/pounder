@@ -304,8 +304,8 @@ class Sidebar extends React.Component {
         this.props.onRemoveProjectClick(this.props.selectedProjectId);
     }
 
-    handleProjectNameSubmit(projectSelectorId, newProjectName) {
-        this.props.onProjectNameSubmit(projectSelectorId, newProjectName);
+    handleProjectNameSubmit(projectSelectorId, newProjectName, oldProjectName) {
+        this.props.onProjectNameSubmit(projectSelectorId, newProjectName, oldProjectName);
     }
 }
 

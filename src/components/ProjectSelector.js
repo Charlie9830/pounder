@@ -122,12 +122,12 @@ class ProjectSelector extends React.Component {
 
     handleKeyPress(e) {
         if (e.key === "Enter") {
-            this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value);
+            this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value, this.props.projectName );
         }
     }
 
     handleInputBlur() {
-        this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value);
+        this.props.onProjectNameSubmit(this.props.projectSelectorId, this.textarea.value, this.props.projectName);
     }
 
 
