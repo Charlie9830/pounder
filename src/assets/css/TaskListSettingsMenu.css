@@ -56,7 +56,7 @@
 }
 
 .TaskListSettingsMenuItemContainer:hover {
-    background: rgba(52, 52, 52, 255);
+    background: var(--primary-hover-color);
 }
 
 .TaskListSettingsMenuItemLabel {
