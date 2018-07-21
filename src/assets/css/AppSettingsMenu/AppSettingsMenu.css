@@ -5,7 +5,7 @@
     background: var(--primary-color);
     border: gray 1px solid;
     margin-top: -25%;
-    width: 700px;
+    width: 900px;
 }
 
 .AppSettingsMenuSidebarContentFlexContainer {
@@ -48,6 +48,19 @@
     right: 0px;
     bottom: 0px;
     background: rgba(0,0,0,0.5);
+}
+
+.AppSettingsIFrameContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.AppSettingsIFrame {
+    width: 100%;
+    height: 100%;
+    border: none;
+    outline: none;
+    
 }
 
 

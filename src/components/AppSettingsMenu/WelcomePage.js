@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 
-class HelpPage extends React.Component {
+class WelcomePage extends React.Component {
     constructor(props) {
         super(props);
     }
@@ -9,10 +9,10 @@ class HelpPage extends React.Component {
     render() {
         return (
             <div className="AppSettingsIFrameContainer">
-                <iframe className="AppSettingsIFrame" src="./help-pages/help.html"></iframe>
+                <iframe className="AppSettingsIFrame" src="./help-pages/welcome.html"></iframe>
             </div>
         )
     }
 }
 
-export default HelpPage;
+export default WelcomePage;

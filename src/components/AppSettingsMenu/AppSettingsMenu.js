@@ -5,6 +5,7 @@ import GeneralSettingsPage from './GeneralSettingsPage';
 import DatabaseSettingsPage from './DatabaseSettingsPage';
 import AccountSettingsPage from './AccountSettingsPage';
 import HelpPage from './HelpPage';
+import WelcomePage from './WelcomePage';
 import AppSettingsSidebar from './AppSettingsSidebar';
 import CenteringContainer from '../../containers/CenteringContainer';
 import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
@@ -24,7 +25,6 @@ import { MessageBoxTypes } from 'pounder-redux';
 import { getUserUid } from 'pounder-firebase';
 import MessageBox from '../MessageBox';
 import { getFirestore } from 'pounder-firebase';
-
 import TestData from '../../testdata/data';
 import Spinner from '../Spinner';
 
@@ -232,6 +232,11 @@ class AppSettingsMenu extends React.Component {
             case "help":
             return (
                 <HelpPage/>
+            )
+
+            case "welcome":
+            return (
+                <WelcomePage/>
             )
         }
     }
