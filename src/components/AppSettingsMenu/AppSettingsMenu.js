@@ -6,6 +6,8 @@ import DatabaseSettingsPage from './DatabaseSettingsPage';
 import AccountSettingsPage from './AccountSettingsPage';
 import HelpPage from './HelpPage';
 import WelcomePage from './WelcomePage';
+import KeyboardShortcutsPage from './KeyboardShortcutsPage';
+import AboutPage from './AboutPage';
 import AppSettingsSidebar from './AppSettingsSidebar';
 import CenteringContainer from '../../containers/CenteringContainer';
 import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
@@ -237,6 +239,16 @@ class AppSettingsMenu extends React.Component {
             case "welcome":
             return (
                 <WelcomePage/>
+            )
+
+            case "keyboard-shortcuts":
+            return (
+                <KeyboardShortcutsPage/>
+            )
+
+            case "about":
+            return (
+                <AboutPage/>
             )
         }
     }

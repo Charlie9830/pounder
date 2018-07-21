@@ -1,0 +1,89 @@
+.AboutPageContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    cursor: default;
+}
+
+.AboutPageAppInfoContainer {
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.AboutPageAppIcon {
+    width: 100px;
+    height: 100px;
+}
+
+.AboutPageAppTitle {
+    flex-shrink: 1;
+    font-family: var(--primary-font-family);
+    color: var(--alternate-active-text-color);
+}
+
+.AboutPageVersionNumber {
+    flex-shrink: 1;
+    font-family: var(--primary-font-family);
+    color: var(--alternate-inactive-text-color);
+}
+
+.AboutPageAuthor {
+    flex-shrink: 1;
+    font-family: var(--primary-font-family);
+    color: var(--alternate-inactive-text-color);
+}
+
+.AboutPageSystemInfoContainer {
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.AboutPageDivider {
+    flex-shrink: 1;
+    height: 100px;
+}
+
+.AboutPageSystemValueContainer {
+    flex-shrink: 1;
+}
+
+.AboutPageSystemValue {
+    font-family: var(--primary-font-family);
+    color: var(--primary-inactive-text-color);
+}
+
+.AboutPageContactContainer {
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+}
+
+.AboutPageContactText {
+    flex-shrink: 1;
+    font-size: 10pt;
+    font-family: var(--primary-font-family);
+    color: var(--primary-active-text-color);
+}
+
+.AboutPageGithubMarkContainer {
+    margin-top: 10px;
+    width: 48px;
+    height: 48px;
+    cursor: pointer;
+}
+
+.AboutPageGithubMark {
+    width: 100%;
+    height: 100%;
+}

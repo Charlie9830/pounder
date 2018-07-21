@@ -56,6 +56,24 @@ class AppSettingsSidebar extends React.Component {
                         </label>
                     </div>
                 </div>
+
+                { /* Keyboard Shortcuts */}
+                <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("keyboard-shortcuts")}>
+                    <div>
+                        <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "keyboard-shortcuts"}>
+                            Keyboard Shortcuts
+                        </label>
+                    </div>
+                </div>
+
+                { /* About */}
+                <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("about")}>
+                    <div>
+                        <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "about"}>
+                            About
+                        </label>
+                    </div>
+                </div>
             </div>
         )    
     }
