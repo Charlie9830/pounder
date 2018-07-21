@@ -28,15 +28,16 @@ class Snackbar extends React.Component {
     }
 
     render() {
+        var type = this.props.snackbarType === undefined ? "affirmative-notification" : this.props.snackbarType;
         var buttonJSX = this.getButtonJSX();
-        var iconJSX = this.getIconJSX();
+        var iconJSX = this.getIconJSX(type);
 
         return (
-            <div className="SnackbarContainer" data-type={this.props.snackbarType} data-isopen={this.props.isSnackbarOpen}>
+            <div className="SnackbarContainer" data-type={type} data-isopen={this.props.isSnackbarOpen}>
                 <div className="SnackbarHorizontalFlexContainer">
                     {iconJSX}
                     <div className="SnackbarMessageContainer">
-                        <div className="SnackbarMessage" data-type={this.props.snackbarType}>
+                        <div className="SnackbarMessage" data-type={type}>
                          {this.props.snackbarMessage}
                           </div>
                     </div>
@@ -62,26 +63,26 @@ class Snackbar extends React.Component {
         }
     }
 
-    getIconJSX() {
-        if (this.props.snackbarType === "affirmative-notification") {
+    getIconJSX(type) {
+        if (type === "affirmative-notification") {
             return (
                 <img className="SnackbarIcon" src={TickIcon} />
             )
         }
 
-        if (this.props.snackbarType === "negative-notification") {
+        if (type === "negative-notification") {
             return (
                 <img className="SnackbarIcon" src={CrossIcon} />
             )
         }
 
-        if (this.props.snackbarType === "infomation") {
+        if (type === "infomation") {
             return (
                 <img className="SnackbarIcon" src={InfomationIcon}/>
             )
         }
 
-        if (this.props.snackbarType === "error") {
+        if (type === "error") {
             return (
                 <img className="SnackbarIcon" src={ErrorIcon}/>
             )
