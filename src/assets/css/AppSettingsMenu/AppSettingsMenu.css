@@ -4,7 +4,6 @@
     position: relative;
     background: var(--primary-color);
     border: gray 1px solid;
-    margin-top: -25%;
     width: 900px;
 }
 
@@ -254,7 +253,11 @@ input.AppSettingsItemInput[type*="number"] {
 
 .AccountSettingsContentsContainer {
     min-height: 325px;
-    width: 100%;
+    display: flex; 
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
 }
 
 .AppSettingsAccountButtonsFlexContainer {

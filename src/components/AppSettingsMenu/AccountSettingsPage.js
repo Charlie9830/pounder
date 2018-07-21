@@ -221,10 +221,10 @@ class AccountSettingsPage extends React.Component {
 
         else {
             return (
-                <div>
+                <React.Fragment>
                     <div className="AppSettingsAccountDisplayName"> {this.props.displayName} </div>
                     <div className="AppSettingsAccountEmailDisplay"> {this.props.userEmail} </div>
-                </div>
+                </React.Fragment>
             )
         }
     }
