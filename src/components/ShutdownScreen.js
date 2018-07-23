@@ -13,9 +13,10 @@ class ShutdownScreen extends React.Component {
         return (
             <div className="ShutdownScreenContainer">
                 <CenteringContainer>
-                    <Spinner size="big"/>
-                    <div className="ShutdownScreenTitle">
-                        Exiting
+                    <div className="ShutdownScreenContentContainer">
+                        <Spinner size="big" />
+                        <div className="ShutdownScreenTitle"> Exiting </div>
+                        <div className="ShutdownScreenSubTitle"> Just backing up your work first </div>
                     </div>
                 </CenteringContainer>
             </div>

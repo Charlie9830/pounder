@@ -32,7 +32,7 @@
 .CalendarHeaderContainer {
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     align-content: center;
     width: 100%;
@@ -45,6 +45,7 @@
 .DateLabel {
     color: white;
     flex: 1;
+    text-align: center;
 }
 
 .PriorityToggle {
