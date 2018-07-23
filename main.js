@@ -1,7 +1,7 @@
 'use strict';
 
 // Import parts of electron to use
-const {app, BrowserWindow} = require('electron');
+const {app, BrowserWindow, Menu} = require('electron');
 const electron = require('electron');
 const path = require('path')
 const url = require('url')
@@ -17,21 +17,26 @@ if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) 
   dev = true;
 }
 
-function installReactDevtools() {
-  const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+// function installReactDevtools() {
+//   const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err));
-}
+//   installExtension(REACT_DEVELOPER_TOOLS)
+//     .then((name) => console.log(`Added Extension:  ${name}`))
+//     .catch((err) => console.log('An error occurred: ', err));
+// }
 
 function createWindow() {
   // Install Devtools.
-  installReactDevtools();
+  // installReactDevtools();
 
   // Disable Security Warnings.
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;
 
+  // Setup Application Menu. (Without this, Copy/Paste/Undo/Redo/etc shortcuts won't work on MacosX)
+  if (process.platform === "darwin") {
+    setupApplicationMenu();
+  }
+  
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1024, height: 768, show: false
@@ -118,3 +123,21 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+function setupApplicationMenu() {
+  var template = [{
+    label: "Edit",
+    submenu: [
+      { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+      { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+      { type: "separator" },
+      { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+      { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+      { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+      { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+    ]
+  }
+  ];
+
+  Menu.setApplicationMenu(Menu.buildFromTemplate(template));
+}

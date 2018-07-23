@@ -16,8 +16,8 @@
     "package": "webpack --config webpack.build.config.js",
     "postpackage": "electron-packager ./ --overwrite --asar --icon=./src/assets/icons/icon.ico --platform=win32 --arch=x64 --out=./builds",
     "buildInstaller": "node build-windows-installer.js",
-    "packagemac": "electron-packager ./ --asar --icon=./src/assets/icons/icon.icns --out=./builds",
-    "postpackagemac": "electron-installer-dmg ./builds/Pounder-darwin-x64/ Handball"
+    "packagemac": "electron-packager ./ --asar --platform=darwin --arch=x64 --icon=./src/assets/icons/icon.icns --out=./builds",
+    "builddmg": "node build-darwin-dmg.js "
   },
   "repository": {
     "type": "git",
@@ -35,8 +35,8 @@
     "electron": "2.0.2",
     "electron-builder": "^19.56.2",
     "electron-devtools-installer": "^2.2.4",
-    "electron-packager": "^12.1.0",
     "electron-installer-dmg": "^2.0.0",
+    "electron-packager": "^12.1.0",
     "electron-react-devtools": "*",
     "electron-winstaller": "^2.6.4",
     "extract-text-webpack-plugin": "^2.1.0",
