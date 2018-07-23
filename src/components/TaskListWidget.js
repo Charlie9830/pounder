@@ -36,7 +36,7 @@ class TaskListWidget extends React.Component {
         var _this = this;
     }
 
-    render(){
+    render() {
         var builtTasks = [];
 
         if (this.props.tasks != undefined) {
@@ -180,6 +180,13 @@ class TaskListWidget extends React.Component {
         this.props.onRemoveButtonClick(this.props.taskListWidgetId);
     }
 
+    taskSortAlphabeticalHelper(a,b) {
+        var textA = a.taskName.toUpperCase();
+        var textB = b.taskName.toUpperCase();
+
+        return (textA < textB) ? -1 : (textA > textB) ? 1 : 0;
+    }
+
     taskSortIsCompletedHelper(a, b) {
         return a.isComplete - b.isComplete;
     }
@@ -228,6 +235,14 @@ class TaskListWidget extends React.Component {
 
         if (sortBy === "assignee") {
             return this.taskSortAssigneeHelper;
+        }
+
+        if (sortBy === "alphabetical") {
+            return this.taskSortAlphabeticalHelper;
+        }
+
+        else {
+            return this.taskSortIsCompletedHelper;
         }
     } 
 

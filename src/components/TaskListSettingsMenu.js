@@ -13,6 +13,7 @@ class TaskListSettingsMenu extends React.Component {
         this.handleSortByDueDateItemClick = this.handleSortByDueDateItemClick.bind(this);
         this.handleSortByPriorityItemClick = this.handleSortByPriorityItemClick.bind(this);
         this.handleSortByAssigneeItemClick = this.handleSortByAssigneeItemClick.bind(this);
+        this.handleSortByAlphabeticalItemClick = this.handleSortByAlphabeticalItemClick.bind(this);
     }
 
     render() {
@@ -60,6 +61,11 @@ class TaskListSettingsMenu extends React.Component {
     handleSortByAssigneeItemClick() {
         var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "assignee"));
+    }
+
+    handleSortByAlphabeticalItemClick() {
+        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "alphabetical"));
     }
 
     getSelectableMenuItems(props) {
@@ -115,6 +121,17 @@ class TaskListSettingsMenu extends React.Component {
                 <div className="TaskListSettingsMenuItemFlexContainer">
                     <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "assignee" } />
                     <label className="TaskListSettingsMenuItemLabel"> Sort by Assignee </label>
+                </div>
+                <div className="TaskListSettingsMenuItemBottomBorder" />
+            </div>
+        ))
+
+        // Sort Alphabetically.
+        jsx.push((
+            <div key="5" className="TaskListSettingsMenuItemContainer" onClick={this.handleSortByAlphabeticalItemClick}>
+                <div className="TaskListSettingsMenuItemFlexContainer">
+                    <div className="TaskListSettingsMenuSelectedItemChit"  data-isselected={ this.props.settings.sortBy === "alphabetical" } />
+                    <label className="TaskListSettingsMenuItemLabel"> Sort Alphabetically </label>
                 </div>
                 {/* No Bottom Border here because it's the bottom of the Menu */}
             </div>
