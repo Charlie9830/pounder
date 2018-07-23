@@ -16,7 +16,7 @@
     "package": "webpack --config webpack.build.config.js",
     "postpackage": "electron-packager ./ --overwrite --asar --icon=./src/assets/icons/icon.ico --platform=win32 --arch=x64 --out=./builds",
     "buildInstaller": "node build-windows-installer.js",
-    "packagemac": "electron-packager ./ --asar --platform=darwin --arch=x64 --icon=./src/assets/icons/icon.icns --out=./builds",
+    "packagemac": "electron-packager ./ --asar --platform=darwin --overwrite --arch=x64 --icon=./src/assets/icons/icon.icns --out=./builds",
     "builddmg": "node build-darwin-dmg.js "
   },
   "repository": {
