@@ -45,7 +45,8 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({title: "Pounder"}),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('development')
+      'process.env.NODE_ENV': JSON.stringify('development'),
+      'HANDBALL_DEVICE': JSON.stringify('desktop'),
     })
   ],
   devtool: 'cheap-source-map',
