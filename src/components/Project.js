@@ -41,6 +41,7 @@ class Project extends React.Component{
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
+        this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -153,6 +154,7 @@ class Project extends React.Component{
                     onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
                     onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
                     hideLockButton={this.props.hideLockButton} buttonEnableStates={toolbarButtonEnableStates}
+                    onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
                     />
                 </div>
 
@@ -171,6 +173,10 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handleKeyboardShortcutsButtonClick() {
+        this.props.onKeyboardShortcutsButtonClick();
     }
 
     getToolbarButtonEnableStates() {

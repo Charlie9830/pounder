@@ -112,6 +112,7 @@ class App extends React.Component {
     this.handleTaskListWidgetHeaderDoubleClick = this.handleTaskListWidgetHeaderDoubleClick.bind(this);
     this.handleProjectSelectorInputDoubleClick = this.handleProjectSelectorInputDoubleClick.bind(this);
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
+    this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
   }
 
   componentDidMount() { 
@@ -296,11 +297,17 @@ class App extends React.Component {
               disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
               projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
-              onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}/>
+              onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
+              onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleKeyboardShortcutsButtonClick() {
+    this.props.dispatch(setAppSettingsMenuPage('keyboard-shortcuts'));
+    this.props.dispatch(setIsAppSettingsOpen(true));
   }
 
   handleSettingsMenuClose() {

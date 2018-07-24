@@ -6,6 +6,7 @@ import NewTaskListIcon from '../assets/icons/NewTaskListIcon.svg';
 import RemoveTaskListIcon from '../assets/icons/RemoveTaskListIcon.svg';
 import LockIcon from '../assets/icons/LockIcon.svg';
 import SettingsIcon from '../assets/icons/SettingsIcon.svg';
+import KeyboardIcon from '../assets/icons/KeyboardIcon.svg';
 import Button from './Button';
 
 class ProjectToolBar extends React.Component {
@@ -19,6 +20,7 @@ class ProjectToolBar extends React.Component {
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
         this.getLockButtonJSX = this.getLockButtonJSX.bind(this);
+        this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
 
     }
 
@@ -48,12 +50,17 @@ class ProjectToolBar extends React.Component {
 
                     <div className="ToolBarFlexDivider"/>
 
+                    <Button iconSrc={KeyboardIcon} onClick={this.handleKeyboardShortcutsButtonClick}/>
                     <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}
                     tooltip="Settings"/>
                     {lockButtonJSX}
                 </div>
             </div>
         )
+    }
+
+    handleKeyboardShortcutsButtonClick() {
+        this.props.onKeyboardShortcutsButtonClick();
     }
 
     getLockButtonJSX() {
