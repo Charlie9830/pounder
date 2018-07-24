@@ -43,7 +43,7 @@ module.exports = {
   },
   target: 'electron-renderer',
   plugins: [
-    new HtmlWebpackPlugin({title: "Pounder"}),
+    new HtmlWebpackPlugin({title: "Handball"}),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('development'),
       'HANDBALL_DEVICE': JSON.stringify('desktop'),
