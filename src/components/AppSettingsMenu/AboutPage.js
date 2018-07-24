@@ -17,7 +17,7 @@ class AboutPage extends React.Component {
 
     
     render() {
-        const appVersion = "2.0.2 RC";
+        const appVersion = "2.0.2";
         const nodeVersion = process.versions.node;
         const chromiumVersion = process.versions.chrome;
         const electronVersion = process.versions.electron;
