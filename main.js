@@ -1,5 +1,8 @@
 'use strict';
 
+// Handle Squirrel startup events.
+if(require('electron-squirrel-startup')) return;
+
 // Import parts of electron to use
 const {app, BrowserWindow, Menu} = require('electron');
 const electron = require('electron');
@@ -17,17 +20,17 @@ if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) 
   dev = true;
 }
 
-function installReactDevtools() {
-  const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
+// function installReactDevtools() {
+//   const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 
-  installExtension(REACT_DEVELOPER_TOOLS)
-    .then((name) => console.log(`Added Extension:  ${name}`))
-    .catch((err) => console.log('An error occurred: ', err));
-}
+//   installExtension(REACT_DEVELOPER_TOOLS)
+//     .then((name) => console.log(`Added Extension:  ${name}`))
+//     .catch((err) => console.log('An error occurred: ', err));
+// }
 
 function createWindow() {
   // Install Devtools.
-  installReactDevtools();
+  //installReactDevtools();
 
   // Disable Security Warnings.
   process.env.ELECTRON_DISABLE_SECURITY_WARNINGS = true;

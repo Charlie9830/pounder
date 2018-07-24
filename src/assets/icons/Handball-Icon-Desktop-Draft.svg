@@ -1,38 +1,123 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 1024 1024" style="enable-background:new 0 0 1024 1024;" xml:space="preserve">
-<style type="text/css">
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   id="Layer_1"
+   x="0px"
+   y="0px"
+   viewBox="0 0 1024 1024"
+   style="enable-background:new 0 0 1024 1024;"
+   xml:space="preserve"
+   inkscape:version="0.91 r13725"
+   sodipodi:docname="Handball-Icon-Desktop-Draft.svg"><metadata
+     id="metadata34"><rdf:RDF><cc:Work
+         rdf:about=""><dc:format>image/svg+xml</dc:format><dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" /><dc:title /></cc:Work></rdf:RDF></metadata><defs
+     id="defs32" /><sodipodi:namedview
+     pagecolor="#000000"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1536"
+     inkscape:window-height="801"
+     id="namedview30"
+     showgrid="false"
+     inkscape:zoom="2.6074563"
+     inkscape:cx="46.370953"
+     inkscape:cy="1066.0599"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="Layer_1" /><style
+     type="text/css"
+     id="style3">
 	.st0{fill:#010101;}
 	.st1{fill:url(#XMLID_7_);}
 	.st2{fill:url(#XMLID_8_);}
 	.st3{fill:url(#XMLID_9_);}
 	.st4{fill:url(#XMLID_10_);}
-</style>
-<path id="XMLID_5_" class="st0" d="M971.6,1023.4H48.4C20.5,1023.4-2,1000.9-2,973V52.2C-2,24.3,20.5,1.8,48.4,1.8h923.1
-	c27.9,0,50.4,22.5,50.4,50.4V973C1022,1000.9,999.5,1023.4,971.6,1023.4z"/>
-<linearGradient id="XMLID_7_" gradientUnits="userSpaceOnUse" x1="-2.0835" y1="399.6556" x2="222.8666" y2="592.2178">
-	<stop  offset="0" style="stop-color:#D82C82"/>
-	<stop  offset="1" style="stop-color:#B72567"/>
-</linearGradient>
-<path id="XMLID_2_" class="st1" d="M233.3,1024.6H27.6c-16.3,0-29.6-10.9-29.6-24.5V26.2C-2,12.7,11.2,1.7,27.6,1.7h205.8
-	c16.3,0,29.6,10.9,29.6,24.5v973.9C263,1013.7,249.7,1024.6,233.3,1024.6z"/>
-<linearGradient id="XMLID_8_" gradientUnits="userSpaceOnUse" x1="328.0856" y1="68.09" x2="692.6152" y2="380.5296">
-	<stop  offset="0" style="stop-color:#D82C82"/>
-	<stop  offset="1" style="stop-color:#B72567"/>
-</linearGradient>
-<path id="XMLID_4_" class="st2" d="M642.5,439h-265V17c0-9.1,6.6-16.4,14.9-16.4h235.2c8.2,0,14.9,7.3,14.9,16.4L642.5,439
-	L642.5,439z"/>
-<linearGradient id="XMLID_9_" gradientUnits="userSpaceOnUse" x1="377.5" y1="804.2" x2="642.4101" y2="804.2">
-	<stop  offset="0" style="stop-color:#F68B21"/>
-	<stop  offset="1" style="stop-color:#CB7028"/>
-</linearGradient>
-<path id="XMLID_3_" class="st3" d="M623.5,1023.4H396.7c-10.6,0-19.2-9.5-19.2-21.2V585h264.9v417.3
-	C642.5,1014.1,634,1023.4,623.5,1023.4z"/>
-<linearGradient id="XMLID_10_" gradientUnits="userSpaceOnUse" x1="570.0931" y1="239.3852" x2="1208.9069" y2="786.9148">
-	<stop  offset="0" style="stop-color:#F68B21"/>
-	<stop  offset="1" style="stop-color:#CB7028"/>
-</linearGradient>
-<path id="XMLID_1_" class="st4" d="M987.2,1024.6H791.8c-19.2,0-34.8-12.9-34.8-28.8V30.5c0-15.9,15.6-28.8,34.8-28.8h195.5
-	c19.2,0,34.8,12.9,34.8,28.8v965.3C1022,1011.7,1006.4,1024.6,987.2,1024.6z"/>
-</svg>
+</style><linearGradient
+     id="XMLID_7_"
+     gradientUnits="userSpaceOnUse"
+     x1="-0.5038"
+     y1="625.0665"
+     x2="224.5893"
+     y2="432.3819"
+     gradientTransform="matrix(1,0,0,-1.0009775,1,1024)"><stop
+       offset="0"
+       style="stop-color:#D82C82"
+       id="stop7" /><stop
+       offset="1"
+       style="stop-color:#B72567"
+       id="stop9" /></linearGradient><path
+     id="XMLID_2_"
+     class="st1"
+     d="m 236.2,1024 -205.7,0 C 14.2,1024 0,1013.0893 0,999.47605 L 0,24.624047 C 0,11.11085 14.1,0 30.5,0 L 236.3,0 C 252.6,0 266,11.010753 266,24.624047 l 0,974.852003 C 266,1013.0893 252.6,1024 236.2,1024 Z"
+     style="fill:url(#XMLID_7_)"
+     inkscape:connector-curvature="0" /><linearGradient
+     id="XMLID_8_"
+     gradientUnits="userSpaceOnUse"
+     x1="327.9026"
+     y1="954.8396"
+     x2="692.7911"
+     y2="642.0923"
+     gradientTransform="matrix(1,0,0,-1,0,1022)"><stop
+       offset="0"
+       style="stop-color:#D82C82"
+       id="stop13" /><stop
+       offset="1"
+       style="stop-color:#B72567"
+       id="stop15" /></linearGradient><path
+     id="XMLID_4_"
+     class="st2"
+     d="m 643,438 -266,0 0,-422 c 0,-9.1 7.1,-16 15.4,-16 l 235.2,0 c 8.2,0 15.4,6.9 15.4,16 l 0,422 0,0 z"
+     style="fill:url(#XMLID_8_)"
+     inkscape:connector-curvature="0" /><linearGradient
+     id="XMLID_9_"
+     gradientUnits="userSpaceOnUse"
+     x1="377"
+     y1="221"
+     x2="643"
+     y2="221"
+     gradientTransform="matrix(1,0,0,-1,0,1026)"><stop
+       offset="0"
+       style="stop-color:#F68B21"
+       id="stop19" /><stop
+       offset="1"
+       style="stop-color:#CB7028"
+       id="stop21" /></linearGradient><path
+     id="XMLID_3_"
+     class="st3"
+     d="m 623.5,1024 -226.8,0 c -10.6,0 -19.7,-9.1 -19.7,-20.8 l 0,-417.2 266,0 0,417.3 c 0,11.8 -9,20.7 -19.5,20.7 z"
+     style="fill:url(#XMLID_9_)"
+     inkscape:connector-curvature="0" /><linearGradient
+     id="XMLID_10_"
+     gradientUnits="userSpaceOnUse"
+     x1="570.1089"
+     y1="786.3129"
+     x2="1208.9333"
+     y2="238.7741"
+     gradientTransform="matrix(1,0,0,-1.0009775,2,1025.001)"><stop
+       offset="0"
+       style="stop-color:#F68B21"
+       id="stop25" /><stop
+       offset="1"
+       style="stop-color:#CB7028"
+       id="stop27" /></linearGradient><path
+     id="XMLID_1_"
+     class="st4"
+     d="m 989.2,1024 -195.4,0 C 774.6,1024 759,1010.9873 759,995.07175 L 759,28.828152 C 759,12.91261 774.6,0 793.8,0 l 195.5,0 c 19.2,0 34.7,12.91261 34.7,28.828152 l 0,966.243598 C 1024,1010.9873 1008.4,1024 989.2,1024 Z"
+     style="fill:url(#XMLID_10_)"
+     inkscape:connector-curvature="0" /></svg>

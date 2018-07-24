@@ -2,7 +2,7 @@ var createDMG = require('electron-installer-dmg');
 
 var opts = {
     appPath: './builds/Handball-darwin-x64/Handball.app',
-    name: 'Handballv203rc',
+    name: 'Handball',
     debug: true,
 }
 
