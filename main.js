@@ -126,7 +126,11 @@ app.on('activate', () => {
 
 function setupApplicationMenu() {
   var template = [{
-    label: "Edit",
+    label: "Handball",
+    submenu: [
+        { label: "Quit", accelerator: "Command+Q", click: function() { app.quit(); }}
+    ]},
+    { label: "Edit",
     submenu: [
       { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
       { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
