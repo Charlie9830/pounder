@@ -1,8 +1,9 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a bug you have encountered
 
 ---
+*This bug report will be public! Do NOT post any personal or private infomation. Contact the developer directly should you need to include that information*
 
 **Describe the bug**
 A clear and concise description of what the bug is.
@@ -11,15 +12,14 @@ A clear and concise description of what the bug is.
 If possible, clear and concise steps to reproduce the bug would be greatly appreciated.
 
 **Expected behavior**
-A clear and concise description of what you expected to happen.
+If applicable, A clear and concise description of what you expected to happen.
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Version Infomation**
+**Version Information**
  - OS: [e.g. Macosx, Windows or Linux]
- - Version [e.g. 22] Found in the top left hand corner of the main screen.
-
+ - Version [e.g. 2.0.2] Found in App Settings -> About or on Desktop the top left hand corner of the window.
 
 **Additional context**
 Add any other context about the problem here.

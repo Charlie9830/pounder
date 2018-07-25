@@ -10,5 +10,4 @@ about: Request features you would like to see in Handball.
 ** Anything else you would like to add? **
 
 Make sure you are subscribed to this issue, the developer may like to discuss the feature with you via the comments.
-The developer may contact you privately to fix any database issues you may have.
 
