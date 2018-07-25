@@ -14,7 +14,7 @@ root.id = "root";
 document.body.appendChild( root );
 
 // Setup Backend.
-setupBackend("production", "desktop");
+setupBackend("development", "desktop");
 
 // Now we can render our application into it
 render( <Provider store={appStore}><VisibleApp/></Provider>, document.getElementById('root') );
