@@ -3,7 +3,6 @@ name: Bug report
 about: Report a bug you have encountered
 
 ---
-*This bug report will be public! Do NOT post any personal or private infomation. Contact the developer directly should you need to include that information*
 
 **Describe the bug**
 A clear and concise description of what the bug is.

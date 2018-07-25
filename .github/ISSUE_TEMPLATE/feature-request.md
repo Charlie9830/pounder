@@ -9,5 +9,5 @@ about: Request features you would like to see in Handball.
 
 ** Anything else you would like to add? **
 
-Make sure you are subscribed to this issue, the developer may like to discuss the feature with you via the comments.
+Make sure you are subscribed to this issue, the developer or other users may like to discuss this feature with you via the comments.
 
