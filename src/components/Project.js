@@ -45,10 +45,10 @@ class Project extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.layoutSyncRequired) {
+        if (this.layoutSyncRequired === true) {
+            this.layoutSyncRequired = false;
             this.props.onLayoutChange([...this.layoutsToSync], this.props.projectId, this.taskListIdsToFoul);
             this.taskListIdsToFoul = null;
-            this.layoutSyncRequired = false;
             this.layoutsToSync = null;
         }
     }
@@ -133,7 +133,13 @@ class Project extends React.Component{
         // tasklists, then a render loop will be caused that will continously call out to the Database.
         var freshIds = this.findFreshTaskListIds(filteredTaskListWidgets);
         freshIds.forEach(id => {
-            selectedLayouts.push({i: id, x: 0, y: 0, w: 6, h: 4 });
+            var alreadyInCollection = selectedLayouts.some(item => {
+                return item.i === id;
+            })
+
+            if (alreadyInCollection !== true) {
+                selectedLayouts.push({i: id, x: 0, y: 0, w: 6, h: 4 });
+            }
         })
 
         // Queue up the Database update for when this render is finished.
