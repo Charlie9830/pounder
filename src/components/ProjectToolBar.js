@@ -50,7 +50,9 @@ class ProjectToolBar extends React.Component {
 
                     <div className="ToolBarFlexDivider"/>
 
-                    <Button iconSrc={KeyboardIcon} onClick={this.handleKeyboardShortcutsButtonClick}/>
+                    <Button iconSrc={KeyboardIcon} onClick={this.handleKeyboardShortcutsButtonClick}
+                    tooltip="View keyboard shortcuts"/>
+                    
                     <Button iconSrc={SettingsIcon} onClick={this.handleAppSettingsButtonClick}
                     tooltip="Settings"/>
                     {lockButtonJSX}
