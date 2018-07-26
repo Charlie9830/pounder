@@ -6,6 +6,7 @@ import AccountIconLoggedIn from '../assets/icons/AccountIconLoggedIn.svg';
 import AccountIconLoggedOut from '../assets/icons/AccountIconLoggedOut.svg';
 import AccountIconLoggingIn from '../assets/icons/AccountIconLoggingIn.svg';
 import BurgerIcon from '../assets/icons/BurgerIcon.svg';
+import ReactTooltip from 'react-tooltip';
 import {setIsAppSettingsOpen, setAppSettingsMenuPage, setIsSidebarOpen } from 'pounder-redux/action-creators';
 
 class StatusBar extends React.Component {
@@ -37,10 +38,27 @@ class StatusBar extends React.Component {
                         <img className="StatusBarAccountIcon" src={accountIconSrc} onClick={this.handleIconClick} />
                         <div className="StatusBarDivider"/>
                         <div className="StatusBarDisplayName"> {this.props.displayName} </div>
-                        <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}> Pr </label>
-                        <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}> Pl </label>
-                        <label className="PendingWrites" data-havependingwrites={this.props.taskListsHavePendingWrites}> Tl </label>
-                        <label className="PendingWrites" data-havependingwrites={this.props.tasksHavePendingWrites}> Ta </label>
+                        <label className="PendingWrites" data-havependingwrites={this.props.projectsHavePendingWrites}
+                        data-tip="Projects cloud sync status"
+                        data-border
+                        data-delay-show={500}> Pr </label>
+
+                        <label className="PendingWrites" data-havependingwrites={this.props.projectLayoutsHavePendingWrites}
+                        data-tip="Project Layouts cloud sync status"
+                        data-border
+                        data-delay-show={500}> Pl </label>
+
+                        <label className="PendingWrites" data-havependingwrites={this.props.taskListsHavePendingWrites}
+                        data-tip="Task Lists cloud sync status"
+                        data-border
+                        data-delay-show={500}> Tl </label>
+
+                        <label className="PendingWrites" data-havependingwrites={this.props.tasksHavePendingWrites}
+                        data-tip="Tasks cloud sync status"
+                        data-border
+                        data-delay-show={500}> Ta </label>
+
+                        <ReactTooltip/>
                     </div>
                     
                     
