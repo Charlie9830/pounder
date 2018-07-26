@@ -42,12 +42,13 @@ class Project extends React.Component{
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
         this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
+        this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
         if (this.layoutSyncRequired === true) {
             this.layoutSyncRequired = false;
-            this.props.onLayoutChange([...this.layoutsToSync], this.props.projectId, this.taskListIdsToFoul);
+            this.props.onLayoutChange([...this.layoutsToSync], this.extractSelectedProjectLayouts(), this.props.projectId, this.taskListIdsToFoul);
             this.taskListIdsToFoul = null;
             this.layoutsToSync = null;
         }
@@ -117,12 +118,8 @@ class Project extends React.Component{
         var rglClassName = "ProjectRGL" // projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
         var rglDragEnabled = this.props.openCalendarId === -1;
 
-         // Extract correct Layouts array from ProjectLayouts wrapper.
-         var selectedProjectLayout = this.props.projectLayouts.find(item => {
-            return item.uid === this.props.projectId;
-        })
-
-        var selectedLayouts = selectedProjectLayout === undefined ? [] : selectedProjectLayout.layouts;
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        var selectedLayouts = this.extractSelectedProjectLayouts();
 
         // Fresh Ids are Ids of Task lists that have not yet had a corresponding Project Layout entity created for them.
         // This could mean they are newly created, or were previously created on Mobile (which doesn't support RGL).
@@ -179,6 +176,15 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    extractSelectedProjectLayouts() {
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        var selectedProjectLayout = this.props.projectLayouts.find(item => {
+            return item.uid === this.props.projectId;
+        })
+
+        return selectedProjectLayout === undefined ? [] : [...selectedProjectLayout.layouts];
     }
 
     handleKeyboardShortcutsButtonClick() {
@@ -313,7 +319,7 @@ class Project extends React.Component{
     }
 
     handleLayoutChange(layouts, oldItem, newItem, e, element) {
-        this.props.onLayoutChange(layouts, this.props.projectId);
+        this.props.onLayoutChange(layouts, this.extractSelectedProjectLayouts(), this.props.projectId);
     }
 
     handleTaskCheckBoxClick(e, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {

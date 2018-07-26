@@ -619,8 +619,8 @@ class App extends React.Component {
     this.props.dispatch(selectProject(projectSelectorId));
   }
 
-  handleLayoutChange(layouts, projectId, taskListIdsToFoul) {
-    this.props.dispatch(updateProjectLayoutAsync(layouts, projectId, taskListIdsToFoul));
+  handleLayoutChange(layouts, oldLayouts, projectId, taskListIdsToFoul) {
+    this.props.dispatch(updateProjectLayoutAsync(layouts, oldLayouts, projectId, taskListIdsToFoul));
   }
   
   handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
