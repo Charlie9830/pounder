@@ -43,6 +43,7 @@ class Project extends React.Component{
         this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
         this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
         this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
+        this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -158,6 +159,7 @@ class Project extends React.Component{
                     onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
                     hideLockButton={this.props.hideLockButton} buttonEnableStates={toolbarButtonEnableStates}
                     onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
+                    onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
                     />
                 </div>
 
@@ -176,6 +178,10 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handleShowCompletedTasksChanged(value) {
+        this.props.onShowCompletedTasksChanged(value);
     }
 
     extractSelectedProjectLayouts() {

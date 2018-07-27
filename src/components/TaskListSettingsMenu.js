@@ -2,12 +2,13 @@ import React from 'react';
 import '../assets/css/TaskListSettingsMenu.css'
 import { TaskListSettingsStore } from 'pounder-stores';
 
+var isCompleteTasksShown = false; // To Preserve backwards compatability of pre Show Complete Tasks change versions when using current Task lists.
+
 class TaskListSettingsMenu extends React.Component {
     constructor(props) {
         super(props);
 
         // Method Bindings.
-        this.handleShowCompletedTasksCheckboxClick = this.handleShowCompletedTasksCheckboxClick.bind(this);
         this.handleSortByCompletedTasksItemClick = this.handleSortByCompletedTasksItemClick.bind(this);
         this.handleSortByDateAddedItemClick = this.handleSortByDateAddedItemClick.bind(this);
         this.handleSortByDueDateItemClick = this.handleSortByDueDateItemClick.bind(this);
@@ -21,50 +22,33 @@ class TaskListSettingsMenu extends React.Component {
 
         return (
             <div className="TaskListSettingsMenuContainer">
-                <div className="ShowCompletedTasksSelection">
-                    <input className="ShowCompletedTasksCheckBox" ref="showCompleteTasksCheckbox" type="checkbox"
-                        defaultChecked={this.props.settings.isCompleteTasksShown}
-                        onClick={this.handleShowCompletedTasksCheckboxClick} />
-                    <label className="ShowCompletedTasksLabel"> Show Completed Tasks </label>
-                </div>
                 {selectableItems}
             </div>
         )
     }
     
     
-    handleShowCompletedTasksCheckboxClick(e) {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, this.props.settings.sortBy));
-    }
-
     handleSortByCompletedTasksItemClick(e) {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "completed"));
     }
 
     handleSortByDueDateItemClick(e) {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "due date"));
     }
 
     handleSortByDateAddedItemClick(e) {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "date added"));
     }
 
     handleSortByPriorityItemClick(e) {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "priority"));
     }
 
     handleSortByAssigneeItemClick() {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "assignee"));
     }
 
     handleSortByAlphabeticalItemClick() {
-        var isCompleteTasksShown = this.refs.showCompleteTasksCheckbox.checked;
         this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "alphabetical"));
     }
 

@@ -21,13 +21,14 @@ import { hot } from 'react-hot-loader';
 import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
-removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
+removeSelectedTaskAsync, updateTaskNameAsync, selectProjectAsync, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
-updateTaskAssignedToAsync, 
-setAppSettingsMenuPage} from 'pounder-redux/action-creators';
+updateTaskAssignedToAsync, setShowCompletedTasksAsync,
+setAppSettingsMenuPage,
+setShowCompletedTasks} from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import electron from 'electron';
@@ -113,6 +114,7 @@ class App extends React.Component {
     this.handleProjectSelectorInputDoubleClick = this.handleProjectSelectorInputDoubleClick.bind(this);
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
     this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
+    this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
   }
 
   componentDidMount() { 
@@ -298,11 +300,16 @@ class App extends React.Component {
               projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
-              onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}/>
+              onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
+              onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleShowCompletedTasksChanged(value) {
+    this.props.dispatch(setShowCompletedTasksAsync(value));
   }
 
   handleKeyboardShortcutsButtonClick() {
@@ -616,7 +623,7 @@ class App extends React.Component {
   }
 
   handleProjectSelectorClick(e, projectSelectorId) {
-    this.props.dispatch(selectProject(projectSelectorId));
+    this.props.dispatch(selectProjectAsync(projectSelectorId));
   }
 
   handleLayoutChange(layouts, oldLayouts, projectId, taskListIdsToFoul) {
@@ -723,6 +730,7 @@ const mapStateToProps = state => {
     updatingInviteIds: state.updatingInviteIds,
     members: state.members,
     remoteProjectIds: state.remoteProjectIds,
+    showCompletedTasks: state.showCompletedTasks,
   }
 }
 

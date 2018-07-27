@@ -56,3 +56,27 @@
     height: 100%;
     margin: 0px 20px 0px 20px;
 }
+
+.ShowCompletedTasksContainer {
+    flex-shrink: 1;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.ShowCompletedTasksCheckbox {
+    flex-shrink: 1;
+    padding: 0px;
+    margin: 0px;
+}
+
+.ShowCompletedTasksLabel {
+    flex-shrink: 1;
+    padding-left: 10px;
+    color: var(--primary-active-text-color);
+    font-size: 10pt;
+    user-select: none;
+}
