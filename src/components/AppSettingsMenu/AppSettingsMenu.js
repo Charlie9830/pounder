@@ -20,7 +20,7 @@ import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, 
         setRestoreDatabaseStatusMessage, setIsDatabaseRestoringFlag, setCSSConfigAsync, setMessageBox, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
-        subscribeToDatabaseAsync, selectProjectAsync, sendPasswordResetEmailAsync, setAuthStatusMessage,
+        subscribeToDatabaseAsync, selectProject, sendPasswordResetEmailAsync, setAuthStatusMessage,
         setIsInRegisterMode } from 'pounder-redux/action-creators';
 import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY, getCurrentBackupDirectory } from '../../utilities/FileHandling';
 import { MessageBoxTypes } from 'pounder-redux';
@@ -316,7 +316,7 @@ class AppSettingsMenu extends React.Component {
 
                     // Unsubscribe after collecting currentLocalProjectIds.
                     this.props.dispatch(unsubscribeFromDatabaseAsync());
-                    this.props.dispatch(selectProjectAsync(-1));
+                    this.props.dispatch(selectProject(-1));
                     
                     restoreProjectsAsync(getFirestore, localProjectIds, remoteProjectIds,
                         this.state.backupData, currentLocalProjectIds).then(() => {
