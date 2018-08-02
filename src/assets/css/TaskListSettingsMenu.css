@@ -1,19 +1,32 @@
 
 .TaskListSettingsMenuContainer {
-    display: flex;
-    width: 200px;
+    display: grid;
+    position: relative;
+    grid-template-columns: [Left]0.5fr [Right]1fr;
+    width: fit-content;
     height: fit-content;
-    flex-direction: column;
-    flex-basis: auto;
-    align-items: flex-start;
     background: var(--surface-color-alternate);
     border: 1px solid white;
     color: var(--primary-active-text-color);
     box-shadow: 5px 5px 10px 0px #111;
 }
 
+.TaskListSettingsSortingOptionsContainer {
+    display: flex;
+    grid-column: Left;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.TaskListSettingsChecklistOptionsContainer {
+    grid-column: Right;
+}
+
+
 .TaskListSettingsMenuItemContainer {
-    flex-grow: 1;
+    flex-shrink: 1;
     width: 195px;
     padding-left: 5px;
 }

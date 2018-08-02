@@ -18,7 +18,7 @@ class OverlayMenuContainer extends React.Component {
 
     render() {
         var jsx = (
-            <div className="OverlayMenuContainer" ref={this.overlayMenuContainerRef}
+            <div className="OverlayMenuContainer nonDraggable" ref={this.overlayMenuContainerRef}
                 onKeyPress={this.handleContainerKeyPress} onClick={(e) => { this.handleContainerClick(e, 'outside') }}>
                 <CenteringContainer>
                         <div onClick={(e) => { this.handleContainerClick(e, 'inside') }}>

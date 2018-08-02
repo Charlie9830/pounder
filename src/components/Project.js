@@ -44,6 +44,7 @@ class Project extends React.Component{
         this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
         this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
         this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
+        this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -108,6 +109,7 @@ class Project extends React.Component{
                      onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
                      onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
                      onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
+                     onRenewNowButtonClick={this.handleRenewNowButtonClick}
                      />   
                 </div>
             )
@@ -178,6 +180,10 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handleRenewNowButtonClick(taskListWidgetId) {
+        this.props.onRenewNowButtonClick(taskListWidgetId);
     }
 
     handleShowCompletedTasksChanged(value) {
@@ -336,8 +342,8 @@ class Project extends React.Component{
         this.props.onTaskListWidgetRemoveButtonClick(this.props.projectId, taskListWidgetId);
     }
 
-    handleTaskListSettingsChanged(taskListWidgetId, newTaskListSettings) {
-        this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings);
+    handleTaskListSettingsChanged(taskListWidgetId, newTaskListSettings, closeMenu) {
+        this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings, closeMenu);
     }
 
     handleNewDateSubmit(taskListWidgetId, taskId, newDate, oldDate, currentMetadata) {

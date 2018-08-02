@@ -30,6 +30,7 @@ class TaskListWidget extends React.Component {
         this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
+        this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
     }
 
     componentDidMount(){
@@ -92,7 +93,8 @@ class TaskListWidget extends React.Component {
                  onRemoveButtonClick={this.handleRemoveButtonClick} isSettingsMenuOpen={isSettingsMenuOpen}
                  onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
-                 isFocused={this.props.isFocused} onSettingsMenuClose={this.handleSettingsMenuClose}/>
+                 isFocused={this.props.isFocused} onSettingsMenuClose={this.handleSettingsMenuClose}
+                 onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
                 <TaskArea>
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {builtTasks}
@@ -100,6 +102,10 @@ class TaskListWidget extends React.Component {
                 </TaskArea>
             </div>
         )
+    }
+
+    handleRenewNowButtonClick() {
+        this.props.onRenewNowButtonClick(this.props.taskListWidgetId);
     }
 
     handleSettingsMenuClose() {
@@ -126,8 +132,8 @@ class TaskListWidget extends React.Component {
         this.props.onTaskListSettingsButtonClick(this.props.taskListWidgetId);
     }
 
-    handleTaskListSettingsChanged(newSettings) {
-        this.props.onSettingsChanged(this.props.taskListWidgetId, newSettings);
+    handleTaskListSettingsChanged(newSettings, closeMenu) {
+        this.props.onSettingsChanged(this.props.taskListWidgetId, newSettings, closeMenu);
     }
 
     handleDueDateClick(taskId) {

@@ -1,7 +1,8 @@
 import React from 'react';
 import Hammer from 'hammerjs';
 import { CSSTransition } from 'react-transition-group';
-import ContextMenuContainer from '../containers/ContextMenuContainer';
+import VerticalCenteringContainer from '../containers/VerticalCenteringContainer';
+import OverlayMenuContainer from '../containers/OverlayMenuContainer';
 import '../assets/css/ListToolbar.css';
 import TaskListSettingsMenu from './TaskListSettingsMenu';
 import TaskListSettingsIcon from '../assets/icons/SettingsIcon.svg';
@@ -31,7 +32,8 @@ class ListToolbar extends React.Component{
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleDoubleTap = this.handleDoubleTap.bind(this);
         this.handleHeaderInputBlur = this.handleHeaderInputBlur.bind(this);
-        this.handleContextMenuOutsideChildBoundsClick = this.handleContextMenuOutsideChildBoundsClick.bind(this);
+        this.handleOverlayMenuOutsideChildBoundsClick = this.handleOverlayMenuOutsideChildBoundsClick.bind(this);
+        this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -59,12 +61,19 @@ class ListToolbar extends React.Component{
     render() {
         var listToolbarHeader = this.getListToolbarHeader(this.props);
         var settingsMenu = this.getSettingsMenu(this.props);
+        var typeText = this.props.settings.checklistSettings.isChecklist ? "Checklist" : "";
 
         return (
                 <div className="ListToolbar" data-isfocused={this.props.isFocused}>
                     <div className="ListToolbarSettingsMenuContainer" onClick={this.handleSettingsClick}>
                         <img className="ListToolbarSettingsIcon" src={TaskListSettingsIcon} />
                         {settingsMenu}
+                    </div>
+
+                    <div className="ListToolbarTypeContainer">
+                        <VerticalCenteringContainer>
+                            <div className="ListToolbarTypeLabel"> {typeText} </div>
+                        </VerticalCenteringContainer>
                     </div>
 
                     <div className="ListToolbarHeaderContainer" ref={this.headerContainerRef}>
@@ -78,7 +87,7 @@ class ListToolbar extends React.Component{
         )
     }
 
-    handleContextMenuOutsideChildBoundsClick() {
+    handleOverlayMenuOutsideChildBoundsClick() {
         this.props.onSettingsMenuClose();
     }
 
@@ -89,17 +98,21 @@ class ListToolbar extends React.Component{
     getSettingsMenu(props) {
         if (props.isSettingsMenuOpen) {
             return (
-                <ContextMenuContainer offsetX={this.state.lastSettingsClickPos.x} offsetY={this.state.lastSettingsClickPos.y}
-                onOutsideChildBoundsClick={this.handleContextMenuOutsideChildBoundsClick}>
+                <OverlayMenuContainer onOutsideChildBoundsClick={this.handleOverlayMenuOutsideChildBoundsClick}>
                     <TaskListSettingsMenu settings={this.props.settings}
-                    onSettingsChanged={this.handleTaskListSettingsChanged}/>
-                </ContextMenuContainer>
+                    onSettingsChanged={this.handleTaskListSettingsChanged}
+                    onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
+                </OverlayMenuContainer>
             ) 
         }
     }
 
-    handleTaskListSettingsChanged(newSettings) {
-        this.props.onTaskListSettingsChanged(newSettings);
+    handleRenewNowButtonClick() {
+        this.props.onRenewNowButtonClick();
+    }
+
+    handleTaskListSettingsChanged(newSettings, closeMenu) {
+        this.props.onTaskListSettingsChanged(newSettings, closeMenu);
     }
 
     handleSettingsClick(e) {

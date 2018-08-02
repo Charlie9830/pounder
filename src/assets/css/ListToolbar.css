@@ -26,6 +26,22 @@
     align-content: center;
 }
 
+.ListToolbarTypeContainer {
+    flex-shrink: 1;
+    width: fit-content;
+    height: 100%;
+}
+
+.ListToolbarTypeLabel {
+    flex-shrink: 1;
+    font-family: var(--primary-font-family);
+    color: var(--alternate-active-text-color);
+    font-size: 8pt;
+    font-style: italic;
+    user-select: none;
+    cursor: default;
+}
+
 .ListToolbarHeaderContainer {
     flex-shrink: 1;
     height: 100%;

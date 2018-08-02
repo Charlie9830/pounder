@@ -1,6 +1,9 @@
 import React from 'react';
 import '../assets/css/TaskListSettingsMenu.css'
-import { TaskListSettingsStore } from 'pounder-stores';
+import { TaskListSettingsStore, ChecklistSettingsFactory } from 'pounder-stores';
+import { getNormalizedDate } from 'pounder-utilities';
+import ChecklistSettings from './ChecklistSettings';
+import Moment from 'moment';
 
 var isCompleteTasksShown = false; // To Preserve backwards compatability of pre Show Complete Tasks change versions when using current Task lists.
 
@@ -15,41 +18,110 @@ class TaskListSettingsMenu extends React.Component {
         this.handleSortByPriorityItemClick = this.handleSortByPriorityItemClick.bind(this);
         this.handleSortByAssigneeItemClick = this.handleSortByAssigneeItemClick.bind(this);
         this.handleSortByAlphabeticalItemClick = this.handleSortByAlphabeticalItemClick.bind(this);
+        this.handleChecklistModeChange = this.handleChecklistModeChange.bind(this);
+        this.handleInitialStartDayPick = this.handleInitialStartDayPick.bind(this);
+        this.handleRenewIntervalChange = this.handleRenewIntervalChange.bind(this);
+        this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
     }
 
     render() {
         var selectableItems = this.getSelectableMenuItems(this.props);
 
         return (
-            <div className="TaskListSettingsMenuContainer">
-                {selectableItems}
+            <div className="TaskListSettingsMenuContainer nonDraggable">
+                <div className="TaskListSettingsSortingOptionsContainer">
+                    {selectableItems}
+                </div>
+                <div className="TaskListSettingsChecklistOptionsContainer">
+                    <ChecklistSettings onChecklistModeChange={this.handleChecklistModeChange} settings={this.props.settings.checklistSettings}
+                        onInitialStartDayPick={this.handleInitialStartDayPick} onRenewNowButtonClick={this.handleRenewNowButtonClick}
+                        onRenewIntervalChange={this.handleRenewIntervalChange} />
+                </div>
+                
             </div>
         )
     }
+
+    handleRenewNowButtonClick() {
+        this.props.onRenewNowButtonClick();
+    }
+
+    handleRenewIntervalChange(renewInterval) {
+        var newChecklistSettings = {
+            ...this.props.settings.checklistSettings,
+            renewInterval: renewInterval
+        };
+
+        this.props.onSettingsChanged(new TaskListSettingsStore(
+            isCompleteTasksShown,
+            this.props.settings.sortBy,
+            newChecklistSettings
+        ))
+    }
+
+    handleInitialStartDayPick(isoStartDate) {
+        var newChecklistSettings = {
+            ...this.props.settings.checklistSettings,
+            initialStartDate: isoStartDate,
+            nextRenewDate: isoStartDate,
+        }
+
+        this.props.onSettingsChanged(new TaskListSettingsStore(
+            isCompleteTasksShown,
+            this.props.settings.sortBy,
+            newChecklistSettings,
+        ))
+    }
     
+    handleChecklistModeChange(newValue) {
+        var checklistSettings = {};
+
+        if (newValue === true) {
+            var initialStartDate = Moment().add(1, 'day');
+            var renewInterval = 1;
+            var nextRenewDate = initialStartDate;
+
+            checklistSettings = ChecklistSettingsFactory(
+                newValue,
+                getNormalizedDate(initialStartDate),
+                getNormalizedDate(nextRenewDate),
+                renewInterval
+            );
+        }
+
+        else {
+            checklistSettings = ChecklistSettingsFactory(false,"", "", 1);
+        }
+
+        this.props.onSettingsChanged(new TaskListSettingsStore(
+            isCompleteTasksShown,
+            this.props.settings.sortBy,
+            checklistSettings,
+        ))
+    }
     
     handleSortByCompletedTasksItemClick(e) {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "completed"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "completed", this.props.settings.checklistSettings), true);
     }
 
     handleSortByDueDateItemClick(e) {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "due date"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "due date", this.props.settings.checklistSettings), true);
     }
 
     handleSortByDateAddedItemClick(e) {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "date added"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "date added", this.props.settings.checklistSettings), true);
     }
 
     handleSortByPriorityItemClick(e) {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "priority"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "priority", this.props.settings.checklistSettings), true);
     }
 
     handleSortByAssigneeItemClick() {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "assignee"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "assignee", this.props.settings.checklistSettings), true);
     }
 
     handleSortByAlphabeticalItemClick() {
-        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "alphabetical"));
+        this.props.onSettingsChanged(new TaskListSettingsStore(isCompleteTasksShown, "alphabetical", this.props.settings.checklistSettings), true);
     }
 
     getSelectableMenuItems(props) {

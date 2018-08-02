@@ -18,6 +18,7 @@ import '../assets/css/Project.css';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
 import { hot } from 'react-hot-loader';
+require('later/later.js');
 import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
@@ -28,10 +29,14 @@ setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsSh
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
 updateTaskAssignedToAsync, setShowCompletedTasksAsync,
 setAppSettingsMenuPage,
-setShowCompletedTasks} from 'pounder-redux/action-creators';
+setShowCompletedTasks, 
+renewChecklistAsync} from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
+import { isChecklistDueForRenew } from 'pounder-utilities';
 import electron from 'electron';
+import Moment from 'moment';
+import Button from './Button';
 
 const remote = electron.remote;
 const KEYBOARD_COMBOS = {
@@ -115,6 +120,9 @@ class App extends React.Component {
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
     this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
     this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
+    this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
+    this.performOvernightJobs = this.performOvernightJobs.bind(this);
+    this.renewChecklists = this.renewChecklists.bind(this);
   }
 
   componentDidMount() { 
@@ -173,6 +181,14 @@ class App extends React.Component {
         }
       }
     })
+
+    // Register Jobs for Later.
+    later.date.localTime();
+    var overnightJobsSchedule = later.parse.text('at 02:05 every day');
+
+    // Set First Run then set Subsequent Calls.
+    later.setTimeout(this.performOvernightJobs, overnightJobsSchedule);
+    later.setInterval(this.performOvernightJobs, overnightJobsSchedule);
   }
 
   componentDidUpdate(prevProps, prevState, snapshot) {
@@ -254,6 +270,11 @@ class App extends React.Component {
 
     return (
       <div>
+
+        <div style={{position: 'absolute', right: '0px', top: '0px', zIndex: '69', background: 'black'}}>
+          <Button text="Debug" onClick={() => {this.performOvernightJobs()}} />
+        </div>
+
         <VisibleSnackbar/>
         <MessageBox config={this.props.messageBox}/>
         {lockScreenJSX}
@@ -301,11 +322,47 @@ class App extends React.Component {
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
               onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
-              onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}/>
+              onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
+              onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  performOvernightJobs() {
+    this.props.dispatch(postSnackbarMessage("Performing overnight updates", true, 'infomation'));
+    this.renewChecklists();
+  }
+
+  renewChecklists() {
+    var checklists = this.props.taskLists.filter(item => {
+      return item.settings.checklistSettings.isChecklist === true;
+    })
+
+    checklists.forEach(item => {
+      if (isChecklistDueForRenew(item.settings.checklistSettings.nextRenewDate)) {
+        this.props.dispatch(renewChecklistAsync(item, this.isTasklistRemote(item.project), item.project, false))
+      }
+    })
+  }
+
+  isTasklistRemote(projectId) {
+    return this.props.remoteProjectIds.some(item => {
+      return item === projectId;
+    })
+  }
+
+  handleRenewNowButtonClick(taskListWidgetId) {
+    this.props.dispatch(setOpenTaskListSettingsMenuId(-1));
+    
+    var taskList = this.props.taskLists.find(item => {
+      return item.uid === taskListWidgetId
+    })
+
+    if (taskList !== undefined) {
+      this.props.dispatch(renewChecklistAsync(taskList, this.props.isSelectedProjectRemote, this.props.selectedProjectId, true));
+    }
   }
 
   handleShowCompletedTasksChanged(value) {
@@ -673,7 +730,11 @@ class App extends React.Component {
     console.error(error);
   }
 
-  handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings) {
+  handleTaskListSettingsChanged(projectId, taskListWidgetId, newTaskListSettings, closeMenu) {
+    if (closeMenu === true) {
+      this.props.dispatch(setOpenTaskListSettingsMenuId(-1));
+    }
+
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
