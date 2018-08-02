@@ -123,6 +123,7 @@ class App extends React.Component {
     this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
     this.performOvernightJobs = this.performOvernightJobs.bind(this);
     this.renewChecklists = this.renewChecklists.bind(this);
+    this.handleTaskOpenKeyPress = this.handleTaskOpenKeyPress.bind(this);
   }
 
   componentDidMount() { 
@@ -133,6 +134,8 @@ class App extends React.Component {
     MouseTrap.bind("mod", this.handleModKeyDown, 'keydown');
     MouseTrap.bind("mod", this.handleModKeyUp, 'keyup');
     MouseTrap.bind("del", this.handleDeleteKeyPress);
+    MouseTrap.bind("enter", this.handleTaskOpenKeyPress);
+    MouseTrap.bind("f2", this.handleTaskOpenKeyPress );
 
 
     // Read and Apply Config Values.
@@ -255,6 +258,8 @@ class App extends React.Component {
     MouseTrap.unBind("shift", this.handleShiftKeyDown);
     MouseTrap.unBind("shift", this.handleShiftKeyUp);
     MouseTrap.unbind("del", this.handleDeleteKeyPress);
+    MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
+    MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
 
     this.unsubscribeFromDatabase();
   }
@@ -328,6 +333,13 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  handleTaskOpenKeyPress(e) {
+    if (this.props.selectedTask.taskId !== -1 && this.props.selectedTask.isInputOpen === false) {
+      e.preventDefault();
+      this.props.dispatch(openTask(this.props.selectedTask.taskListWidgetId, this.props.selectedTask.taskId));
+    }
   }
 
   performOvernightJobs() {
