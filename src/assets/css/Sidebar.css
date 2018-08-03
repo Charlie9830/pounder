@@ -136,7 +136,7 @@
     width: 100%;
     height: 1px;
     margin: 10px 0px 10px 0px;
-    background: var(--task-divider-color);
+    background: var(--primary-divider-color);
 }
 
 .RemoteProjectSelectorsContainer {

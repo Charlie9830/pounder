@@ -83,7 +83,7 @@
 .DatabaseRestoreCheckboxContainer[data-showdivider*="true"] {
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: var(--task-divider-color);
+    border-bottom-color: var(--primary-divider-color);
 }
 
 .DatabaseRestoreCheckbox {
@@ -103,7 +103,7 @@
 .DatabaseRestoreProjectNameContainer[data-showdivider*="true"] {
     border-bottom-width: 1px;
     border-bottom-style: solid;
-    border-bottom-color: var(--task-divider-color);
+    border-bottom-color: var(--primary-divider-color);
 }
 
 .DatabaseRestoreProjectName {

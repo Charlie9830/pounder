@@ -34,6 +34,7 @@ body {
   --loading-spinner-secondary-color: #ffffff;
   --button-background-top-color: #333333;
   --button-background-bottom-color: #2d2d2d;
+  --primary-divider-color: #3D3D3D;
 
   /* Task */
   --task-checkbox-color: #FFF;
