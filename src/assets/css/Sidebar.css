@@ -30,7 +30,7 @@
 .SidebarGridContainer {
     display: grid;
     grid-template-columns: [Main]auto;
-    grid-template-rows: [Toolbar]48px [Selectables]minmax(auto, 655px) [Footer]48px;
+    grid-template-rows: [Toolbar]48px [Selectables]minmax(auto, auto) [Footer]48px;
     overflow-x: hidden;
     height: 100%;
 }
