@@ -27,7 +27,7 @@ addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAs
 updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
-updateTaskAssignedToAsync, setShowCompletedTasksAsync,
+updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
 setAppSettingsMenuPage,
 setShowCompletedTasks, 
 renewChecklistAsync} from 'pounder-redux/action-creators';
@@ -343,7 +343,13 @@ class App extends React.Component {
   }
 
   performOvernightJobs() {
-    this.props.dispatch(postSnackbarMessage("Performing overnight updates", true, 'infomation'));
+    this.props.dispatch(postSnackbarMessage("Performing overnight jobs", true, 'infomation'));
+
+    // Update Due date Displays.
+    this.props.dispatch(calculateProjectSelectorDueDateDisplays());
+    this.forceUpdate(); // Forces recalculation of Task Due date displays.
+
+    // Renew any checklists requiring renewal.
     this.renewChecklists();
   }
 
