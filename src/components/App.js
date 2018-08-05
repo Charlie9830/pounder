@@ -568,7 +568,7 @@ class App extends React.Component {
         }
 
         else {
-          // Otherwise just Select it.
+          // Otherwise just Select it and perhaps open it's Metadata.
           this.props.dispatch(selectTask(taskListWidgetId, taskId, this.isModKeyDown));
         }
       }

@@ -197,6 +197,7 @@ class Project extends React.Component{
     }
 
     handleKeyCombo(mousetrap) {
+        mousetrap.preventDefault();
         // Tab.
         if (mousetrap.key === "Tab" && mousetrap.shiftKey === false) {
             this.focusNextTaskList();

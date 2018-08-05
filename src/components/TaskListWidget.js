@@ -135,18 +135,38 @@ class TaskListWidget extends React.Component {
     }
 
     handleDocumentKeyDown(e) {
-        if (this.props.isFocused &&
-            this.selectedTaskIndex !== -1 &&
-            this.props.openTaskInputId === -1) {
+        if (this.props.isFocused && this.props.openTaskInputId === -1) {
             if (e.key === "ArrowDown") {
-                if (this.selectedTaskIndex !== this.arrowKeyTracking.length - 1) {
+                e.preventDefault();
+
+                if (this.selectedTaskIndex === -1) {
+                    // No Task currently selected. Force select first task.
+                    var nextTaskId = this.arrowKeyTracking[0];
+                    if (nextTaskId !== undefined) {
+                        this.arrowSelectTask(nextTaskId);
+                    }
+                }
+
+                else if (this.selectedTaskIndex !== -1 && this.selectedTaskIndex !== this.arrowKeyTracking.length - 1) {
+                    // Task already selected. Select next task.
                     var nextTaskId = this.arrowKeyTracking[this.selectedTaskIndex + 1];
                     this.arrowSelectTask(nextTaskId);
                 }
             }
 
             if (e.key === "ArrowUp") {
-                if (this.selectedTaskIndex !== 0) {
+                e.preventDefault();
+                
+                if (this.selectedTaskIndex === -1) {
+                    // No task currently selected. Force select last Task.
+                    var nextTaskId = this.arrowKeyTracking[this.arrowKeyTracking.length - 1];
+                    if (nextTaskId !== undefined) {
+                        this.arrowSelectTask(nextTaskId);
+                    }
+                }
+
+                else if (this.selectedTaskIndex !== -1 && this.selectedTaskIndex !== 0) {
+                    // Task already selected. Select previous Task.
                     var previousTaskId = this.arrowKeyTracking[this.selectedTaskIndex - 1];
                     this.arrowSelectTask(previousTaskId);
                 }
