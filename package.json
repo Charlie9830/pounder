@@ -36,7 +36,8 @@
       "./main.js"
     ],
     "mac": {
-      "icon": "./icon.icns"
+      "icon": "./icon.icns",
+      "target": "default"
     },
     "dmg": {
       "icon": "./icon.icns"
