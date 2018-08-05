@@ -1,8 +1,5 @@
 'use strict';
 
-// Handle Squirrel startup events.
-if(require('electron-squirrel-startup')) return;
-
 // Import parts of electron to use
 const {app, BrowserWindow, Menu} = require('electron');
 const electron = require('electron');
