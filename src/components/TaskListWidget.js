@@ -11,6 +11,10 @@ class TaskListWidget extends React.Component {
     constructor(props){
         super(props);
 
+        // Class Storage.
+        this.arrowKeyTracking = [];
+        this.selectedTaskIndex = -1;
+
         // Method Bindings.
         this.handleTaskClick = this.handleTaskClick.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
@@ -31,14 +35,37 @@ class TaskListWidget extends React.Component {
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
+        this.arrowSelectTask = this.arrowSelectTask.bind(this);
+        
     }
 
     componentDidMount(){
-        var _this = this;
+        if (this.props.isFocused) {
+            document.addEventListener('keydown', this.handleDocumentKeyDown);
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isFocused !== this.props.isFocused) {
+            if (this.props.isFocused) {
+                document.addEventListener('keydown', this.handleDocumentKeyDown);
+            }
+
+            else {
+                document.removeEventListener('keydown', this.handleDocumentKeyDown);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleDocumentKeyDown);
     }
 
     render() {
         var builtTasks = [];
+        this.arrowKeyTracking = [];
+        this.selectedTaskIndex = -1;
 
         if (this.props.tasks != undefined) {
             // Sort Tasks.
@@ -66,6 +93,9 @@ class TaskListWidget extends React.Component {
                 var metadata = item.metadata === undefined ? Object.assign({}, new TaskMetadataStore("", "", "", "", "")) 
                 : item.metadata; 
                 var assignedTo = item.assignedTo === undefined ? -1 : item.assignedTo;
+
+                this.arrowKeyTracking[index] = item.uid;
+                if (isTaskSelected === true) { this.selectedTaskIndex = index };
 
                 return (
                     <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true}>
@@ -102,6 +132,30 @@ class TaskListWidget extends React.Component {
                 </TaskArea>
             </div>
         )
+    }
+
+    handleDocumentKeyDown(e) {
+        if (this.props.isFocused &&
+            this.selectedTaskIndex !== -1 &&
+            this.props.openTaskInputId === -1) {
+            if (e.key === "ArrowDown") {
+                if (this.selectedTaskIndex !== this.arrowKeyTracking.length - 1) {
+                    var nextTaskId = this.arrowKeyTracking[this.selectedTaskIndex + 1];
+                    this.arrowSelectTask(nextTaskId);
+                }
+            }
+
+            if (e.key === "ArrowUp") {
+                if (this.selectedTaskIndex !== 0) {
+                    var previousTaskId = this.arrowKeyTracking[this.selectedTaskIndex - 1];
+                    this.arrowSelectTask(previousTaskId);
+                }
+            }
+        }
+    }
+
+    arrowSelectTask(taskId) {
+        this.props.onTaskClick(taskId, this.props.taskListWidgetId);
     }
 
     handleRenewNowButtonClick() {
@@ -154,8 +208,8 @@ class TaskListWidget extends React.Component {
         this.props.onWidgetClick(this.props.taskListWidgetId, this.props.isFocused);
     }
 
-    handleTaskClick(element) {
-        this.props.onTaskClick(element, this.props.taskListWidgetId);
+    handleTaskClick(taskId) {
+        this.props.onTaskClick(taskId, this.props.taskListWidgetId);
     }
 
     handleKeyPress(e, taskId, newData, currentMetadata) {

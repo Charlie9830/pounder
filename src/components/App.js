@@ -548,28 +548,28 @@ class App extends React.Component {
     this.props.dispatch(removeSelectedTaskAsync());
   }
 
-  handleTaskClick(element, projectId, taskListWidgetId) {
+  handleTaskClick(taskId, projectId, taskListWidgetId) {
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.props.selectedTask;
-    var openCalendarId = this.props.openCalendarId === element.props.taskId ? this.props.openCalendarId : -1; // Keep calendar Open if it already Open.
+    var openCalendarId = this.props.openCalendarId === taskId? this.props.openCalendarId : -1; // Keep calendar Open if it already Open.
 
       if (this.isShiftKeyDown) {
-        this.props.dispatch(startTaskMove(element.props.taskId, taskListWidgetId));
+        this.props.dispatch(startTaskMove(taskId, taskListWidgetId));
       }
 
       // If a task is already moving, it's completion will be handled by the Task List Focus change. Letting the selecition handling runs
       // causes problems.
       else if (this.props.isATaskMoving === false) {
         if (selectedTask.taskListWidgetId === taskListWidgetId &&
-          selectedTask.taskId === element.props.taskId && this.isModKeyDown !== true) { // If task is already selected and the Mod Key isn't down.
+          selectedTask.taskId === taskId && this.isModKeyDown !== true) { // If task is already selected and the Mod Key isn't down.
 
             // Task Already Selected. Exclusively open it's Text Input.
-            this.props.dispatch(openTask(taskListWidgetId, element.props.taskId));          
+            this.props.dispatch(openTask(taskListWidgetId, taskId));          
         }
 
         else {
           // Otherwise just Select it.
-          this.props.dispatch(selectTask(taskListWidgetId, element.props.taskId, this.isModKeyDown));
+          this.props.dispatch(selectTask(taskListWidgetId, taskId, this.isModKeyDown));
         }
       }
 

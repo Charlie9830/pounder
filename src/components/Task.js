@@ -181,7 +181,7 @@ class Task extends React.Component {
     }
 
     forwardOnTaskClick(e) {
-        this.props.handleClick(this);
+        this.props.handleClick(this.props.taskId);
     }
 
     forwardKeyPress(e, newData) {

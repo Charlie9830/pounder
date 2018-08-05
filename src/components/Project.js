@@ -6,6 +6,8 @@ import '../assets/css/Project.css';
 import '../assets/css/react-grid-layout/styles.css';
 import '../assets/css/react-resizable/styles.css';
 import ProjectToolBar from './ProjectToolBar';
+import Mousetrap from 'mousetrap';
+
 
 
 class Project extends React.Component{
@@ -45,6 +47,15 @@ class Project extends React.Component{
         this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
         this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
         this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
+        this.focusNextTaskList = this.focusNextTaskList.bind(this);
+        this.focusPreviousTaskList = this.focusPreviousTaskList.bind(this);
+        this.handleKeyCombo = this.handleKeyCombo.bind(this);
+        this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
+        this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
+    }
+
+    componentDidMount() {
+        Mousetrap.bind(['tab', 'shift+tab'], this.handleKeyCombo);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -54,6 +65,10 @@ class Project extends React.Component{
             this.taskListIdsToFoul = null;
             this.layoutsToSync = null;
         }
+    }
+
+    componentWillUnmount() {
+        Mousetrap.unbind(['tab', 'shift+tab'], this.handleKeyCombo);
     }
 
 
@@ -175,11 +190,146 @@ class Project extends React.Component{
                             {taskListWidgets}
                         </TaskListWidgetGrid>
 
-
                     </div>
                 </div>
             </div>
         )
+    }
+
+    handleKeyCombo(mousetrap) {
+        // Tab.
+        if (mousetrap.key === "Tab" && mousetrap.shiftKey === false) {
+            this.focusNextTaskList();
+        }
+
+        // Shift + Tab.
+        if (mousetrap.key === "Tab" && mousetrap.shiftKey === true) {
+            this.focusPreviousTaskList();
+        }
+        
+    }
+
+    getGridSortedTaskListIds() {
+        var sortedLayouts = this.extractSelectedProjectLayouts().sort(this.layoutGridSorter);
+
+        var sortedTaskListIds = sortedLayouts.map(item => {
+            return item.i;
+        })
+
+        return sortedTaskListIds;
+    }
+
+    focusNextTaskList() {
+        var sortedTaskListIds = this.getGridSortedTaskListIds();
+
+        if (sortedTaskListIds.length === 0) {
+            return;
+        }
+
+        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
+            return item === this.props.focusedTaskListId;
+        })
+
+        var filteredTaskListWidgets = this.props.taskLists.filter(item => {
+            return item.project === this.props.projectId;
+        })
+
+        if (currentFocusedTaskListIndex === -1) {
+            // No Tasklist in Focus. Force Focus to first Task List.
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[0], false);
+        }
+
+        else {
+            if (currentFocusedTaskListIndex < filteredTaskListWidgets.length - 1) {
+                // Step to next Tasklist.
+                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
+            }
+
+            else {
+                // Wrap around to First tasklist.
+                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
+            }
+        }
+    }
+
+    focusPreviousTaskList() {
+        var sortedTaskListIds = this.getGridSortedTaskListIds();
+
+        if (sortedTaskListIds.length === 0) {
+            return;
+        }
+
+        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
+            return item === this.props.focusedTaskListId;
+        })
+
+        if (currentFocusedTaskListIndex === -1) {
+            // No Tasklist in Focus. Force Focus to Last Task List.
+            var lastTaskListId = sortedTaskListIds[sortedTaskListIds.length - 1];
+            this.props.onTaskListWidgetFocusChanged(lastTaskListId, false);
+        }
+
+        else {
+            if (currentFocusedTaskListIndex !== 0) {
+                // Step to Previous Tasklist.
+                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
+            }
+
+            else {
+                // Wrap around to First tasklist.
+                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
+            }
+        }
+    }
+
+    stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
+        if (type === 'step') {
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex], false);
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex + 1], false);
+        }
+
+        if (type === 'wrap') {
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex, false]);
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[0]);
+        }
+    }
+
+    stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
+        if (type === 'step') {
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex], false);
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex - 1], false);
+        }
+
+        if (type === 'wrap') {
+            console.log("Wrapping back");
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex, false]);
+            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[sortedTaskListIds.length - 1]);
+        }
+    }
+
+
+
+    layoutGridSorter(a, b) {
+        // Sort by Left to Right, Top to bottom.
+        if (a.y > b.y) {
+            return 1;
+        }
+
+        else if (a.y < b.y) {
+            return -1;
+        }
+
+        if (a.x > b.x) {
+            return 1;
+        }
+
+        else if (a.x < b.x) {
+            return -1;
+        }
+
+        else {
+            return 0;
+        }
     }
 
     handleRenewNowButtonClick(taskListWidgetId) {
@@ -326,8 +476,8 @@ class Project extends React.Component{
         this.props.onTaskListWidgetHeaderChanged(taskListWidgetId, newData, oldValue);
     }
 
-    handleTaskClick(element, taskListWidgetId) {
-        this.props.onTaskClick(element, this.props.projectId, taskListWidgetId);
+    handleTaskClick(taskId, taskListWidgetId) {
+        this.props.onTaskClick(taskId, this.props.projectId, taskListWidgetId);
     }
 
     handleLayoutChange(layouts, oldItem, newItem, e, element) {
