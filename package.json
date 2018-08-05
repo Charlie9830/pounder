@@ -3,7 +3,7 @@
   "productName": "Handball",
   "author": "Charlie Hall",
   "description": "Widget based ToDo app",
-  "version": "2.0.2",
+  "version": "2.0.3",
   "license": "MIT",
   "main": "main.js",
   "scripts": {
@@ -18,7 +18,8 @@
     "buildInstaller": "node build-windows-installer.js",
     "packagemac": "electron-packager ./ --asar --platform=darwin --overwrite --arch=x64 --icon=./src/assets/icons/icon.icns --out=./builds",
     "builddmg": "node build-darwin-dmg.js ",
-    "electronBuild": "electron-builder --win --x64"
+    "electronBuild": "electron-builder --win --x64",
+    "release": "build"
   },
   "repository": {
     "type": "git",
@@ -45,6 +46,10 @@
     "nsis": {
       "installerIcon": "./icon.ico",
       "uninstallerIcon": "./icon.ico"
+    },
+    "publish": {
+      "provider": "github",
+      "private": false
     }
   },
   "devDependencies": {
