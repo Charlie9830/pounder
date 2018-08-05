@@ -20,40 +20,15 @@
     "builddmg": "node build-darwin-dmg.js ",
     "electronBuildWin": "electron-builder --win --x64",
     "electronBuildMac": "electron-builder --mac --x64",
-    "release": "build"
+    "winRelease": "build --publish always -c ./electron-builder-configs/win-publish-to-github.yaml",
+    "macRelease": "build --publish always -c ./electron-builder-configs/mac-publish-to-github.yaml",
+    "testWinRelease": "build --publish always -c ./electron-builder-configs/win-publish-to-test.yaml",
+    "testMacRelease": "CSC_IDENTITY_AUTO_DISCOVERY=false build -c ./electron-builder-configs/mac-publish-to-test.yaml",
+    "startTestReleaseServer": "http-server ./test-release-server -p 3001"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/Charlie9830/pounder.git"
-  },
-  "build": {
-    "directories": {
-      "buildResources": "./build-resources",
-      "output": "./builds"
-    },
-    "files": [
-      "./dist/",
-      "./main.js"
-    ],
-    "mac": {
-      "icon": "./icon.icns",
-      "target": "default"
-    },
-    "dmg": {
-      "icon": "./icon.icns"
-    },
-    "win": {
-      "target": "nsis"
-    },
-    "nsis": {
-      "installerIcon": "./icon.ico",
-      "uninstallerIcon": "./icon.ico"
-    },
-    "publish": {
-      "provider": "github",
-      "private": false
-    },
-    "forceCodeSigning": true
   },
   "devDependencies": {
     "app-builder-lib": "^20.27.0",
@@ -83,6 +58,7 @@
   },
   "dependencies": {
     "dexie": "^2.0.4",
+    "electron-log": "^2.2.16",
     "electron-updater": "^3.0.3",
     "fs-jetpack": "^1.3.0",
     "hammerjs": "^2.0.8",

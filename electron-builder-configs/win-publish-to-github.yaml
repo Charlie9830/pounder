@@ -1,0 +1,15 @@
+directories:
+  output: ./builds
+  buildResources: ./build-resources
+files:
+  - ./dist/
+  - ./main.js
+win:
+  target: nsis
+  publish:
+    provider: github
+    private: false
+nsis:
+  installerIcon: ./icon.ico
+  uninstallerIcon: ./icon.ico
+forceCodeSigning: true

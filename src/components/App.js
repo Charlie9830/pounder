@@ -12,6 +12,7 @@ import OverlayMenuContainer from '../containers/OverlayMenuContainer';
 import MessageBox from './MessageBox';
 import VisibleSnackbar from './Snackbar';
 import VisibleShareMenu from './ShareMenu';
+import VisibleUpdateSnackbar from './UpdateSnackbar';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -28,7 +29,7 @@ updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, ge
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
 updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
-setAppSettingsMenuPage,
+setAppSettingsMenuPage, setIsUpdateSnackbarOpen,
 setShowCompletedTasks, 
 renewChecklistAsync} from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
@@ -148,6 +149,14 @@ class App extends React.Component {
     electron.ipcRenderer.on('resume', () => {
       // Refresh Data.
       // Code here removed because it messes with Auth.. Firebase will re check server it just takes about 15 seconds.
+    })
+
+    electron.ipcRenderer.on('update-downloaded', () => {
+      this.props.dispatch(setIsUpdateSnackbarOpen(true));
+    })
+
+    electron.ipcRenderer.on('update-error', (event, error) => {
+      this.props.dispatch(postSnackbarMessage("An error has occured with the Update.", false, 'error'));
     })
 
     electron.ipcRenderer.on('window-closing', () => {
@@ -280,6 +289,7 @@ class App extends React.Component {
           <Button text="Debug" onClick={() => {this.performOvernightJobs()}} />
         </div>
 
+        <VisibleUpdateSnackbar/>
         <VisibleSnackbar/>
         <MessageBox config={this.props.messageBox}/>
         {lockScreenJSX}

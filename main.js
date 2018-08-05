@@ -5,6 +5,8 @@ const {app, BrowserWindow, Menu} = require('electron');
 const electron = require('electron');
 const path = require('path')
 const url = require('url')
+const {autoUpdater} = require('electron-updater');
+const log = require('electron-log');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -16,6 +18,13 @@ let dev = false;
 if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath) ) {
   dev = true;
 }
+
+// Logging
+  autoUpdater.logger = log;
+  autoUpdater.logger.transports.file.level = 'info';
+  log.info('App starting...');
+
+
 
 // function installReactDevtools() {
 //   const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
@@ -64,6 +73,9 @@ function createWindow() {
   mainWindow.once('ready-to-show', () => {
     mainWindow.show();
     mainWindow.maximize()
+
+    // Auto Updater.
+    setupAutoUpdater();
 
     // Power Monitor Event Listener.
     electron.powerMonitor.on('resume', () => {
@@ -123,6 +135,30 @@ app.on('activate', () => {
     createWindow();
   }
 });
+
+function setupAutoUpdater() {
+  autoUpdater.on('update-downloaded', (info) => {
+    mainWindow.webContents.send('update-downloaded');
+  })
+
+  autoUpdater.on('error', (error) => {
+    log.log(error);
+    mainWindow.webContents.send('update-error');
+  })
+
+  electron.ipcMain.on('install-update', event => {
+    autoUpdater.quitAndInstall();
+  })
+
+  autoUpdater.on('checking-for-update', () => {
+    console.log("Checking for Update");
+  })
+
+  autoUpdater.on('update-available', (info) => {
+    console.log("Update available");
+    console.log(info);
+  })
+}
 
 function setupApplicationMenu() {
   var template = [{

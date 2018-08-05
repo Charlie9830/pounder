@@ -1,0 +1,14 @@
+directories:
+  output: ./builds
+  buildResources: ./build-resources
+files:
+  - ./dist/
+  - ./main.js
+mac:
+  icon: ./icon.icns
+  publish:
+    provider: github
+    private: false
+dmg:
+  icon: ./icon.icns
+forceCodeSigning: true
