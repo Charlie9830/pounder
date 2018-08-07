@@ -1,4 +1,4 @@
-artifactName: '${productName}-${version}-${os}-${arch}.${ext}'
+artifactName: '${productName}.${ext}'
 directories:
   output: ./builds
   buildResources: ./build-resources
@@ -12,4 +12,6 @@ mac:
     url: 'http://127.0.0.1:3001'
 dmg:
   icon: ./icon.icns
+  title: '${productName} ${version}'
+  artifactName: '${productName}-${version}.${ext}'
 forceCodeSigning: false

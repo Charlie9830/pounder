@@ -1,4 +1,4 @@
-artifactName: '${productName}-${version}-${os}-${arch}.${ext}'
+artifactName: '${productName}.${ext}'
 directories:
   output: ./builds
   buildResources: ./build-resources
@@ -13,4 +13,5 @@ win:
 nsis:
   installerIcon: ./icon.ico
   uninstallerIcon: ./icon.ico
+  artifactName: '${productName}-${version}-${os}-setup.${ext}'
 forceCodeSigning: false
