@@ -29,7 +29,7 @@ updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, ge
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
 updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
-setAppSettingsMenuPage, setIsUpdateSnackbarOpen,
+setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
 renewChecklistAsync} from 'pounder-redux/action-creators';
 import { getFirestore } from 'pounder-firebase';
@@ -125,6 +125,7 @@ class App extends React.Component {
     this.performOvernightJobs = this.performOvernightJobs.bind(this);
     this.renewChecklists = this.renewChecklists.bind(this);
     this.handleTaskOpenKeyPress = this.handleTaskOpenKeyPress.bind(this);
+    this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this);
   }
 
   componentDidMount() { 
@@ -137,6 +138,7 @@ class App extends React.Component {
     MouseTrap.bind("del", this.handleDeleteKeyPress);
     MouseTrap.bind("enter", this.handleTaskOpenKeyPress);
     MouseTrap.bind("f2", this.handleTaskOpenKeyPress );
+    MouseTrap.bind("esc", this.handleEscapeKeyPress);
 
 
     // Read and Apply Config Values.
@@ -269,6 +271,7 @@ class App extends React.Component {
     MouseTrap.unbind("del", this.handleDeleteKeyPress);
     MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
     MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
+    MouseTrap.unbind("esc", this.handleEscapeKeyPress);
 
     this.unsubscribeFromDatabase();
   }
@@ -343,6 +346,12 @@ class App extends React.Component {
         </div>
       </div>
     );
+  }
+
+  handleEscapeKeyPress(mousetrap) {
+    if (this.props.isATaskMoving === true) {
+      this.props.dispatch(cancelTaskMove());
+    }
   }
 
   handleTaskOpenKeyPress(e) {
