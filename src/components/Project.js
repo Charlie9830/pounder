@@ -361,12 +361,14 @@ class Project extends React.Component{
         var isRemoveTaskButtonEnabled = overide && this.props.selectedTask.taskId !== -1;
         var isAddTaskListButtonEnabled = overide;
         var isRemoveTaskListButtonEnabled = overide && this.props.focusedTaskListId !== -1;
+        var isShowCompletedTasksButtonEnabled = overide;
 
         return {
             isAddTaskButtonEnabled: isAddTaskButtonEnabled,
             isRemoveTaskButtonEnabled: isRemoveTaskButtonEnabled,
             isAddTaskListButtonEnabled: isAddTaskListButtonEnabled,
             isRemoveTaskListButtonEnabled: isRemoveTaskListButtonEnabled,
+            isShowCompletedTasksButtonEnabled: isShowCompletedTasksButtonEnabled,
         }
     }
 
