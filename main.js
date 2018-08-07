@@ -13,6 +13,8 @@ const log = require('electron-log');
 let mainWindow;
 let isClosing = false;
 let readyToClose = false;
+let updateDownloaded = false;
+
 // Keep a reference for dev mode
 let dev = false;
 if ( process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath) ) {
@@ -137,26 +139,21 @@ app.on('activate', () => {
 });
 
 function setupAutoUpdater() {
+  autoUpdater.checkForUpdatesAndNotify();
+
   autoUpdater.on('update-downloaded', (info) => {
+    updateDownloaded = true;
     mainWindow.webContents.send('update-downloaded');
   })
 
   autoUpdater.on('error', (error) => {
     log.log(error);
-    mainWindow.webContents.send('update-error');
-  })
-
-  electron.ipcMain.on('install-update', event => {
-    autoUpdater.quitAndInstall();
-  })
-
-  autoUpdater.on('checking-for-update', () => {
-    console.log("Checking for Update");
-  })
-
-  autoUpdater.on('update-available', (info) => {
-    console.log("Update available");
-    console.log(info);
+    if (updateDownloaded === true) {
+      // Only inform the user if something has gone wrong after the update has been downloaded. This supresses errors that are
+      // thrown when autoUpdater can't reach the update server. Eg: Starting without an internet connection.
+      mainWindow.webContents.send('update-error');
+    }
+    
   })
 }
 

@@ -1,3 +1,4 @@
+artifactName: '${productName}-${version}-${os}-${arch}.${ext}'
 directories:
   output: ./builds
   buildResources: ./build-resources
