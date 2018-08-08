@@ -9,6 +9,8 @@ import BurgerIcon from '../assets/icons/BurgerIcon.svg';
 import ReactTooltip from 'react-tooltip';
 import {setIsAppSettingsOpen, setAppSettingsMenuPage, setIsSidebarOpen } from 'pounder-redux/action-creators';
 
+const versionNumber = HANDBALL_VERSION;
+
 class StatusBar extends React.Component {
     constructor(props) {
         super(props);
@@ -29,7 +31,7 @@ class StatusBar extends React.Component {
                     <div className="StatusBarLeftContainer">
                         <img className="StatusBarBurgerIcon" src={BurgerIcon} onClick={this.handleBurgerButtonClick} />
                         <div className="StatusBarDivider" />
-                        <label className="VersionNumber"> Version 2.0.2 </label>
+                        <label className="VersionNumber"> Version {versionNumber} </label>
                         
                     </div>
                     
