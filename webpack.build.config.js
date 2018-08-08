@@ -55,6 +55,7 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
       'HANDBALL_DEVICE': JSON.stringify('desktop'),
+      'HANDBALL_VERSION': JSON.stringify(require('./package.json').version)
     }),
     new BabiliPlugin()
   ],

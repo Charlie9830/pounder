@@ -5,6 +5,24 @@ import Path from 'path';
 import { setupBackend, appStore, setupFirebase } from 'pounder-redux';
 import { Provider } from 'react-redux';
 
+if (process.env.NODE_ENV !== 'development') {
+  var Rollbar = require("rollbar");
+  var rollbar = new Rollbar({
+    accessToken: '9c728629baff4e7480314f39a5c4f12e',
+    captureUncaught: true,
+    captureUnhandledRejections: true,
+  });
+
+  rollbar.configure({
+    codeVersion: HANDBALL_VERSION,
+    captureIp: false,
+    payload: {
+      environment: "desktop " + process.platform,
+    }
+  })
+}
+
+
 // Load Open Sans typeface
 require('typeface-open-sans');
 

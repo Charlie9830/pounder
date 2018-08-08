@@ -79,6 +79,7 @@
     "react-tooltip": "^3.6.1",
     "react-transition-group": "^2.4.0",
     "redux": "^4.0.0",
+    "rollbar": "^2.4.4",
     "sanitize-filename": "^1.6.1",
     "typeface-open-sans": "0.0.54",
     "yui-lint": "^0.2.0"
