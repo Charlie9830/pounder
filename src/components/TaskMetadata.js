@@ -1,59 +1,84 @@
 import React from 'react';
 import '../assets/css/TaskMetadata.css';
 import UpArrowIcon from '../assets/icons/UpArrowIcon.svg';
+import TimeIcon from '../assets/icons/TimeIcon.svg';
+import PersonIcon from '../assets/icons/PersonIcon.svg';
+import TickIcon from '../assets/icons/TickIcon.svg';
 
 class TaskMetadata extends React.Component {
     render() {
         return (
             <div className="TaskMetadata">
-
-                <div className="TaskMetadataHeader">
-                    <div className="TaskMetadataCloseButtonContainer" onClick={() => {this.props.onCloseButtonClick()}}>
-                        <img className="TaskMetadataCloseButton" src={UpArrowIcon}/>
+                    <div className="TaskMetadataCloseButtonContainer" onClick={() => { this.props.onCloseButtonClick() }}>
+                        <img className="TaskMetadataCloseButton" src={UpArrowIcon} />
                     </div>
-                </div>
+
                 <div className="TaskMetadataGrid">
-                    {/* Created By  */}
-                    <div className="TaskMetadataLabel">
-                        Created By
-                </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.createdBy}
-                </div>
 
                     {/* Created  */}
-                    <div className="TaskMetadataLabel">
-                        Created
-                </div>
+                    <div className="TaskMetadataSubtitleContainer"> 
+                        <div className="TaskMetadataSubtitle"> Created </div>
+                    </div>
+                    
+                    {/* User  */} 
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={PersonIcon} />
+                    </div>
+                    <div className="TaskMetadataValue">
+                        {this.props.metadata.createdBy}
+                    </div>
+
+                    {/* Time  */} 
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={TimeIcon} />
+                    </div>
                     <div className="TaskMetadataValue">
                         {this.props.metadata.createdOn}
-                </div>
-
-                    {/* Updated By  */}
-                    <div className="TaskMetadataLabel">
-                        Updated By
-                </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.updatedBy}
-                </div>
+                    </div>
 
                     {/* Updated  */}
-                    <div className="TaskMetadataLabel">
-                        Updated
-                </div>
+                    <div className="TaskMetadataSubtitleContainer"> 
+                        <div className="TaskMetadataSubtitle"> Updated </div>
+                    </div>
+
+                    {/* User  */} 
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={PersonIcon} />
+                    </div>
+                    <div className="TaskMetadataValue">
+                        {this.props.metadata.updatedBy}
+                    </div>
+
+                    {/* Time */}
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={TimeIcon} />
+                    </div>
                     <div className="TaskMetadataValue">
                         {this.props.metadata.updatedOn}
-                </div>
+                    </div>
 
-                    {/* Completed By  */}
-                    <div className="TaskMetadataLabel">
-                        Completed By:
-                </div>
+                    {/* Completed */}
+                    <div className="TaskMetadataSubtitleContainer"> 
+                        <div className="TaskMetadataSubtitle"> Completed </div>
+                    </div>
+
+                    {/* Person */}
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={PersonIcon} />
+                    </div>
                     <div className="TaskMetadataValue">
                         {this.props.metadata.completedBy}
+                    </div>
+
+                    {/* Time */}
+                    <div className="TaskMetadataIconContainer">
+                        <img className="TaskMetadataIcon" src={TimeIcon} />
+                    </div>
+                    <div className="TaskMetadataValue">
+                        {this.props.metadata.completedOn}
+                    </div>
                 </div>
-                </div>
-        </div>
+            </div>
         )
     }
 }
