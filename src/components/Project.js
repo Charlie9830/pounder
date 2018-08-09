@@ -302,7 +302,6 @@ class Project extends React.Component{
         }
 
         if (type === 'wrap') {
-            console.log("Wrapping back");
             this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex, false]);
             this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[sortedTaskListIds.length - 1]);
         }

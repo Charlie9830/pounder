@@ -185,7 +185,7 @@ class Task extends React.Component {
     }
 
     forwardKeyPress(e, newData) {
-        this.props.onKeyPress(e, this.props.taskId, newData, this.props.metadata);
+        this.props.onKeyPress(e, this.props.taskId, newData, this.props.text, this.props.metadata);
     }
 
     handleCheckBoxClick(e, incomingValue) {

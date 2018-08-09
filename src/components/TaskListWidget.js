@@ -232,11 +232,11 @@ class TaskListWidget extends React.Component {
         this.props.onTaskClick(taskId, this.props.taskListWidgetId);
     }
 
-    handleKeyPress(e, taskId, newData, currentMetadata) {
+    handleKeyPress(e, taskId, newData, oldData, currentMetadata) {
         // Enter Key.
         if (e.key == "Enter") {
             // Handle Data Changes.
-            this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newData, currentMetadata)
+            this.props.onTaskSubmit(this.props.taskListWidgetId, taskId, newData, oldData, currentMetadata)
         }   
     }
 
