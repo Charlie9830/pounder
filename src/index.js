@@ -17,7 +17,8 @@ if (process.env.NODE_ENV !== 'development') {
     codeVersion: HANDBALL_VERSION,
     captureIp: false,
     payload: {
-      environment: "desktop " + process.platform,
+      environment: "production",
+      platform: process.platform,
     }
   })
 }
