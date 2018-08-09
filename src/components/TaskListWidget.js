@@ -324,8 +324,7 @@ class TaskListWidget extends React.Component {
             return 1;
         }
 
-        return 0;
-        //return this.taskSortDateAddedHelper(a,b);
+        return this.taskSortDateAddedHelper(a,b);
         
     }
 
