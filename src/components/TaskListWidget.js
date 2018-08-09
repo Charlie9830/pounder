@@ -37,6 +37,10 @@ class TaskListWidget extends React.Component {
         this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
         this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
         this.arrowSelectTask = this.arrowSelectTask.bind(this);
+        this.taskSortIsCompletedHelper = this.taskSortIsCompletedHelper.bind(this);
+        this.taskSortPriorityHelper = this.taskSortPriorityHelper.bind(this);
+        this.taskSortAssigneeHelper = this.taskSortAssigneeHelper.bind(this);
+        this.taskSortDueDateHelper = this.taskSortDueDateHelper.bind(this);
         
     }
 
@@ -264,17 +268,42 @@ class TaskListWidget extends React.Component {
     }
 
     taskSortIsCompletedHelper(a, b) {
-        return a.isComplete - b.isComplete;
+        if (a.isComplete > b.isComplete) {
+            return 1
+        }
+
+        if (a.isComplete < b.isComplete) {
+            return -1
+        }
+
+        return this.taskSortDateAddedHelper(a,b);
     }
 
     taskSortPriorityHelper(a,b) {
-        return b.isHighPriority - a.isHighPriority;
+        if (a.isHighPriority > b.isHighPriority) {
+            return -1;
+        }
+
+        if (a.isHighPriority < b.isHighPriority) {
+            return 1;
+        }
+        
+        return this.taskSortDateAddedHelper(a,b);
     }
 
     taskSortDueDateHelper(a, b) {
         var dueDateA = a.dueDate.length === 0 ? Infinity : new Date(a.dueDate);
         var dueDateB = b.dueDate.length === 0 ? Infinity : new Date(b.dueDate);
-        return dueDateA - dueDateB;
+        
+        if (dueDateA > dueDateB) {
+            return 1;
+        }
+
+        if (dueDateA < dueDateB) {
+            return -1
+        }
+
+        return this.taskSortDateAddedHelper(a,b);
     }
 
     taskSortDateAddedHelper(a, b) {
@@ -284,10 +313,19 @@ class TaskListWidget extends React.Component {
     }
 
     taskSortAssigneeHelper(a,b) {
-        var a = a.assignedTo === undefined || a.assignedTo === -1 ? "z".charCodeAt(0) : a.assignedTo.charCodeAt(0);
-        var b = b.assignedTo === undefined || b.assignedTo === -1 ? "z".charCodeAt(0) : b.assignedTo.charCodeAt(0);
+        var aName = (a.assignedTo === undefined || a.assignedTo === -1 ? "aaa" : a.assignedTo).toUpperCase();
+        var bName = (b.assignedTo === undefined || b.assignedTo === -1 ? "aaa" : b.assignedTo).toUpperCase();
 
-        return a - b;
+        if (aName > bName) {
+            return -1;
+        }
+
+        if (aName < bName) {
+            return 1;
+        }
+
+        return 0;
+        //return this.taskSortDateAddedHelper(a,b);
         
     }
 
@@ -318,7 +356,7 @@ class TaskListWidget extends React.Component {
         }
 
         else {
-            return this.taskSortIsCompletedHelper;
+            return this.taskSortDateAddedHelper;
         }
     } 
 
