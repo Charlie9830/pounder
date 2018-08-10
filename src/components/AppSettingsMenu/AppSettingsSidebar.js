@@ -67,6 +67,15 @@ class AppSettingsSidebar extends React.Component {
                 </div>
 
                 { /* About */}
+                <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("release-notes")}>
+                    <div>
+                        <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "release-notes"}>
+                            Release Notes
+                        </label>
+                    </div>
+                </div>
+
+                { /* About */}
                 <div className="AppSettingsSidebarItemContainer" onClick={() => this.handleItemClick("about")}>
                     <div>
                         <label className="AppSettingsSidebarItemLabel" data-isselected={this.props.menuPage === "about"}>

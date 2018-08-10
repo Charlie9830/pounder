@@ -8,6 +8,7 @@ import HelpPage from './HelpPage';
 import WelcomePage from './WelcomePage';
 import KeyboardShortcutsPage from './KeyboardShortcutsPage';
 import AboutPage from './AboutPage';
+import ReleaseNotesPage from './ReleaseNotesPage';
 import AppSettingsSidebar from './AppSettingsSidebar';
 import CenteringContainer from '../../containers/CenteringContainer';
 import OverlayMenuContainer from '../../containers/OverlayMenuContainer';
@@ -244,6 +245,11 @@ class AppSettingsMenu extends React.Component {
             case "keyboard-shortcuts":
             return (
                 <KeyboardShortcutsPage/>
+            )
+
+            case "release-notes":
+            return (
+                <ReleaseNotesPage/>
             )
 
             case "about":
