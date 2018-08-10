@@ -378,7 +378,7 @@ class App extends React.Component {
     })
 
     checklists.forEach(item => {
-      if (isChecklistDueForRenew(item.settings.checklistSettings.nextRenewDate)) {
+      if (isChecklistDueForRenew(item.settings.checklistSettings)) {
         this.props.dispatch(renewChecklistAsync(item, this.isTasklistRemote(item.project), item.project, false))
       }
     })

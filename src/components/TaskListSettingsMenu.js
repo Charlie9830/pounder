@@ -49,7 +49,7 @@ class TaskListSettingsMenu extends React.Component {
     handleRenewIntervalChange(renewInterval) {
         var newChecklistSettings = {
             ...this.props.settings.checklistSettings,
-            renewInterval: renewInterval
+            renewInterval: renewInterval,
         };
 
         this.props.onSettingsChanged(new TaskListSettingsStore(
@@ -63,7 +63,6 @@ class TaskListSettingsMenu extends React.Component {
         var newChecklistSettings = {
             ...this.props.settings.checklistSettings,
             initialStartDate: isoStartDate,
-            nextRenewDate: isoStartDate,
         }
 
         this.props.onSettingsChanged(new TaskListSettingsStore(
@@ -79,12 +78,12 @@ class TaskListSettingsMenu extends React.Component {
         if (newValue === true) {
             var initialStartDate = Moment().add(1, 'day');
             var renewInterval = 1;
-            var nextRenewDate = initialStartDate;
+            var lastRenewDate = "";
 
             checklistSettings = ChecklistSettingsFactory(
                 newValue,
                 getNormalizedDate(initialStartDate),
-                getNormalizedDate(nextRenewDate),
+                lastRenewDate,
                 renewInterval
             );
         }

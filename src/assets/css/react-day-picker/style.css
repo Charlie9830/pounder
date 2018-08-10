@@ -149,6 +149,9 @@ div {
 }
 
 /* Default modifiers */
+.DayPicker-Day--followingRenewDate {
+  background: orange;
+}
 
 .DayPicker-Day--today {
   color: #FFF;

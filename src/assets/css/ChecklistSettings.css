@@ -35,6 +35,12 @@
     grid-row: Interval;
 }
 
+.ChecklistSettingsNextRenewDate {
+    color: var(--alternate-active-text-color);
+    font-size: 9pt;
+    padding-bottom: 10px;
+}
+
 .ChecklistSettingsHorizontalFlexContainer {
     display: flex;
     flex-direction: row;
@@ -83,4 +89,47 @@
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     width: 85px;
+}
+
+.ChecklistSettingsDayPickerLegendContainer {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    padding-bottom: 10px;
+    padding-left: 15px;
+}
+
+.ChecklistSettingsDayPickerLegendItemContainer {
+    flex-shrink: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-content: center;
+    align-items: center;
+    padding-right: 10px;
+}
+
+.ChecklistSettingsDayPickerLegendChit {
+    flex-shrink: 1;
+    width: 14px;
+    height: 14px;
+}
+
+.ChecklistSettingsDayPickerLegendChit[data-type*="initial"] {
+    background: #4A90E2;
+}
+
+.ChecklistSettingsDayPickerLegendChit[data-type*="repeating"] {
+    background: orange;
+}
+
+
+.ChecklistSettingsDayPickerLegendChitLabel {
+    flex-shrink: 1;
+    color: var(--alternate-active-text-color);
+    font-size: 9pt;
+    padding-left: 10px;
 }
