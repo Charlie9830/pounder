@@ -146,6 +146,12 @@ function setupAutoUpdater() {
     mainWindow.webContents.send('update-downloaded');
   })
 
+  electron.ipcMain.on('install-update', event => {
+    // User want's to Install the Update now.
+    readyToClose = true;
+    autoUpdater.quitAndInstall();
+  })
+
   autoUpdater.on('error', (error) => {
     log.log(error);
     if (updateDownloaded === true) {
@@ -153,8 +159,8 @@ function setupAutoUpdater() {
       // thrown when autoUpdater can't reach the update server. Eg: Starting without an internet connection.
       mainWindow.webContents.send('update-error');
     }
-    
   })
+  
 }
 
 function setupApplicationMenu() {

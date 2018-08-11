@@ -23,7 +23,7 @@
     "winRelease": "build --publish always -c ./electron-builder-configs/win-publish-to-github.yaml",
     "macRelease": "build --publish always -c ./electron-builder-configs/mac-publish-to-github.yaml",
     "testWinRelease": "build --publish always -c ./electron-builder-configs/win-publish-to-test.yaml",
-    "testMacRelease": "CSC_IDENTITY_AUTO_DISCOVERY=false build -c ./electron-builder-configs/mac-publish-to-test.yaml",
+    "testMacRelease": "build -c ./electron-builder-configs/mac-publish-to-test.yaml",
     "startTestReleaseServer": "http-server ./test-release-server -p 3001"
   },
   "repository": {
