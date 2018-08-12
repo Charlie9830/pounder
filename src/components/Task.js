@@ -46,7 +46,7 @@ class Task extends React.Component {
             var hammer = new Hammer(this.taskContainerRef, { domEvents: false });
             hammer.on('press', event => {
                 if (event.pointerType !== "mouse") {
-                    if (this.props.isMetadataOpen === false) {
+                    if (this.props.isMetadataOpen === false && this.props.isInputOpen === false) {
                         // Open Metadata.
                         this.props.onMetadataOpen(this.props.taskId);
                     }
@@ -211,6 +211,10 @@ class Task extends React.Component {
 let type = 'task';
 
 let spec = {
+    canDrag: (props, monitor) => {
+        return props.isInputOpen === false;
+    },
+
     beginDrag: (props, monitor, component) => {
         return {
             taskId: props.taskId,
