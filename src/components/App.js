@@ -345,7 +345,8 @@ class App extends React.Component {
               onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
               onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
               onRenewNowButtonClick={this.handleRenewNowButtonClick}
-              onTaskDragDrop={this.handleTaskDragDrop}/>
+              onTaskDragDrop={this.handleTaskDragDrop}
+              enableKioskMode={this.props.generalConfig.enableKioskMode}/>
           </div>
         </div>
       </div>

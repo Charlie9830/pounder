@@ -115,7 +115,8 @@ class TaskListWidget extends React.Component {
                                 onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
                                 metadata={metadata} disableAnimations={this.props.disableAnimations} projectMembers={this.props.projectMembers}
                                 onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo}
-                                onDragDrop={this.handleTaskDragDrop} />
+                                onDragDrop={this.handleTaskDragDrop}
+                                enableKioskMode={this.props.enableKioskMode} />
                         </div>
                     </CSSTransition>
                     

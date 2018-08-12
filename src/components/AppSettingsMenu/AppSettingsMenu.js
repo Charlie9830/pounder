@@ -81,6 +81,7 @@ class AppSettingsMenu extends React.Component {
         this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
         this.handleRegisterModeChanged = this.handleRegisterModeChanged.bind(this);
         this.handleSortProjectsBySelectorChange = this.handleSortProjectsBySelectorChange.bind(this);
+        this.handleEnableKioskModeChange = this.handleEnableKioskModeChange.bind(this);
     }
 
     render() {
@@ -177,6 +178,10 @@ class AppSettingsMenu extends React.Component {
         this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, startLocked: newValue}));
     }
 
+    handleEnableKioskModeChange(newValue) {
+        this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, enableKioskMode: newValue}));
+    }
+    
     handleStartInFullscreenChange(newValue) {
         this.props.dispatch(setGeneralConfigAsync({...this.props.generalConfig, startInFullscreen: newValue}));
     }
@@ -203,7 +208,8 @@ class AppSettingsMenu extends React.Component {
                     onDefaultAllColorsButtonClick={this.handleDefaultAllColorsButtonClick} onPinCodeChange={this.handlePinCodeChange}
                     onDisableAnimationsChange={this.handleDisableAnimationsChange} onHideLockButtonChange={this.handleHideLockButtonChange}
                     onAutoBackupIntervalChange={this.handleAutoBackupIntervalChange} onUseLargeFontsChange={this.handleUseLargeFontsChange}
-                    onSortProjectsBySelectorChange={this.handleSortProjectsBySelectorChange}/>
+                    onSortProjectsBySelectorChange={this.handleSortProjectsBySelectorChange}
+                    onEnableKioskModeChange={this.handleEnableKioskModeChange}/>
                 )
             break;
 

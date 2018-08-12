@@ -127,6 +127,7 @@ class Project extends React.Component{
                      onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
                      onRenewNowButtonClick={this.handleRenewNowButtonClick}
                      onTaskDragDrop={this.handleTaskDragDrop}
+                     enableKioskMode={this.props.enableKioskMode}
                      />   
                 </div>
             )

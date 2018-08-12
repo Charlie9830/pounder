@@ -42,24 +42,28 @@ class Task extends React.Component {
     }
 
     componentDidMount() {
-        // var hammer = new Hammer(this.taskContainerRef, { domEvents: false });
-        // hammer.on('press', event => {
-        //     if (event.pointerType !== "mouse") {
-        //         if (this.props.isMetadataOpen === false) {
-        //             // Open Metadata.
-        //             this.props.onMetadataOpen(this.props.taskId);
-        //         }
+        if (this.props.enableKioskMode) {
+            var hammer = new Hammer(this.taskContainerRef, { domEvents: false });
+            hammer.on('press', event => {
+                if (event.pointerType !== "mouse") {
+                    if (this.props.isMetadataOpen === false) {
+                        // Open Metadata.
+                        this.props.onMetadataOpen(this.props.taskId);
+                    }
 
-        //         else {
-        //             // Close Metadata.
-        //             this.props.onTaskMetadataCloseButtonClick();
-        //         }
-        //     }  
-        // })
+                    else {
+                        // Close Metadata.
+                        this.props.onTaskMetadataCloseButtonClick();
+                    }
+                }  
+            })
+        }
     }
 
     componentWillUnmount() {
-        // Hammer.off(this.taskContainerRef, 'press');
+        if (this.props.enableKioskMode) {
+            Hammer.off(this.taskContainerRef, 'press');
+        }
     }
 
     render() {

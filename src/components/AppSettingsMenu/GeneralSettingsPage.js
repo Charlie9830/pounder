@@ -22,6 +22,7 @@ class GeneralSettingsPage extends React.Component {
         this.autoBackupIntervalEntryRef = React.createRef();
         this.useLargeFontsCheckboxRef = React.createRef();
         this.sortProjectsBySelectorRef = React.createRef();
+        this.enableKioskModeCheckboxRef = React.createRef();
 
         // Method Bindings.
         this.getFavouriteProjectSelectorJSX = this.getFavouriteProjectSelectorJSX.bind(this);
@@ -39,6 +40,7 @@ class GeneralSettingsPage extends React.Component {
         this.handleUseLargeFontsChange = this.handleUseLargeFontsChange.bind(this);
         this.getSortProjectsBySelectorJSX = this.getSortProjectsBySelectorJSX.bind(this);
         this.handleSortProjectsBySelectorChange = this.handleSortProjectsBySelectorChange.bind(this);
+        this.handleEnableKioskModeChange = this.handleEnableKioskModeChange.bind(this);
     }
 
     componentDidMount() {
@@ -104,6 +106,18 @@ class GeneralSettingsPage extends React.Component {
                         checked={this.props.generalConfig.useLargeFonts} onChange={this.handleUseLargeFontsChange} />
                     <span className="AppSettingsHorizontalFlexItem">
                         <div className="AppSettingsItemLabel"> Use large font display </div>
+                    </span>
+                </div>
+
+                {/* Kiosk Mode */}
+                <div className="AppSettingsVerticalFlexItem">
+                    <input className="AppSettingsHorizontalFlexItem" type="checkbox" ref={this.enableKioskModeCheckboxRef}
+                        checked={this.props.generalConfig.enableKioskMode} onChange={this.handleEnableKioskModeChange} />
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemLabel"> Enable Touchscreen Kiosk mode </div>
+                    </span>
+                    <span className="AppSettingsHorizontalFlexItem">
+                        <div className="AppSettingsItemHint"> Restart required for changes to take affect </div>
                     </span>
                 </div>
 
@@ -183,6 +197,11 @@ class GeneralSettingsPage extends React.Component {
     handleUseLargeFontsChange() {
         var value = this.useLargeFontsCheckboxRef.current.checked;
         this.props.onUseLargeFontsChange(value);
+    }
+
+    handleEnableKioskModeChange() {
+        var value = this.enableKioskModeCheckboxRef.current.checked;
+        this.props.onEnableKioskModeChange(value);
     }
 
     handleAutoBackupIntervalInputBlur() {
