@@ -4,6 +4,8 @@ import VisibleApp from './components/App';
 import Path from 'path';
 import { setupBackend, appStore, setupFirebase } from 'pounder-redux';
 import { Provider } from 'react-redux';
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 
 if (process.env.NODE_ENV !== 'development') {
   var Rollbar = require("rollbar");
@@ -34,5 +36,7 @@ document.body.appendChild( root );
 // Setup Backend.
 setupBackend("development", "desktop");
 
+let DragSourcedApp = DragDropContext(HTML5Backend)(VisibleApp);
+
 // Now we can render our application into it
-render( <Provider store={appStore}><VisibleApp/></Provider>, document.getElementById('root') );
+render( <Provider store={appStore}><DragSourcedApp/></Provider>, document.getElementById('root') );

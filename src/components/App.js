@@ -19,8 +19,6 @@ import '../assets/css/Project.css';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
 import { hot } from 'react-hot-loader';
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
 require('later/later.js');
 import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
@@ -842,7 +840,5 @@ const mapStateToProps = state => {
   }
 }
 
-let dragSourcedApp = DragDropContext(HTML5Backend)(App);
-let VisibleApp = connect(mapStateToProps)(dragSourcedApp);
+let VisibleApp = connect(mapStateToProps)(App);
 export default hot(module)(VisibleApp);
-

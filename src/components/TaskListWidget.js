@@ -103,7 +103,8 @@ class TaskListWidget extends React.Component {
                 if (isTaskSelected === true) { this.selectedTaskIndex = index };
 
                 return (
-                    <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true}>
+                    <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true} unmountOnExit={true}>
+                        <div>
                             <DraggableTask key={item.uid} taskId={item.uid} text={item.taskName} dueDate={item.dueDate} isMetadataOpen={isMetadataOpen}
                                 isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                                 handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
@@ -115,7 +116,9 @@ class TaskListWidget extends React.Component {
                                 metadata={metadata} disableAnimations={this.props.disableAnimations} projectMembers={this.props.projectMembers}
                                 onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo}
                                 onDragDrop={this.handleTaskDragDrop} />
+                        </div>
                     </CSSTransition>
+                    
                 )
             })
         }

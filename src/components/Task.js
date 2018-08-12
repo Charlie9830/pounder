@@ -65,21 +65,16 @@ class Task extends React.Component {
     render() {
         var taskOrMetadata = this.getTaskOrMetadata();
 
-        console.log(this.props.isDragging);
-        if (this.props.isDragging) {
-            console.log("I'm Dragging");
-        }
-
         return this.props.connectDragSource(
-            <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
-             data-ismetadataopen={this.props.isMetadataOpen}>
-                <div className="TaskTransitionArea">
-                    <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
-                        {taskOrMetadata}
-                    </TransitionGroup>
+                <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
+                    data-ismetadataopen={this.props.isMetadataOpen}>
+                    <div className="TaskTransitionArea">
+                        <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
+                            {taskOrMetadata}
+                        </TransitionGroup>
+                    </div>
+                    {this.getBottomBorderJSX(this.props)}
                 </div>
-                {this.getBottomBorderJSX(this.props)}
-            </div>
         )
     }
 
