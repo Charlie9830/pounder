@@ -141,7 +141,6 @@ class Sidebar extends React.Component {
         var jsx = this.props.invites.map((item, index) => {
             
             var isEnabled = !this.getIsInviteUpdating(item.projectId);
-            console.warn("value is " + isEnabled);
             return (
                 <CSSTransition key={index} classNames="InviteContainer" timeout={250}>
                     <div className="InviteContainer" key={index} data-isenabled={isEnabled}>

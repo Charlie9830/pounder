@@ -288,9 +288,11 @@ class App extends React.Component {
     return (
       <div>
 
+      {/* Debug Button
         <div style={{position: 'absolute', right: '0px', top: '0px', zIndex: '69', background: 'black'}}>
           <Button text="Debug" onClick={() => {this.performOvernightJobs()}} />
         </div>
+      */} 
 
         <VisibleUpdateSnackbar/>
         <VisibleSnackbar/>
@@ -441,7 +443,6 @@ class App extends React.Component {
   }
 
   autoBackupIntervalCallback() {
-    console.warn('Triggering Auto Back Up');
     // Trigger Firebase Backup.
     backupFirebaseAsync(getFirestore, this.props.remoteProjectIds).then(isoDateSaved => {
       this.props.dispatch(setLastBackupDate(isoDateSaved));
