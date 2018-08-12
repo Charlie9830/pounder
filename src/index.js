@@ -23,7 +23,6 @@ if (process.env.NODE_ENV !== 'development') {
   })
 }
 
-
 // Load Open Sans typeface
 require('typeface-open-sans');
 
