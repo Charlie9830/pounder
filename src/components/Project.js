@@ -52,6 +52,7 @@ class Project extends React.Component{
         this.handleKeyCombo = this.handleKeyCombo.bind(this);
         this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
         this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
+        this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
     }
 
     componentDidMount() {
@@ -125,6 +126,7 @@ class Project extends React.Component{
                      onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
                      onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
                      onRenewNowButtonClick={this.handleRenewNowButtonClick}
+                     onTaskDragDrop={this.handleTaskDragDrop}
                      />   
                 </div>
             )
@@ -194,6 +196,10 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handleTaskDragDrop(taskId, targetTaskListWidgetId) {
+        this.props.onTaskDragDrop(taskId, targetTaskListWidgetId);
     }
 
     handleKeyCombo(mousetrap) {

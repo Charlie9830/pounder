@@ -5,8 +5,6 @@ import Path from 'path';
 import { setupBackend, appStore, setupFirebase } from 'pounder-redux';
 import { Provider } from 'react-redux';
 
-// Version 2.0.3 Force Commit.
-
 if (process.env.NODE_ENV !== 'development') {
   var Rollbar = require("rollbar");
   var rollbar = new Rollbar({
@@ -34,7 +32,7 @@ root.id = "root";
 document.body.appendChild( root );
 
 // Setup Backend.
-setupBackend("production", "desktop");
+setupBackend("development", "desktop");
 
 // Now we can render our application into it
 render( <Provider store={appStore}><VisibleApp/></Provider>, document.getElementById('root') );

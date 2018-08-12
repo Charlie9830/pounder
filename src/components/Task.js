@@ -7,6 +7,7 @@ import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Hammer from 'hammerjs';
 import '../assets/css/Task.css';
 import '../assets/css/TaskCheckBox.css'
+import { DragSource } from 'react-dnd';
 
 
 class Task extends React.Component {
@@ -14,7 +15,11 @@ class Task extends React.Component {
         super(props);
 
         // Refs.
-        this.taskContainerRef = React.createRef();
+        this.taskContainerRef = null;
+
+        this.setTaskContainerRef = element => {
+            this.taskContainerRef = element;
+        }
 
         // Hammer.
         this.hammer = null;
@@ -37,29 +42,36 @@ class Task extends React.Component {
     }
 
     componentDidMount() {
-        var hammer = new Hammer(this.taskContainerRef.current, { domEvents: true });
-        hammer.on('press', event => {
-                if (this.props.isMetadataOpen === false) {
-                    // Open Metadata.
-                    this.props.onMetadataOpen(this.props.taskId);
-                }
+        // var hammer = new Hammer(this.taskContainerRef, { domEvents: false });
+        // hammer.on('press', event => {
+        //     if (event.pointerType !== "mouse") {
+        //         if (this.props.isMetadataOpen === false) {
+        //             // Open Metadata.
+        //             this.props.onMetadataOpen(this.props.taskId);
+        //         }
 
-                else {
-                    // Close Metadata.
-                    this.props.onTaskMetadataCloseButtonClick();
-                }
-        })
+        //         else {
+        //             // Close Metadata.
+        //             this.props.onTaskMetadataCloseButtonClick();
+        //         }
+        //     }  
+        // })
     }
 
     componentWillUnmount() {
-        Hammer.off(this.taskContainerRef.current, 'press');
+        // Hammer.off(this.taskContainerRef, 'press');
     }
 
     render() {
         var taskOrMetadata = this.getTaskOrMetadata();
 
-        return (
-            <div ref={this.taskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
+        console.log(this.props.isDragging);
+        if (this.props.isDragging) {
+            console.log("I'm Dragging");
+        }
+
+        return this.props.connectDragSource(
+            <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
              data-ismetadataopen={this.props.isMetadataOpen}>
                 <div className="TaskTransitionArea">
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
@@ -197,4 +209,28 @@ class Task extends React.Component {
     }
 }
 
-export default Task;
+let type = 'task';
+
+let spec = {
+    beginDrag: (props, monitor, component) => {
+        return {
+            taskId: props.taskId,
+        }
+    },
+
+    endDrag: (props, monitor, component) => {
+        if (monitor.didDrop()) {
+            props.onDragDrop(props.taskId, monitor.getDropResult().targetTaskListWidgetId);
+        }
+    }
+}
+
+let collect = (connect, monitor) => {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    }
+}
+
+let DraggableTask = DragSource(type, spec, collect)(Task);
+export default DraggableTask;

@@ -19,6 +19,8 @@ import '../assets/css/Project.css';
 import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'pounder-redux';
 import { hot } from 'react-hot-loader';
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 require('later/later.js');
 import {selectTask, openTask, startTaskMove,
 lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
@@ -126,6 +128,7 @@ class App extends React.Component {
     this.renewChecklists = this.renewChecklists.bind(this);
     this.handleTaskOpenKeyPress = this.handleTaskOpenKeyPress.bind(this);
     this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this);
+    this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
   }
 
   componentDidMount() { 
@@ -343,11 +346,16 @@ class App extends React.Component {
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
               onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
               onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
-              onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
+              onRenewNowButtonClick={this.handleRenewNowButtonClick}
+              onTaskDragDrop={this.handleTaskDragDrop}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleTaskDragDrop(taskId, targetTaskListWidgetId) {
+    this.props.dispatch(moveTaskAsync(targetTaskListWidgetId, taskId));
   }
 
   handleEscapeKeyPress(mousetrap) {
@@ -834,6 +842,7 @@ const mapStateToProps = state => {
   }
 }
 
-let VisibleApp = connect(mapStateToProps)(App);
+let dragSourcedApp = DragDropContext(HTML5Backend)(App);
+let VisibleApp = connect(mapStateToProps)(dragSourcedApp);
 export default hot(module)(VisibleApp);
 

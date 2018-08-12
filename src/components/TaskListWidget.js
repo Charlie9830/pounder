@@ -1,6 +1,6 @@
 import React from 'react';
-import TaskArea from '../components/TaskArea';
-import Task from '../components/Task';
+import DropTargetTaskArea from '../components/TaskArea';
+import DraggableTask from '../components/Task';
 import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
 import { TaskMetadataStore } from 'pounder-stores';
@@ -41,6 +41,7 @@ class TaskListWidget extends React.Component {
         this.taskSortPriorityHelper = this.taskSortPriorityHelper.bind(this);
         this.taskSortAssigneeHelper = this.taskSortAssigneeHelper.bind(this);
         this.taskSortDueDateHelper = this.taskSortDueDateHelper.bind(this);
+        this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
         
     }
 
@@ -103,7 +104,7 @@ class TaskListWidget extends React.Component {
 
                 return (
                     <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true}>
-                            <Task key={item.uid} taskId={item.uid} text={item.taskName} dueDate={item.dueDate} isMetadataOpen={isMetadataOpen}
+                            <DraggableTask key={item.uid} taskId={item.uid} text={item.taskName} dueDate={item.dueDate} isMetadataOpen={isMetadataOpen}
                                 isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                                 handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
                                 onKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
@@ -112,7 +113,8 @@ class TaskListWidget extends React.Component {
                                 isHighPriority={item.isHighPriority} onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
                                 onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
                                 metadata={metadata} disableAnimations={this.props.disableAnimations} projectMembers={this.props.projectMembers}
-                                onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo} />
+                                onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo}
+                                onDragDrop={this.handleTaskDragDrop} />
                     </CSSTransition>
                 )
             })
@@ -129,13 +131,17 @@ class TaskListWidget extends React.Component {
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
                  isFocused={this.props.isFocused} onSettingsMenuClose={this.handleSettingsMenuClose}
                  onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
-                <TaskArea>
+                <DropTargetTaskArea taskListWidgetId={this.props.taskListWidgetId}>
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {builtTasks}
                     </TransitionGroup>
-                </TaskArea>
+                </DropTargetTaskArea>
             </div>
         )
+    }
+
+    handleTaskDragDrop(taskId, targetTaskListWidgetId) {
+        this.props.onTaskDragDrop(taskId, targetTaskListWidgetId);
     }
 
     handleDocumentKeyDown(e) {
