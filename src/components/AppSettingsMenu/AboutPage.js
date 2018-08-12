@@ -71,7 +71,7 @@ class AboutPage extends React.Component {
     }
 
     handleGitHubMarkClick() {
-        open("https://github.com/Charlie9830/Pounder/issues");
+        open("https://github.com/Charlie9830/Pounder/issues/new/choose");
     }
 }
 
