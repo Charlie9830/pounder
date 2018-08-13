@@ -6,16 +6,29 @@ import AppIcon from '../../assets/icons/Handball-Icon-Desktop-Draft.svg'
 import GitHubMark from '../../assets/icons/GitHubMark.svg';
 import os from 'os';
 import open from 'open';
+let dependencyVersions = [
+    { name: "pounder-redux", value: require('pounder-redux/package.json').version },
+    { name: "pounder-firebase", value: require('pounder-firebase/package.json').version },
+    { name: "pounder-stores", value: require('pounder-stores/package.json').version },
+    { name: "pounder-utilities", value: require('pounder-utilities/package.json').version },
+    { name: "pounder-dexie", value: require('pounder-dexie/package.json').version },
+    { name: "firestore-batch-paginator", value: require('firestore-batch-paginator/package.json').version },
+    
+]
 
 class AboutPage extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            showDependencyVersionInfo: false,
+        }
+
         // Method Bindings.
         this.handleGitHubMarkClick = this.handleGitHubMarkClick.bind(this);
+        this.getDependencyJSX = this.getDependencyJSX.bind(this);
     }
 
-    
     render() {
         const appVersion = HANDBALL_VERSION;
         const nodeVersion = process.versions.node;
@@ -25,11 +38,14 @@ class AboutPage extends React.Component {
         const platform = process.platform;
         const operatingSystem = os.release();
 
+        var dependencyJSX = this.getDependencyJSX();
+
         return (
             <div className="AboutPageContainer">
                 <CenteringContainer>
                     <div className="AboutPageAppInfoContainer">
-                        <img className="AboutPageAppIcon" src={AppIcon} />
+                        <img className="AboutPageAppIcon" src={AppIcon} 
+                        onDoubleClick={() => {this.setState({showDependencyVersionInfo: true})}} />
                         <div className="AboutPageAppTitle"> Handball </div>
                         <div className="AboutPageVersionNumber"> Version {appVersion} </div>
                         <div className="AboutPageAuthor"> Charlie Hall </div>
@@ -53,6 +69,10 @@ class AboutPage extends React.Component {
                                 <div className="AboutPageSystemValue"> Operating System: {platform}  {operatingSystem}  {arch} </div>
                             </HorizontalCenteringContainer>
                         </div>
+
+                        <div className="AboutPageDivider"/>
+                        {dependencyJSX}
+                        
                     </div>
 
                     <div className="AboutPageDivider"/>
@@ -68,6 +88,24 @@ class AboutPage extends React.Component {
                 </CenteringContainer>
             </div>
         )
+    }
+
+    getDependencyJSX() {
+        if (this.state.showDependencyVersionInfo) {
+            var jsx = dependencyVersions.map((item,index) => {
+                return (
+                    <HorizontalCenteringContainer key={index}>
+                        <div className="AboutPageSystemValue"> {item.name} : {item.value} </div>
+                    </HorizontalCenteringContainer>
+                )
+            })
+    
+            return (
+                <div className="AboutPageSystemValueContainer">
+                    {jsx}
+                </div>
+            )
+        }
     }
 
     handleGitHubMarkClick() {
