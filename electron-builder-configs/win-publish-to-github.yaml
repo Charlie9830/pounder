@@ -14,4 +14,4 @@ nsis:
   installerIcon: ./icon.ico
   uninstallerIcon: ./icon.ico
   artifactName: '${productName}-${version}-${os}-setup.${ext}'
-forceCodeSigning: true
+forceCodeSigning: false
