@@ -31,7 +31,7 @@
 }
 
 .DatabaseRestoreButtonLabel {
-    color: var(--primary-inactive-text-color);
+    color: var(--primary-active-text-color);
     font-family: var(--primary-font-family);
     font-size: 10pt;
     flex-shrink: 1;

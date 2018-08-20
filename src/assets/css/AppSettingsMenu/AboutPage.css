@@ -22,19 +22,19 @@
 .AboutPageAppTitle {
     flex-shrink: 1;
     font-family: var(--primary-font-family);
-    color: var(--alternate-active-text-color);
+    color: var(--primary-active-text-color);
 }
 
 .AboutPageVersionNumber {
     flex-shrink: 1;
     font-family: var(--primary-font-family);
-    color: var(--alternate-inactive-text-color);
+    color: var(--alternate-active-text-color);
 }
 
 .AboutPageAuthor {
     flex-shrink: 1;
     font-family: var(--primary-font-family);
-    color: var(--alternate-inactive-text-color);
+    color: var(--alternate-active-text-color);
 }
 
 .AboutPageSystemInfoContainer {
@@ -57,7 +57,7 @@
 
 .AboutPageSystemValue {
     font-family: var(--primary-font-family);
-    color: var(--primary-inactive-text-color);
+    color: var(--alternate-active-text-color);
 }
 
 .AboutPageContactContainer {
