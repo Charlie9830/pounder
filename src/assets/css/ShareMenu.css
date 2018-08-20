@@ -75,6 +75,11 @@
     padding: 2px;
 }
 
+.InviteEmail::placeholder {
+    color: var(--alternate-inactive-text-color);
+    opacity: 1;
+}
+
 .InviteRoleSelect {
     flex-shrink: 1;
     width: 140px;
