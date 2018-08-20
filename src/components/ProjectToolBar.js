@@ -77,7 +77,7 @@ class ProjectToolBar extends React.Component {
 
     getShowCompletedTasksButtonJSX() {
         var iconSrc = this.props.showCompletedTasks ? EyeClosedIcon : EyeOpenIcon;
-        var tooltipText = this.props.showCompletedTasks ? "Hide finished tasks" : "Show finished tasks";
+        var tooltipText = this.props.showCompletedTasks ? "Hide completed tasks" : "Show completed tasks";
         return (
             <Button iconSrc={iconSrc}  onClick={this.handleShowCompletedTasksButtonClick}
             tooltip={tooltipText} isEnabled={this.props.buttonEnableStates.isShowCompletedTasksButtonEnabled} />
