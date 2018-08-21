@@ -675,8 +675,14 @@ class App extends React.Component {
     }
 
     if (combo === KEYBOARD_COMBOS.MOD_DEL) {
-      if (this.isAppLocked() !== true && this.props.focusedTaskListId !== -1 && confirm("Are you sure?") === true) {
-        this.removeTaskList(this.props.focusedTaskListId);
+      if (this.isAppLocked() !== true && this.props.focusedTaskListId !== -1) {
+        this.props.dispatch(setMessageBox(true, "Are you sure you want to delete this Task List?", MessageBoxTypes.STANDARD, null,
+          (result) => {
+            if (result === "ok") {
+              this.removeTaskList(this.props.focusedTaskListId);
+            }
+            this.props.dispatch(setMessageBox({}));
+          }));
       }
     }
 
