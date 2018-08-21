@@ -127,19 +127,13 @@ class App extends React.Component {
     this.handleTaskOpenKeyPress = this.handleTaskOpenKeyPress.bind(this);
     this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this);
     this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
+    this.bindMouseTrap = this.bindMouseTrap.bind(this);
+    this.unBindMouseTrap = this.unBindMouseTrap.bind(this);
   }
 
   componentDidMount() { 
     // MouseTrap.
-    MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
-    MouseTrap.bind("shift", this.handleShiftKeyDown, 'keydown');
-    MouseTrap.bind("shift", this.handleShiftKeyUp, 'keyup');
-    MouseTrap.bind("mod", this.handleModKeyDown, 'keydown');
-    MouseTrap.bind("mod", this.handleModKeyUp, 'keyup');
-    MouseTrap.bind("del", this.handleDeleteKeyPress);
-    MouseTrap.bind("enter", this.handleTaskOpenKeyPress);
-    MouseTrap.bind("f2", this.handleTaskOpenKeyPress );
-    MouseTrap.bind("esc", this.handleEscapeKeyPress);
+    this.bindMouseTrap();
 
 
     // Read and Apply Config Values.
@@ -263,17 +257,21 @@ class App extends React.Component {
         document.getElementsByTagName("body")[0].style.removeProperty('--project-selector-font-size');
       }
     }
+
+    // If Locking or Unlocking. Set Mousetrap Bindings.
+    if (prevProps.isLockScreenDisplayed !== this.props.isLockScreenDisplayed) {
+      if (this.props.isLockScreenDisplayed === true) {
+        this.unBindMouseTrap();
+      }
+
+      else {
+        this.bindMouseTrap();
+      }
+    }
   }
 
   componentWillUnmount(){
-    MouseTrap.unBind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
-    MouseTrap.unBind("shift", this.handleShiftKeyDown);
-    MouseTrap.unBind("shift", this.handleShiftKeyUp);
-    MouseTrap.unbind("del", this.handleDeleteKeyPress);
-    MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
-    MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
-    MouseTrap.unbind("esc", this.handleEscapeKeyPress);
-
+    this.unBindMouseTrap();
     this.unsubscribeFromDatabase();
   }
 
@@ -799,6 +797,30 @@ class App extends React.Component {
   handleQuitButtonClick() {
       // Close Application.
       remote.getCurrentWindow().close();
+  }
+
+  bindMouseTrap() {
+    MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
+    MouseTrap.bind("shift", this.handleShiftKeyDown, 'keydown');
+    MouseTrap.bind("shift", this.handleShiftKeyUp, 'keyup');
+    MouseTrap.bind("mod", this.handleModKeyDown, 'keydown');
+    MouseTrap.bind("mod", this.handleModKeyUp, 'keyup');
+    MouseTrap.bind("del", this.handleDeleteKeyPress);
+    MouseTrap.bind("enter", this.handleTaskOpenKeyPress);
+    MouseTrap.bind("f2", this.handleTaskOpenKeyPress );
+    MouseTrap.bind("esc", this.handleEscapeKeyPress);
+  }
+
+  unBindMouseTrap() {
+    MouseTrap.unbind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
+    MouseTrap.unbind("shift", this.handleShiftKeyDown);
+    MouseTrap.unbind("shift", this.handleShiftKeyUp);
+    MouseTrap.unbind("mod", this.handleModKeyDown);
+    MouseTrap.unbind("mod", this.handleModKeyUp);
+    MouseTrap.unbind("del", this.handleDeleteKeyPress);
+    MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
+    MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
+    MouseTrap.unbind("esc", this.handleEscapeKeyPress);
   }
 }
 
