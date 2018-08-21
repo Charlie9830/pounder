@@ -129,6 +129,7 @@ class App extends React.Component {
     this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
     this.bindMouseTrap = this.bindMouseTrap.bind(this);
     this.unBindMouseTrap = this.unBindMouseTrap.bind(this);
+    this.isAppLocked = this.isAppLocked.bind(this);
   }
 
   componentDidMount() { 
@@ -362,6 +363,8 @@ class App extends React.Component {
   }
 
   handleTaskOpenKeyPress(e) {
+    if (this.isAppLocked()) { return }
+
     if (this.props.selectedTask.taskId !== -1 && this.props.selectedTask.isInputOpen === false) {
       e.preventDefault();
       this.props.dispatch(openTask(this.props.selectedTask.taskListWidgetId, this.props.selectedTask.taskId));
@@ -570,6 +573,8 @@ class App extends React.Component {
   }
 
   handleDeleteKeyPress(mouseTrap) {
+    if (this.isAppLocked()) { return }
+
     this.props.dispatch(removeSelectedTaskAsync());
   }
 
@@ -632,6 +637,8 @@ class App extends React.Component {
   }
 
   handleTaskChanged(projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
+    if (this.isAppLocked()) { return }
+
     this.props.dispatch(updateTaskNameAsync(taskListWidgetId, taskId, newValue, oldValue, currentMetadata));
   }
 
@@ -641,10 +648,9 @@ class App extends React.Component {
 
   handleKeyboardShortcut(mouseTrap, combo){
     // Ctrl + n
-    if (combo === KEYBOARD_COMBOS.MOD_N)
-      {
-        this.addNewTask();
-      }
+    if (combo === KEYBOARD_COMBOS.MOD_N) {
+      this.addNewTask();
+    }
 
     // Ctrl + Shift + N
     if (combo === KEYBOARD_COMBOS.MOD_SHIFT_N) {
@@ -661,7 +667,6 @@ class App extends React.Component {
     if (combo === KEYBOARD_COMBOS.MOD_SHIFT_I) {
         // Open Dev Tools.
         remote.getCurrentWindow().openDevTools();
-      
     }
 
     // Ctrl + F
@@ -670,7 +675,7 @@ class App extends React.Component {
     }
 
     if (combo === KEYBOARD_COMBOS.MOD_DEL) {
-      if (this.props.focusedTaskListId !== -1 && confirm("Are you sure?") === true) {
+      if (this.isAppLocked() !== true && this.props.focusedTaskListId !== -1 && confirm("Are you sure?") === true) {
         this.removeTaskList(this.props.focusedTaskListId);
       }
     }
@@ -697,10 +702,14 @@ class App extends React.Component {
   }
 
   addNewTaskList() {
+    if (this.isAppLocked()) { return }
+
     this.props.dispatch(addNewTaskListAsync());
   }
 
   addNewTask() {
+    if (this.isAppLocked()) { return }
+
     this.props.dispatch(addNewTaskAsync());
   }
 
@@ -766,6 +775,8 @@ class App extends React.Component {
   }
 
   removeTaskList(taskListWidgetId) {
+    if (this.isAppLocked()) { return }
+
     this.props.dispatch(removeTaskListAsync(taskListWidgetId));
   }
 
@@ -821,6 +832,10 @@ class App extends React.Component {
     MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
     MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
     MouseTrap.unbind("esc", this.handleEscapeKeyPress);
+  }
+
+  isAppLocked() {
+    return this.props.isLockScreenDisplayed;
   }
 }
 
