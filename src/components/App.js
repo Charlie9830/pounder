@@ -17,7 +17,7 @@ import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
 import { connect } from 'react-redux';
-import { MessageBoxTypes } from '../../../handball-libs/libs/pounder-redux';
+import { MessageBoxTypes } from 'handball-libs/libs/pounder-redux';
 import { hot } from 'react-hot-loader';
 require('later/later.js');
 import {selectTask, openTask, startTaskMove,
@@ -31,10 +31,10 @@ setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMess
 updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
-renewChecklistAsync} from '../../../handball-libs/libs/pounder-redux/action-creators';
-import { getFirestore } from '../../../handball-libs/libs/pounder-firebase';
+renewChecklistAsync} from 'handball-libs/libs/pounder-redux/action-creators';
+import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
-import { isChecklistDueForRenew } from '../../../handball-libs/libs/pounder-utilities';
+import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
 import electron from 'electron';
 import Moment from 'moment';
 import Button from './Button';

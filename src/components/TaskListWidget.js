@@ -3,7 +3,7 @@ import DropTargetTaskArea from '../components/TaskArea';
 import DraggableTask from '../components/Task';
 import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
-import { TaskMetadataStore } from '../../../handball-libs/libs/pounder-stores';
+import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 
 

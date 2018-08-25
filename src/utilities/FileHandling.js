@@ -1,7 +1,7 @@
 import Path from 'path';
 import fsJetpack from 'fs-jetpack';
-import { getUserUid } from '../../../handball-libs/libs/pounder-firebase';
-import { USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from '../../../handball-libs/libs/pounder-firebase/paths';
+import { getUserUid } from 'handball-libs/libs/pounder-firebase';
+import { USERS, TASKS, TASKLISTS, PROJECTS, PROJECTLAYOUTS, REMOTE_IDS, REMOTES, MEMBERS } from 'handball-libs/libs/pounder-firebase/paths';
 import Electron from 'electron';
 import sanitize from 'sanitize-filename';
 let remote = Electron.remote;

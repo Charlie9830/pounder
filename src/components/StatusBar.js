@@ -7,7 +7,7 @@ import AccountIconLoggedOut from '../assets/icons/AccountIconLoggedOut.svg';
 import AccountIconLoggingIn from '../assets/icons/AccountIconLoggingIn.svg';
 import BurgerIcon from '../assets/icons/BurgerIcon.svg';
 import ReactTooltip from 'react-tooltip';
-import {setIsAppSettingsOpen, setAppSettingsMenuPage, setIsSidebarOpen } from 'pounder-redux/action-creators';
+import {setIsAppSettingsOpen, setAppSettingsMenuPage, setIsSidebarOpen } from 'handball-libs/libs/pounder-redux/action-creators';
 
 const versionNumber = HANDBALL_VERSION;
 

@@ -3,7 +3,7 @@ import Button from './Button';
 import '../assets/css/UpdateSnackbar.css';
 import { connect } from 'react-redux';
 import UpdateIcon from '../assets/icons/UpdateIcon.svg';
-import { setIsUpdateSnackbarOpen } from 'pounder-redux/action-creators';
+import { setIsUpdateSnackbarOpen } from 'handball-libs/libs/pounder-redux/action-creators';
 import electron from 'electron';
 
 class UpdateSnackbar extends React.Component {

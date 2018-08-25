@@ -2,7 +2,7 @@ import React from 'react';
 import Button from './Button';
 import '../assets/css/Snackbar.css';
 import { connect } from 'react-redux';
-import { dismissSnackbar } from 'pounder-redux/action-creators';
+import { dismissSnackbar } from 'handball-libs/libs/pounder-redux/action-creators';
 import TickIcon from '../assets/icons/TickIcon.svg';
 import CrossIcon from '../assets/icons/CrossIcon.svg';
 import InfomationIcon from '../assets/icons/InfomationIcon.svg'

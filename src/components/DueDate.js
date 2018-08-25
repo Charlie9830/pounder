@@ -5,7 +5,7 @@ import ContextMenuContainer from '../containers/ContextMenuContainer';
 import OverlayMenuContainer from '../containers/OverlayMenuContainer';
 import CenteringContainer from '../containers/CenteringContainer';
 import Moment from 'moment';
-import { ParseDueDate } from '../../../handball-libs/libs/pounder-utilities';
+import { ParseDueDate } from 'handball-libs/libs/pounder-utilities';
 
 class DueDate extends React.Component {
   constructor(props) {

@@ -186,6 +186,7 @@ class Task extends React.Component {
     }
     
     handleTaskTouchStart(touchEvent) {
+        console.log("Phew it will work");
         if (touchEvent.touches.length === 2) {
             this.props.onTaskTwoFingerTouch(this.props.taskId);
         }

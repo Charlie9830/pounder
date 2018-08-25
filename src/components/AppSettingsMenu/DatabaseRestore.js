@@ -2,7 +2,7 @@ import React from 'react';
 import Button from '../Button';
 import Spinner from '../Spinner';
 import Moment from 'moment';
-import { getUserUid } from '../../../../handball-libs/libs/pounder-firebase';
+import { getUserUid } from 'handball-libs/libs/pounder-firebase';
 import '../../assets/css/AppSettingsMenu/DatabaseRestore.css';
 
 class DatabaseRestore extends React.Component {

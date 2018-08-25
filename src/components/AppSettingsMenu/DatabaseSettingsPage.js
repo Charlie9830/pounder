@@ -5,7 +5,7 @@ import MessageBox from '../MessageBox';
 import Button from '../Button';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Spinner from '../Spinner';
-import { setMessageBox } from 'pounder-redux/action-creators';
+import { setMessageBox } from 'handball-libs/libs/pounder-redux/action-creators';
 import '../../assets/css/AppSettingsMenu/AppSettingsMenu.css';
 import '../../assets/css/ToolBarButton.css';
 

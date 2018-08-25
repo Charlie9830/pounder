@@ -22,10 +22,10 @@ import { setAppSettingsMenuPage, getDatabaseInfoAsync, purgeCompleteTasksAsync, 
         setIsRestoreDatabaseCompleteDialogOpen, setGeneralConfigAsync, setIsAppSettingsOpen, setAllColorsToDefaultAsync,
         logInUserAsync, logOutUserAsync, registerNewUserAsync, postSnackbarMessage, unsubscribeFromDatabaseAsync,
         subscribeToDatabaseAsync, selectProject, sendPasswordResetEmailAsync, setAuthStatusMessage,
-        setIsInRegisterMode } from 'pounder-redux/action-creators';
+        setIsInRegisterMode } from 'handball-libs/libs/pounder-redux/action-creators';
 import { readBackupFileAsync, restoreProjectsAsync, BACKUP_VALIDATION_KEY, getCurrentBackupDirectory } from '../../utilities/FileHandling';
-import { MessageBoxTypes } from '../../../../handball-libs/libs/pounder-redux';
-import { getFirestore, getUserUid } from '../../../../handball-libs/libs/pounder-firebase';
+import { MessageBoxTypes } from 'handball-libs/libs/pounder-redux';
+import { getFirestore, getUserUid } from 'handball-libs/libs/pounder-firebase';
 import MessageBox from '../MessageBox';
 import TestData from '../../testdata/data';
 import Spinner from '../Spinner';
