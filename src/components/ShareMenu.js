@@ -8,8 +8,8 @@ import CenteringContainer from '../containers/CenteringContainer';
 import '../assets/css/ShareMenu.css';
 import { inviteUserToProjectAsync, kickUserFromProjectAsync, updateMemberRoleAsync, setMessageBox, setIsShareMenuOpen,
 removeRemoteProjectAsync, migrateProjectBackToLocalAsync } from 'pounder-redux/action-creators';
-import { MessageBoxTypes } from 'pounder-redux';
-import { getUserUid } from 'pounder-firebase';
+import { MessageBoxTypes } from '../../../handball-libs/libs/pounder-redux';
+import { getUserUid } from '../../../handball-libs/libs/pounder-firebase';
 
 class ShareMenu extends React.Component {
     constructor(props) {

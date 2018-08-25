@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import VisibleApp from './components/App';
 import Path from 'path';
-import { setupBackend, appStore, setupFirebase } from 'pounder-redux';
+import { setupBackend, appStore, setupFirebase } from '../../handball-libs/libs/pounder-redux';
 import { Provider } from 'react-redux';
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContext } from 'react-dnd'

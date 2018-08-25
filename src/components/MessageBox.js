@@ -1,7 +1,7 @@
 import React from 'react';
 import Modal from 'react-modal';
 import Button from './Button';
-import { MessageBoxTypes } from 'pounder-redux';
+import { MessageBoxTypes } from '../../../handball-libs/libs/pounder-redux';
 import '../assets/css/MessageBox.css';
 import '../assets/css/ToolBarButton.css';
 

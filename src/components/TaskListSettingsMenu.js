@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assets/css/TaskListSettingsMenu.css'
-import { TaskListSettingsStore, ChecklistSettingsFactory } from 'pounder-stores';
-import { getNormalizedDate } from 'pounder-utilities';
+import { TaskListSettingsStore, ChecklistSettingsFactory } from '../../../handball-libs/libs/pounder-stores';
+import { getNormalizedDate } from '../../../handball-libs/libs/pounder-utilities';
 import ChecklistSettings from './ChecklistSettings';
 import Moment from 'moment';
 
