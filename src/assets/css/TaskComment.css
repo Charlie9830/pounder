@@ -1,0 +1,59 @@
+.TaskCommentContainer {
+    width: 100%;
+    font-family: var(--primary-font-family);
+    font-size: 9pt;
+    padding-bottom: 10px;
+}
+
+.TaskCommentContainer[data-isunread*="true"] {
+    border-left-width: 6px;
+    border-left-color: rgb(76, 76, 200);
+    border-left-style: solid;
+    padding-left: 5px;
+}
+
+.TaskCommentGrid {
+    display: grid;
+    width: 100%;
+    grid-template-rows: [Header] 35px [Text] 1fr;
+}
+
+.TaskCommentHeaderContainer {
+    grid-row: Header;
+}
+
+.TaskCommentTextContainer {
+    grid-row: Text;
+}
+
+.TaskCommentText {
+    color: var(--primary-active-text-color);
+}
+
+.TaskCommentHeaderGrid {
+    display: grid;
+    width: 100%;
+    grid-template-columns: [DisplayName] 1fr [TimeAgo]1fr [DeleteButton] 24px;
+}
+
+.TaskCommentDisplayNameContainer {
+    grid-column: DisplayName;
+}
+
+.TaskCommentDisplayName {
+    color: var(--alternate-inactive-text-color);
+}
+
+.TaskCommentTimeAgoContainer {
+    grid-column: TimeAgo;
+    justify-self: end;
+}
+
+.TaskCommentTimeAgoContainer {
+    color: var(--alternate-inactive-text-color);
+}
+
+.TaskCommentDeleteButtonContainer {
+    grid-column: DeleteButton;
+}
+

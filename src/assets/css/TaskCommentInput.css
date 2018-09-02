@@ -1,0 +1,44 @@
+
+.TaskCommentInputGrid {
+    display: grid;
+    grid-template-columns: [Text]1fr [Button] 50px;
+    padding: 5px 5px 5px 5px;
+    height: 100%;
+}
+
+.TaskCommentInputTextContainer {
+    grid-column: Text;
+    position: relative;
+}
+
+.TaskCommentInputButtonContainer {
+    grid-column: Button;
+    align-self: center;
+    justify-self: start;
+}
+
+.TaskCommentInputTextArea {
+    width: 100%;
+    height: 80px;
+    resize: none;
+    background: var(--surface-color-alternate);
+    color: var(--primary-active-text-color);
+    font-family: var(--primary-font-family);
+}
+
+.TaskCommentAutocompleteItem {
+    font-family: var(--primary-font-family);
+    color: var(--primary-inactive-text-color);
+    list-style: none;
+}
+
+.TaskCommentAutocompleteItem[data-selected*="true"] {
+    color: var(--primary-active-text-color);
+}
+
+.TaskCommentAutocompleteDropdown {
+    background: var(--surface-color-alternate);
+    border: 1px solid white;
+    position: absolute;
+    padding: 5px 10px 5px 10px;
+}

@@ -1,0 +1,29 @@
+.TaskCommentPanelGrid {
+    display: grid;
+    height: 425px;
+    width: 100%;
+    grid-template-rows: [Comments]auto [Input]100px;
+}
+
+.TaskCommentPanelCommentsContainer {
+    grid-row: Comments;
+    width: 100%;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    padding-right: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+}
+
+.TaskCommentPanelSpinnerContainer {
+    width: 100%;
+    height: 100%;
+}
+
+.TaskCommentPanelInputContainer {
+    grid-row: Input;
+    width: 100%;
+}
