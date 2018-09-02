@@ -8,8 +8,6 @@ import '../assets/css/react-resizable/styles.css';
 import ProjectToolBar from './ProjectToolBar';
 import Mousetrap from 'mousetrap';
 
-
-
 class Project extends React.Component{
     constructor(props){
         super(props);
@@ -38,8 +36,8 @@ class Project extends React.Component{
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
-        this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
-        this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+        this.handleTaskInfoClose = this.handleTaskInfoClose.bind(this);
+        this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
@@ -53,6 +51,8 @@ class Project extends React.Component{
         this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
         this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
+        this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
+        this.handleNewComment = this.handleNewComment.bind(this);
     }
 
     componentDidMount() {
@@ -122,12 +122,17 @@ class Project extends React.Component{
                      openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} projectMembers={this.props.projectMembers}
-                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
-                     onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} disableAnimations={this.props.disableAnimations}
+                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskInfoOpen}
+                     onTaskInfoClose={this.handleTaskInfoClose} disableAnimations={this.props.disableAnimations}
                      onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
                      onRenewNowButtonClick={this.handleRenewNowButtonClick}
                      onTaskDragDrop={this.handleTaskDragDrop}
                      enableKioskMode={this.props.enableKioskMode}
+                     onTaskNoteChange={this.handleTaskNoteChange}
+                     onNewComment={this.handleNewComment}
+                     isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
+                     openTaskInfoId={this.props.openTaskInfoId}
+                     projectMembersLookup={this.props.projectMembersLookup}
                      />   
                 </div>
             )
@@ -197,6 +202,14 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handleNewComment(taskId, value, currentMetadata) {
+        this.props.onNewComment(taskId, value, this.props.projectMembers, currentMetadata);
+    }
+
+    handleTaskNoteChange(newValue, oldValue, taskId, currentMetadata) {
+        this.props.onTaskNoteChange(newValue, oldValue, taskId, currentMetadata);
     }
 
     handleTaskDragDrop(taskId, targetTaskListWidgetId) {
@@ -398,12 +411,12 @@ class Project extends React.Component{
         this.props.onAssignToMember(newUserId, oldUserId, taskId);
     }
 
-    handleTaskMetadataOpen(taskListWidgetId, taskId) {
-        this.props.onTaskMetadataOpen(taskListWidgetId, taskId);
+    handleTaskInfoOpen(taskListWidgetId, taskId) {
+        this.props.onTaskInfoOpen(taskListWidgetId, taskId);
     }
 
-    handleTaskMetadataCloseButtonClick() {
-        this.props.onTaskMetadataCloseButtonClick();
+    handleTaskInfoClose() {
+        this.props.onTaskInfoClose();
     }
 
     handleAppSettingsButtonClick() {

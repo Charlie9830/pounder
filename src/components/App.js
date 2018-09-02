@@ -20,7 +20,7 @@ import { connect } from 'react-redux';
 import { MessageBoxTypes } from 'handball-libs/libs/pounder-redux';
 import { hot } from 'react-hot-loader';
 require('later/later.js');
-import {selectTask, openTask, startTaskMove,
+import { selectTask, openTask, startTaskMove,
 lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
@@ -31,7 +31,8 @@ setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMess
 updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
-renewChecklistAsync} from 'handball-libs/libs/pounder-redux/action-creators';
+renewChecklistAsync, updateTaskNoteAsync, openTaskInfo, getTaskCommentsAsync,
+postNewCommentAsync, closeTaskInfoAsync } from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
@@ -111,8 +112,8 @@ class App extends React.Component {
     this.handleDenyInviteButtonClick = this.handleDenyInviteButtonClick.bind(this);
     this.handleModKeyDown = this.handleModKeyDown.bind(this);
     this.handleModKeyUp = this.handleModKeyUp.bind(this);
-    this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
-    this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+    this.handleTaskInfoClose = this.handleTaskInfoClose.bind(this);
+    this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
     this.autoBackupIntervalCallback = this.autoBackupIntervalCallback.bind(this);
     this.getProjectMembers = this.getProjectMembers.bind(this);
     this.handleAssignToMember = this.handleAssignToMember.bind(this);
@@ -130,6 +131,10 @@ class App extends React.Component {
     this.bindMouseTrap = this.bindMouseTrap.bind(this);
     this.unBindMouseTrap = this.unBindMouseTrap.bind(this);
     this.isAppLocked = this.isAppLocked.bind(this);
+    this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
+    this.handleNewComment = this.handleNewComment.bind(this);
+    this.dispatchOpenTaskInfo = this.dispatchOpenTaskInfo.bind(this);
+    this.getProjectMembersLookup = this.getProjectMembersLookup.bind(this);
   }
 
   componentDidMount() { 
@@ -284,6 +289,7 @@ class App extends React.Component {
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
     var projectMembers = this.getProjectMembers();
+    var projectMembersLookup = this.getProjectMembersLookup(projectMembers);
 
     return (
       <div>
@@ -336,7 +342,7 @@ class App extends React.Component {
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
-              onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick} onTaskMetadataOpen={this.handleTaskMetadataOpen}
+              onTaskInfoClose={this.handleTaskInfoClose} onTaskInfoOpen={this.handleTaskMetadataOpen}
               disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
               projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
@@ -345,11 +351,25 @@ class App extends React.Component {
               onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
               onRenewNowButtonClick={this.handleRenewNowButtonClick}
               onTaskDragDrop={this.handleTaskDragDrop}
-              enableKioskMode={this.props.generalConfig.enableKioskMode}/>
+              enableKioskMode={this.props.generalConfig.enableKioskMode}
+              onTaskNoteChange={this.handleTaskNoteChange}
+              onNewComment={this.handleNewComment} isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
+              openTaskInfoId={this.props.openTaskInfoId}
+              projectMembersLookup={projectMembersLookup}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  
+
+  handleNewComment(taskId, value, projectMembers, currentMetadata) {
+    this.props.dispatch(postNewCommentAsync(taskId, value, projectMembers, currentMetadata));
+  }
+
+  handleTaskNoteChange(newValue, oldValue, taskId, currentMetadata) {
+    this.props.dispatch(updateTaskNoteAsync(newValue, oldValue, taskId, currentMetadata));
   }
 
   handleTaskDragDrop(taskId, targetTaskListWidgetId) {
@@ -446,6 +466,15 @@ class App extends React.Component {
     }
   }
 
+  getProjectMembersLookup(filteredMembers) {
+    var lookup = {};
+    filteredMembers.forEach(member => {
+      lookup[member.userId] = member.displayName;
+    })
+
+    return lookup;
+  }
+
   handleTaskListWidgetHeaderDoubleClick(taskListWidgetId) {
     this.props.dispatch(setOpenTaskListWidgetHeaderId(taskListWidgetId));
   }
@@ -460,12 +489,12 @@ class App extends React.Component {
     })
   }
 
-  handleTaskMetadataOpen(taskListWidgetId, taskId) {
-    this.props.dispatch(selectTask(taskListWidgetId, taskId, true));
+  handleTaskInfoOpen(taskListWidgetId, taskId) {
+    this.dispatchOpenTaskInfo(taskId);
   }
 
-  handleTaskMetadataCloseButtonClick() {
-    this.props.dispatch(closeMetadata());
+  handleTaskInfoClose() {
+    this.props.dispatch(closeTaskInfoAsync());
   }
 
   handleDenyInviteButtonClick(projectId) {
@@ -511,6 +540,14 @@ class App extends React.Component {
       return (
         <ShutdownScreen/>
       )
+    }
+  }
+
+  dispatchOpenTaskInfo(taskId) {
+    this.props.dispatch(openTaskInfo(taskId));
+
+    if (this.props.isSelectedProjectRemote) {
+      this.props.dispatch(getTaskCommentsAsync(taskId));
     }
   }
 
@@ -598,8 +635,13 @@ class App extends React.Component {
         }
 
         else {
-          // Otherwise just Select it and perhaps open it's Metadata.
-          this.props.dispatch(selectTask(taskListWidgetId, taskId, this.isModKeyDown));
+          // Otherwise just Select it.
+          this.props.dispatch(selectTask(taskListWidgetId, taskId));
+
+          // And open TaskInfo if a Mod key is down.
+          if (this.isModKeyDown === true) {
+            this.dispatchOpenTaskInfo(taskId);
+          }
         }
       }
 
@@ -881,6 +923,9 @@ const mapStateToProps = state => {
     members: state.members,
     remoteProjectIds: state.remoteProjectIds,
     showCompletedTasks: state.showCompletedTasks,
+    openTaskInfoId: state.openTaskInfoId,
+    isGettingTaskComments: state.isGettingTaskComments,
+    taskComments: state.taskComments,
   }
 }
 

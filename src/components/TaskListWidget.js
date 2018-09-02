@@ -30,8 +30,8 @@ class TaskListWidget extends React.Component {
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleSettingsButtonClick = this.handleSettingsButtonClick.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
-        this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
-        this.handleTaskMetadataOpen = this.handleTaskMetadataOpen.bind(this);
+        this.handleTaskInfoClose = this.handleTaskInfoClose.bind(this);
+        this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
@@ -42,6 +42,8 @@ class TaskListWidget extends React.Component {
         this.taskSortAssigneeHelper = this.taskSortAssigneeHelper.bind(this);
         this.taskSortDueDateHelper = this.taskSortDueDateHelper.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
+        this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
+        this.handleNewComment = this.handleNewComment.bind(this);
         
     }
 
@@ -93,7 +95,7 @@ class TaskListWidget extends React.Component {
                 var isTaskInputOpen = item.uid === this.props.openTaskInputId;
                 var isTaskMoving = item.uid === this.props.movingTaskId;
                 var isCalendarOpen = item.uid === this.props.openCalendarId;
-                var isMetadataOpen = item.uid === this.props.openMetadataId;
+                var isTaskInfoOpen = item.uid === this.props.openTaskInfoId;
                 var renderBottomBorder = array.length !== 1 && index !== array.length - 1;
                 var metadata = item.metadata === undefined ? Object.assign({}, new TaskMetadataStore("", "", "", "", "")) 
                 : item.metadata; 
@@ -105,18 +107,24 @@ class TaskListWidget extends React.Component {
                 return (
                     <CSSTransition key={item.uid} classNames="TaskContainer" timeout={500} mountOnEnter={true} unmountOnExit={true}>
                         <div>
-                            <DraggableTask key={item.uid} taskId={item.uid} text={item.taskName} dueDate={item.dueDate} isMetadataOpen={isMetadataOpen}
+                            <DraggableTask key={item.uid} taskId={item.uid} text={item.taskName} dueDate={item.dueDate}
                                 isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                                 handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
                                 onKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
                                 onInputUnmounting={this.handleTaskInputUnmounting} onDueDateClick={this.handleDueDateClick}
-                                isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} onMetadataOpen={this.handleTaskMetadataOpen}
-                                isHighPriority={item.isHighPriority} onTaskMetadataCloseButtonClick={this.handleTaskMetadataCloseButtonClick}
+                                isCalendarOpen={isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit} onTaskOpen={this.handleTaskInfoOpen}
+                                isHighPriority={item.isHighPriority} onTaskInfoClose={this.handleTaskInfoClose}
                                 onPriorityToggleClick={this.handleTaskPriorityToggleClick} renderBottomBorder={renderBottomBorder}
                                 metadata={metadata} disableAnimations={this.props.disableAnimations} projectMembers={this.props.projectMembers}
                                 onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo}
                                 onDragDrop={this.handleTaskDragDrop}
-                                enableKioskMode={this.props.enableKioskMode} />
+                                enableKioskMode={this.props.enableKioskMode}
+                                onTaskNoteChange={this.handleTaskNoteChange}
+                                note={item.note}
+                                onNewComment={this.handleNewComment}
+                                isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
+                                isTaskInfoOpen={isTaskInfoOpen}
+                                projectMembersLookup={this.props.projectMembersLookup} />
                         </div>
                     </CSSTransition>
                     
@@ -142,6 +150,14 @@ class TaskListWidget extends React.Component {
                 </DropTargetTaskArea>
             </div>
         )
+    }
+
+    handleNewComment(taskId, value, currentMetadata) {
+        this.props.onNewComment(taskId, value, currentMetadata);
+    }
+
+    handleTaskNoteChange(newValue, oldValue, taskId, currentMetadata) {
+        this.props.onTaskNoteChange(newValue, oldValue, taskId, currentMetadata);
     }
 
     handleTaskDragDrop(taskId, targetTaskListWidgetId) {
@@ -204,12 +220,12 @@ class TaskListWidget extends React.Component {
         this.props.onAssignToMember(newUserId, oldUserId, taskId);
     }
 
-    handleTaskMetadataOpen(taskId) {
-        this.props.onTaskMetadataOpen(this.props.taskListWidgetId, taskId);
+    handleTaskInfoOpen(taskId) {
+        this.props.onTaskInfoOpen(this.props.taskListWidgetId, taskId);
     }
 
-    handleTaskMetadataCloseButtonClick() {
-        this.props.onTaskMetadataCloseButtonClick();
+    handleTaskInfoClose() {
+        this.props.onTaskInfoClose();
     }
 
     handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {

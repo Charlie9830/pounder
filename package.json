@@ -57,6 +57,7 @@
     "webpack-dev-server": "^2.11.2"
   },
   "dependencies": {
+    "@webscopeio/react-textarea-autocomplete": "^2.3.2",
     "dexie": "^2.0.4",
     "electron-log": "^2.2.16",
     "electron-updater": "^3.0.3",
@@ -78,6 +79,7 @@
     "react-resizable": "^1.7.5",
     "react-sidebar": "^2.3.2",
     "react-sizeme": "^2.5.2",
+    "react-tabs": "^2.2.2",
     "react-tooltip": "^3.6.1",
     "react-transition-group": "^2.4.0",
     "redux": "^4.0.0",

@@ -2,7 +2,8 @@ import React from 'react';
 import TaskText from './TaskText';
 import DueDate from './DueDate';
 import TaskCheckBox from './TaskCheckBox';
-import TaskMetadata from './TaskMetadata';
+import TaskInfo from './TaskInfo';
+import OverlayMenuContainer from '../containers/OverlayMenuContainer';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Hammer from 'hammerjs';
 import '../assets/css/Task.css';
@@ -33,12 +34,14 @@ class Task extends React.Component {
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
-        this.getTaskOrMetadata = this.getTaskOrMetadata.bind(this);
-        this.handleTaskMetadataCloseButtonClick = this.handleTaskMetadataCloseButtonClick.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.getTaskAssigneeJSX = this.getTaskAssigneeJSX.bind(this);
         this.getAssigneeDisplayName = this.getAssigneeDisplayName.bind(this);
         this.handleTaskAssigneeClick = this.handleTaskAssigneeClick.bind(this);
+        this.getTaskInfoOverlayJSX = this.getTaskInfoOverlayJSX.bind(this);
+        this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
+        this.handleTaskInfoOutsideChildBoundsClick = this.handleTaskInfoOutsideChildBoundsClick.bind(this);
+        this.handleNewComment = this.handleNewComment.bind(this);
     }
 
     componentDidMount() {
@@ -46,14 +49,14 @@ class Task extends React.Component {
             var hammer = new Hammer(this.taskContainerRef, { domEvents: false });
             hammer.on('press', event => {
                 if (event.pointerType !== "mouse") {
-                    if (this.props.isMetadataOpen === false && this.props.isInputOpen === false) {
+                    if (this.props.isTaskInfo === false && this.props.isInputOpen === false) {
                         // Open Metadata.
-                        this.props.onMetadataOpen(this.props.taskId);
+                        this.props.onTaskInfoOpen(this.props.taskId);
                     }
 
                     else {
                         // Close Metadata.
-                        this.props.onTaskMetadataCloseButtonClick();
+                        this.props.onTaskInfoClose();
                     }
                 }  
             })
@@ -67,16 +70,33 @@ class Task extends React.Component {
     }
 
     render() {
-        var taskOrMetadata = this.getTaskOrMetadata();
+        var taskAssigneeJSX = this.getTaskAssigneeJSX();
+        var taskInfoOverlayJSX = this.getTaskInfoOverlayJSX();
 
         return this.props.connectDragSource(
-                <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}
-                    data-ismetadataopen={this.props.isMetadataOpen}>
-                    <div className="TaskTransitionArea">
-                        <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
-                            {taskOrMetadata}
-                        </TransitionGroup>
-                    </div>
+                <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}>
+                    {taskInfoOverlayJSX}
+                    <div className="Task" data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
+                        <div className={"TaskCheckBox"} >
+                            <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}
+                            disableAnimations={this.props.disableAnimations} />
+                        </div>
+                        <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
+                            <div className="TaskTextContainer">
+                                <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
+                                    onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
+                                />
+                            </div>
+                        </div>
+                        <div className="DueDateContainer">
+                            <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
+                                isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
+                                projectMembers={this.props.projectMembers} onAssignToMember={this.handleAssignToMember}
+                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority}
+                                assignedTo={this.props.assignedTo} />
+                        </div>
+                    {taskAssigneeJSX}
+                </div>
                     {this.getBottomBorderJSX(this.props)}
                 </div>
         )
@@ -107,50 +127,29 @@ class Task extends React.Component {
         }
     }
 
-    getTaskOrMetadata() {
-        if (this.props.isMetadataOpen !== true) {
-            var taskAssigneeJSX = this.getTaskAssigneeJSX();
-
+    getTaskInfoOverlayJSX() {
+        if (this.props.isTaskInfoOpen) {
             return (
-                <CSSTransition classNames="TaskTransitionItem" timeout={250} mountOnEnter={true} unmountOnExit={true}
-                 key="task">
-                <div>
-                    <div className="Task" data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
-                        <div className={"TaskCheckBox"} >
-                            <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}
-                            disableAnimations={this.props.disableAnimations} />
-                        </div>
-                        <div className="TaskClickContainer" onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
-                            <div className="TaskTextContainer">
-                                <TaskText text={this.props.text} isInputOpen={this.props.isInputOpen} isComplete={this.props.isComplete}
-                                    onKeyPress={this.forwardKeyPress} onInputUnmounting={this.handleInputUnmounting}
-                                />
-                            </div>
-                        </div>
-                        <div className="DueDateContainer">
-                            <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
-                                isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
-                                projectMembers={this.props.projectMembers} onAssignToMember={this.handleAssignToMember}
-                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority}
-                                assignedTo={this.props.assignedTo} />
-                        </div>
-                    </div>
-                    {taskAssigneeJSX}
-                </div>
-                </CSSTransition>
+                <OverlayMenuContainer onOutsideChildBoundsClick={this.handleTaskInfoOutsideChildBoundsClick}>
+                    <TaskInfo projectMembersLookup={this.props.projectMembersLookup} onTaskNoteChange={this.handleTaskNoteChange} 
+                        metadata={this.props.metadata} note={this.props.note} onNewComment={this.handleNewComment}
+                        isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
+                        projectMembers={this.props.projectMembers}/>
+                </OverlayMenuContainer>
             )
         }
+    }
+    
+    handleNewComment(value) {
+        this.props.onNewComment(this.props.taskId, value, this.props.metadata);
+    }
 
-        else {
-            return (
-                <CSSTransition classNames="MetadataTransitionItem" timeout={250} mountOnEnter={true} unmountOnExit={true}
-                 key="metadata">
-                    <div>
-                        <TaskMetadata metadata={this.props.metadata} onCloseButtonClick={this.handleTaskMetadataCloseButtonClick}/>
-                    </div>
-                </CSSTransition>
-            )
-        }
+    handleTaskInfoOutsideChildBoundsClick() {
+        this.props.onTaskInfoClose();
+    }
+
+    handleTaskNoteChange(newValue, oldValue) {
+        this.props.onTaskNoteChange(newValue, oldValue, this.props.taskId, this.props.metadata);
     }
 
     handleTaskAssigneeClick(e) {
@@ -160,10 +159,6 @@ class Task extends React.Component {
 
     handleAssignToMember(userId) {
         this.props.onAssignToMember(userId, this.props.assignedTo, this.props.taskId);
-    }
-
-    handleTaskMetadataCloseButtonClick() {
-        this.props.onTaskMetadataCloseButtonClick();
     }
 
     getBottomBorderJSX(props) {
