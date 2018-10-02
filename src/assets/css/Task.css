@@ -70,17 +70,14 @@
   max-height: 0px;
 }
 
-.TaskAssigneeContainer {
+.TaskIndicatorPanelContainer {
   width: 100%;
   height: fit-content;
-  display: flex;
-  flex-direction: row-reverse;
-  justify-content: flex-start;
-  align-content: center;
-  align-items: center;
+  display: grid;
+  grid-template-columns: [Note]min-content [Comments]min-content [Assignee]1fr;
 }
 
-.TaskAssigneeContainer[data-ishighpriority*="true"] {
+.TaskIndicatorPanelContainer[data-ishighpriority*="true"] {
   border-left-width: 6px;
   border-left-style: solid;
   border-left-color: var(--important-color);
@@ -88,7 +85,10 @@
 }
 
 .TaskAssignee {
-  flex-shrink: 1;
+  grid-column: Assignee;
+  grid-row: 1;
+  justify-self: end;
+  align-self: end;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -171,6 +171,29 @@
   min-height: 40px;
   max-height: 240px;  /* Same as .TaskContainer max-height */
   overflow: hidden;
+}
+
+.UnreadTaskCommentsIndicator {
+  grid-column: Comments;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  background: rgb(76, 76, 200);
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  padding-left: 10px;
+}
+
+.TaskNoteIndicator {
+  grid-column: Note;
+  grid-row: 1;
+  align-self: center;
+  justify-self: center;
+  width: 15px;
+  height: 15px;
+  color: white;
+  padding-left: 10px;
 }
 
 

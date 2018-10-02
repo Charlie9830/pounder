@@ -42,6 +42,10 @@ class Task extends React.Component {
         this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
         this.handleTaskInfoOutsideChildBoundsClick = this.handleTaskInfoOutsideChildBoundsClick.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
+        this.getTaskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX.bind(this);
+        this.getUnreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX.bind(this);
+        this.getNoteIndicatorJSX = this.getNoteIndicatorJSX.bind(this);
+        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
     }
 
     componentDidMount() {
@@ -70,7 +74,7 @@ class Task extends React.Component {
     }
 
     render() {
-        var taskAssigneeJSX = this.getTaskAssigneeJSX();
+        var taskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX();
         var taskInfoOverlayJSX = this.getTaskInfoOverlayJSX();
 
         return this.props.connectDragSource(
@@ -95,24 +99,54 @@ class Task extends React.Component {
                                 onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority}
                                 assignedTo={this.props.assignedTo} />
                         </div>
-                    {taskAssigneeJSX}
+                    
                 </div>
+                    {taskIndicatorPanelJSX}
                     {this.getBottomBorderJSX(this.props)}
                 </div>
         )
     }
+
 
     getTaskAssigneeJSX() {
         if (this.props.assignedTo !== -1) {
             var displayName = this.getAssigneeDisplayName(this.props.assignedTo);
 
             return (
-                <div className="TaskAssigneeContainer" data-ishighpriority={this.props.isHighPriority}
-                    onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
-                    <div className="TaskAssignee" onClick={this.handleTaskAssigneeClick}>
-                        <div className="TaskAssigneeDisplayName"> {displayName} </div>
-                    </div>
+                <div className="TaskAssignee" onClick={this.handleTaskAssigneeClick}>
+                    <div className="TaskAssigneeDisplayName"> {displayName} </div>
                 </div>
+            )
+        }
+    }
+
+    getTaskIndicatorPanelJSX() {
+        var taskAssigneeJSX = this.getTaskAssigneeJSX();
+        var unreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX();
+        var noteIndicatorJSX = this.getNoteIndicatorJSX();
+
+        return (
+            <div className="TaskIndicatorPanelContainer" data-ishighpriority={this.props.isHighPriority}
+                onClick={this.forwardOnTaskClick} onTouchStart={this.handleTaskTouchStart}>
+                {taskAssigneeJSX}
+                {unreadCommentsIndicatorJSX}
+                {noteIndicatorJSX}
+            </div>
+        )
+    }
+
+    getUnreadCommentsIndicatorJSX() {
+        if (this.props.hasUnseenComments === true) {
+            return (
+                <div className="UnreadTaskCommentsIndicator"/>
+            )
+        }
+    }
+
+    getNoteIndicatorJSX() {
+        if (this.props.note !== undefined && this.props.note.length > 0) {
+            return (
+                <div className="TaskNoteIndicator"> \ </div>
             )
         }
     }
@@ -134,12 +168,18 @@ class Task extends React.Component {
                     <TaskInfo projectMembersLookup={this.props.projectMembersLookup} onTaskNoteChange={this.handleTaskNoteChange} 
                         metadata={this.props.metadata} note={this.props.note} onNewComment={this.handleNewComment}
                         isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
-                        projectMembers={this.props.projectMembers}/>
+                        projectMembers={this.props.projectMembers}
+                        onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
+                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
                 </OverlayMenuContainer>
             )
         }
     }
     
+    handlePaginateTaskCommentsRequest() {
+        this.props.onPaginateTaskCommentsRequest(this.props.taskId);
+    }
+
     handleNewComment(value) {
         this.props.onNewComment(this.props.taskId, value, this.props.metadata);
     }
@@ -181,7 +221,6 @@ class Task extends React.Component {
     }
     
     handleTaskTouchStart(touchEvent) {
-        console.log("Phew it will work");
         if (touchEvent.touches.length === 2) {
             this.props.onTaskTwoFingerTouch(this.props.taskId);
         }

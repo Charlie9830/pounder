@@ -5,6 +5,7 @@ import ListToolbar from '../components/ListToolbar';
 import '../assets/css/TaskListWidget.css';
 import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { getUserUid } from 'handball-libs/libs/pounder-firebase';
 
 
 class TaskListWidget extends React.Component {
@@ -44,6 +45,7 @@ class TaskListWidget extends React.Component {
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
         this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
+        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
         
     }
 
@@ -101,6 +103,9 @@ class TaskListWidget extends React.Component {
                 : item.metadata; 
                 var assignedTo = item.assignedTo === undefined ? -1 : item.assignedTo;
 
+                var hasUnseenComments = item.unseenTaskCommentMembers !== undefined &&
+                 item.unseenTaskCommentMembers[getUserUid()] !== undefined;
+
                 this.arrowKeyTracking[index] = item.uid;
                 if (isTaskSelected === true) { this.selectedTaskIndex = index };
 
@@ -124,10 +129,12 @@ class TaskListWidget extends React.Component {
                                 onNewComment={this.handleNewComment}
                                 isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
                                 isTaskInfoOpen={isTaskInfoOpen}
-                                projectMembersLookup={this.props.projectMembersLookup} />
+                                projectMembersLookup={this.props.projectMembersLookup}
+                                hasUnseenComments={hasUnseenComments}
+                                onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
+                                isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched} />
                         </div>
                     </CSSTransition>
-                    
                 )
             })
         }
@@ -150,6 +157,10 @@ class TaskListWidget extends React.Component {
                 </DropTargetTaskArea>
             </div>
         )
+    }
+
+    handlePaginateTaskCommentsRequest(taskId) {
+        this.props.onPaginateTaskCommentsRequest(taskId);
     }
 
     handleNewComment(taskId, value, currentMetadata) {

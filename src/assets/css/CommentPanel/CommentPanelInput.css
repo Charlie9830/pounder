@@ -9,6 +9,7 @@
 .TaskCommentInputTextContainer {
     grid-column: Text;
     position: relative;
+    align-self: center;
 }
 
 .TaskCommentInputButtonContainer {
@@ -19,8 +20,8 @@
 
 .TaskCommentInputTextArea {
     width: 100%;
-    height: 80px;
     resize: none;
+    min-height: 65px;
     background: var(--surface-color-alternate);
     color: var(--primary-active-text-color);
     font-family: var(--primary-font-family);

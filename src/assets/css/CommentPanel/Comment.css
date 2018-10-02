@@ -55,5 +55,12 @@
 
 .TaskCommentDeleteButtonContainer {
     grid-column: DeleteButton;
+    justify-self: end;
+    cursor: default;
+}
+
+.TaskCommentDeleteButton {
+    color: var(--primary-inactive-text-color);
+    user-select: none;
 }
 

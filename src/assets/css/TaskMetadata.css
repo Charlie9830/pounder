@@ -30,7 +30,6 @@
 
 .TaskMetadata {
     position: relative;
-    background: rgb(42,42,42);
     user-select: none;
     cursor: default;
     z-index: 3;

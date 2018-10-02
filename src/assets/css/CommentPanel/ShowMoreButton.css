@@ -1,0 +1,9 @@
+.ShowMoreButtonContainer {
+    width: 100%;
+}
+
+.ShowMoreButtonText {
+    font-family: var(--primary-font-family);
+    color: var(--primary-inactive-text-color);
+    font-size: 8pt;
+}

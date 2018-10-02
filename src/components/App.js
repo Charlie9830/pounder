@@ -32,7 +32,7 @@ updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorD
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
 renewChecklistAsync, updateTaskNoteAsync, openTaskInfo, getTaskCommentsAsync,
-postNewCommentAsync, closeTaskInfoAsync } from 'handball-libs/libs/pounder-redux/action-creators';
+postNewCommentAsync, closeTaskInfoAsync, paginateTaskCommentsAsync } from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
@@ -135,6 +135,7 @@ class App extends React.Component {
     this.handleNewComment = this.handleNewComment.bind(this);
     this.dispatchOpenTaskInfo = this.dispatchOpenTaskInfo.bind(this);
     this.getProjectMembersLookup = this.getProjectMembersLookup.bind(this);
+    this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
   }
 
   componentDidMount() { 
@@ -355,14 +356,18 @@ class App extends React.Component {
               onTaskNoteChange={this.handleTaskNoteChange}
               onNewComment={this.handleNewComment} isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
               openTaskInfoId={this.props.openTaskInfoId}
-              projectMembersLookup={projectMembersLookup}/>
+              projectMembersLookup={projectMembersLookup}
+              onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
+              isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
           </div>
         </div>
       </div>
     );
   }
 
-  
+  handlePaginateTaskCommentsRequest(taskId) {
+    this.props.dispatch(paginateTaskCommentsAsync(taskId));
+  }  
 
   handleNewComment(taskId, value, projectMembers, currentMetadata) {
     this.props.dispatch(postNewCommentAsync(taskId, value, projectMembers, currentMetadata));
@@ -926,6 +931,7 @@ const mapStateToProps = state => {
     openTaskInfoId: state.openTaskInfoId,
     isGettingTaskComments: state.isGettingTaskComments,
     taskComments: state.taskComments,
+    isAllTaskCommentsFetched: state.isAllTaskCommentsFetched,
   }
 }
 

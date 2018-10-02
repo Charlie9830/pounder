@@ -1,6 +1,7 @@
 import React from 'react';
 import MenuSubtitle from './MenuSubtitle';
-import TaskCommentPanel from './TaskCommentPanel';
+import CommentPanel from './CommentPanel/CommentPanel';
+import TaskMetadata from './TaskMetadata';
 import '../assets/css/TaskInfo.css';
 
 class TaskInfo extends React.Component {
@@ -13,6 +14,7 @@ class TaskInfo extends React.Component {
         // Method Bindings.
         this.handleNoteInputBlur = this.handleNoteInputBlur.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
+        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
     }
 
     render() {
@@ -31,20 +33,27 @@ class TaskInfo extends React.Component {
                     {/* Comments  */} 
                     <div className="TaskInfoCommentsContainer">
                         <MenuSubtitle text="Comments" showDivider={false}/>
-                        <TaskCommentPanel taskComments={this.props.taskComments} onNewComment={this.handleNewComment}
+                        <CommentPanel taskComments={this.props.taskComments} onNewComment={this.handleNewComment}
                         isGettingTaskComments={this.props.isGettingTaskComments}
                         projectMembersLookup={this.props.projectMembersLookup}
-                        projectMembers={this.props.projectMembers}/>
+                        projectMembers={this.props.projectMembers}
+                        onPaginateCommentsRequest={this.handlePaginateTaskCommentsRequest}
+                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
                     </div>
                     {/* Metadata  */} 
-                    {/*
+                    
                     <div className="TaskInfoMetadataContainer">
+                        <MenuSubtitle text="Metadata" showDivider={false}/>
                         <TaskMetadata metadata={this.props.metadata}/>
                     </div>
-                    */} 
+                    
                 </div>
             </div>
         )
+    }
+
+    handlePaginateTaskCommentsRequest() {
+        this.props.onPaginateTaskCommentsRequest();
     }
 
     handleNewComment(value) {

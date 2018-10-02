@@ -53,6 +53,7 @@ class Project extends React.Component{
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
         this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
+        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
     }
 
     componentDidMount() {
@@ -133,7 +134,8 @@ class Project extends React.Component{
                      isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
                      openTaskInfoId={this.props.openTaskInfoId}
                      projectMembersLookup={this.props.projectMembersLookup}
-                     />   
+                     onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
+                     isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>   
                 </div>
             )
         });
@@ -202,6 +204,10 @@ class Project extends React.Component{
                 </div>
             </div>
         )
+    }
+
+    handlePaginateTaskCommentsRequest(taskId) {
+        this.props.onPaginateTaskCommentsRequest(taskId);
     }
 
     handleNewComment(taskId, value, currentMetadata) {

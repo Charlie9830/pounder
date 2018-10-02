@@ -9,10 +9,6 @@ class TaskMetadata extends React.Component {
     render() {
         return (
             <div className="TaskMetadata">
-                    <div className="TaskMetadataCloseButtonContainer" onClick={() => { this.props.onCloseButtonClick() }}>
-                        <img className="TaskMetadataCloseButton" src={UpArrowIcon} />
-                    </div>
-
                 <div className="TaskMetadataGrid">
 
                     {/* Created  */}
