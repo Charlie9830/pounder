@@ -33,7 +33,7 @@ class TaskInfo extends React.Component {
 
                     {/* Comments  */} 
                     <div className="TaskInfoCommentsContainer">
-                        <MenuSubtitle text="Comments" showDivider={false}/>
+                        <MenuSubtitle text="Comments" showDivider={false} />
                         <CommentPanel taskComments={this.props.taskComments} onNewComment={this.handleNewComment}
                         isGettingTaskComments={this.props.isGettingTaskComments}
                         projectMembersLookup={this.props.projectMembersLookup}
@@ -42,8 +42,8 @@ class TaskInfo extends React.Component {
                         isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
                         onDeleteButtonClick={this.handleTaskCommentDelete}/>
                     </div>
+
                     {/* Metadata  */} 
-                    
                     <div className="TaskInfoMetadataContainer">
                         <MenuSubtitle text="Metadata" showDivider={false}/>
                         <TaskMetadata metadata={this.props.metadata}/>

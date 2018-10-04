@@ -1,7 +1,7 @@
 .TaskInfoContainer {
-    height: 500px;
+    height: 450px;
     background: var(--surface-color-alternate);
-    border: 1px solid teal;
+    border: 1px solid gray;
     padding: 20px;
 }
 
@@ -16,7 +16,7 @@
 .TaskInfoNoteContainer {
     grid-row: 1;
     grid-column: 1;
-    height: 80%;
+    height: 400px;
     width: 200px;
 }
 
@@ -24,6 +24,7 @@
     grid-row: 1;
     grid-column: 2;
     width: 400px;
+    height: 425px;
 }
 
 .TaskInfoMetadataContainer {
