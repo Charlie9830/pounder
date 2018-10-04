@@ -42,12 +42,7 @@ class CommentPanelInput extends React.Component {
     }
 
     handleCommentButtonClick() {
-        if (this.autocompleteTextAreaRefTextAreaRef !== null) {
-            var value = this.textareaRef.value;
-            if (value !== "") {
-                this.props.onNewComment(value);
-            }
-        }
+        this.postComment();
     }
 
     postComment() {

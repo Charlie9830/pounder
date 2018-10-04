@@ -20,6 +20,7 @@ class CommentPanel extends React.Component {
         this.getTaskCommentsJSX = this.getTaskCommentsJSX.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
         this.handleShowMoreButtonClick = this.handleShowMoreButtonClick.bind(this);
+        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -65,8 +66,9 @@ class CommentPanel extends React.Component {
             var isUnread = !item.seenBy.some(item => { return item === getUserUid()})
 
             return (
-                <Comment key={item.uid} text={item.text} timeAgo={timeAgo} createdBy={item.createdBy}
-                displayName={displayName} isUnread={isUnread} canDelete={canDelete}/>
+                <Comment key={item.uid} uid={item.uid} text={item.text} timeAgo={timeAgo} createdBy={item.createdBy}
+                displayName={displayName} isUnread={isUnread} canDelete={canDelete} isSynced={item.isSynced}
+                onDeleteButtonClick={this.handleDeleteButtonClick}/>
             )
         })
 
@@ -78,6 +80,10 @@ class CommentPanel extends React.Component {
         isAllCommentsFetched={this.props.isAllTaskCommentsFetched}/>));
         
         return taskCommentsJSX;
+    }
+
+    handleDeleteButtonClick(commentId) {
+        this.props.onDeleteButtonClick(commentId);
     }
 
     handleShowMoreButtonClick() {

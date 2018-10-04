@@ -32,7 +32,8 @@ updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorD
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
 renewChecklistAsync, updateTaskNoteAsync, openTaskInfo, getTaskCommentsAsync,
-postNewCommentAsync, closeTaskInfoAsync, paginateTaskCommentsAsync } from 'handball-libs/libs/pounder-redux/action-creators';
+postNewCommentAsync, closeTaskInfoAsync, paginateTaskCommentsAsync, 
+deleteTaskCommentAsync } from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
@@ -136,6 +137,7 @@ class App extends React.Component {
     this.dispatchOpenTaskInfo = this.dispatchOpenTaskInfo.bind(this);
     this.getProjectMembersLookup = this.getProjectMembersLookup.bind(this);
     this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
+    this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
   }
 
   componentDidMount() { 
@@ -358,11 +360,16 @@ class App extends React.Component {
               openTaskInfoId={this.props.openTaskInfoId}
               projectMembersLookup={projectMembersLookup}
               onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-              isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
+              isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
+              onTaskCommentDelete={this.handleTaskCommentDelete}/>
           </div>
         </div>
       </div>
     );
+  }
+
+  handleTaskCommentDelete(taskId, commentId) {
+    this.props.dispatch(deleteTaskCommentAsync(taskId, commentId));
   }
 
   handlePaginateTaskCommentsRequest(taskId) {

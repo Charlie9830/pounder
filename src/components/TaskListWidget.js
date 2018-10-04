@@ -46,6 +46,7 @@ class TaskListWidget extends React.Component {
         this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
         this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
+        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
         
     }
 
@@ -132,7 +133,8 @@ class TaskListWidget extends React.Component {
                                 projectMembersLookup={this.props.projectMembersLookup}
                                 hasUnseenComments={hasUnseenComments}
                                 onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-                                isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched} />
+                                isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
+                                onTaskCommentDelete={this.handleTaskCommentDelete} />
                         </div>
                     </CSSTransition>
                 )
@@ -157,6 +159,10 @@ class TaskListWidget extends React.Component {
                 </DropTargetTaskArea>
             </div>
         )
+    }
+
+    handleTaskCommentDelete(taskId, commentId) {
+        this.props.onTaskCommentDelete(taskId, commentId);
     }
 
     handlePaginateTaskCommentsRequest(taskId) {

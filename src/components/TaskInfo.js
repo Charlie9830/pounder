@@ -15,6 +15,7 @@ class TaskInfo extends React.Component {
         this.handleNoteInputBlur = this.handleNoteInputBlur.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
         this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
+        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
     }
 
     render() {
@@ -38,7 +39,8 @@ class TaskInfo extends React.Component {
                         projectMembersLookup={this.props.projectMembersLookup}
                         projectMembers={this.props.projectMembers}
                         onPaginateCommentsRequest={this.handlePaginateTaskCommentsRequest}
-                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
+                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
+                        onDeleteButtonClick={this.handleTaskCommentDelete}/>
                     </div>
                     {/* Metadata  */} 
                     
@@ -50,6 +52,10 @@ class TaskInfo extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    handleTaskCommentDelete(commentId) {
+        this.props.onTaskCommentDelete(commentId);
     }
 
     handlePaginateTaskCommentsRequest() {

@@ -28,6 +28,7 @@
 
 .TaskCommentText {
     color: var(--primary-active-text-color);
+    user-select: text;
 }
 
 .TaskCommentHeaderGrid {

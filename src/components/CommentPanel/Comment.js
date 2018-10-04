@@ -13,10 +13,12 @@ class Comment extends React.Component {
         this.handleContainerMouseEnter = this.handleContainerMouseEnter.bind(this);
         this.handleContainerMouseLeave = this.handleContainerMouseLeave.bind(this);
         this.getDeleteButtonJSX = this.getDeleteButtonJSX.bind(this);
+        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
     }
 
     render() {
         var deleteButtonJSX = this.getDeleteButtonJSX();
+        var timeAgo = this.props.isSynced ? this.props.timeAgo : "Not Synced";
 
         return (
             <div className="TaskCommentContainer" data-isunread={this.props.isUnread}
@@ -34,7 +36,7 @@ class Comment extends React.Component {
                         {/* Time Ago  */} 
                         <div className="TaskCommentTimeAgoContainer">
                             <div className="TaskCommentTimeAgo">
-                                {this.props.timeAgo}
+                                {timeAgo}
                             </div>
                         </div>
 
@@ -56,11 +58,15 @@ class Comment extends React.Component {
     getDeleteButtonJSX() {
         if (this.props.canDelete && this.state.isMouseOver) {
             return (
-                <div className="TaskCommentDeleteButtonContainer">
+                <div className="TaskCommentDeleteButtonContainer" onClick={this.handleDeleteButtonClick}>
                     <div className="TaskCommentDeleteButton"> X </div>
                 </div>
             )
         }
+    }
+
+    handleDeleteButtonClick() {
+        this.props.onDeleteButtonClick(this.props.uid);
     }
 
     handleContainerMouseEnter() {

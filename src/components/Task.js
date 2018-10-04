@@ -9,6 +9,9 @@ import Hammer from 'hammerjs';
 import '../assets/css/Task.css';
 import '../assets/css/TaskCheckBox.css'
 import { DragSource } from 'react-dnd';
+import NewCommentsIcon from '../assets/icons/NewCommentsIcon.svg';
+import HasCommentsIcon from '../assets/icons/HasCommentsIcon.svg';
+import HasNotesIcon from '../assets/icons/HasNotesIcon.svg';
 
 
 class Task extends React.Component {
@@ -46,6 +49,7 @@ class Task extends React.Component {
         this.getUnreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX.bind(this);
         this.getNoteIndicatorJSX = this.getNoteIndicatorJSX.bind(this);
         this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
+        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
     }
 
     componentDidMount() {
@@ -138,7 +142,7 @@ class Task extends React.Component {
     getUnreadCommentsIndicatorJSX() {
         if (this.props.hasUnseenComments === true) {
             return (
-                <div className="UnreadTaskCommentsIndicator"/>
+                <img className="UnreadTaskCommentsIndicator" src={NewCommentsIcon}/>
             )
         }
     }
@@ -146,7 +150,7 @@ class Task extends React.Component {
     getNoteIndicatorJSX() {
         if (this.props.note !== undefined && this.props.note.length > 0) {
             return (
-                <div className="TaskNoteIndicator"> \ </div>
+                <img className="TaskNoteIndicator" src={HasNotesIcon}/>
             )
         }
     }
@@ -170,12 +174,17 @@ class Task extends React.Component {
                         isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
                         projectMembers={this.props.projectMembers}
                         onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}/>
+                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
+                        onTaskCommentDelete={this.handleTaskCommentDelete}/>
                 </OverlayMenuContainer>
             )
         }
     }
     
+    handleTaskCommentDelete(commentId) {
+        this.props.onTaskCommentDelete(this.props.taskId, commentId);
+    }
+
     handlePaginateTaskCommentsRequest() {
         this.props.onPaginateTaskCommentsRequest(this.props.taskId);
     }
