@@ -361,7 +361,8 @@ class App extends React.Component {
               projectMembersLookup={projectMembersLookup}
               onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
               isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-              onTaskCommentDelete={this.handleTaskCommentDelete}/>
+              onTaskCommentDelete={this.handleTaskCommentDelete}
+              onTaskInfoOpen={this.handleTaskInfoOpen}/>
           </div>
         </div>
       </div>

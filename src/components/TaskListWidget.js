@@ -134,7 +134,8 @@ class TaskListWidget extends React.Component {
                                 hasUnseenComments={hasUnseenComments}
                                 onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
                                 isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-                                onTaskCommentDelete={this.handleTaskCommentDelete} />
+                                onTaskCommentDelete={this.handleTaskCommentDelete}
+                                onTaskInfoOpen={this.handleTaskInfoOpen} />
                         </div>
                     </CSSTransition>
                 )

@@ -50,6 +50,9 @@ class Task extends React.Component {
         this.getNoteIndicatorJSX = this.getNoteIndicatorJSX.bind(this);
         this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
         this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
+        this.handleTaskNoteIndicatorClick = this.handleTaskNoteIndicatorClick.bind(this);
+        this.handleUnreadCommentsIndicatorClick = this.handleUnreadCommentsIndicatorClick.bind(this);
+        this.openTaskInfo = this.openTaskInfo.bind(this);
     }
 
     componentDidMount() {
@@ -59,7 +62,7 @@ class Task extends React.Component {
                 if (event.pointerType !== "mouse") {
                     if (this.props.isTaskInfo === false && this.props.isInputOpen === false) {
                         // Open Metadata.
-                        this.props.onTaskInfoOpen(this.props.taskId);
+                        this.openTaskInfo();
                     }
 
                     else {
@@ -142,7 +145,7 @@ class Task extends React.Component {
     getUnreadCommentsIndicatorJSX() {
         if (this.props.hasUnseenComments === true) {
             return (
-                <img className="UnreadTaskCommentsIndicator" src={NewCommentsIcon}/>
+                <img className="UnreadTaskCommentsIndicator" src={NewCommentsIcon} onClick={this.handleUnreadCommentsIndicatorClick}/>
             )
         }
     }
@@ -150,7 +153,7 @@ class Task extends React.Component {
     getNoteIndicatorJSX() {
         if (this.props.note !== undefined && this.props.note.length > 0) {
             return (
-                <img className="TaskNoteIndicator" src={HasNotesIcon}/>
+                <img className="TaskNoteIndicator" src={HasNotesIcon} onClick={this.handleTaskNoteIndicatorClick}/>
             )
         }
     }
@@ -179,6 +182,20 @@ class Task extends React.Component {
                 </OverlayMenuContainer>
             )
         }
+    }
+
+    handleTaskNoteIndicatorClick(e) {
+        e.stopPropagation();
+        this.openTaskInfo();
+    }
+
+    handleUnreadCommentsIndicatorClick(e) {
+        e.stopPropagation();
+        this.openTaskInfo();
+    }
+
+    openTaskInfo() {
+        this.props.onTaskInfoOpen(this.props.taskId);
     }
     
     handleTaskCommentDelete(commentId) {

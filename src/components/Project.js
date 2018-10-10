@@ -137,7 +137,8 @@ class Project extends React.Component{
                      projectMembersLookup={this.props.projectMembersLookup}
                      onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
                      isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-                     onTaskCommentDelete={this.handleTaskCommentDelete}/>   
+                     onTaskCommentDelete={this.handleTaskCommentDelete}
+                     onTaskInfoOpen={this.handleTaskInfoOpen}/>   
                 </div>
             )
         });
