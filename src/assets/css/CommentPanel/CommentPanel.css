@@ -1,6 +1,6 @@
 .TaskCommentPanelGrid {
     display: grid;
-    height: 100%;
+    height: 450px;
     width: 100%;
     grid-template-rows: [Comments]auto [Input]100px;
 }

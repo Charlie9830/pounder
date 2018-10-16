@@ -9,69 +9,75 @@ class TaskMetadata extends React.Component {
     render() {
         return (
             <div className="TaskMetadata">
-                <div className="TaskMetadataGrid">
+                <div className="TaskMetadataHorizontalFlex">
 
-                    {/* Created  */}
-                    <div className="TaskMetadataSubtitleContainer"> 
-                        <div className="TaskMetadataSubtitle"> Created </div>
-                    </div>
-                    
-                    {/* User  */} 
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={PersonIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.createdBy}
-                    </div>
+                    <div className="TaskMetadataValueGrid">
+                        {/* Created  */}
+                        <div className="TaskMetadataSubtitleContainer">
+                            <div className="TaskMetadataSubtitle"> Created </div>
+                        </div>
 
-                    {/* Time  */} 
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={TimeIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.createdOn}
-                    </div>
+                        {/* User  */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={PersonIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.createdBy}
+                        </div>
 
-                    {/* Updated  */}
-                    <div className="TaskMetadataSubtitleContainer"> 
-                        <div className="TaskMetadataSubtitle"> Updated </div>
+                        {/* Time  */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={TimeIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.createdOn}
+                        </div>
                     </div>
 
-                    {/* User  */} 
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={PersonIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.updatedBy}
+                    <div className="TaskMetadataValueGrid">
+                        {/* Updated  */}
+                        <div className="TaskMetadataSubtitleContainer">
+                            <div className="TaskMetadataSubtitle"> Updated </div>
+                        </div>
+
+                        {/* User  */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={PersonIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.updatedBy}
+                        </div>
+
+                        {/* Time */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={TimeIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.updatedOn}
+                        </div>
                     </div>
 
-                    {/* Time */}
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={TimeIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.updatedOn}
-                    </div>
+                    <div className="TaskMetadataValueGrid">
+                        {/* Completed */}
+                        <div className="TaskMetadataSubtitleContainer">
+                            <div className="TaskMetadataSubtitle"> Completed </div>
+                        </div>
 
-                    {/* Completed */}
-                    <div className="TaskMetadataSubtitleContainer"> 
-                        <div className="TaskMetadataSubtitle"> Completed </div>
-                    </div>
+                        {/* Person */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={PersonIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.completedBy}
+                        </div>
 
-                    {/* Person */}
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={PersonIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.completedBy}
-                    </div>
-
-                    {/* Time */}
-                    <div className="TaskMetadataIconContainer">
-                        <img className="TaskMetadataIcon" src={TimeIcon} />
-                    </div>
-                    <div className="TaskMetadataValue">
-                        {this.props.metadata.completedOn}
+                        {/* Time */}
+                        <div className="TaskMetadataIconContainer">
+                            <img className="TaskMetadataIcon" src={TimeIcon} />
+                        </div>
+                        <div className="TaskMetadataValue">
+                            {this.props.metadata.completedOn}
+                        </div>
                     </div>
                 </div>
             </div>

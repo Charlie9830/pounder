@@ -53,7 +53,16 @@
     cursor: default;
 }
 
-.TaskMetadataGrid {
+.TaskMetadataHorizontalFlex {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.TaskMetadataValueGrid {
+    flex: 1;
     height: 100%;
     display: grid;
     grid-template-columns: [Icon]0.35fr [Value]1fr;

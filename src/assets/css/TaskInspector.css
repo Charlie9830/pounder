@@ -1,0 +1,51 @@
+.TaskInspector {
+    position: relative;
+    background: var(--surface-color-alternate);
+    width: 1100px;
+    border: 1px solid gray;
+}
+
+.TaskInspectorGrid {
+    display: grid;
+    grid-template-columns: [Calendar]1fr [CommentPanel]1fr [Notes]1fr;
+    grid-column-gap: 50px;
+    grid-template-rows: max-content auto;
+    justify-content: stretch;
+}
+
+.TaskInspectorCalendarContainer {
+    grid-column: Calendar;
+    grid-row: 1;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+.TaskInspectorCommentPanelContainer {
+    grid-column: CommentPanel;
+    grid-row: 1;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+.TaskInspectorNotesContainer {
+    grid-column: Notes;
+    grid-row: 1;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+.TaskInspectorMetadataContainer {
+    grid-column: Calendar / span 3;
+    grid-row: 2;
+    justify-self: stretch;
+    align-self: stretch;
+}
+
+.TaskNotePanel {
+    background: var(--surface-color-alternate);
+    color: var(--primary-active-text-color);
+    font-family: var(--primary-font-family);
+    resize: none;
+    width: 90%;
+    height: 90%;
+}

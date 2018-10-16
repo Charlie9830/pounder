@@ -30,15 +30,10 @@ class Project extends React.Component{
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
-        this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
         this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
-        this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
         this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
-        this.handleTaskInfoClose = this.handleTaskInfoClose.bind(this);
-        this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
-        this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
         this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
         this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
@@ -51,10 +46,6 @@ class Project extends React.Component{
         this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
         this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
-        this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
-        this.handleNewComment = this.handleNewComment.bind(this);
-        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
-        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
     }
 
     componentDidMount() {
@@ -121,24 +112,21 @@ class Project extends React.Component{
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
                      onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
                      onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
-                     openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+                    
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} projectMembers={this.props.projectMembers}
-                     onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onTaskMetadataOpen={this.handleTaskInfoOpen}
-                     onTaskInfoClose={this.handleTaskInfoClose} disableAnimations={this.props.disableAnimations}
-                     onAssignToMember={this.handleAssignToMember} onSettingsMenuClose={this.handleSettingsMenuClose}
+                     
+                     disableAnimations={this.props.disableAnimations}
+                     onSettingsMenuClose={this.handleSettingsMenuClose}
                      onRenewNowButtonClick={this.handleRenewNowButtonClick}
                      onTaskDragDrop={this.handleTaskDragDrop}
                      enableKioskMode={this.props.enableKioskMode}
-                     onTaskNoteChange={this.handleTaskNoteChange}
-                     onNewComment={this.handleNewComment}
-                     isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
-                     openTaskInfoId={this.props.openTaskInfoId}
-                     projectMembersLookup={this.props.projectMembersLookup}
-                     onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-                     isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-                     onTaskCommentDelete={this.handleTaskCommentDelete}
-                     onTaskInfoOpen={this.handleTaskInfoOpen}/>   
+                     onTaskInspectorOpen={this.props.onTaskInspectorOpen}
+                     
+                     
+                     
+                     
+                     />   
                 </div>
             )
         });
@@ -209,21 +197,6 @@ class Project extends React.Component{
         )
     }
 
-    handleTaskCommentDelete(taskId, commentId) {
-        this.props.onTaskCommentDelete(taskId, commentId);
-    }
-
-    handlePaginateTaskCommentsRequest(taskId) {
-        this.props.onPaginateTaskCommentsRequest(taskId);
-    }
-
-    handleNewComment(taskId, value, currentMetadata) {
-        this.props.onNewComment(taskId, value, this.props.projectMembers, currentMetadata);
-    }
-
-    handleTaskNoteChange(newValue, oldValue, taskId, currentMetadata) {
-        this.props.onTaskNoteChange(newValue, oldValue, taskId, currentMetadata);
-    }
 
     handleTaskDragDrop(taskId, targetTaskListWidgetId) {
         this.props.onTaskDragDrop(taskId, targetTaskListWidgetId);
@@ -419,19 +392,6 @@ class Project extends React.Component{
         return freshIds;
     }
 
-
-    handleAssignToMember(newUserId, oldUserId, taskId) {
-        this.props.onAssignToMember(newUserId, oldUserId, taskId);
-    }
-
-    handleTaskInfoOpen(taskListWidgetId, taskId) {
-        this.props.onTaskInfoOpen(taskListWidgetId, taskId);
-    }
-
-    handleTaskInfoClose() {
-        this.props.onTaskInfoClose();
-    }
-
     handleAppSettingsButtonClick() {
         this.props.onAppSettingsButtonClick();
     }
@@ -456,10 +416,6 @@ class Project extends React.Component{
                 <ProjectMessageDisplay message="No Task Lists created"/>
             )
         }
-    }
-
-    handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {
-        this.props.onTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata);
     }
 
     handleLockButtonClick() {
@@ -529,10 +485,6 @@ class Project extends React.Component{
 
     handleTaskListSettingsChanged(taskListWidgetId, newTaskListSettings, closeMenu) {
         this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings, closeMenu);
-    }
-
-    handleNewDateSubmit(taskListWidgetId, taskId, newDate, oldDate, currentMetadata) {
-        this.props.onNewDateSubmit(this.props.projectId, taskListWidgetId, taskId, newDate, oldDate, currentMetadata);
     }
 }
 

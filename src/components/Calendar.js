@@ -3,6 +3,7 @@ import '../assets/css/Calendar.css';
 import '../assets/css/react-day-picker/style.css';
 import DayPicker from 'react-day-picker';
 import Button from './Button';
+import MenuSubtitle from './MenuSubtitle';
 import Moment from 'moment';
 import { getDayPickerDate, getClearedDate, getDaysForwardDate, getWeeksForwardDate } from 'handball-libs/libs/pounder-utilities';
 import { getUserUid } from 'handball-libs/libs/pounder-firebase';
@@ -38,7 +39,7 @@ class Calendar extends React.Component {
         var assignToJSX = this.getAssignToJSX();
 
         return (
-            <div className="CalendarPopupContainer">
+            <div>
 
                 {/* Header */}
                 <div className="CalendarHeaderContainer">
@@ -99,9 +100,7 @@ class Calendar extends React.Component {
             return (
                 <div className="CalendarAssignToContainer">
                     {/* Header  */}
-                    <div className="CalendarAssignToHeaderContainer">
-                        <div className="CalendarAssignToHeader"> Assign To </div>
-                    </div>
+                    <MenuSubtitle text="Assign to" />
     
                     {/* Members  */}
                     <div className="CalendarMembersContainer">
@@ -143,11 +142,11 @@ class Calendar extends React.Component {
     }
 
     handleMemberClick(userId) {
-        this.props.onAssignToMember(userId);
+        this.props.onAssignToMember(userId, this.props.assignedTo);
     }
 
     handlePriorityToggleClick(e) {
-        this.props.onPriorityToggleClick(!this.props.isHighPriority);
+        this.props.onPriorityToggleClick(!this.props.isHighPriority, this.props.isHighPriority);
     }
 
     handleDaysInputKeyPress(e) {
@@ -185,23 +184,23 @@ class Calendar extends React.Component {
     }
 
     handleNoDueDateClick() {
-        this.props.onNewDateSubmit(getClearedDate());
+        this.props.onNewDateSubmit(getClearedDate(), this.props.dueDate);
     }
 
     handleDayClick(day) {
-        this.props.onNewDateSubmit(getDayPickerDate(day));
+        this.props.onNewDateSubmit(getDayPickerDate(day), this.props.dueDate);
     }
 
     handleTodayItemClick() {
-        this.props.onNewDateSubmit(getDaysForwardDate(0));
+        this.props.onNewDateSubmit(getDaysForwardDate(0), this.props.dueDate);
     }
 
     handleTomorrowItemClick() {
-        this.props.onNewDateSubmit(getDaysForwardDate(1));
+        this.props.onNewDateSubmit(getDaysForwardDate(1), this.props.dueDate);
     }
 
     handleOneWeekItemClick() {
-        this.props.onNewDateSubmit(getWeeksForwardDate(1));
+        this.props.onNewDateSubmit(getWeeksForwardDate(1), this.props.dueDate);
     }
 
     handleDaysChanged() {
@@ -214,7 +213,7 @@ class Calendar extends React.Component {
 
     submitDays() {
         var days = this.refs.DaysInput.value;
-        this.props.onNewDateSubmit(getDaysForwardDate(days));
+        this.props.onNewDateSubmit(getDaysForwardDate(days), this.props.dueDate);
     }
 }
 

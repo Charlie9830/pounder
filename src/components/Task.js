@@ -35,24 +35,12 @@ class Task extends React.Component {
         this.handleTaskTouchStart = this.handleTaskTouchStart.bind(this);
         this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
-        this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
-        this.handlePriorityToggleClick = this.handlePriorityToggleClick.bind(this);
-        this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.getTaskAssigneeJSX = this.getTaskAssigneeJSX.bind(this);
         this.getAssigneeDisplayName = this.getAssigneeDisplayName.bind(this);
         this.handleTaskAssigneeClick = this.handleTaskAssigneeClick.bind(this);
-        this.getTaskInfoOverlayJSX = this.getTaskInfoOverlayJSX.bind(this);
-        this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
-        this.handleTaskInfoOutsideChildBoundsClick = this.handleTaskInfoOutsideChildBoundsClick.bind(this);
-        this.handleNewComment = this.handleNewComment.bind(this);
         this.getTaskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX.bind(this);
         this.getUnreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX.bind(this);
-        this.getNoteIndicatorJSX = this.getNoteIndicatorJSX.bind(this);
-        this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
-        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
-        this.handleTaskNoteIndicatorClick = this.handleTaskNoteIndicatorClick.bind(this);
-        this.handleUnreadCommentsIndicatorClick = this.handleUnreadCommentsIndicatorClick.bind(this);
-        this.openTaskInfo = this.openTaskInfo.bind(this);
+
     }
 
     componentDidMount() {
@@ -61,13 +49,8 @@ class Task extends React.Component {
             hammer.on('press', event => {
                 if (event.pointerType !== "mouse") {
                     if (this.props.isTaskInfo === false && this.props.isInputOpen === false) {
-                        // Open Metadata.
-                        this.openTaskInfo();
-                    }
-
-                    else {
-                        // Close Metadata.
-                        this.props.onTaskInfoClose();
+                        // Open Task Inspector
+                        this.props.onTaskInspectorOpen(this.props.taskId);
                     }
                 }  
             })
@@ -82,11 +65,9 @@ class Task extends React.Component {
 
     render() {
         var taskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX();
-        var taskInfoOverlayJSX = this.getTaskInfoOverlayJSX();
 
         return this.props.connectDragSource(
                 <div ref={this.setTaskContainerRef} className="TaskContainer" data-isselected={this.props.isSelected} data-ismoving={this.props.isMoving}>
-                    {taskInfoOverlayJSX}
                     <div className="Task" data-ishighpriority={this.props.isHighPriority} data-iscomplete={this.props.isComplete}>
                         <div className={"TaskCheckBox"} >
                             <TaskCheckBox isChecked={this.props.isComplete} onCheckBoxClick={this.handleCheckBoxClick}
@@ -101,10 +82,8 @@ class Task extends React.Component {
                         </div>
                         <div className="DueDateContainer">
                             <DueDate dueDate={this.props.dueDate} onClick={this.handleDueDateClick} isComplete={this.props.isComplete}
-                                isCalendarOpen={this.props.isCalendarOpen} onNewDateSubmit={this.handleNewDateSubmit}
-                                projectMembers={this.props.projectMembers} onAssignToMember={this.handleAssignToMember}
-                                onPriorityToggleClick={this.handlePriorityToggleClick} isHighPriority={this.props.isHighPriority}
-                                assignedTo={this.props.assignedTo} />
+                                isCalendarOpen={this.props.isCalendarOpen}
+                                />
                         </div>
                     
                 </div>
@@ -168,63 +147,16 @@ class Task extends React.Component {
         }
     }
 
-    getTaskInfoOverlayJSX() {
-        if (this.props.isTaskInfoOpen) {
-            return (
-                <OverlayMenuContainer onOutsideChildBoundsClick={this.handleTaskInfoOutsideChildBoundsClick}>
-                    <TaskInfo projectMembersLookup={this.props.projectMembersLookup} onTaskNoteChange={this.handleTaskNoteChange} 
-                        metadata={this.props.metadata} note={this.props.note} onNewComment={this.handleNewComment}
-                        isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
-                        projectMembers={this.props.projectMembers}
-                        onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-                        isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-                        onTaskCommentDelete={this.handleTaskCommentDelete}/>
-                </OverlayMenuContainer>
-            )
-        }
-    }
-
     handleTaskNoteIndicatorClick(e) {
-        e.stopPropagation();
-        this.openTaskInfo();
+        this.props.onTaskInspectorOpen(this.props.taskId);
     }
 
     handleUnreadCommentsIndicatorClick(e) {
-        e.stopPropagation();
-        this.openTaskInfo();
-    }
-
-    openTaskInfo() {
-        this.props.onTaskInfoOpen(this.props.taskId);
-    }
-    
-    handleTaskCommentDelete(commentId) {
-        this.props.onTaskCommentDelete(this.props.taskId, commentId);
-    }
-
-    handlePaginateTaskCommentsRequest() {
-        this.props.onPaginateTaskCommentsRequest(this.props.taskId);
-    }
-
-    handleNewComment(value) {
-        this.props.onNewComment(this.props.taskId, value, this.props.metadata);
-    }
-
-    handleTaskInfoOutsideChildBoundsClick() {
-        this.props.onTaskInfoClose();
-    }
-
-    handleTaskNoteChange(newValue, oldValue) {
-        this.props.onTaskNoteChange(newValue, oldValue, this.props.taskId, this.props.metadata);
+        this.props.onTaskInspectorOpen(this.props.taskId);
     }
 
     handleTaskAssigneeClick(e) {
-        e.stopPropagation();
-        this.handleDueDateClick();
-    }
-
-    handleAssignToMember(userId) {
-        this.props.onAssignToMember(userId, this.props.assignedTo, this.props.taskId);
+        this.props.onTaskInspectorOpen(this.props.taskId);
     }
 
     getBottomBorderJSX(props) {
@@ -234,12 +166,9 @@ class Task extends React.Component {
             )
         }
     }
-    handlePriorityToggleClick(newValue) {
-        this.props.onPriorityToggleClick(this.props.taskId, newValue, this.props.isHighPriority, this.props.metadata);
-    }
 
     handleDueDateClick() {
-        this.props.onDueDateClick(this.props.taskId);
+        this.props.onTaskInspectorOpen(this.props.taskId);
     } 
 
     handleInputUnmounting(data) {
@@ -262,10 +191,6 @@ class Task extends React.Component {
 
     handleCheckBoxClick(e, incomingValue) {
         this.props.onTaskCheckBoxClick(e, this.props.taskId, incomingValue, this.props.isComplete, this.props.metadata);
-    }
-
-    handleNewDateSubmit(newDate) {
-        this.props.onNewDateSubmit(this.props.taskId, newDate, this.props.dueDate, this.props.metadata);
     }
 }
 

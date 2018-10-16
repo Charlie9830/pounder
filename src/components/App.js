@@ -13,6 +13,7 @@ import MessageBox from './MessageBox';
 import VisibleSnackbar from './Snackbar';
 import VisibleShareMenu from './ShareMenu';
 import VisibleUpdateSnackbar from './UpdateSnackbar';
+import VisibleTaskInspector from './TaskInspector';
 import '../assets/css/TaskListWidget.css';
 import '../assets/css/Sidebar.css';
 import '../assets/css/Project.css';
@@ -25,15 +26,16 @@ lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewT
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
-updateTaskDueDateAsync, unlockApp, updateTaskPriority, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
+unlockApp, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
-updateTaskAssignedToAsync, setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
+setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
-renewChecklistAsync, updateTaskNoteAsync, openTaskInfo, getTaskCommentsAsync,
-postNewCommentAsync, closeTaskInfoAsync, paginateTaskCommentsAsync, 
-deleteTaskCommentAsync } from 'handball-libs/libs/pounder-redux/action-creators';
+renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
+closeTaskInfoAsync,
+setOpenTaskInspectorId,
+} from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
@@ -94,13 +96,11 @@ class App extends React.Component {
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
     this.lockApp = this.lockApp.bind(this);
     this.handleDueDateClick = this.handleDueDateClick.bind(this);
-    this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
     this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
     this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
     this.getLockScreen = this.getLockScreen.bind(this);
     this.handleQuitButtonClick = this.handleQuitButtonClick.bind(this);
     this.getSelectedProjectTasks = this.getSelectedProjectTasks.bind(this);
-    this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
     this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
     this.getShutdownScreenJSX = this.getShutdownScreenJSX.bind(this);
     this.initalizeLocalConfig = this.initalizeLocalConfig.bind(this);
@@ -117,7 +117,6 @@ class App extends React.Component {
     this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
     this.autoBackupIntervalCallback = this.autoBackupIntervalCallback.bind(this);
     this.getProjectMembers = this.getProjectMembers.bind(this);
-    this.handleAssignToMember = this.handleAssignToMember.bind(this);
     this.handleTaskListWidgetHeaderDoubleClick = this.handleTaskListWidgetHeaderDoubleClick.bind(this);
     this.handleProjectSelectorInputDoubleClick = this.handleProjectSelectorInputDoubleClick.bind(this);
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
@@ -132,12 +131,9 @@ class App extends React.Component {
     this.bindMouseTrap = this.bindMouseTrap.bind(this);
     this.unBindMouseTrap = this.unBindMouseTrap.bind(this);
     this.isAppLocked = this.isAppLocked.bind(this);
-    this.handleTaskNoteChange = this.handleTaskNoteChange.bind(this);
-    this.handleNewComment = this.handleNewComment.bind(this);
     this.dispatchOpenTaskInfo = this.dispatchOpenTaskInfo.bind(this);
-    this.getProjectMembersLookup = this.getProjectMembersLookup.bind(this);
-    this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
-    this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
+    this.getTaskInspectorJSX = this.getTaskInspectorJSX.bind(this);
+    this.handleTaskInspectorOpen = this.handleTaskInspectorOpen.bind(this);
   }
 
   componentDidMount() { 
@@ -291,8 +287,8 @@ class App extends React.Component {
     var shareMenuJSX = this.getShareMenuJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
-    var projectMembers = this.getProjectMembers();
-    var projectMembersLookup = this.getProjectMembersLookup(projectMembers);
+
+    var taskInspectorJSX = this.getTaskInspectorJSX();
 
     return (
       <div>
@@ -310,6 +306,7 @@ class App extends React.Component {
         {shutdownScreenJSX}
         {shareMenuJSX}
         {appSettingsMenuJSX}
+        {taskInspectorJSX}
       
         <div className="AppGrid">
           <div className="StatusBarAppGridItem">
@@ -341,13 +338,13 @@ class App extends React.Component {
               onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
               movingTaskId={this.props.movingTaskId} sourceTaskListId={this.props.sourceTaskListId}
               onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
-              openCalendarId={this.props.openCalendarId} onNewDateSubmit={this.handleNewDateSubmit}
+
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
-              onTaskPriorityToggleClick={this.handleTaskPriorityToggleClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
-              onTaskInfoClose={this.handleTaskInfoClose} onTaskInfoOpen={this.handleTaskMetadataOpen}
+              onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
+              
               disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
-              projectMembers={projectMembers} onAssignToMember={this.handleAssignToMember} 
+              
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
               onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
@@ -355,34 +352,27 @@ class App extends React.Component {
               onRenewNowButtonClick={this.handleRenewNowButtonClick}
               onTaskDragDrop={this.handleTaskDragDrop}
               enableKioskMode={this.props.generalConfig.enableKioskMode}
-              onTaskNoteChange={this.handleTaskNoteChange}
-              onNewComment={this.handleNewComment} isGettingTaskComments={this.props.isGettingTaskComments} taskComments={this.props.taskComments}
-              openTaskInfoId={this.props.openTaskInfoId}
-              projectMembersLookup={projectMembersLookup}
-              onPaginateTaskCommentsRequest={this.handlePaginateTaskCommentsRequest}
-              isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-              onTaskCommentDelete={this.handleTaskCommentDelete}
-              onTaskInfoOpen={this.handleTaskInfoOpen}/>
+              onTaskInspectorOpen={this.handleTaskInspectorOpen}
+              
+              
+              
+              />
           </div>
         </div>
       </div>
     );
   }
 
-  handleTaskCommentDelete(taskId, commentId) {
-    this.props.dispatch(deleteTaskCommentAsync(taskId, commentId));
+  handleTaskInspectorOpen(taskId) {
+    this.props.dispatch(setOpenTaskInspectorId(taskId));
   }
 
-  handlePaginateTaskCommentsRequest(taskId) {
-    this.props.dispatch(paginateTaskCommentsAsync(taskId));
-  }  
-
-  handleNewComment(taskId, value, projectMembers, currentMetadata) {
-    this.props.dispatch(postNewCommentAsync(taskId, value, projectMembers, currentMetadata));
-  }
-
-  handleTaskNoteChange(newValue, oldValue, taskId, currentMetadata) {
-    this.props.dispatch(updateTaskNoteAsync(newValue, oldValue, taskId, currentMetadata));
+  getTaskInspectorJSX() {
+    if (this.props.openTaskInspectorId !== -1) {
+      return (
+        <VisibleTaskInspector/>
+      )
+    }
   }
 
   handleTaskDragDrop(taskId, targetTaskListWidgetId) {
@@ -460,10 +450,6 @@ class App extends React.Component {
 
   handleProjectSelectorInputDoubleClick(projectSelectorId) {
     this.props.dispatch(setOpenProjectSelectorId(projectSelectorId));
-  }
-
-  handleAssignToMember(newUserId, oldUserId, taskId) {
-    this.props.dispatch(updateTaskAssignedToAsync(newUserId, oldUserId, taskId));
   }
 
   getProjectMembers() {
@@ -567,10 +553,6 @@ class App extends React.Component {
   initalizeLocalConfig() {
     this.props.dispatch(getGeneralConfigAsync());
     this.props.dispatch(getCSSConfigAsync());
-  }
-
-  handleTaskPriorityToggleClick(taskId, newValue, oldValue, currentMetadata) {
-    this.props.dispatch(updateTaskPriority(taskId, newValue, oldValue, currentMetadata));
   }
 
   getSelectedProjectTasks() {
@@ -853,10 +835,6 @@ class App extends React.Component {
     this.props.dispatch(updateTaskListSettingsAsync(taskListWidgetId, newTaskListSettings));
   }
 
-  handleNewDateSubmit(projectId, taskListWidgetId, taskId, newDate, oldDate, currentMetadata) {
-    this.props.dispatch(updateTaskDueDateAsync(taskId, newDate, oldDate, currentMetadata));
-  }
-
   getLockScreen() {
     if (this.props.isLockScreenDisplayed) {
       return (
@@ -915,7 +893,6 @@ const mapStateToProps = state => {
     isATaskMoving: state.isATaskMoving,
     movingTaskId: state.movingTaskId,
     sourceTaskListId: state.sourceTaskListId,
-    openCalendarId: state.openCalendarId,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
     projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
     isLockScreenDisplayed: state.isLockScreenDisplayed,
@@ -940,6 +917,7 @@ const mapStateToProps = state => {
     isGettingTaskComments: state.isGettingTaskComments,
     taskComments: state.taskComments,
     isAllTaskCommentsFetched: state.isAllTaskCommentsFetched,
+    openTaskInspectorId: state.openTaskInspectorId,
   }
 }
 

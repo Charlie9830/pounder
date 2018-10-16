@@ -1,14 +1,3 @@
-.CalendarPopupContainer {
-    background: var(--surface-color-alternate);
-    height: auto;
-    margin: auto;
-    padding: 0px;
-    display: flex;
-    flex-direction: column;
-    align-content: center;
-    border: 1px solid #FFF;
-}
-
 .CalendarGrid {
     display: grid;
     height: 100%;
@@ -37,9 +26,6 @@
     align-content: center;
     width: 100%;
     height: 40px;
-    border-bottom-width: 1px;
-    border-bottom-style: solid;
-    border-bottom-color: gray;
 }
 
 .DateLabel {
