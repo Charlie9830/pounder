@@ -6,10 +6,10 @@ import CommentPanel from './CommentPanel/CommentPanel';
 import TaskMetadata from './TaskMetadata';
 import MenuSubtitle from './MenuSubtitle';
 import '../assets/css/TaskInspector.css';
+import CrossIcon from '../assets/icons/CrossIcon.svg';
 import { updateTaskDueDateAsync, updateTaskPriorityAsync, updateTaskAssignedToAsync,
 postNewCommentAsync, paginateTaskCommentsAsync, deleteTaskCommentAsync,
-updateTaskNoteAsync, 
-setOpenTaskInspectorId} from 'handball-libs/libs/pounder-redux/action-creators';
+updateTaskNoteAsync, closeTaskInspectorAsync} from 'handball-libs/libs/pounder-redux/action-creators';
 
 class TaskInspector extends React.Component {
     constructor(props) {
@@ -20,63 +20,68 @@ class TaskInspector extends React.Component {
 
         // Method Bindings.
         this.extractSelectedTask = this.extractSelectedTask.bind(this);
-        this.getProjectMembers = this.getProjectMembers.bind(this);
-        this.buildProjectMembersLookup = this.buildProjectMembersLookup.bind(this);
         this.handleNewDateSubmit = this.handleNewDateSubmit.bind(this);
         this.handleTaskPriorityToggleClick = this.handleTaskPriorityToggleClick.bind(this);
         this.handleAssignToMember = this.handleAssignToMember.bind(this);
         this.handleNewComment = this.handleNewComment.bind(this);
         this.handlePaginateTaskCommentsRequest = this.handlePaginateTaskCommentsRequest.bind(this);
         this.handleNoteInputBlur = this.handleNoteInputBlur.bind(this);
-        this.handleOutsideChildBoundsClick = this.handleOutsideChildBoundsClick.bind(this);
         this.updateNote = this.updateNote.bind(this);
+        this.handleCloseButtonClick = this.handleCloseButtonClick.bind(this);
+        this.handleTaskCommentDelete = this.handleTaskCommentDelete.bind(this);
     }
 
-    render() {        
+    render() {
         var selectedTaskEntity = this.extractSelectedTask();
         
         var dueDate = selectedTaskEntity.dueDate;
         var isHighPriority = selectedTaskEntity.isHighPriority;
         var note = selectedTaskEntity.note === undefined ? "" : selectedTaskEntity.note;
         var metadata = selectedTaskEntity.metadata;
+        var assignedTo = selectedTaskEntity.assignedTo === undefined ? "" : selectedTaskEntity.assignedTo;
 
-        var projectMembers = this.getProjectMembers();
-        var projectMembersLookup = this.buildProjectMembersLookup(projectMembers);
+        var selectedProjectMembers = this.props.members.filter(item => {
+            return item.project === this.props.selectedProjectId
+        });
 
         return (
             <OverlayMenuContainer onOutsideChildBoundsClick={this.handleOutsideChildBoundsClick}>
                 <div className="TaskInspector">
                     <div className="TaskInspectorGrid">
+                        {/* Toolbar  */}
+                        <div className="TaskInspectorToolbarContainer">
+                            <img className="TaskInspectorCloseIcon" src={CrossIcon} onClick={this.handleCloseButtonClick} />
+                        </div>
+
                         {/* Calendar  */}
                         <div className="TaskInspectorCalendarContainer">
-                            <MenuSubtitle text="Properties"/>
-                            <Calendar dueDate={dueDate} onNewDateSubmit={this.handleNewDateSubmit} projectMembers={projectMembers}
+                            <MenuSubtitle text="Properties" showDivider={false}/>
+                            <Calendar dueDate={dueDate} onNewDateSubmit={this.handleNewDateSubmit} projectMembers={selectedProjectMembers}
                                 isHighPriority={isHighPriority} onPriorityToggleClick={this.handleTaskPriorityToggleClick}
-                                onAssignToMember={this.handleAssignToMember} assignedTo={this.props.assignedTo} />
+                                onAssignToMember={this.handleAssignToMember} assignedTo={assignedTo} />
                         </div>
 
                         {/* Comments  */}
                         <div className="TaskInspectorCommentPanelContainer">
-                            <MenuSubtitle text="Comments"/>
+                            <MenuSubtitle text="Comments" showDivider={false}/>
                             <CommentPanel taskComments={this.props.taskComments} onNewComment={this.handleNewComment}
                                 isGettingTaskComments={this.props.isGettingTaskComments}
-                                projectMembersLookup={projectMembersLookup}
-                                projectMembers={projectMembers}
+                                memberLookup={this.props.memberLookup}
                                 onPaginateCommentsRequest={this.handlePaginateTaskCommentsRequest}
                                 isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
                                 onDeleteButtonClick={this.handleTaskCommentDelete} />
                         </div>
 
                         {/* Notes */}
-                        <div className="TaskInspectorNotesPanelContainer">
-                            <MenuSubtitle text="Notes"/>
+                        <div className="TaskInspectorNotesContainer">
+                            <MenuSubtitle text="Details" showDivider={false}/>
                             <textarea className="TaskNotePanel" ref={this.noteInputTextAreaRef} onBlur={this.handleNoteInputBlur}
-                                defaultValue={note} placeholder="Enter a note" />
+                                defaultValue={note} placeholder="Add Details" />
                         </div>
 
                         {/* Metadata */}
                         <div className="TaskInspectorMetadataContainer">
-                            <MenuSubtitle text="Info"/>
+                            <MenuSubtitle text="Info" showDivider={false}/>
                             <TaskMetadata metadata={metadata} />
                         </div>
                     </div>
@@ -85,30 +90,8 @@ class TaskInspector extends React.Component {
         )
     }
 
-    handleOutsideChildBoundsClick() {
-        this.props.dispatch(setOpenTaskInspectorId(-1));
-    }
-
-    getProjectMembers() {
-        if (this.props.isSelectedProjectRemote) {
-            // Filter Members.
-            return this.props.members.filter(item => {
-                return item.project === this.props.selectedProjectId;
-            })
-        }
-
-        else {
-            return [];
-        }
-    }
-
-    buildProjectMembersLookup(filteredMembers) {
-        var lookup = {};
-        filteredMembers.forEach(member => {
-            lookup[member.userId] = member.displayName;
-        })
-
-        return lookup;
+    handleCloseButtonClick() {
+        this.props.dispatch(closeTaskInspectorAsync());
     }
 
     extractSelectedTask() {
@@ -121,18 +104,22 @@ class TaskInspector extends React.Component {
         var taskId = this.props.openTaskInspectorId;
 
         this.props.dispatch(updateTaskDueDateAsync(taskId, newDate, oldDate));
+        this.props.dispatch(closeTaskInspectorAsync());
     }
 
     handleTaskPriorityToggleClick(newValue, oldValue) {
         var taskId = this.props.openTaskInspectorId;
 
         this.props.dispatch(updateTaskPriorityAsync(taskId, newValue, oldValue));
+        this.props.dispatch(closeTaskInspectorAsync());
+        
     }
 
     handleAssignToMember(newUserId, oldUserId, taskId) {
         var taskId = this.props.openTaskInspectorId;
 
         this.props.dispatch(updateTaskAssignedToAsync(newUserId, oldUserId, taskId));
+        this.props.dispatch(closeTaskInspectorAsync());
     }
 
     handleNewComment(value) {
@@ -148,9 +135,8 @@ class TaskInspector extends React.Component {
         this.props.dispatch(paginateTaskCommentsAsync(taskId));
     }
 
-    handleTaskCommentDelete(taskId, commentId) {
+    handleTaskCommentDelete(commentId) {
         var taskId = this.props.openTaskInspectorId;
-
         this.props.dispatch(deleteTaskCommentAsync(taskId, commentId));
     }
 
@@ -173,6 +159,7 @@ let mapStateToProps = state => {
         selectedProjectId: state.selectedProjectId,
         isSelectedProjectRemote: state.isSelectedProjectRemote,
         members: state.members,
+        memberLookup: state.memberLookup,
         tasks: state.tasks,
         taskComments: state.taskComments,
         isGettingTaskComments: state.isGettingTaskComments,

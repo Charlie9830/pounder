@@ -1,66 +1,67 @@
-.TaskCommentContainer {
+.CommentContainer {
     width: 100%;
     font-family: var(--primary-font-family);
     font-size: 9pt;
-    padding-bottom: 10px;
+    margin: 0px 10px 10px 5px;
 }
 
-.TaskCommentContainer[data-isunread*="true"] {
+.CommentContainer[data-isunread*="true"] {
     border-left-width: 6px;
     border-left-color: rgb(76, 76, 200);
     border-left-style: solid;
-    padding-left: 5px;
 }
 
-.TaskCommentGrid {
+.CommentGrid {
     display: grid;
     width: 100%;
     grid-template-rows: [Header] 35px [Text] 1fr;
 }
 
-.TaskCommentHeaderContainer {
+.CommentHeaderContainer {
     grid-row: Header;
 }
 
-.TaskCommentTextContainer {
+.CommentTextContainer {
     grid-row: Text;
 }
 
-.TaskCommentText {
+.CommentText {
     color: var(--primary-active-text-color);
     user-select: text;
 }
 
-.TaskCommentHeaderGrid {
+.CommentHeaderGrid {
     display: grid;
     width: 100%;
     grid-template-columns: [DisplayName] 1fr [TimeAgo]1fr [DeleteButton] 24px;
 }
 
-.TaskCommentDisplayNameContainer {
+.CommentDisplayNameContainer {
     grid-column: DisplayName;
 }
 
-.TaskCommentDisplayName {
+.CommentDisplayName {
     color: var(--alternate-inactive-text-color);
 }
 
-.TaskCommentTimeAgoContainer {
+.CommentTimeAgoContainer {
     grid-column: TimeAgo;
     justify-self: end;
 }
 
-.TaskCommentTimeAgoContainer {
+.CommentTimeAgoContainer {
     color: var(--alternate-inactive-text-color);
 }
 
-.TaskCommentDeleteButtonContainer {
+.CommentDeleteButtonContainer {
     grid-column: DeleteButton;
     justify-self: end;
     cursor: default;
+    width: 16px;
+    height: 16px;
 }
 
-.TaskCommentDeleteButton {
+.CommentDeleteButton {
     color: var(--primary-inactive-text-color);
     user-select: none;
 }

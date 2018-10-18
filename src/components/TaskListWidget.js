@@ -6,6 +6,7 @@ import '../assets/css/TaskListWidget.css';
 import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { getUserUid } from 'handball-libs/libs/pounder-firebase';
+import { GetDisplayNameFromLookup } from 'handball-libs/libs/pounder-utilities';
 
 
 class TaskListWidget extends React.Component {
@@ -92,7 +93,7 @@ class TaskListWidget extends React.Component {
                 var renderBottomBorder = array.length !== 1 && index !== array.length - 1;
                 var metadata = item.metadata === undefined ? Object.assign({}, new TaskMetadataStore("", "", "", "", "")) 
                 : item.metadata; 
-                var assignedTo = item.assignedTo === undefined ? -1 : item.assignedTo;
+                var assignedToDisplayName = GetDisplayNameFromLookup(item.assignedTo, this.props.memberLookup);
 
                 var hasUnseenComments = item.unseenTaskCommentMembers !== undefined &&
                  item.unseenTaskCommentMembers[getUserUid()] !== undefined;
@@ -112,7 +113,7 @@ class TaskListWidget extends React.Component {
                                 isHighPriority={item.isHighPriority}
                                 renderBottomBorder={renderBottomBorder}
                                 metadata={metadata} disableAnimations={this.props.disableAnimations}
-                                assignedTo={assignedTo}
+                                assignedToDisplayName={assignedToDisplayName}
                                 onDragDrop={this.handleTaskDragDrop}
                                 enableKioskMode={this.props.enableKioskMode}
                                 hasUnseenComments={hasUnseenComments}

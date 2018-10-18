@@ -1,29 +1,39 @@
-.TaskCommentPanelGrid {
+.CommentPanelGrid {
     display: grid;
     height: 450px;
     width: 100%;
     grid-template-rows: [Comments]auto [Input]100px;
 }
 
-.TaskCommentPanelCommentsContainer {
+.CommentPanelCommentsContainer {
     grid-row: Comments;
-    width: 100%;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    align-self: center;
+    justify-self: stretch;
+    height: 100%;
+    margin: 0px 10px 0px 10px;
     padding-right: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-start;
     align-content: flex-start;
+    border: 1px solid gray;
 }
 
-.TaskCommentPanelSpinnerContainer {
+.CommentPanelSpinnerContainer {
     width: 100%;
     height: 100%;
 }
 
-.TaskCommentPanelInputContainer {
+.CommentPanelInputContainer {
     grid-row: Input;
     width: 100%;
+}
+
+.CommentPanelNote {
+    color: var(--primary-inactive-text-color);
+    font-size: 10pt;
+    user-select: none;
 }

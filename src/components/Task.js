@@ -36,7 +36,6 @@ class Task extends React.Component {
         this.handleInputUnmounting = this.handleInputUnmounting.bind(this);
         this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.getTaskAssigneeJSX = this.getTaskAssigneeJSX.bind(this);
-        this.getAssigneeDisplayName = this.getAssigneeDisplayName.bind(this);
         this.handleTaskAssigneeClick = this.handleTaskAssigneeClick.bind(this);
         this.getTaskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX.bind(this);
         this.getUnreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX.bind(this);
@@ -95,12 +94,10 @@ class Task extends React.Component {
 
 
     getTaskAssigneeJSX() {
-        if (this.props.assignedTo !== -1) {
-            var displayName = this.getAssigneeDisplayName(this.props.assignedTo);
-
+        if (this.props.assignedToDisplayName !== "") {
             return (
                 <div className="TaskAssignee" onClick={this.handleTaskAssigneeClick}>
-                    <div className="TaskAssigneeDisplayName"> {displayName} </div>
+                    <div className="TaskAssigneeDisplayName"> {this.props.assignedToDisplayName} </div>
                 </div>
             )
         }
@@ -134,16 +131,6 @@ class Task extends React.Component {
             return (
                 <img className="TaskNoteIndicator" src={HasNotesIcon} onClick={this.handleTaskNoteIndicatorClick}/>
             )
-        }
-    }
-
-    getAssigneeDisplayName(userId) {
-        var member = this.props.projectMembers.find(item => {
-            return item.userId === userId;
-        })
-
-        if (member !== undefined) {
-            return member.displayName;
         }
     }
 

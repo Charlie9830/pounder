@@ -1,5 +1,6 @@
 import React from 'react';
 import '../../assets/css/CommentPanel/Comment.css';
+import DeleteCommentIcon from '../../assets/icons/DeleteCommentIcon.svg';
 
 class Comment extends React.Component {
     constructor(props) {
@@ -21,21 +22,21 @@ class Comment extends React.Component {
         var timeAgo = this.props.isSynced ? this.props.timeAgo : "Not Synced";
 
         return (
-            <div className="TaskCommentContainer" data-isunread={this.props.isUnread}
+            <div className="CommentContainer" data-isunread={this.props.isUnread}
             onMouseEnter={this.handleContainerMouseEnter} onMouseLeave={this.handleContainerMouseLeave} >
                 {/* Header  */} 
-                <div className="TaskCommentHeaderContainer">
-                    <div className="TaskCommentHeaderGrid">
+                <div className="CommentHeaderContainer">
+                    <div className="CommentHeaderGrid">
                         {/* Display Name  */} 
-                        <div className="TaskCommentDisplayNameContainer">
-                            <div className="TaskCommentDisplayName">
+                        <div className="CommentDisplayNameContainer">
+                            <div className="CommentDisplayName">
                                 {this.props.displayName}
                             </div>
                         </div>
 
                         {/* Time Ago  */} 
-                        <div className="TaskCommentTimeAgoContainer">
-                            <div className="TaskCommentTimeAgo">
+                        <div className="CommentTimeAgoContainer">
+                            <div className="CommentTimeAgo">
                                 {timeAgo}
                             </div>
                         </div>
@@ -46,8 +47,8 @@ class Comment extends React.Component {
                 </div>
 
                 {/* Comment Text  */} 
-                <div className="TaskCommentTextContainer">
-                    <div className="TaskCommentText">
+                <div className="CommentTextContainer">
+                    <div className="CommentText">
                         {this.props.text}
                     </div>
                 </div>
@@ -58,8 +59,8 @@ class Comment extends React.Component {
     getDeleteButtonJSX() {
         if (this.props.canDelete && this.state.isMouseOver) {
             return (
-                <div className="TaskCommentDeleteButtonContainer" onClick={this.handleDeleteButtonClick}>
-                    <div className="TaskCommentDeleteButton"> X </div>
+                <div className="CommentDeleteButtonContainer" onClick={this.handleDeleteButtonClick}>
+                    <img className="CommentDeleteButton" src={DeleteCommentIcon}/>
                 </div>
             )
         }

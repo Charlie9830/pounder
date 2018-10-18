@@ -114,7 +114,7 @@ class Project extends React.Component{
                      onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
                     
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} projectMembers={this.props.projectMembers}
+                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
                      
                      disableAnimations={this.props.disableAnimations}
                      onSettingsMenuClose={this.handleSettingsMenuClose}
@@ -122,7 +122,7 @@ class Project extends React.Component{
                      onTaskDragDrop={this.handleTaskDragDrop}
                      enableKioskMode={this.props.enableKioskMode}
                      onTaskInspectorOpen={this.props.onTaskInspectorOpen}
-                     
+                     memberLookup={this.props.memberLookup}
                      
                      
                      

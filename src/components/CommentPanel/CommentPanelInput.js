@@ -23,7 +23,7 @@ class CommentPanelInput extends React.Component {
                     <div className="TaskCommentInputTextContainer">
                         <TextareaAutosize className="TaskCommentInputTextArea"
                         innerRef={(textArea) => { this.textareaRef = textArea }}
-                        placeholder="Type a comment..."
+                        placeholder="Add a comment..."
                         maxRows={6}
                         onKeyPress={this.handleCommentInputKeyPress}/>
                     </div>

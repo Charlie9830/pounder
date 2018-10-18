@@ -5,7 +5,7 @@ import Comment from './Comment';
 import ShowMoreButton from './ShowMoreButton';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Spinner from '../Spinner';
-import { getDisplayNameFromLookup } from 'handball-libs/libs/pounder-utilities';
+import { GetDisplayNameFromLookup } from 'handball-libs/libs/pounder-utilities';
 import { getUserUid, TaskCommentQueryLimit } from 'handball-libs/libs/pounder-firebase';
 import '../../assets/css/CommentPanel/CommentPanel.css';
 
@@ -24,7 +24,9 @@ class CommentPanel extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevProps.taskComments.length !== this.props.taskComments.length) {
+        if (this.props.taskComments !== undefined &&
+            prevProps.taskComments.length !== this.props.taskComments.length &&
+            this.props.taskComments.length !== 0) {
             // Scroll Latest Message into View.
             this.latestCommentScrollTarget.current.scrollIntoView();
         }
@@ -34,21 +36,34 @@ class CommentPanel extends React.Component {
         var taskCommentsJSX = this.getTaskCommentsJSX();
 
         return (
-            <div className="TaskCommentPanelGrid">
-                <div className="TaskCommentPanelCommentsContainer">
+            <div className="CommentPanelGrid">
+                <div className="CommentPanelCommentsContainer">
                     {taskCommentsJSX}
                 </div>
-                <div className="TaskCommentPanelInputContainer">
-                    <CommentPanelInput projectMembers={this.props.projectMembers} onNewComment={this.handleNewComment}/>
+                
+                <div className="CommentPanelInputContainer">
+                    <CommentPanelInput onNewComment={this.handleNewComment}/>
                 </div>
             </div>
         )
     }
 
     getTaskCommentsJSX() {
+        var taskComments = this.props.taskComments === undefined ? [] : [...this.props.taskComments];
+
+        if (this.props.isGettingTaskComments === false && taskComments.length === 0) {
+            return (
+                <CenteringContainer>
+                    <div className="CommentPanelNote">
+                        No Comments
+                    </div>
+                </CenteringContainer>
+            )
+        }
+
         if (this.props.isGettingTaskComments === true) {
             return (
-                <div className="TaskCommentPanelSpinnerContainer">
+                <div className="CommentPanelSpinnerContainer">
                     <CenteringContainer>
                         <Spinner size="medium"/>
                     </CenteringContainer>
@@ -56,14 +71,14 @@ class CommentPanel extends React.Component {
             )
         }
 
-        var taskComments = this.props.taskComments === undefined ? [] : [...this.props.taskComments];
+        
         var sortedTaskComments = taskComments.sort(this.taskCommentSorter);
         
         var taskCommentsJSX = sortedTaskComments.map(item => {
             var canDelete = item.createdBy === getUserUid();
-            var displayName = getDisplayNameFromLookup(this.props.projectMembersLookup, item.createdBy);
+            var displayName = GetDisplayNameFromLookup(item.createdBy, this.props.memberLookup);
             var timeAgo = Moment(item.created).fromNow();
-            var isUnread = !item.seenBy.some(item => { return item === getUserUid()})
+            var isUnread = !item.seenBy.some(item => { return item === getUserUid() })
 
             return (
                 <Comment key={item.uid} uid={item.uid} text={item.text} timeAgo={timeAgo} createdBy={item.createdBy}

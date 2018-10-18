@@ -34,7 +34,7 @@ setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
 renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
 closeTaskInfoAsync,
-setOpenTaskInspectorId,
+openTaskInspectorAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
@@ -116,7 +116,6 @@ class App extends React.Component {
     this.handleTaskInfoClose = this.handleTaskInfoClose.bind(this);
     this.handleTaskInfoOpen = this.handleTaskInfoOpen.bind(this);
     this.autoBackupIntervalCallback = this.autoBackupIntervalCallback.bind(this);
-    this.getProjectMembers = this.getProjectMembers.bind(this);
     this.handleTaskListWidgetHeaderDoubleClick = this.handleTaskListWidgetHeaderDoubleClick.bind(this);
     this.handleProjectSelectorInputDoubleClick = this.handleProjectSelectorInputDoubleClick.bind(this);
     this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
@@ -353,7 +352,7 @@ class App extends React.Component {
               onTaskDragDrop={this.handleTaskDragDrop}
               enableKioskMode={this.props.generalConfig.enableKioskMode}
               onTaskInspectorOpen={this.handleTaskInspectorOpen}
-              
+              memberLookup={this.props.memberLookup}
               
               
               />
@@ -364,7 +363,7 @@ class App extends React.Component {
   }
 
   handleTaskInspectorOpen(taskId) {
-    this.props.dispatch(setOpenTaskInspectorId(taskId));
+    this.props.dispatch(openTaskInspectorAsync(taskId));
   }
 
   getTaskInspectorJSX() {
@@ -450,28 +449,6 @@ class App extends React.Component {
 
   handleProjectSelectorInputDoubleClick(projectSelectorId) {
     this.props.dispatch(setOpenProjectSelectorId(projectSelectorId));
-  }
-
-  getProjectMembers() {
-    if (this.props.isSelectedProjectRemote) {
-      // Filter Members.
-      return this.props.members.filter(item => {
-        return item.project === this.props.selectedProjectId;
-      })
-    }
-
-    else {
-      return [];
-    }
-  }
-
-  getProjectMembersLookup(filteredMembers) {
-    var lookup = {};
-    filteredMembers.forEach(member => {
-      lookup[member.userId] = member.displayName;
-    })
-
-    return lookup;
   }
 
   handleTaskListWidgetHeaderDoubleClick(taskListWidgetId) {
@@ -911,6 +888,7 @@ const mapStateToProps = state => {
     invites: state.invites,
     updatingInviteIds: state.updatingInviteIds,
     members: state.members,
+    memberLookup: state.memberLookup,
     remoteProjectIds: state.remoteProjectIds,
     showCompletedTasks: state.showCompletedTasks,
     openTaskInfoId: state.openTaskInfoId,
