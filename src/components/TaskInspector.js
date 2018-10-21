@@ -74,7 +74,7 @@ class TaskInspector extends React.Component {
 
                         {/* Notes */}
                         <div className="TaskInspectorNotesContainer">
-                            <MenuSubtitle text="Details" showDivider={false}/>
+                            <MenuSubtitle text="Note" showDivider={false}/>
                             <textarea className="TaskNotePanel" ref={this.noteInputTextAreaRef} onBlur={this.handleNoteInputBlur}
                                 defaultValue={note} placeholder="Add Details" />
                         </div>
@@ -124,9 +124,8 @@ class TaskInspector extends React.Component {
 
     handleNewComment(value) {
         var taskId = this.props.openTaskInspectorId;
-        var projectMembers = this.getProjectMembers();
 
-        this.props.dispatch(postNewCommentAsync(taskId, value, projectMembers));
+        this.props.dispatch(postNewCommentAsync(taskId, value));
     }
 
     handlePaginateTaskCommentsRequest(taskId) {
