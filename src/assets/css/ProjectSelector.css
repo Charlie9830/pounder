@@ -116,6 +116,13 @@
   opacity: 0.80;
 }
 
+.ProjectSelectorCommentsIcon {
+  float: right;
+  width: 16px;
+  height: 16px;
+  opacity: 0.80;
+}
+
 .ProjectSelectorIcon[data-colour*="Red"] {
   background: var(--overdue-color);
 }

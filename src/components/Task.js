@@ -39,6 +39,7 @@ class Task extends React.Component {
         this.handleTaskAssigneeClick = this.handleTaskAssigneeClick.bind(this);
         this.getTaskIndicatorPanelJSX = this.getTaskIndicatorPanelJSX.bind(this);
         this.getUnreadCommentsIndicatorJSX = this.getUnreadCommentsIndicatorJSX.bind(this);
+        this.handleTaskNoteIndicatorClick = this.handleTaskNoteIndicatorClick.bind(this);
 
     }
 

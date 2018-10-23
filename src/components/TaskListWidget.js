@@ -27,7 +27,6 @@ class TaskListWidget extends React.Component {
         this.handleRemoveButtonClick = this.handleRemoveButtonClick.bind(this);
         this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
         this.handleTaskInputUnmounting = this.handleTaskInputUnmounting.bind(this);
-        this.handleDueDateClick = this.handleDueDateClick.bind(this);
         this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
         this.handleSettingsButtonClick = this.handleSettingsButtonClick.bind(this);
         this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
@@ -108,7 +107,7 @@ class TaskListWidget extends React.Component {
                                 isSelected={isTaskSelected} isInputOpen={isTaskInputOpen} isComplete={item.isComplete} isMoving={isTaskMoving}
                                 handleClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick}
                                 onKeyPress={this.handleKeyPress} onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
-                                onInputUnmounting={this.handleTaskInputUnmounting} onDueDateClick={this.handleDueDateClick}
+                                onInputUnmounting={this.handleTaskInputUnmounting}
                                 onTaskOpen={this.handleTaskInfoOpen}
                                 isHighPriority={item.isHighPriority}
                                 renderBottomBorder={renderBottomBorder}
@@ -118,7 +117,7 @@ class TaskListWidget extends React.Component {
                                 enableKioskMode={this.props.enableKioskMode}
                                 hasUnseenComments={hasUnseenComments}
                                 onTaskInspectorOpen={this.props.onTaskInspectorOpen}
-                                
+                                note={item.note}
                                 
                                 />
                         </div>
@@ -209,10 +208,6 @@ class TaskListWidget extends React.Component {
 
     handleTaskListSettingsChanged(newSettings, closeMenu) {
         this.props.onSettingsChanged(this.props.taskListWidgetId, newSettings, closeMenu);
-    }
-
-    handleDueDateClick(taskId) {
-        this.props.onDueDateClick(this.props.taskListWidgetId, taskId);
     }
 
     handleTaskInputUnmounting(newValue, oldValue, taskId, currentMetadata) {

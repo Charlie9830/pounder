@@ -5,7 +5,6 @@ import Comment from './Comment';
 import ShowMoreButton from './ShowMoreButton';
 import CenteringContainer from '../../containers/CenteringContainer';
 import Spinner from '../Spinner';
-import { GetDisplayNameFromLookup } from 'handball-libs/libs/pounder-utilities';
 import { getUserUid, TaskCommentQueryLimit } from 'handball-libs/libs/pounder-firebase';
 import '../../assets/css/CommentPanel/CommentPanel.css';
 
@@ -76,13 +75,12 @@ class CommentPanel extends React.Component {
         
         var taskCommentsJSX = sortedTaskComments.map(item => {
             var canDelete = item.createdBy === getUserUid();
-            var displayName = GetDisplayNameFromLookup(item.createdBy, this.props.memberLookup);
             var timeAgo = Moment(item.created).fromNow();
             var isUnread = !item.seenBy.some(item => { return item === getUserUid() })
 
             return (
                 <Comment key={item.uid} uid={item.uid} text={item.text} timeAgo={timeAgo} createdBy={item.createdBy}
-                displayName={displayName} isUnread={isUnread} canDelete={canDelete} isSynced={item.isSynced}
+                displayName={item.displayName} isUnread={isUnread} canDelete={canDelete} isSynced={item.isSynced}
                 onDeleteButtonClick={this.handleDeleteButtonClick}/>
             )
         })

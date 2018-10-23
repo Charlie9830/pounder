@@ -22,14 +22,14 @@ import { MessageBoxTypes } from 'handball-libs/libs/pounder-redux';
 import { hot } from 'react-hot-loader';
 require('later/later.js');
 import { selectTask, openTask, startTaskMove,
-lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, openCalendar, addNewTaskListAsync, addNewTaskAsync,
+lockApp, setLastBackupDate, setOpenTaskListSettingsMenuId, addNewTaskListAsync, addNewTaskAsync,
 changeFocusedTaskList, moveTaskAsync, updateTaskListWidgetHeaderAsync, setIsSidebarOpen, acceptProjectInviteAsync,
 removeSelectedTaskAsync, updateTaskNameAsync, selectProject, updateProjectLayoutAsync, updateTaskCompleteAsync,
 addNewProjectAsync, removeProjectAsync, updateProjectNameAsync, removeTaskListAsync, updateTaskListSettingsAsync,
 unlockApp, setIsShuttingDownFlag, getGeneralConfigAsync, setOpenProjectSelectorId,
 setIsAppSettingsOpen, setIgnoreFullscreenTriggerFlag, getCSSConfigAsync, setIsShareMenuOpen, closeMetadata, setGeneralConfigAsync,
 setMessageBox, attachAuthListenerAsync, denyProjectInviteAsync, postSnackbarMessage, setOpenTaskListWidgetHeaderId,
-setShowCompletedTasksAsync, calculateProjectSelectorDueDateDisplays,
+setShowCompletedTasksAsync, calculateProjectSelectorIndicators,
 setAppSettingsMenuPage, setIsUpdateSnackbarOpen, cancelTaskMove,
 setShowCompletedTasks, 
 renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
@@ -95,7 +95,6 @@ class App extends React.Component {
     this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
     this.handleLockScreenAccessGranted = this.handleLockScreenAccessGranted.bind(this);
     this.lockApp = this.lockApp.bind(this);
-    this.handleDueDateClick = this.handleDueDateClick.bind(this);
     this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
     this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
     this.getLockScreen = this.getLockScreen.bind(this);
@@ -286,7 +285,7 @@ class App extends React.Component {
     var shareMenuJSX = this.getShareMenuJSX();
     var projects = this.props.projects == undefined ? [] : this.props.projects;
     var projectTasks = this.getSelectedProjectTasks();
-
+    var rglDragEnabled = this.props.openTaskInspectorId === -1;
     var taskInspectorJSX = this.getTaskInspectorJSX();
 
     return (
@@ -316,7 +315,7 @@ class App extends React.Component {
               disableAnimations={this.props.generalConfig.disableAnimations}
               onProjectSelectorClick={this.handleProjectSelectorClick} onAddProjectClick={this.handleAddProjectClick}
               onRemoveProjectClick={this.handleRemoveProjectClick} onProjectNameSubmit={this.handleProjectNameSubmit}
-              projectSelectorDueDateDisplays={this.props.projectSelectorDueDateDisplays} invites={this.props.invites}
+              projectSelectorIndicators={this.props.projectSelectorIndicators} invites={this.props.invites}
               favouriteProjectId={this.props.accountConfig.favouriteProjectId} isOpen={this.props.isSidebarOpen}
               onRequestIsSidebarOpenChange={this.handleRequestIsSidebarOpenChange} isSelectedProjectRemote={this.props.isSelectedProjectRemote}
               onAcceptInviteButtonClick={this.handleAcceptInviteButtonClick} onDenyInviteButtonClick={this.handleDenyInviteButtonClick}
@@ -336,7 +335,7 @@ class App extends React.Component {
               onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
               onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
               movingTaskId={this.props.movingTaskId} sourceTaskListId={this.props.sourceTaskListId}
-              onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} onDueDateClick={this.handleDueDateClick}
+              onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
 
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
@@ -353,7 +352,7 @@ class App extends React.Component {
               enableKioskMode={this.props.generalConfig.enableKioskMode}
               onTaskInspectorOpen={this.handleTaskInspectorOpen}
               memberLookup={this.props.memberLookup}
-              
+              rglDragEnabled={rglDragEnabled}
               
               />
           </div>
@@ -397,7 +396,7 @@ class App extends React.Component {
     this.props.dispatch(postSnackbarMessage("Performing overnight jobs", true, 'infomation'));
 
     // Update Due date Displays.
-    this.props.dispatch(calculateProjectSelectorDueDateDisplays());
+    this.props.dispatch(calculateProjectSelectorIndicators());
     this.forceUpdate(); // Forces recalculation of Task Due date displays.
 
     // Renew any checklists requiring renewal.
@@ -557,10 +556,6 @@ class App extends React.Component {
     this.props.dispatch(setOpenTaskListSettingsMenuId(taskListWidgetId));
   }
 
-  handleDueDateClick(projectId, taskListWidgetId, taskId) {
-    this.props.dispatch(openCalendar(taskListWidgetId, taskId));
-  }
-
   handleLockScreenAccessGranted() {
     this.props.dispatch(unlockApp());
   }
@@ -590,7 +585,6 @@ class App extends React.Component {
   handleTaskClick(taskId, projectId, taskListWidgetId) {
     // TODO: Do you need to provide the entire Element as a parameter? Why not just the taskID?
     var selectedTask = this.props.selectedTask;
-    var openCalendarId = this.props.openCalendarId === taskId? this.props.openCalendarId : -1; // Keep calendar Open if it already Open.
 
       if (this.isShiftKeyDown) {
         this.props.dispatch(startTaskMove(taskId, taskListWidgetId));
@@ -871,7 +865,7 @@ const mapStateToProps = state => {
     movingTaskId: state.movingTaskId,
     sourceTaskListId: state.sourceTaskListId,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
-    projectSelectorDueDateDisplays: state.projectSelectorDueDateDisplays,
+    projectSelectorIndicators: state.projectSelectorIndicators,
     isLockScreenDisplayed: state.isLockScreenDisplayed,
     openTaskListSettingsMenuId: state.openTaskListSettingsMenuId,
     isShuttingDown: state.isShuttingDown,

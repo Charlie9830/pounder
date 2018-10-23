@@ -66,7 +66,6 @@ class TaskInspector extends React.Component {
                             <MenuSubtitle text="Comments" showDivider={false}/>
                             <CommentPanel taskComments={this.props.taskComments} onNewComment={this.handleNewComment}
                                 isGettingTaskComments={this.props.isGettingTaskComments}
-                                memberLookup={this.props.memberLookup}
                                 onPaginateCommentsRequest={this.handlePaginateTaskCommentsRequest}
                                 isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
                                 onDeleteButtonClick={this.handleTaskCommentDelete} />
@@ -158,7 +157,6 @@ let mapStateToProps = state => {
         selectedProjectId: state.selectedProjectId,
         isSelectedProjectRemote: state.isSelectedProjectRemote,
         members: state.members,
-        memberLookup: state.memberLookup,
         tasks: state.tasks,
         taskComments: state.taskComments,
         isGettingTaskComments: state.isGettingTaskComments,

@@ -112,10 +112,8 @@ class Project extends React.Component{
                      onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
                      onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
                      onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
-                    
                      onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
                      openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
-                     
                      disableAnimations={this.props.disableAnimations}
                      onSettingsMenuClose={this.handleSettingsMenuClose}
                      onRenewNowButtonClick={this.handleRenewNowButtonClick}
@@ -123,9 +121,6 @@ class Project extends React.Component{
                      enableKioskMode={this.props.enableKioskMode}
                      onTaskInspectorOpen={this.props.onTaskInspectorOpen}
                      memberLookup={this.props.memberLookup}
-                     
-                     
-                     
                      />   
                 </div>
             )
@@ -187,7 +182,7 @@ class Project extends React.Component{
                         {projectMessageDisplayJSX}
 
                         <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts}
-                            onLayoutChange={this.handleLayoutChange} rglDragEnabled={rglDragEnabled}>
+                            onLayoutChange={this.handleLayoutChange} rglDragEnabled={this.props.rglDragEnabled}>
                             {taskListWidgets}
                         </TaskListWidgetGrid>
 
