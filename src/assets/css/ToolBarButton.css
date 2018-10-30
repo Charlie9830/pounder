@@ -80,3 +80,18 @@
     font-size: 10pt;
     user-select: none;
 }
+
+.LayoutSelectorContainer {
+    flex-shrink: 1;
+    padding-left: 15px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.LayoutSelector {
+    background: var(--surface-color-alternate);
+    color: var(--primary-active-text-color);
+}

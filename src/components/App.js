@@ -35,8 +35,9 @@ setShowCompletedTasks,
 renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
 closeTaskInfoAsync,
 openTaskInspectorAsync,
+updateProjectLayoutTypeAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
-import { getFirestore } from 'handball-libs/libs/pounder-firebase';
+import { getFirestore, getUserUid } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
 import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
 import electron from 'electron';
@@ -132,6 +133,7 @@ class App extends React.Component {
     this.dispatchOpenTaskInfo = this.dispatchOpenTaskInfo.bind(this);
     this.getTaskInspectorJSX = this.getTaskInspectorJSX.bind(this);
     this.handleTaskInspectorOpen = this.handleTaskInspectorOpen.bind(this);
+    this.handleLayoutSelectorChange = this.handleLayoutSelectorChange.bind(this);
   }
 
   componentDidMount() { 
@@ -330,19 +332,16 @@ class App extends React.Component {
               projectId={this.props.selectedProjectId} onTaskListWidgetRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick}
               onTaskChanged={this.handleTaskChanged} onTaskListWidgetFocusChanged={this.handleTaskListWidgetFocusChange}
               onTaskListWidgetHeaderChanged={this.handleTaskListWidgetHeaderChanged} onLayoutChange={this.handleLayoutChange}
-              projectLayouts={this.props.projectLayouts} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
+              projectLayout={this.props.selectedProjectLayout} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} onTaskMoved={this.handleTaskMoved}
               onAddTaskButtonClick={this.handleAddTaskButtonClick} onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick}
               onAddTaskListButtonClick={this.handleAddTaskListButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
               onTaskListSettingsChanged={this.handleTaskListSettingsChanged} onTaskClick={this.handleTaskClick}
               movingTaskId={this.props.movingTaskId} sourceTaskListId={this.props.sourceTaskListId}
               onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch}
-
               onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick} isLoggedIn={this.props.isLoggedIn}
               openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId} onLockButtonClick={this.handleLockButtonClick}
               onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
-              
               disableAnimations={this.props.generalConfig.disableAnimations} hideLockButton={this.props.generalConfig.hideLockButton}
-              
               openTaskListWidgetHeaderId={this.props.openTaskListWidgetHeaderId} onSettingsMenuClose={this.handleSettingsMenuClose}
               onTaskListWidgetHeaderDoubleClick={this.handleTaskListWidgetHeaderDoubleClick}
               onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
@@ -353,12 +352,18 @@ class App extends React.Component {
               onTaskInspectorOpen={this.handleTaskInspectorOpen}
               memberLookup={this.props.memberLookup}
               rglDragEnabled={rglDragEnabled}
-              
+              onLayoutSelectorChange={this.handleLayoutSelectorChange}
+              projectLayoutType={this.props.selectedProjectLayoutType}
+              showProjectLayoutTypeSelector={this.props.isSelectedProjectRemote}
               />
           </div>
         </div>
       </div>
     );
+  }
+
+  handleLayoutSelectorChange(newValue) {
+    this.props.dispatch(updateProjectLayoutTypeAsync(newValue));
   }
 
   handleTaskInspectorOpen(taskId) {
@@ -854,7 +859,7 @@ const mapStateToProps = state => {
     projects: state.projects,
     taskLists: state.taskLists,
     tasks: state.tasks,
-    projectLayouts: state.projectLayouts,
+    projectLayoutsMap: state.projectLayoutsMap,
     focusedTaskListId: state.focusedTaskListId,
     openTaskListWidgetHeaderId: state.openTaskListWidgetHeaderId,
     selectedTask: state.selectedTask,
@@ -890,6 +895,8 @@ const mapStateToProps = state => {
     taskComments: state.taskComments,
     isAllTaskCommentsFetched: state.isAllTaskCommentsFetched,
     openTaskInspectorId: state.openTaskInspectorId,
+    selectedProjectLayout: state.selectedProjectLayout,
+    selectedProjectLayoutType: state.selectedProjectLayoutType,
   }
 }
 

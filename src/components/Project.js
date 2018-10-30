@@ -173,7 +173,8 @@ class Project extends React.Component{
                     hideLockButton={this.props.hideLockButton} buttonEnableStates={toolbarButtonEnableStates}
                     onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
                     onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
-                    />
+                    onLayoutSelectorChange={this.props.onLayoutSelectorChange} projectLayoutType={this.props.projectLayoutType}
+                    showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}/>
                 </div>
 
                 <div className="ProjectGridItem">
@@ -343,11 +344,8 @@ class Project extends React.Component{
 
     extractSelectedProjectLayouts() {
         // Extract correct Layouts array from ProjectLayouts wrapper.
-        var selectedProjectLayout = this.props.projectLayouts.find(item => {
-            return item.uid === this.props.projectId;
-        })
-
-        return selectedProjectLayout === undefined ? [] : [...selectedProjectLayout.layouts];
+        return this.props.projectLayout === undefined || this.props.projectLayout.layouts === undefined ?
+         [] : [...this.props.projectLayout.layouts];
     }
 
     handleKeyboardShortcutsButtonClick() {

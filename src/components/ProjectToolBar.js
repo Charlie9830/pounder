@@ -17,6 +17,7 @@ class ProjectToolBar extends React.Component {
 
         // Refs.
         this.showCompletedTasksCheckboxRef = React.createRef();
+        this.layoutSelectorRef = React.createRef();
 
         this.handleAddTaskButtonClick = this.handleAddTaskButtonClick.bind(this);
         this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
@@ -29,12 +30,15 @@ class ProjectToolBar extends React.Component {
         this.handleShowCompletedTasksCheckboxChanged = this.handleShowCompletedTasksCheckboxChanged.bind(this);
         this.getShowCompletedTasksButtonJSX = this.getShowCompletedTasksButtonJSX.bind(this);
         this.handleShowCompletedTasksButtonClick = this.handleShowCompletedTasksButtonClick.bind(this);
+        this.handleLayoutSelectorChange = this.handleLayoutSelectorChange.bind(this);
+        this.getProjectLayoutTypeSelectorJSX = this.getProjectLayoutTypeSelectorJSX.bind(this);
 
     }
 
     render() {
         var lockButtonJSX = this.getLockButtonJSX();
         var showCompletedTasksButtonJSX = this.getShowCompletedTasksButtonJSX();
+        var projectLayoutTypeSelectorJSX = this.getProjectLayoutTypeSelectorJSX();
 
         return (
             <div>
@@ -62,6 +66,8 @@ class ProjectToolBar extends React.Component {
                         {showCompletedTasksButtonJSX}
                     </div>
 
+                    {projectLayoutTypeSelectorJSX}
+
                     <div className="ToolBarFlexDivider" />
 
                     <Button iconSrc={KeyboardIcon} onClick={this.handleKeyboardShortcutsButtonClick}
@@ -73,6 +79,31 @@ class ProjectToolBar extends React.Component {
                 </div>
             </div>
         )
+    }
+
+    getProjectLayoutTypeSelectorJSX() {
+        if (this.props.showProjectLayoutTypeSelector) {
+            return (
+                <div className="LayoutSelectorContainer">
+                    <select className="LayoutSelector" ref={this.layoutSelectorRef} value={this.props.projectLayoutType}
+                        onChange={this.handleLayoutSelectorChange}>
+                        <option value="global">
+                            Global Layout
+                            </option>
+
+                        <option value="local">
+                            Local Layout
+                            </option>
+                    </select>
+                </div>
+            )
+        }
+    }
+
+    handleLayoutSelectorChange() {
+        var value = this.layoutSelectorRef.current.value;
+
+        this.props.onLayoutSelectorChange(value);
     }
 
     getShowCompletedTasksButtonJSX() {
