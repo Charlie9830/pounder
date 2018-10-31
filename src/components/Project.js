@@ -53,12 +53,12 @@ class Project extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (this.layoutSyncRequired === true) {
-            this.layoutSyncRequired = false;
-            this.props.onLayoutChange([...this.layoutsToSync], this.extractSelectedProjectLayouts(), this.props.projectId, this.taskListIdsToFoul);
-            this.taskListIdsToFoul = null;
-            this.layoutsToSync = null;
-        }
+        // if (this.layoutSyncRequired === true) {
+        //     this.layoutSyncRequired = false;
+        //     this.props.onLayoutChange([...this.layoutsToSync], this.extractSelectedProjectLayouts(), this.props.projectId, this.taskListIdsToFoul);
+        //     this.taskListIdsToFoul = null;
+        //     this.layoutsToSync = null;
+        // }
     }
 
     componentWillUnmount() {
@@ -68,6 +68,17 @@ class Project extends React.Component{
 
     render() {
         // Build a list of TaskListWidgets to Render out here.
+        
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        var selectedLayouts = this.extractSelectedProjectLayouts();
+        var layouts = JSON.parse(JSON.stringify(selectedLayouts)); // Hacky way to get RGL to update it's Layout more reliably.
+        
+        // Turn layouts array into a Lookup by taskListId to avoid an O[^n] operation when building the Task List Widgets.
+        var layoutsMap = {};
+        layouts.forEach(layout => {
+            layoutsMap[layout.i] = layout;
+        })
+
         // Filter out Task Lists from other Projects.
         var filteredTaskListWidgets = this.props.taskLists.filter(taskList => {
             return taskList.project === this.props.projectId;
@@ -101,9 +112,24 @@ class Project extends React.Component{
             }
 
             var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
+
+            // We give the Layouts to RGL via the 'data-grid' property as well as using the 'layouts' prop.
+            // using Data-grid means that New Task Lists will render at a sane size initally, but only using data-grid means
+            // that updates to the Layout once established won't cause RGL to render. This is because RGL only looks at it's
+            // children's keys to decide if it should recalculate the layout when children change.
+            // Therefore we also provide provide the layouts via the RGL 'layouts' prop further down. This covers us for
+            // layout mutations.
+            var layoutEntry = {
+                x: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].x,
+                y: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].y,
+                w: layoutsMap[item.uid] === undefined ? 6 : layoutsMap[item.uid].w,
+                h: layoutsMap[item.uid] === undefined ? 4 : layoutsMap[item.uid].h,
+            }
+            
+
             return (
                 /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
-                <div key={item.uid}>
+                <div key={item.uid} data-grid={layoutEntry}>
                     <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
                      tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
                      onTaskSubmit={this.handleTaskSubmit} onWidgetClick={this.handleWidgetClick} movingTaskId={movingTaskId}
@@ -132,36 +158,6 @@ class Project extends React.Component{
         var rglClassName = "ProjectRGL" // projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
         var rglDragEnabled = this.props.openCalendarId === -1;
 
-        // Extract correct Layouts array from ProjectLayouts wrapper.
-        var selectedLayouts = this.extractSelectedProjectLayouts();
-
-        // Fresh Ids are Ids of Task lists that have not yet had a corresponding Project Layout entity created for them.
-        // This could mean they are newly created, or were previously created on Mobile (which doesn't support RGL).
-        // The layouts collection needs to be coerced to include these Fresh items and render them at a sane size.
-        // RGL will not trigger the layoutsChanged callback when new stuff is added, it will only trigger on human
-        // interaction, Therefore we need to queue up our own layout change Update to the DB. We provide the new
-        // layouts, as well as the ids of Task Lists that should no longer be marked as fresh. If we don't 'foul' these
-        // tasklists, then a render loop will be caused that will continously call out to the Database.
-        var freshIds = this.findFreshTaskListIds(filteredTaskListWidgets);
-        freshIds.forEach(id => {
-            var alreadyInCollection = selectedLayouts.some(item => {
-                return item.i === id;
-            })
-
-            if (alreadyInCollection !== true) {
-                selectedLayouts.push({i: id, x: 0, y: 0, w: 6, h: 4 });
-            }
-        })
-
-        // Queue up the Database update for when this render is finished.
-        if (freshIds.length > 0) {
-            this.layoutSyncRequired = true;
-            this.layoutsToSync = selectedLayouts;
-            this.taskListIdsToFoul = freshIds;
-        }
-        
-        var layouts = JSON.parse(JSON.stringify(selectedLayouts));
-
         var toolbarButtonEnableStates = this.getToolbarButtonEnableStates();
 
         return (
@@ -182,6 +178,7 @@ class Project extends React.Component{
                     
                         {projectMessageDisplayJSX}
 
+                        {/* Provide layouts via the 'layout' prop to cover us for remote Layout Mutation  */} 
                         <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts}
                             onLayoutChange={this.handleLayoutChange} rglDragEnabled={this.props.rglDragEnabled}>
                             {taskListWidgets}
@@ -192,7 +189,6 @@ class Project extends React.Component{
             </div>
         )
     }
-
 
     handleTaskDragDrop(taskId, targetTaskListWidgetId) {
         this.props.onTaskDragDrop(taskId, targetTaskListWidgetId);
