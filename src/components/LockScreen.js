@@ -98,8 +98,14 @@ class LockScreen extends React.Component {
 
         else {
             return (
-                <img className="LockScreenIcon" 
-                src={LockScreenIcon} onClick={this.handleLogoClick} />
+                <div>
+                    <img className="LockScreenIcon"
+                        src={LockScreenIcon} onClick={this.handleLogoClick} />
+                        <CenteringContainer>
+                            <div className="LockScreenHintText"> Click or Touch the logo to unlock </div>
+                        </CenteringContainer>
+                    
+                </div>
             )
         }
     }

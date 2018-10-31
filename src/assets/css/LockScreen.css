@@ -34,12 +34,7 @@
     height: 300px;
     margin: auto;
     user-select: none;
-    animation: PulseIcon 5s alternate infinite;
-}
-
-@keyframes PulseIcon {
-    0% { opacity: 0; }
-    100% { opacity: 0.5; }
+    opacity: 0.5;
 }
 
 .LockScreenBackupMessageContainer {
@@ -63,4 +58,11 @@
     height: 40px;
     width: 40px;
     opacity: 0.15;
+}
+
+.LockScreenHintText {
+    color: var(--primary-inactive-text-color);
+    user-select: none;
+    width: fit-content;
+    cursor: default;
 }
