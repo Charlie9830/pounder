@@ -38,7 +38,7 @@ class TaskListWidget extends React.Component {
         this.taskSortAssigneeHelper = this.taskSortAssigneeHelper.bind(this);
         this.taskSortDueDateHelper = this.taskSortDueDateHelper.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
-        
+        this.handleMoveTaskListToProject = this.handleMoveTaskListToProject.bind(this);
     }
 
     componentDidMount(){
@@ -136,7 +136,9 @@ class TaskListWidget extends React.Component {
                  onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
                  settings={this.props.settings} onSettingsButtonClick={this.handleSettingsButtonClick}
                  isFocused={this.props.isFocused} onSettingsMenuClose={this.handleSettingsMenuClose}
-                 onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
+                 onRenewNowButtonClick={this.handleRenewNowButtonClick}
+                 projects={this.props.projects} projectId={this.props.projectId}
+                 onMoveTaskListToProject={this.handleMoveTaskListToProject}/>
                 <DropTargetTaskArea taskListWidgetId={this.props.taskListWidgetId}>
                     <TransitionGroup enter={!this.props.disableAnimations} exit={!this.props.disableAnimations}>
                         {builtTasks}
@@ -144,6 +146,10 @@ class TaskListWidget extends React.Component {
                 </DropTargetTaskArea>
             </div>
         )
+    }
+
+    handleMoveTaskListToProject(sourceProjectId, targetProjectId) {
+        this.props.onMoveTaskListToProject(sourceProjectId, targetProjectId, this.props.taskListWidgetId)
     }
 
     handleTaskDragDrop(taskId, targetTaskListWidgetId) {

@@ -3,6 +3,7 @@ import '../assets/css/TaskListSettingsMenu.css'
 import { TaskListSettingsStore, ChecklistSettingsFactory } from 'handball-libs/libs/pounder-stores';
 import { getNormalizedDate } from 'handball-libs/libs/pounder-utilities';
 import ChecklistSettings from './ChecklistSettings';
+import MenuSubtitle from './MenuSubtitle';
 import Moment from 'moment';
 
 var isCompleteTasksShown = false; // To Preserve backwards compatability of pre Show Complete Tasks change versions when using current Task lists.
@@ -10,6 +11,9 @@ var isCompleteTasksShown = false; // To Preserve backwards compatability of pre 
 class TaskListSettingsMenu extends React.Component {
     constructor(props) {
         super(props);
+
+        // Refs.
+        this.moveToProjectSelectorRef = React.createRef();
 
         // Method Bindings.
         this.handleSortByCompletedTasksItemClick = this.handleSortByCompletedTasksItemClick.bind(this);
@@ -22,10 +26,13 @@ class TaskListSettingsMenu extends React.Component {
         this.handleInitialStartDayPick = this.handleInitialStartDayPick.bind(this);
         this.handleRenewIntervalChange = this.handleRenewIntervalChange.bind(this);
         this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
+        this.getProjectsSelectorJSX = this.getProjectsSelectorJSX.bind(this);
+        this.handleMoveToProjectSelectorChange = this.handleMoveToProjectSelectorChange.bind(this);
     }
 
     render() {
         var selectableItems = this.getSelectableMenuItems(this.props);
+        var projectsSelectorJSX = this.getProjectsSelectorJSX();
 
         return (
             <div className="TaskListSettingsMenuContainer nonDraggable">
@@ -38,8 +45,45 @@ class TaskListSettingsMenu extends React.Component {
                         onRenewIntervalChange={this.handleRenewIntervalChange} />
                 </div>
                 
+                {projectsSelectorJSX}
+                
             </div>
         )
+    }
+
+    getProjectsSelectorJSX() {
+        if (this.props.projects === undefined || this.props.projects.length < 2) {
+            return null;
+        }
+
+        var projects = this.props.projects === undefined ? [] : this.props.projects;
+
+        var selectJSX = projects.map((item, index) => {
+            if (item.uid !== this.props.projectId) {
+                return (
+                    <option key={item.uid} value={item.uid}> {item.projectName} </option>
+                )
+            }
+        })
+
+        // Prepend blank option.
+        selectJSX.unshift((<option key={-1} value={-1}> </option>));
+
+        return (
+            <div className="TaskListSettingsMoveToContainer">
+                <MenuSubtitle text="Move list to" />
+                <select className="MoveToProjectsSelector" ref={this.moveToProjectSelectorRef} onChange={this.handleMoveToProjectSelectorChange}
+                defaultValue={-1}>
+                    {selectJSX}
+                </select>
+            </div>
+        )
+    }
+
+    handleMoveToProjectSelectorChange() {
+        var value = this.moveToProjectSelectorRef.current.value;
+
+        this.props.onMoveTaskListToProject(this.props.projectId, value);
     }
 
     handleRenewNowButtonClick() {

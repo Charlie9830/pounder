@@ -53,12 +53,6 @@ class Project extends React.Component{
     }
 
     componentDidUpdate(prevProps, prevState) {
-        // if (this.layoutSyncRequired === true) {
-        //     this.layoutSyncRequired = false;
-        //     this.props.onLayoutChange([...this.layoutsToSync], this.extractSelectedProjectLayouts(), this.props.projectId, this.taskListIdsToFoul);
-        //     this.taskListIdsToFoul = null;
-        //     this.layoutsToSync = null;
-        // }
     }
 
     componentWillUnmount() {
@@ -85,7 +79,6 @@ class Project extends React.Component{
         })
 
         var taskListWidgets = filteredTaskListWidgets.map((item, index) => {
-
             // Widget Layer.
             var isFocused = this.props.focusedTaskListId === item.uid;
             var isHeaderOpen = this.props.openTaskListWidgetHeaderId === item.uid;
@@ -147,6 +140,8 @@ class Project extends React.Component{
                      enableKioskMode={this.props.enableKioskMode}
                      onTaskInspectorOpen={this.props.onTaskInspectorOpen}
                      memberLookup={this.props.memberLookup}
+                     projects={this.props.projects} projectId={this.props.projectId}
+                     onMoveTaskListToProject={this.props.onMoveTaskListToProject}
                      />   
                 </div>
             )

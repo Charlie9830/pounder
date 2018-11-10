@@ -101,7 +101,9 @@ class ListToolbar extends React.Component{
                 <OverlayMenuContainer onOutsideChildBoundsClick={this.handleOverlayMenuOutsideChildBoundsClick}>
                     <TaskListSettingsMenu settings={this.props.settings}
                     onSettingsChanged={this.handleTaskListSettingsChanged}
-                    onRenewNowButtonClick={this.handleRenewNowButtonClick}/>
+                    onRenewNowButtonClick={this.handleRenewNowButtonClick}
+                    projects={this.props.projects} projectId={this.props.projectId}
+                    onMoveTaskListToProject={this.props.onMoveTaskListToProject}/>
                 </OverlayMenuContainer>
             ) 
         }

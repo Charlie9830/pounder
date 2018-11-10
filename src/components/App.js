@@ -36,6 +36,7 @@ renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
 closeTaskInfoAsync,
 openTaskInspectorAsync,
 updateProjectLayoutTypeAsync,
+moveTaskListToProjectAsync
 } from 'handball-libs/libs/pounder-redux/action-creators';
 import { getFirestore, getUserUid } from 'handball-libs/libs/pounder-firebase';
 import { backupFirebaseAsync } from '../utilities/FileHandling';
@@ -134,6 +135,7 @@ class App extends React.Component {
     this.getTaskInspectorJSX = this.getTaskInspectorJSX.bind(this);
     this.handleTaskInspectorOpen = this.handleTaskInspectorOpen.bind(this);
     this.handleLayoutSelectorChange = this.handleLayoutSelectorChange.bind(this);
+    this.handleMoveTaskListToProject = this.handleMoveTaskListToProject.bind(this);
   }
 
   componentDidMount() { 
@@ -355,11 +357,30 @@ class App extends React.Component {
               onLayoutSelectorChange={this.handleLayoutSelectorChange}
               projectLayoutType={this.props.selectedProjectLayoutType}
               showProjectLayoutTypeSelector={this.props.isSelectedProjectRemote}
+              projects={this.props.projects}
+              onMoveTaskListToProject={this.handleMoveTaskListToProject}
               />
           </div>
         </div>
       </div>
     );
+  }
+
+  handleMoveTaskListToProject(sourceProjectId, targetProjectId, taskListWidgetId) {
+    if (targetProjectId !== "-1") {
+      var projectName = this.props.projects.find(item => {
+        return item.uid === targetProjectId;
+      }).projectName;
+
+      this.props.dispatch(setMessageBox(true, `Are you sure you want to move this list to ${projectName}`,
+        MessageBoxTypes.STANDARD, null, result => {
+          this.props.dispatch(setMessageBox(false));
+
+          if (result === "ok") {
+            this.props.dispatch(moveTaskListToProjectAsync(sourceProjectId, targetProjectId, taskListWidgetId));
+          }
+        }))
+    }
   }
 
   handleLayoutSelectorChange(newValue) {
@@ -755,8 +776,8 @@ class App extends React.Component {
     this.props.dispatch(setShowCompletedTasksAsync(false));
   }
 
-  handleLayoutChange(layouts, oldLayouts, projectId, taskListIdsToFoul) {
-    this.props.dispatch(updateProjectLayoutAsync(layouts, oldLayouts, projectId, taskListIdsToFoul));
+  handleLayoutChange(layouts, oldLayouts, projectId) {
+    this.props.dispatch(updateProjectLayoutAsync(layouts, oldLayouts, projectId));
   }
   
   handleTaskCheckBoxClick(e, projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
