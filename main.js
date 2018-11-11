@@ -1,7 +1,7 @@
 'use strict';
 
 // Import parts of electron to use
-const {app, BrowserWindow, Menu} = require('electron');
+const {app, BrowserWindow, Menu, powerSaveBlocker} = require('electron');
 const electron = require('electron');
 const path = require('path')
 const url = require('url')
@@ -79,6 +79,9 @@ function createWindow() {
     // Auto Updater.
     setupAutoUpdater();
 
+    // Power Monitor to Prevent App Nap.
+    powerSaveBlocker.start('prevent-app-suspension');
+
     // Power Monitor Event Listener.
     electron.powerMonitor.on('resume', () => {
       mainWindow.webContents.send('resume');
@@ -140,6 +143,11 @@ app.on('activate', () => {
 
 function setupAutoUpdater() {
   autoUpdater.checkForUpdatesAndNotify();
+
+  // Set the interval to check for Updates.
+  let interval = 30 * (60 * 1000); // 30 Minutes.
+  let intervalCallback = function() {autoUpdater.checkForUpdatesAndNotify() };
+  setInterval(intervalCallback, interval);
 
   autoUpdater.on('update-downloaded', (info) => {
     updateDownloaded = true;
