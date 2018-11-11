@@ -68,7 +68,8 @@ class TaskInspector extends React.Component {
                                 isGettingTaskComments={this.props.isGettingTaskComments}
                                 onPaginateCommentsRequest={this.handlePaginateTaskCommentsRequest}
                                 isAllTaskCommentsFetched={this.props.isAllTaskCommentsFetched}
-                                onDeleteButtonClick={this.handleTaskCommentDelete} />
+                                onDeleteButtonClick={this.handleTaskCommentDelete}
+                                isPaginating={this.props.isTaskCommentsPaginating} />
                         </div>
 
                         {/* Notes */}
@@ -161,6 +162,7 @@ let mapStateToProps = state => {
         taskComments: state.taskComments,
         isGettingTaskComments: state.isGettingTaskComments,
         isAllTaskCommentsFetched: state.isAllTaskCommentsFetched,
+        isTaskCommentsPaginating: state.isTaskCommentsPaginating,
     }
 }
 

@@ -90,7 +90,7 @@ class CommentPanel extends React.Component {
 
         // Prepend the Show More button.
         taskCommentsJSX.unshift((<ShowMoreButton key="0" onClick={this.handleShowMoreButtonClick}
-        isAllCommentsFetched={this.props.isAllTaskCommentsFetched}/>));
+        isAllCommentsFetched={this.props.isAllTaskCommentsFetched} isPaginating={this.props.isPaginating}/>));
         
         return taskCommentsJSX;
     }

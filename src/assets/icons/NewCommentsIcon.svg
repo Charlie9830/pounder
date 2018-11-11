@@ -15,7 +15,7 @@
    id="svg2"
    version="1.1"
    inkscape:version="0.91 r13725"
-   sodipodi:docname="NewCommentsIcon.svg">
+   sodipodi:docname="PostCommentIcon.svg">
   <defs
      id="defs4" />
   <sodipodi:namedview
@@ -26,7 +26,7 @@
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.90509668"
-     inkscape:cx="-91.617457"
+     inkscape:cx="-119.3682"
      inkscape:cy="139.79555"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -65,7 +65,7 @@
        y="657.82556"
        ry="1.9977899" />
     <ellipse
-       style="fill:#4c4cc8;fill-opacity:1;stroke:none;stroke-width:32;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#c8c8c8;fill-opacity:1;stroke:none;stroke-width:32;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4137"
        cx="198.01016"
        cy="854.85712"
@@ -73,7 +73,7 @@
        ry="125" />
     <path
        sodipodi:type="star"
-       style="fill:#4c4cc8;fill-opacity:1;stroke:none;stroke-width:32;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#c8c8c8;fill-opacity:1;stroke:none;stroke-width:32;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="path4139"
        sodipodi:sides="3"
        sodipodi:cx="280.63303"

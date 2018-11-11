@@ -1,7 +1,7 @@
 import React from 'react';
 import '../assets/css/ProjectSelector.css';
 import FavoriteIcon from '../assets/icons/HeartIcon.svg';
-import HasUnseenCommentsIcon from '../assets/icons/HasCommentsIcon.svg';
+import NewCommentsIcon from '../assets/icons/NewCommentsIcon.svg';
 import TextareaAutosize from 'react-autosize-textarea';
 import Hammer from 'hammerjs';
 
@@ -104,7 +104,7 @@ class ProjectSelector extends React.Component {
     getHasUnseenCommentsIconJSX(props) {
         if (props.projectIndicators.hasUnseenComments) {
             return (
-                <img className="ProjectSelectorCommentsIcon" src={HasUnseenCommentsIcon}/>
+                <img className="ProjectSelectorCommentsIcon" src={NewCommentsIcon}/>
             )
         }
     }
