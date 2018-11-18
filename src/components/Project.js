@@ -365,17 +365,6 @@ class Project extends React.Component{
         this.props.onSettingsMenuClose();
     }
 
-    findFreshTaskListIds(filteredTaskListWidgets) {
-        var freshIds = [];
-        filteredTaskListWidgets.forEach(item => {
-            if (item.isFresh !== undefined && item.isFresh === true) {
-                freshIds.push(item.uid);
-            }
-        })
-
-        return freshIds;
-    }
-
     handleAppSettingsButtonClick() {
         this.props.onAppSettingsButtonClick();
     }
