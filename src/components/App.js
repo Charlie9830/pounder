@@ -35,6 +35,7 @@ setShowCompletedTasks,
 renewChecklistAsync, openTaskInfo, getTaskCommentsAsync,
 closeTaskInfoAsync,
 openTaskInspectorAsync,
+closeTaskInspectorAsync,
 updateProjectLayoutTypeAsync,
 moveTaskListToProjectAsync
 } from 'handball-libs/libs/pounder-redux/action-creators';
@@ -141,7 +142,6 @@ class App extends React.Component {
   componentDidMount() { 
     // MouseTrap.
     this.bindMouseTrap();
-
 
     // Read and Apply Config Values.
     this.initalizeLocalConfig();
@@ -406,6 +406,10 @@ class App extends React.Component {
   handleEscapeKeyPress(mousetrap) {
     if (this.props.isATaskMoving === true) {
       this.props.dispatch(cancelTaskMove());
+    }
+
+    if (this.props.openTaskInspectorId !== -1) {
+      this.props.dispatch(closeTaskInspectorAsync());
     }
   }
 
