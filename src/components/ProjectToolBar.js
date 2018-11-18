@@ -10,6 +10,7 @@ import KeyboardIcon from '../assets/icons/KeyboardIcon.svg';
 import EyeOpenIcon from '../assets/icons/EyeOpenIcon.svg';
 import EyeClosedIcon from '../assets/icons/EyeClosedIcon.svg';
 import Button from './Button';
+import ReactTooltip from 'react-tooltip';
 
 class ProjectToolBar extends React.Component {
     constructor(props) {
@@ -84,17 +85,21 @@ class ProjectToolBar extends React.Component {
     getProjectLayoutTypeSelectorJSX() {
         if (this.props.showProjectLayoutTypeSelector) {
             return (
-                <div className="LayoutSelectorContainer">
+                <div className="LayoutSelectorContainer"
+                    data-tip='Use the Global Layout shared by every contributor, or your own Personal version.'
+                    data-border
+                    data-delay-show={500}>
                     <select className="LayoutSelector" ref={this.layoutSelectorRef} value={this.props.projectLayoutType}
                         onChange={this.handleLayoutSelectorChange}>
                         <option value="global">
                             Global Layout
-                            </option>
+                       </option>
 
                         <option value="local">
-                            Local Layout
-                            </option>
+                            Personal Layout
+                       </option>
                     </select>
+                    <ReactTooltip />
                 </div>
             )
         }
