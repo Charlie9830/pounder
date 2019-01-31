@@ -34,7 +34,7 @@ root.id = "root";
 document.body.appendChild( root );
 
 // Setup Backend.
-setupBackend("production", "desktop");
+setupBackend("development", "desktop");
 
 let DragSourcedApp = DragDropContext(HTML5Backend)(VisibleApp);
 
