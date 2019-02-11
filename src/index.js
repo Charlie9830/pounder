@@ -6,7 +6,7 @@ import { setupBackend ,appStore } from 'handball-libs/libs/pounder-redux';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import VisibleAppThemeInjector from './components/AppThemeInjector';
-require('typeface-roboto');
+// require('typeface-roboto');
 
 if (process.env.NODE_ENV === 'production') {
     // eslint-disable-next-line
@@ -34,6 +34,11 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 require('typeface-open-sans');
+
+// Since we are using HtmlWebpackPlugin WITHOUT a template, we should create our own root node in the body element before rendering into it
+let root = document.createElement('div');
+root.id = "root";
+document.body.appendChild( root );
 
 setupBackend("development", "desktop");
 

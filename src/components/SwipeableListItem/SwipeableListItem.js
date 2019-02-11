@@ -129,14 +129,19 @@ class SwipeableListItem extends Component {
                     </div>
 
                     <div style={childrenContainer}>
+                        {this.props.children}
+
+                        {/* Causing invalid Type error
                         <Swipeable
                             onSwipingLeft={this.handleSwipingLeft}
                             onSwipingRight={this.handleSwipingRight}
                             onSwiped={this.handleSwiped}>
                             <div ref={this.childrenContainerRef}>
-                                {this.props.children}
+                                
                             </div>
                         </Swipeable>
+
+                        */} 
                     </div>
 
                     <div style={rightActionsContainer}>
