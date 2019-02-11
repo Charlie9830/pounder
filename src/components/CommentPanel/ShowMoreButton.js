@@ -1,39 +1,42 @@
 import React from 'react';
-import Button from '../Button';
-import CenteringContainer from '../../containers/CenteringContainer';
-import Spinner from '../Spinner';
-import '../../assets/css/CommentPanel/ShowMoreButton.css';
+import { Button, CircularProgress, Typography } from '@material-ui/core';
 
-class ShowMoreButton extends React.Component {
-    constructor(props) {
-        super(props);
-
-        // Method Bindings.
-        this.getInternalJSX = this.getInternalJSX.bind(this);
-    }
-
-    render() {
-        var internalJSX = this.getInternalJSX();
-            return (
-                <div className="ShowMoreButtonContainer">
-                    <CenteringContainer>
-                        {internalJSX}
-                    </CenteringContainer>
-                </div>
-            )
-    }
-
-    getInternalJSX() {
-        if (this.props.isPaginating) {
-            return <Spinner size="small"/>
-        }
-
-        return this.props.isAllCommentsFetched ? 
-        <div className="ShowMoreButtonText"> No more comments </div> :
-        <Button size="small" text="More" onClick={() => { this.props.onClick() }}/>;
-    }
-
-
+let containerStyle = {
+    width: '100%',
+    minHeight: '48px',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    justifyItems: 'center'
 }
+
+const ShowMoreButton = (props) => {
+    if (props.isLoadingMore) {
+        return (
+            <div style={containerStyle}>
+                <CircularProgress/>
+            </div>
+            
+        )
+    }
+
+    if (props.hasMoreComments) {
+        return (
+            <div style={containerStyle}>
+                <Button variant="text" onClick={props.onClick}> Show more </Button>
+            </div>
+        )
+    }
+
+    return (
+        <div style={containerStyle}>
+            <Typography
+                variant="caption"
+                color="textSecondary">
+                No more comments
+               </Typography>
+        </div>
+    )
+};
 
 export default ShowMoreButton;

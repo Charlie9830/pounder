@@ -1,117 +1,127 @@
-import React from 'react';
+import React, { Component } from 'react';
 import Moment from 'moment';
-import CommentPanelInput from './CommentPanelInput';
-import Comment from './Comment';
+import CommentInput from './CommentInput';
 import ShowMoreButton from './ShowMoreButton';
-import CenteringContainer from '../../containers/CenteringContainer';
-import Spinner from '../Spinner';
-import { getUserUid, TaskCommentQueryLimit } from 'handball-libs/libs/pounder-firebase';
-import '../../assets/css/CommentPanel/CommentPanel.css';
+import Comment from './Comment';
+import SwipeableListItem from '../SwipeableListItem/SwipeableListItem';
+import TransitionList from '../TransitionList/TransitionList';
+import ListItemTransition from '../TransitionList/ListItemTransition';
+import { getUserUid } from 'handball-libs/libs/pounder-firebase';
+import { withTheme } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Panel from './Panel';
 
-class CommentPanel extends React.Component {
+
+let gridStyle = {
+    width: '100%',
+    height: 'calc(100% - 16px)',
+    display: 'grid',
+    gridTemplateRows: '[Panel]1fr [Input]auto',
+    marginTop: '8px',
+    marginBotom: '8px',
+}
+
+let commentContainerStyle = {
+    gridRow: 'Panel',
+    placeSelf: 'stretch stretch',
+    overflowY: 'scroll',
+    padding: '0px 8px 0px 8px',
+}
+
+let spinnerContainerStyle = {
+    ...commentContainerStyle,
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center'
+}
+
+class CommentPanel extends Component {
     constructor(props) {
         super(props);
-
-        // Refs
-        this.latestCommentScrollTarget = React.createRef();
+        
+        // Refs.
+        this.panelRef = React.createRef();
 
         // Method Bindings.
-        this.getTaskCommentsJSX = this.getTaskCommentsJSX.bind(this);
-        this.handleNewComment = this.handleNewComment.bind(this);
-        this.handleShowMoreButtonClick = this.handleShowMoreButtonClick.bind(this);
-        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        if (this.props.taskComments !== undefined &&
-            prevProps.taskComments.length !== this.props.taskComments.length &&
-            this.props.taskComments.length !== 0) {
-            // Scroll Latest Message into View.
-            this.latestCommentScrollTarget.current.scrollIntoView();
-        }
+        this.getCommentsJSX = this.getCommentsJSX.bind(this);
     }
 
     render() {
-        var taskCommentsJSX = this.getTaskCommentsJSX();
-
         return (
-            <div className="CommentPanelGrid">
-                <div className="CommentPanelCommentsContainer">
-                    {taskCommentsJSX}
-                </div>
-                
-                <div className="CommentPanelInputContainer">
-                    <CommentPanelInput onNewComment={this.handleNewComment}/>
+            <div style={gridStyle}>
+                <Panel 
+                spinnerContainerStyle={spinnerContainerStyle}
+                commentContainerStyle={commentContainerStyle}
+                isLoadingComments={this.props.isLoadingComments}>
+                    <TransitionList>
+                        {this.getCommentsJSX()}
+                    </TransitionList>
+                </Panel>
+                    
+
+                <div style={{gridRow: 'Input', placeSelf: 'stretch stretch'}}>
+                    <CommentInput 
+                    autoFocus={this.props.autoFocus}
+                    onPost={this.props.onCommentPost}/>
                 </div>
             </div>
-        )
+        );
     }
 
-    getTaskCommentsJSX() {
-        var taskComments = this.props.taskComments === undefined ? [] : [...this.props.taskComments];
+    getCommentsJSX() {
+        let sortedComments = this.props.comments.slice().sort(this.commentSorter);
 
-        if (this.props.isGettingTaskComments === false && taskComments.length === 0) {
-            return (
-                <CenteringContainer>
-                    <div className="CommentPanelNote">
-                        No Comments
-                    </div>
-                </CenteringContainer>
-            )
-        }
+        let jsx = sortedComments.map( item => {
+            let canDelete = item.createdBy === getUserUid();
+            let timeAgo = Moment(item.created).fromNow();
+            let isUnread = !item.seenBy.some(item => { return item === getUserUid() })
 
-        if (this.props.isGettingTaskComments === true) {
-            return (
-                <div className="CommentPanelSpinnerContainer">
-                    <CenteringContainer>
-                        <Spinner size="medium"/>
-                    </CenteringContainer>
-                </div>
-            )
-        }
-
-        
-        var sortedTaskComments = taskComments.sort(this.taskCommentSorter);
-        
-        var taskCommentsJSX = sortedTaskComments.map(item => {
-            var canDelete = item.createdBy === getUserUid();
-            var timeAgo = Moment(item.created).fromNow();
-            var isUnread = !item.seenBy.some(item => { return item === getUserUid() })
+            let rightActions = canDelete === true && !this.props.disableInteraction ?
+            [ { value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/> }] :
+            null;
 
             return (
-                <Comment key={item.uid} uid={item.uid} text={item.text} timeAgo={timeAgo} createdBy={item.createdBy}
-                displayName={item.displayName} isUnread={isUnread} canDelete={canDelete} isSynced={item.isSynced}
-                onDeleteButtonClick={this.handleDeleteButtonClick}/>
+                <ListItemTransition
+                key={item.uid}>
+                    <SwipeableListItem
+                        rightActions={rightActions}
+                        onActionClick={(action) => { this.props.onCommentDelete(item.uid) }}>
+                        <Comment
+                            disableSyncStatus={this.props.disableSyncStatus}
+                            text={item.text}
+                            timeAgo={timeAgo}
+                            displayName={item.displayName}
+                            isUnread={isUnread}
+                            isSynced={item.isSynced}
+                        />
+                    </SwipeableListItem>
+                </ListItemTransition>
             )
         })
 
-        // Append a scroll Target invisible Component.
-        taskCommentsJSX.push((<div key="scroll" ref={this.latestCommentScrollTarget}/>))
-
-        // Prepend the Show More button.
-        taskCommentsJSX.unshift((<ShowMoreButton key="0" onClick={this.handleShowMoreButtonClick}
-        isAllCommentsFetched={this.props.isAllTaskCommentsFetched} isPaginating={this.props.isPaginating}/>));
+        if (this.props.disableShowMoreButton !== true) {
+            jsx.unshift(
+                <ListItemTransition
+                key="showmorebutton">
+                    <ShowMoreButton
+                        isLoadingMore={this.props.isPaginating}
+                        hasMoreComments={!this.props.isAllLoaded}
+                        onClick={this.props.onPaginateComments} />
+                </ListItemTransition>
+            )
+        }
         
-        return taskCommentsJSX;
+        return jsx;
     }
 
-    handleDeleteButtonClick(commentId) {
-        this.props.onDeleteButtonClick(commentId);
-    }
-
-    handleShowMoreButtonClick() {
-        this.props.onPaginateCommentsRequest();
-    }
-
-    taskCommentSorter(a,b) {
+    commentSorter(a,b) {
         var createdA = new Date(a.created);
         var createdB = new Date(b.created);
         return createdA - createdB;
     }
-
-    handleNewComment(value) {
-        this.props.onNewComment(value);
-    }
 }
 
-export default CommentPanel;
+export default withTheme()(CommentPanel);

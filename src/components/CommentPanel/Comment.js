@@ -1,81 +1,66 @@
-import React from 'react';
-import '../../assets/css/CommentPanel/Comment.css';
-import DeleteCommentIcon from '../../assets/icons/DeleteCommentIcon.svg';
+import React, { Component } from 'react';
+import { ListItem, Typography } from '@material-ui/core';
+import UnreadIndicator from './UnreadIndicator';
 
-class Comment extends React.Component {
-    constructor(props) {
-        super(props);
+let gridStyle = {
+    width: '100%',
+    height: 'fit-content',
+    display: 'grid',
+    gridTemplateRows: 'auto 1fr auto',
+    gridTemplateColumns: 'auto 1fr 1fr',
+    gridTemplateAreas: `' UnreadIndicator DisplayName  .    Timestamp '
+                        ' UnreadIndicator Text        Text  Text     '`
+}
 
-        this.state = {
-            isMouseOver: false,
-        }
+let unreadIndicatorContainer = {
+    gridArea: 'UnreadIndicator',
+    placeSelf: 'stretch stretch',
+}
 
-        // Method Bindings.
-        this.handleContainerMouseEnter = this.handleContainerMouseEnter.bind(this);
-        this.handleContainerMouseLeave = this.handleContainerMouseLeave.bind(this);
-        this.getDeleteButtonJSX = this.getDeleteButtonJSX.bind(this);
-        this.handleDeleteButtonClick = this.handleDeleteButtonClick.bind(this);
-    }
+let displayNameContainer = {
+    gridArea: 'DisplayName',
+    placeSelf: 'center flex-start '
+}
 
+let timestampContainer = {
+    gridArea: 'Timestamp',
+    placeSelf: 'center flex-end'
+}
+
+let textContainer = {
+    gridArea: 'Text',
+    placeSelf: 'center flex-start'
+}
+
+class Comment extends Component {
     render() {
-        var deleteButtonJSX = this.getDeleteButtonJSX();
-        var timeAgo = this.props.isSynced ? this.props.timeAgo : "Not Synced";
+        let timeAgo = this.props.isSynced || this.props.disableSyncStatus === true ? this.props.timeAgo : "Not Synced";
 
         return (
-            <div className="CommentContainer" data-isunread={this.props.isUnread}
-            onMouseEnter={this.handleContainerMouseEnter} onMouseLeave={this.handleContainerMouseLeave} >
-                {/* Header  */} 
-                <div className="CommentHeaderContainer">
-                    <div className="CommentHeaderGrid">
-                        {/* Display Name  */} 
-                        <div className="CommentDisplayNameContainer">
-                            <div className="CommentDisplayName">
-                                {this.props.displayName}
-                            </div>
-                        </div>
+            <ListItem>
+                <div style={gridStyle}>
+                    <div
+                    style={unreadIndicatorContainer}>
+                        <UnreadIndicator show={this.props.isUnread}/>
+                    </div>
 
-                        {/* Time Ago  */} 
-                        <div className="CommentTimeAgoContainer">
-                            <div className="CommentTimeAgo">
-                                {timeAgo}
-                            </div>
-                        </div>
+                    <div 
+                    style={displayNameContainer}>
+                        <Typography color="textSecondary"> { this.props.displayName } </Typography>
+                    </div>
 
-                        {/* Delete Button */}
-                        {deleteButtonJSX}
+                    <div 
+                    style={timestampContainer}>
+                        <Typography color="textSecondary" variant="caption"> { timeAgo } </Typography>
+                    </div>
+
+                    <div 
+                    style={textContainer}>
+                        <Typography color="textPrimary"> { this.props.text } </Typography>
                     </div>
                 </div>
-
-                {/* Comment Text  */} 
-                <div className="CommentTextContainer">
-                    <div className="CommentText">
-                        {this.props.text}
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    getDeleteButtonJSX() {
-        if (this.props.canDelete && this.state.isMouseOver) {
-            return (
-                <div className="CommentDeleteButtonContainer" onClick={this.handleDeleteButtonClick}>
-                    <img className="CommentDeleteButton" src={DeleteCommentIcon}/>
-                </div>
-            )
-        }
-    }
-
-    handleDeleteButtonClick() {
-        this.props.onDeleteButtonClick(this.props.uid);
-    }
-
-    handleContainerMouseEnter() {
-        this.setState({isMouseOver: true});
-    }
-
-    handleContainerMouseLeave() {
-        this.setState({isMouseOver: false});
+            </ListItem>
+        );
     }
 }
 

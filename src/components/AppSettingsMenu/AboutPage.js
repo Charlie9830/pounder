@@ -1,16 +1,27 @@
 import React from 'react';
-import CenteringContainer from '../../containers/CenteringContainer';
-import HorizontalCenteringContainer from '../../containers/HorizontalCenteringContainer';
-import '../../assets/css/AppSettingsMenu/AboutPage.css';
-import AppIcon from '../../assets/icons/Handball-Icon-Desktop-Draft.svg'
-import GitHubMark from '../../assets/icons/GitHubMark.svg';
-import os from 'os';
-import open from 'open';
+import AppIcon from '../../assets/icons/Handball-Icon-Desktop-Draft.svg';
+
+import { Grid, Typography } from '@material-ui/core';
+
 let dependencyVersions = [
     { name: "handball-libs", value: require('handball-libs/package.json').version },
-    { name: "firestore-batch-paginator", value: require('firestore-batch-paginator/package.json').version },
-    
 ]
+
+// eslint-disable-next-line
+const appVersion = HANDBALL_VERSION;
+
+let AppIconComponent = (props) => {
+    let style = {
+        flex: 1,
+        width: '96px',
+        height: '96px',
+        marginTop: '32px',
+        marginBottom: '32px',
+    }
+    return (
+        <img style={style} src={AppIcon}/>
+    )
+}
 
 class AboutPage extends React.Component {
     constructor(props) {
@@ -21,68 +32,38 @@ class AboutPage extends React.Component {
         }
 
         // Method Bindings.
-        this.handleGitHubMarkClick = this.handleGitHubMarkClick.bind(this);
         this.getDependencyJSX = this.getDependencyJSX.bind(this);
     }
-
     render() {
-        const appVersion = HANDBALL_VERSION;
-        const nodeVersion = process.versions.node;
-        const chromiumVersion = process.versions.chrome;
-        const electronVersion = process.versions.electron;
-        const arch = process.arch;
-        const platform = process.platform;
-        const operatingSystem = os.release();
-
         var dependencyJSX = this.getDependencyJSX();
 
         return (
-            <div className="AboutPageContainer">
-                <CenteringContainer>
-                    <div className="AboutPageAppInfoContainer">
-                        <img className="AboutPageAppIcon" src={AppIcon} 
-                        onDoubleClick={() => {this.setState({showDependencyVersionInfo: true})}} />
-                        <div className="AboutPageAppTitle"> Handball </div>
-                        <div className="AboutPageVersionNumber"> Version {appVersion} </div>
-                        <div className="AboutPageAuthor"> Charlie Hall </div>
-                        
-                        <div className="AboutPageDivider"/>
+            <Grid container
+            direction="column"
+            justify="center"
+            alignItems="center">
 
-                        <div className="AboutPageSystemValueContainer">
-                            <HorizontalCenteringContainer>
-                                <div className="AboutPageSystemValue"> Node Version: {nodeVersion} </div>
-                            </HorizontalCenteringContainer>
+                <Grid item onClick={() => {this.setState({showDependencyVersionInfo: !this.state.showDependencyVersionInfo})}}>
+                    <AppIconComponent/>
+                </Grid>
+                
 
-                            <HorizontalCenteringContainer>
-                                <div className="AboutPageSystemValue"> Chromium Version: {chromiumVersion} </div>
-                            </HorizontalCenteringContainer>
+                <Typography color="textPrimary" variant="h6"> Handball </Typography>
+                <Typography color="textSecondary"> Version {appVersion} </Typography>
+                <Typography color="textSecondary"> Charlie Hall </Typography>
 
-                            <HorizontalCenteringContainer>
-                                <div className="AboutPageSystemValue"> Electron Version: {electronVersion} </div>
-                            </HorizontalCenteringContainer>
+                {dependencyJSX}
+                
+                <Grid container
+                direction="column"
+                justify="flex-end"
+                alignItems="center"
+                style={{marginTop: '32px'}}>
+                    <Typography color="textSecondary"> To report bugs or suggest features visit </Typography>
+                    <Typography color="textPrimary"> {this.props.issuesURL} </Typography>
+                </Grid>
 
-                            <HorizontalCenteringContainer>
-                                <div className="AboutPageSystemValue"> Operating System: {platform}  {operatingSystem}  {arch} </div>
-                            </HorizontalCenteringContainer>
-                        </div>
-
-                        <div className="AboutPageDivider"/>
-                        {dependencyJSX}
-                        
-                    </div>
-
-                    <div className="AboutPageDivider"/>
-
-                    <div className="AboutPageContactContainer">
-                        <div className="AboutPageContactText">
-                            Click below to report bugs, suggest features or join the development team.
-                        </div>
-                        <div className="AboutPageGithubMarkContainer" onClick={this.handleGitHubMarkClick}>
-                            <img className="AboutPageGithubMark" src={GitHubMark}/>
-                        </div>
-                    </div>
-                </CenteringContainer>
-            </div>
+            </Grid>
         )
     }
 
@@ -90,22 +71,16 @@ class AboutPage extends React.Component {
         if (this.state.showDependencyVersionInfo) {
             var jsx = dependencyVersions.map((item,index) => {
                 return (
-                    <HorizontalCenteringContainer key={index}>
-                        <div className="AboutPageSystemValue"> {item.name} : {item.value} </div>
-                    </HorizontalCenteringContainer>
+                    <Typography key={index}> {item.name} : {item.value} </Typography>
                 )
             })
     
             return (
-                <div className="AboutPageSystemValueContainer">
+                <Grid item style={{marginTop: '24px'}}>
                     {jsx}
-                </div>
+                </Grid>    
             )
         }
-    }
-
-    handleGitHubMarkClick() {
-        open("https://github.com/Charlie9830/Pounder/issues/new/choose");
     }
 }
 

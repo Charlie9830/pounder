@@ -1,42 +1,46 @@
+import '@babel/polyfill'; // Stops renerator runtime error when using async/await.
 import React from 'react';
-import { render } from 'react-dom';
-import VisibleApp from './components/App';
-import Path from 'path';
-import { setupBackend, appStore, setupFirebase } from 'handball-libs/libs/pounder-redux';
+import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContext } from 'react-dnd'
+import { setupBackend ,appStore } from 'handball-libs/libs/pounder-redux';
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
+import MomentUtils from '@date-io/moment';
+import VisibleAppThemeInjector from './components/AppThemeInjector';
+require('typeface-roboto');
 
-if (process.env.NODE_ENV !== 'development') {
-  var Rollbar = require("rollbar");
-  var rollbar = new Rollbar({
-    accessToken: '9c728629baff4e7480314f39a5c4f12e',
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-  });
+if (process.env.NODE_ENV === 'production') {
+    // eslint-disable-next-line
+    const handballVersion = HANDBALL_VERSION;
+    const { detect } = require('detect-browser');
+    const browser = detect();
+    var browserName = "Unknown";
+    if (browser) { browserName = browser.name + " " + browser.version; }
 
-  rollbar.configure({
-    codeVersion: HANDBALL_VERSION,
-    captureIp: false,
-    payload: {
-      environment: "production",
-      platform: process.platform,
-    }
-  })
+    var Rollbar = require("rollbar");
+    var rollbar = new Rollbar({
+        accessToken: '9ec475a3202f424f942fbc3d02a3e7c6',
+        captureUncaught: true,
+        captureUnhandledRejections: true,
+    });
+
+    rollbar.configure({
+        codeVersion: handballVersion,
+        captureIp: false,
+        payload: {
+            environment: "production",
+            platform: browserName,
+        }
+    })
 }
 
-// Load Open Sans typeface
 require('typeface-open-sans');
 
-// Since we are using HtmlWebpackPlugin WITHOUT a template, we should create our own root node in the body element before rendering into it
-let root = document.createElement('div');
-root.id = "root";
-document.body.appendChild( root );
-
-// Setup Backend.
 setupBackend("development", "desktop");
 
-let DragSourcedApp = DragDropContext(HTML5Backend)(VisibleApp);
-
-// Now we can render our application into it
-render( <Provider store={appStore}><DragSourcedApp/></Provider>, document.getElementById('root') );
+ReactDOM.render(
+    <MuiPickersUtilsProvider utils={MomentUtils}>
+        <Provider store={appStore}>
+                <VisibleAppThemeInjector />
+        </Provider>
+    </MuiPickersUtilsProvider>,
+    document.getElementById('root'));

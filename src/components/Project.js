@@ -1,464 +1,428 @@
 import React from 'react';
-import TaskListWidget from './TaskListWidget';
-import ProjectMessageDisplay from './ProjectMessageDisplay';
-import TaskListWidgetGrid from './TaskListWidgetGrid';
-import '../assets/css/Project.css';
-import '../assets/css/react-grid-layout/styles.css';
-import '../assets/css/react-resizable/styles.css';
-import ProjectToolBar from './ProjectToolBar';
-import Mousetrap from 'mousetrap';
+import TaskList from './TaskList';
+import TaskBase from './Task/TaskBase';
+import DueDate from './Task/DueDate';
+import IndicatorPanel from './Task/IndicatorPanel';
+import PriorityIndicator from './Task/PriorityIndicator';
+import TaskCheckbox from './Task/TaskCheckbox';
+import TaskText from './Task/TaskText';
+import AddNewTaskListButton from './AddNewTaskListButton';
+import SwipeableListItem from './SwipeableListItem/SwipeableListItem';
+import RenewChecklistButton from './RenewChecklistButton'
+import MoveTaskIcon from '../icons/MoveTaskIcon';
+import AddNewTaskButton from './AddNewTaskButton.js';
+import ProjectMenu from './ProjectMenu';
+import ListItemTransition from './TransitionList/ListItemTransition';
 
-class Project extends React.Component{
-    constructor(props){
+import {
+    GetDisplayNameFromLookup, TaskDueDateSorter, TaskCompletedSorter, TaskDateAddedSorter, TaskAssigneeSorter,
+    TaskPrioritySorter, TaskAlphabeticalSorter
+} from 'handball-libs/libs/pounder-utilities';
+import { getUserUid } from 'handball-libs/libs/pounder-firebase';
+import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
+import { ParseDueDate } from 'handball-libs/libs/pounder-utilities';
+
+import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom } from '@material-ui/core';
+import { withStyles } from '@material-ui/core/styles';
+
+import AddIcon from '@material-ui/icons/Add';
+import AddTaskListIcon from '@material-ui/icons/PlaylistAdd';
+import DeleteIcon from '@material-ui/icons/Delete';
+import MenuIcon from '@material-ui/icons/Menu';
+import JumpMenu from './JumpMenu';
+
+let styles = theme => {
+    let primaryFabBase = {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 20,
+        left: 'auto',
+        position: 'fixed',
+    }
+
+    let secondaryFabBase = {
+        margin: 0,
+        top: 'auto',
+        right: 20,
+        bottom: 90,
+        left: 'auto',
+        position: 'fixed',
+    }
+
+    return {
+        primaryFabMoveUp: {
+            ...primaryFabBase,
+            transform: 'translate3d(0, -46px, 0)',
+            transition: theme.transitions.create(['transform', 'bottom'], {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.easeOut,
+            }),
+        },
+    
+        primaryFabMoveDown: {
+            ...primaryFabBase,
+            transform: 'translate3d(0, 0, 0)',
+            transition: theme.transitions.create(['transform', 'bottom'], {
+                duration: theme.transitions.duration.leavingScreen,
+                easing: theme.transitions.easing.sharp,
+            }),
+        },
+
+        secondaryFabMoveUp: {
+            ...secondaryFabBase,
+            transform: 'translate3d(0, -46px, 0)',
+            transition: theme.transitions.create(['transform', 'bottom'], {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.easeOut,
+            }),
+        },
+
+        secondaryFabMoveDown: {
+            ...secondaryFabBase,
+            transform: 'translate3d(0, 0, 0)',
+            transition: theme.transitions.create(['transform', 'bottom'], {
+                duration: theme.transitions.duration.leavingScreen,
+                easing: theme.transitions.easing.sharp,
+            }),
+        },
+
+        projectGrid: {
+            display: 'grid',
+            width: '100%',
+            height: '100%',
+            gridTemplateRows: '[Toolbar]auto [Content]1fr'
+        },
+
+        toolbarContainer: {
+            gridRow: 'Toolbar',
+            placeSelf: 'stretch'
+        },
+
+        contentContainer: {
+            gridRow: 'Content',
+            placeSelf: 'stretch',
+            overflowY: 'scroll',
+            background: theme.palette.background.default,
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'flex-start',
+            alignItems: 'center',
+            paddingBottom: '160px' // Clear the Fabs
+        }
+    }
+};
+
+const projectRightButtonsContainer = {
+    display: 'flex',
+    flexDirection: 'row-reverse',
+    justifyContent: 'flex-start',
+    alignItems: 'center'
+}
+
+class Project extends React.Component {
+    constructor(props) {
         super(props);
 
-        this.layoutSyncRequired = false;
-        this.layoutsToSync = null;
+        // Refs.
+        this.contentContainerRef = React.createRef();
 
-        this.handleTaskSubmit = this.handleTaskSubmit.bind(this);
-        this.handleWidgetClick = this.handleWidgetClick.bind(this);
-        this.handleWidgetHeaderDoubleClick = this.handleWidgetHeaderDoubleClick.bind(this);
-        this.handleTaskListWidgetHeaderSubmit = this.handleTaskListWidgetHeaderSubmit.bind(this);
-        this.handleTaskClick = this.handleTaskClick.bind(this);
-        this.handleLayoutChange = this.handleLayoutChange.bind(this);
-        this.handleTaskCheckBoxClick = this.handleTaskCheckBoxClick.bind(this);
-        this.handleTaskListWidgetRemoveButtonClick = this.handleTaskListWidgetRemoveButtonClick.bind(this);
-        this.handleAddTaskButtonClick = this.handleAddTaskButtonClick.bind(this);
-        this.handleRemoveTaskButtonClick = this.handleRemoveTaskButtonClick.bind(this);
-        this.handleAddTaskListButtonClick = this.handleAddTaskListButtonClick.bind(this);
-        this.handleRemoveTaskListButtonClick = this.handleRemoveTaskListButtonClick.bind(this);
-        this.handleTaskTwoFingerTouch = this.handleTaskTwoFingerTouch.bind(this);
-        this.handleTaskListSettingsChanged = this.handleTaskListSettingsChanged.bind(this);
-        this.handleDueDateClick = this.handleDueDateClick.bind(this);
-        this.handleTaskListSettingsButtonClick = this.handleTaskListSettingsButtonClick.bind(this);
-        this.handleLockButtonClick = this.handleLockButtonClick.bind(this);
-        this.getProjectMessageDisplayJSX = this.getProjectMessageDisplayJSX.bind(this);
-        this.handleAppSettingsButtonClick = this.handleAppSettingsButtonClick.bind(this);
-        this.handleSettingsMenuClose = this.handleSettingsMenuClose.bind(this);
-        this.getToolbarButtonEnableStates = this.getToolbarButtonEnableStates.bind(this);
-        this.handleKeyboardShortcutsButtonClick = this.handleKeyboardShortcutsButtonClick.bind(this);
-        this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
-        this.handleShowCompletedTasksChanged = this.handleShowCompletedTasksChanged.bind(this);
-        this.handleRenewNowButtonClick = this.handleRenewNowButtonClick.bind(this);
-        this.focusNextTaskList = this.focusNextTaskList.bind(this);
-        this.focusPreviousTaskList = this.focusPreviousTaskList.bind(this);
-        this.handleKeyCombo = this.handleKeyCombo.bind(this);
-        this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
-        this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
-        this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
+        // Method Bindings.
+        this.getTaskListsJSX = this.getTaskListsJSX.bind(this);
+        this.getTasksJSX = this.getTasksJSX.bind(this);
+        this.handleJumpMenuItemClick = this.handleJumpMenuItemClick.bind(this);
+        this.getFabClassNames = this.getFabClassNames.bind(this);
     }
-
-    componentDidMount() {
-        Mousetrap.bind(['tab', 'shift+tab'], this.handleKeyCombo);
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-    }
-
-    componentWillUnmount() {
-        Mousetrap.unbind(['tab', 'shift+tab'], this.handleKeyCombo);
-    }
-
 
     render() {
-        // Build a list of TaskListWidgets to Render out here.
+        let { classes } = this.props;
+        const { primaryFabClassName, secondaryFabClassName } = this.getFabClassNames();
         
-        // Extract correct Layouts array from ProjectLayouts wrapper.
-        var selectedLayouts = this.extractSelectedProjectLayouts();
-        var layouts = JSON.parse(JSON.stringify(selectedLayouts)); // Hacky way to get RGL to update it's Layout more reliably.
-        
-        // Turn layouts array into a Lookup by taskListId to avoid an O[^n] operation when building the Task List Widgets.
-        var layoutsMap = {};
-        layouts.forEach(layout => {
-            layoutsMap[layout.i] = layout;
-        })
-
-        // Filter out Task Lists from other Projects.
-        var filteredTaskListWidgets = this.props.taskLists.filter(taskList => {
-            return taskList.project === this.props.projectId;
-        })
-
-        var taskListWidgets = filteredTaskListWidgets.map((item, index) => {
-            // Widget Layer.
-            var isFocused = this.props.focusedTaskListId === item.uid;
-            var isHeaderOpen = this.props.openTaskListWidgetHeaderId === item.uid;
-            var taskListSettings = item.settings;    
-
-            // Task Layer.
-            var tasks = this.props.tasks.filter(task => {
-                return task.taskList === item.uid;
-            })
-
-            var selectedTaskId = -1;
-            var openTaskInputId = -1;
-            var openMetadataId = -1;
-            if (this.props.selectedTask.taskListWidgetId === item.uid) {
-                selectedTaskId = this.props.selectedTask.taskId;
-
-                if (this.props.selectedTask.isInputOpen) {
-                    openTaskInputId = selectedTaskId;
-                }
-
-                if (this.props.selectedTask.isMetadataOpen) {
-                    openMetadataId = selectedTaskId
-                }
-            }
-
-            var movingTaskId = item.uid === this.props.sourceTaskListId ? this.props.movingTaskId : -1;
-
-            // We give the Layouts to RGL via the 'data-grid' property as well as using the 'layouts' prop.
-            // using Data-grid means that New Task Lists will render at a sane size initally, but only using data-grid means
-            // that updates to the Layout once established won't cause RGL to render. This is because RGL only looks at it's
-            // children's keys to decide if it should recalculate the layout when children change.
-            // Therefore we also provide provide the layouts via the RGL 'layouts' prop further down. This covers us for
-            // layout mutations.
-            var layoutEntry = {
-                x: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].x,
-                y: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].y,
-                w: layoutsMap[item.uid] === undefined ? 6 : layoutsMap[item.uid].w,
-                h: layoutsMap[item.uid] === undefined ? 4 : layoutsMap[item.uid].h,
-            }
-            
-
-            return (
-                /* Items must be wrapped in a div for ReactGridLayout to use them properly. */
-                <div key={item.uid} data-grid={layoutEntry}>
-                    <TaskListWidget key={index} taskListWidgetId={item.uid} isFocused={isFocused} taskListName={item.taskListName}
-                     tasks={tasks} isHeaderOpen={isHeaderOpen} selectedTaskId={selectedTaskId} openTaskInputId={openTaskInputId}
-                     onTaskSubmit={this.handleTaskSubmit} onWidgetClick={this.handleWidgetClick} movingTaskId={movingTaskId}
-                     onRemoveButtonClick={this.handleTaskListWidgetRemoveButtonClick} openMetadataId={openMetadataId}
-                     onHeaderDoubleClick={this.handleWidgetHeaderDoubleClick} onHeaderSubmit={this.handleTaskListWidgetHeaderSubmit}
-                     onTaskClick={this.handleTaskClick} onTaskCheckBoxClick={this.handleTaskCheckBoxClick} 
-                     onTaskTwoFingerTouch={this.handleTaskTwoFingerTouch} settings={taskListSettings} 
-                     onSettingsChanged={this.handleTaskListSettingsChanged} onDueDateClick={this.handleDueDateClick}
-                     onTaskListSettingsButtonClick={this.handleTaskListSettingsButtonClick}
-                     openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
-                     disableAnimations={this.props.disableAnimations}
-                     onSettingsMenuClose={this.handleSettingsMenuClose}
-                     onRenewNowButtonClick={this.handleRenewNowButtonClick}
-                     onTaskDragDrop={this.handleTaskDragDrop}
-                     enableKioskMode={this.props.enableKioskMode}
-                     onTaskInspectorOpen={this.props.onTaskInspectorOpen}
-                     memberLookup={this.props.memberLookup}
-                     projects={this.props.projects} projectId={this.props.projectId}
-                     onMoveTaskListToProject={this.props.onMoveTaskListToProject}
-                     />   
-                </div>
-            )
-        });
-
-
-        var projectMessageDisplayJSX = this.getProjectMessageDisplayJSX(filteredTaskListWidgets.length);
-        // Determine if getProjectMesssageDisplayJSX() has come back with null, if so we can show the Project.
-        var rglClassName = "ProjectRGL" // projectMessageDisplayJSX == null ? "Project" : "ProjectHidden";
-        var rglDragEnabled = this.props.openCalendarId === -1;
-
-        var toolbarButtonEnableStates = this.getToolbarButtonEnableStates();
-
         return (
-            <div className="ProjectGrid">
-                <div className="ProjectToolBarGridItem">
-                    <ProjectToolBar onAddTaskButtonClick={this.handleAddTaskButtonClick} onAddTaskListButtonClick={this.handleAddTaskListButtonClick}
-                    onRemoveTaskButtonClick={this.handleRemoveTaskButtonClick} onRemoveTaskListButtonClick={this.handleRemoveTaskListButtonClick}
-                    onLockButtonClick={this.handleLockButtonClick} onAppSettingsButtonClick={this.handleAppSettingsButtonClick}
-                    hideLockButton={this.props.hideLockButton} buttonEnableStates={toolbarButtonEnableStates}
-                    onKeyboardShortcutsButtonClick={this.handleKeyboardShortcutsButtonClick}
-                    onShowCompletedTasksChanged={this.handleShowCompletedTasksChanged} showCompletedTasks={this.props.showCompletedTasks}
-                    onLayoutSelectorChange={this.props.onLayoutSelectorChange} projectLayoutType={this.props.projectLayoutType}
-                    showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}/>
-                </div>
+            <React.Fragment>
+                <div
+                    className={classes['projectGrid']}>
+                    <div
+                        className={classes['toolbarContainer']}>
+                        <AppBar
+                            position="static">
+                            <Toolbar
+                                disableGutters={true}>
+                                <IconButton
+                                    onClick={this.props.onMenuButtonClick}>
+                                    <MenuIcon />
+                                </IconButton>
+                                <Typography variant="h6" style={{ flexGrow: 1 }}> {this.props.projectName} </Typography>
+                                <div style={projectRightButtonsContainer}>
+                                    <ProjectMenu
+                                        onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId)}}
+                                        onRenameProjectButtonClick={() => { this.props.onRenameProjectButtonClick(this.props.projectId, this.props.projectName) }}
+                                        onCompletedTasksButtonClick={this.props.onCompletedTasksButtonClick}
+                                        showCompletedTasks={this.props.showCompletedTasks}
+                                        onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
+                                        showOnlySelfTasks={this.props.showOnlySelfTasks}
+                                        onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }} />
+                                    <JumpMenu
+                                        isOpen={this.props.isJumpMenuOpen}
+                                        onOpen={this.props.onJumpMenuOpen}
+                                        onClose={this.props.onJumpMenuClose}
+                                        taskLists={this.props.taskLists}
+                                        onItemClick={this.handleJumpMenuItemClick} />
+                                </div>
 
-                <div className="ProjectGridItem">
-                    <div className="ProjectContent">
-                    
-                        {projectMessageDisplayJSX}
-
-                        {/* Provide layouts via the 'layout' prop to cover us for remote Layout Mutation  */} 
-                        <TaskListWidgetGrid rglClassName={rglClassName} layout={layouts}
-                            onLayoutChange={this.handleLayoutChange} rglDragEnabled={this.props.rglDragEnabled}>
-                            {taskListWidgets}
-                        </TaskListWidgetGrid>
-
+                            </Toolbar>
+                        </AppBar>
                     </div>
+
+
+                    <div
+                        className={classes['contentContainer']}
+                        ref={this.contentContainerRef}>
+                        {this.getTaskListsJSX()}
+                        <AddNewTaskListButton onClick={this.props.onAddNewTaskListButtonClick} />
+                    </div>
+
                 </div>
-            </div>
+
+                <Zoom
+                    in={this.props.enableStates.newTaskFab}>
+                    <Fab
+                        className={primaryFabClassName}
+                        color="primary"
+                        onClick={this.props.onAddNewTaskButtonClick}>
+                        <AddIcon />
+                    </Fab>
+                </Zoom>
+
+                <Fab
+                    className={secondaryFabClassName}
+                    color="secondary"
+                    onClick={this.props.onAddNewTaskListButtonClick}>
+                    <AddTaskListIcon />
+                </Fab>
+            </React.Fragment>
+            
         )
     }
 
-    handleTaskDragDrop(taskId, targetTaskListWidgetId) {
-        this.props.onTaskDragDrop(taskId, targetTaskListWidgetId);
-    }
+    getFabClassNames() {
+        let { classes } = this.props;
+        const primaryFabClassName = this.props.isASnackbarOpen ? classes['primaryFabMoveUp'] : classes['primaryFabMoveDown'];
+        let secondaryFabClassName = this.props.isASnackbarOpen ? classes['secondaryFabMoveUp'] : classes['secondaryFabMoveDown'];
 
-    handleKeyCombo(mousetrap) {
-        mousetrap.preventDefault();
-        // Tab.
-        if (mousetrap.key === "Tab" && mousetrap.shiftKey === false) {
-            this.focusNextTaskList();
+        // Override if the Primary button is going to be hidden so the secondary will 'take it's place'.
+        if (this.props.enableStates.newTaskFab === false ) {
+            secondaryFabClassName = primaryFabClassName;
         }
-
-        // Shift + Tab.
-        if (mousetrap.key === "Tab" && mousetrap.shiftKey === true) {
-            this.focusPreviousTaskList();
-        }
-        
-    }
-
-    getGridSortedTaskListIds() {
-        var sortedLayouts = this.extractSelectedProjectLayouts().sort(this.layoutGridSorter);
-
-        var sortedTaskListIds = sortedLayouts.map(item => {
-            return item.i;
-        })
-
-        return sortedTaskListIds;
-    }
-
-    focusNextTaskList() {
-        var sortedTaskListIds = this.getGridSortedTaskListIds();
-
-        if (sortedTaskListIds.length === 0) {
-            return;
-        }
-
-        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
-            return item === this.props.focusedTaskListId;
-        })
-
-        var filteredTaskListWidgets = this.props.taskLists.filter(item => {
-            return item.project === this.props.projectId;
-        })
-
-        if (currentFocusedTaskListIndex === -1) {
-            // No Tasklist in Focus. Force Focus to first Task List.
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[0], false);
-        }
-
-        else {
-            if (currentFocusedTaskListIndex < filteredTaskListWidgets.length - 1) {
-                // Step to next Tasklist.
-                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
-            }
-
-            else {
-                // Wrap around to First tasklist.
-                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
-            }
-        }
-    }
-
-    focusPreviousTaskList() {
-        var sortedTaskListIds = this.getGridSortedTaskListIds();
-
-        if (sortedTaskListIds.length === 0) {
-            return;
-        }
-
-        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
-            return item === this.props.focusedTaskListId;
-        })
-
-        if (currentFocusedTaskListIndex === -1) {
-            // No Tasklist in Focus. Force Focus to Last Task List.
-            var lastTaskListId = sortedTaskListIds[sortedTaskListIds.length - 1];
-            this.props.onTaskListWidgetFocusChanged(lastTaskListId, false);
-        }
-
-        else {
-            if (currentFocusedTaskListIndex !== 0) {
-                // Step to Previous Tasklist.
-                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
-            }
-
-            else {
-                // Wrap around to First tasklist.
-                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
-            }
-        }
-    }
-
-    stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
-        if (type === 'step') {
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex], false);
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex + 1], false);
-        }
-
-        if (type === 'wrap') {
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex, false]);
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[0]);
-        }
-    }
-
-    stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
-        if (type === 'step') {
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex], false);
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex - 1], false);
-        }
-
-        if (type === 'wrap') {
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[currentFocusedTaskListIndex, false]);
-            this.props.onTaskListWidgetFocusChanged(sortedTaskListIds[sortedTaskListIds.length - 1]);
-        }
-    }
-
-
-
-    layoutGridSorter(a, b) {
-        // Sort by Left to Right, Top to bottom.
-        if (a.y > b.y) {
-            return 1;
-        }
-
-        else if (a.y < b.y) {
-            return -1;
-        }
-
-        if (a.x > b.x) {
-            return 1;
-        }
-
-        else if (a.x < b.x) {
-            return -1;
-        }
-
-        else {
-            return 0;
-        }
-    }
-
-    handleRenewNowButtonClick(taskListWidgetId) {
-        this.props.onRenewNowButtonClick(taskListWidgetId);
-    }
-
-    handleShowCompletedTasksChanged(value) {
-        this.props.onShowCompletedTasksChanged(value);
-    }
-
-    extractSelectedProjectLayouts() {
-        // Extract correct Layouts array from ProjectLayouts wrapper.
-        return this.props.projectLayout === undefined || this.props.projectLayout.layouts === undefined ?
-         [] : [...this.props.projectLayout.layouts];
-    }
-
-    handleKeyboardShortcutsButtonClick() {
-        this.props.onKeyboardShortcutsButtonClick();
-    }
-
-    getToolbarButtonEnableStates() {
-        var overide = this.props.projectId !== -1;
-
-        var isAddTaskButtonEnabled = overide && this.props.focusedTaskListId !== -1;
-        var isRemoveTaskButtonEnabled = overide && this.props.selectedTask.taskId !== -1;
-        var isAddTaskListButtonEnabled = overide;
-        var isRemoveTaskListButtonEnabled = overide && this.props.focusedTaskListId !== -1;
-        var isShowCompletedTasksButtonEnabled = overide;
 
         return {
-            isAddTaskButtonEnabled: isAddTaskButtonEnabled,
-            isRemoveTaskButtonEnabled: isRemoveTaskButtonEnabled,
-            isAddTaskListButtonEnabled: isAddTaskListButtonEnabled,
-            isRemoveTaskListButtonEnabled: isRemoveTaskListButtonEnabled,
-            isShowCompletedTasksButtonEnabled: isShowCompletedTasksButtonEnabled,
+            primaryFabClassName,
+            secondaryFabClassName,
         }
     }
 
-    handleSettingsMenuClose() {
-        this.props.onSettingsMenuClose();
+    handleJumpMenuItemClick(id) {
+        this.props.onJumpMenuClose();
+        this.props.onTaskListClick(id);
+        
+        let targetElement = document.getElementById(id);
+        if (targetElement === undefined) {
+            return;
+        }
+
+        this.contentContainerRef.current.scrollTop = targetElement.offsetTop - (56 + 8); // Toolbar Height + List top margin.
     }
 
-    handleAppSettingsButtonClick() {
-        this.props.onAppSettingsButtonClick();
-    }
+    getTaskListsJSX(taskLists) {
+        let taskListsJSX = this.props.taskLists.map(item => {
+            // Widget Layer.
+            let isFocused = this.props.focusedTaskListId === item.uid;
+            let isSettingsMenuOpen = this.props.openTaskListSettingsMenuId === item.uid;
 
-    getProjectMessageDisplayJSX(taskListWidgetCount) {
-        if (this.props.isLoggedIn === false) {
             return (
-                <ProjectMessageDisplay message="You are logged out"/>
+                <TaskList 
+                scrollTargetId={item.uid}
+                key={item.uid}
+                name={item.taskListName}
+                isFocused={isFocused}
+                onClick={ () => { this.props.onTaskListClick(item.uid) }}
+                onTaskListSettingsChanged={(newValue) => { this.props.onTaskListSettingsChanged(item.uid, newValue) }}
+                taskListSettings={item.settings}
+                isSettingsMenuOpen={isSettingsMenuOpen}
+                onSettingsMenuOpen={() => { this.props.onTaskListSettingsMenuOpen(item.uid) }}
+                onSettingsMenuClose={this.props.onTaskListSettingsMenuClose}
+                onRenameTaskListButtonClick={() => { this.props.onRenameTaskListButtonClick(item.uid, item.taskListName) }}
+                onDeleteButtonClick={() => { this.props.onDeleteTaskListButtonClick(item.uid) }}
+                onChecklistSettingsButtonClick={() => { this.props.onChecklistSettingsButtonClick(item.uid, item.settings.checklistSettings)}}
+                onMoveTaskListButtonClick={() => { this.props.onMoveTaskListButtonClick(item.uid, item.project)}}>
+                    { this.getTasksJSX(item.uid, item.settings.sortBy, item.settings.checklistSettings.isChecklist) }
+                </TaskList>
             )
+        })
+
+        return taskListsJSX;
+    }
+
+    getTasksJSX(taskListId, sortBy, isChecklist) {
+        if (this.props.tasks !== undefined) {
+            let filteredTasks = this.props.tasks.filter(item => {
+                return item.taskList === taskListId;
+            })
+
+
+            if (filteredTasks.length === 0) {
+                if (isChecklist && this.props.showOnlySelfTasks === false) {
+                    return (
+                        <ListItemTransition
+                        key="renewchecklistbutton">
+                            <RenewChecklistButton
+                                disabled={this.props.movingTaskId !== -1}
+                                onClick={() => { this.props.onRenewChecklistButtonClick(taskListId) }} />
+                        </ListItemTransition>
+                    )
+                }
+
+                else {
+                    return (
+                        <ListItemTransition
+                        key="addtaskbutton">
+                            <AddNewTaskButton
+                                disabled={this.props.movingTaskId !== -1}
+                                onClick={() => { this.props.onAddNewTaskButtonClick(taskListId) }} />
+                        </ListItemTransition>
+                    )
+                }
+            }
+
+            // Sort.
+            let sortedTasks = [...filteredTasks].sort(this.getTaskSorter(sortBy));
+
+            let builtTasks = sortedTasks.map((item, index, array) => {
+                // Render Element.
+                let isTaskSelected = item.uid === this.props.selectedTaskId;
+                let isTaskMoving = item.uid === this.props.movingTaskId;
+                let hasUnseenComments = item.unseenTaskCommentMembers !== undefined &&
+                 item.unseenTaskCommentMembers[getUserUid()] !== undefined;
+
+                let metadata = item.metadata === undefined ?  { ...new TaskMetadataStore("", "", "", "", "") }
+                : item.metadata; 
+
+                let assignedToDisplayName = GetDisplayNameFromLookup(item.assignedTo, this.props.memberLookup);
+
+                let showDivider = index !== array.length - 1 && array.length > 1;
+
+                let priorityIndicator = <PriorityIndicator
+                    isHighPriority={item.isHighPriority}
+                />
+
+                let checkbox = <TaskCheckbox
+                    checked={item.isComplete}
+                    onChange={(newValue, oldValue) => { this.props.onTaskCheckboxChange(item.uid, newValue, oldValue, metadata) }}
+                />
+
+                let taskText = <TaskText
+                    text={item.taskName}
+                />
+
+                let dueDate = <DueDate
+                    {...this.getDueDateProps(item.isComplete, item.dueDate, this.props.theme)}/>
+
+                let indicatorPanel = <IndicatorPanel
+                    hasUnseenComments={hasUnseenComments}
+                    hasNote={item.note !== undefined && item.note.length > 0}
+                    assignedTo={item.assignedTo}
+                    assignedToDisplayName={assignedToDisplayName}
+                />
+
+                let leftActions = [
+                    { value: 'moveTask', background: this.props.theme.palette.primary.light, icon: <MoveTaskIcon/> },
+                ]
+
+                let rightActions = [
+                    { value: 'deleteTask', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/>},
+                ]
+
+                return (
+                    <ListItemTransition
+                    key={item.uid}>
+                    <SwipeableListItem
+                            leftActions={leftActions}
+                            rightActions={rightActions}
+                            onActionClick={(value) => { this.props.onTaskActionClick(value, item.uid, item.taskList, item.project) }}>
+                            <TaskBase
+                                selected={isTaskSelected}
+                                isMoving={isTaskMoving}
+                                priorityIndicator={priorityIndicator}
+                                checkbox={checkbox}
+                                taskText={taskText}
+                                dueDate={dueDate}
+                                indicatorPanel={indicatorPanel}
+                                onTextContainerTap={() => { this.props.onTaskTextContainerTap(item.uid) }}
+                                onPress={() => { this.props.onTaskPress(item.uid, item.taskList, item.taskName, item.metadata) }}
+                                onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
+                                showDivider={showDivider}
+                            />
+                        </SwipeableListItem>                        
+                    </ListItemTransition>
+                    
+                )
+            })
+
+            return builtTasks;
+        }        
+    }
+
+    getFilteredTaskLists() {
+        return this.props.taskLists.filter(item => {
+            return item.project === this.props.projectId
+        })
+    }
+
+    getTaskSorter(sortBy) {
+        switch(sortBy) {
+            case 'completed':
+            return TaskCompletedSorter;
+
+            case 'due date':
+            return TaskDueDateSorter;
+
+            case 'date added':
+            return TaskDateAddedSorter;
+
+            case 'priority':
+            return TaskPrioritySorter;
+
+            case 'assignee':
+            return TaskAssigneeSorter;
+
+            case 'alphabetical':
+            return TaskAlphabeticalSorter;
+
+            default:
+            return TaskPrioritySorter;
+        }
+    }
+
+    getDueDateProps(isComplete, dueDate, theme) {
+        let result = ParseDueDate(isComplete, dueDate);
+
+        if (result.type === 'unset') {
+            return {
+                type: 'unset'
+            } 
         }
 
-        // No Project Selected.
-        if (this.props.projectId === -1) {
-            return (
-                <ProjectMessageDisplay message="No project selected"/>
-            )
+        if (result.type === 'complete') {
+            return {
+                type: 'complete'
+            }
         }
 
-        // No Tasklists created.
-        if (taskListWidgetCount === 0 || taskListWidgetCount == null) {
-            return (
-                <ProjectMessageDisplay message="No Task Lists created"/>
-            )
+        return {
+            color: theme.palette.custom[result.type], // Extract color from Theme
+            text: result.text,
         }
-    }
-
-    handleLockButtonClick() {
-        this.props.onLockButtonClick();
-    }
-
-    handleTaskListSettingsButtonClick(taskListWidgetId) {
-        this.props.onTaskListSettingsButtonClick(this.props.projectId, taskListWidgetId);
-    }
-
-    handleDueDateClick(taskListWidgetId, taskId) {
-        this.props.onDueDateClick(this.props.projectId, taskListWidgetId, taskId);
-    }
-
-    handleTaskTwoFingerTouch(taskListWidgetId, taskId) {
-        this.props.onTaskTwoFingerTouch(taskListWidgetId, taskId);
-    }
-
-    handleRemoveTaskListButtonClick() {
-        this.props.onRemoveTaskListButtonClick();
-    }
-
-    handleAddTaskListButtonClick() {
-        this.props.onAddTaskListButtonClick();
-    }
-
-    handleAddTaskButtonClick() {
-        this.props.onAddTaskButtonClick();
-    }
-
-    handleRemoveTaskButtonClick() {
-        this.props.onRemoveTaskButtonClick();
-    }
-
-    handleTaskSubmit(taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
-        this.props.onTaskChanged(this.props.projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata)
-    }
-
-    handleWidgetClick(taskListWidgetId, isFocused) {
-        this.props.onTaskListWidgetFocusChanged(taskListWidgetId, isFocused);
-    }
-
-    handleWidgetHeaderDoubleClick(taskListWidgetId) {
-        this.props.onTaskListWidgetHeaderDoubleClick(taskListWidgetId);
-    }
-
-    handleTaskListWidgetHeaderSubmit(taskListWidgetId, newData, oldValue) {
-        // Raise it up to Parent.
-        this.props.onTaskListWidgetHeaderChanged(taskListWidgetId, newData, oldValue);
-    }
-
-    handleTaskClick(taskId, taskListWidgetId) {
-        this.props.onTaskClick(taskId, this.props.projectId, taskListWidgetId);
-    }
-
-    handleLayoutChange(layouts, oldItem, newItem, e, element) {
-        this.props.onLayoutChange(layouts, this.extractSelectedProjectLayouts(), this.props.projectId);
-    }
-
-    handleTaskCheckBoxClick(e, taskListWidgetId, taskId, newValue, oldValue, currentMetadata) {
-        this.props.onTaskCheckBoxClick(e, this.props.projectId, taskListWidgetId, taskId, newValue, oldValue, currentMetadata)
-    }
-
-    handleTaskListWidgetRemoveButtonClick(taskListWidgetId) {
-        this.props.onTaskListWidgetRemoveButtonClick(this.props.projectId, taskListWidgetId);
-    }
-
-    handleTaskListSettingsChanged(taskListWidgetId, newTaskListSettings, closeMenu) {
-        this.props.onTaskListSettingsChanged(this.props.projectId, taskListWidgetId, newTaskListSettings, closeMenu);
     }
 }
 
-export default Project;
+export default (withTheme()(withStyles(styles)(Project)));
