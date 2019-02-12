@@ -2,6 +2,7 @@ import React from 'react';
 import Project from './Project';
 import TextInputDialog from './dialogs/TextInputDialog';
 import TaskInspector from './TaskInspector/TaskInspector';
+import ProjectOverlay from './ProjectOverlay';
 
 import '../assets/css/App.css';
 
@@ -13,10 +14,10 @@ import {
     moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync,
-    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync
+    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
-import { Drawer, CssBaseline, withTheme } from '@material-ui/core';
+import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
 import VisibleAppDrawer from './AppDrawer';
 import VisibleAppSettingsMenu from './AppSettingsMenu/AppSettingsMenu';
 import VisibleShareMenu from './ShareMenu/ShareMenu';
@@ -29,6 +30,7 @@ import QuickItemSelectDialog from './dialogs/QuickItemSelectDialog';
 import VisibleOnboarder from './Onboarder/Onboarder';
 import VisibleInductionSplash from './Induction/InductionSplash';
 import VisibleStatusBar from './StatusBar';
+import AddNewTaskListButton from './AddNewTaskListButton';
 
 let appGrid = {
     display: 'grid',
@@ -67,6 +69,8 @@ class App extends React.Component {
         this.handleMoveTaskListButtonClick = this.handleMoveTaskListButtonClick.bind(this);
         this.handleDeleteProjectButtonClick = this.handleDeleteProjectButtonClick.bind(this);
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
+        this.getProjectOverlayComponent = this.getProjectOverlayComponent.bind(this);
+        this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
 
     }
 
@@ -83,6 +87,7 @@ class App extends React.Component {
 
     render() {
         let rglDragEnabled = this.props.openTaskInspectorId === -1;
+        let projectOverlayComponent = this.getProjectOverlayComponent();
 
         return (
             <React.Fragment>
@@ -138,6 +143,7 @@ class App extends React.Component {
                             projectLayoutType={this.props.projectLayoutType}
                             rglDragEnabled={rglDragEnabled}
                             onLayoutChange={this.handleLayoutChange}
+                            projectOverlayComponent={projectOverlayComponent}
                         />
                     </div>
 
@@ -226,6 +232,60 @@ class App extends React.Component {
         )
     }
 
+    getProjectOverlayComponent() {
+        let stateMachine = () => {
+            if (this.props.isLoggedIn === false) {
+                return 'logged-out';
+            } 
+        
+            if (this.props.selectedProjectId === -1) {
+                return 'no-project-selected';
+            }
+        
+            if (this.props.projects.length === 0) {
+                return 'no-projects';
+            }
+        
+            if (this.props.filteredTaskLists.length === 0) {
+                return 'no-task-lists';
+            }
+        
+            return 'no-overlay';
+        }
+
+        
+
+        let machinedState = stateMachine();
+    
+        if (machinedState === 'no-overlay') {
+            return null;
+        }
+    
+        let container = {
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+        }
+
+        return (
+            <div
+            style={container}>
+    
+            { machinedState === 'logged-out' && <Button variant="outlined" onClick={this.handleLogInButtonClick}> Log in </Button> }
+            { machinedState === 'no-project-selected' && <Typography> Select a project to start </Typography> }
+            { machinedState === 'no-projects' && <Button variant="outlined" onClick={() => { this.props.dispatch(addNewProjectAsync)}}> Create Project </Button> }
+            { machinedState === 'no-task-lists' && <AddNewTaskListButton onClick={() => { this.props.dispatch(addNewTaskListAsync())}}/>}
+            </div>
+        );
+    };
+
+    handleLogInButtonClick() {
+        this.props.dispatch(setAppSettingsMenuPage('account'));
+        this.props.dispatch(setIsAppSettingsOpen(true));
+    }
     
     handleLayoutChange(layouts, oldLayouts, projectId) {
         this.props.dispatch(updateProjectLayoutAsync(layouts, oldLayouts, projectId));

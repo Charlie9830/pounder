@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
-import { Modal, TextField, DialogActions, Button, withTheme, Collapse, Typography } from '@material-ui/core';
+import { Modal, TextField, DialogActions, Button, withTheme, Collapse, Typography, Dialog, DialogContent, Slide } from '@material-ui/core';
+
+const Transition = (props) => {
+    return <Slide direction="down" {...props}/>
+}
 
 class TextInputDialog extends Component {
     constructor(props) {
@@ -17,8 +21,8 @@ class TextInputDialog extends Component {
 
         const gridStyle = {
             display: 'grid',
-            gridTemplateRows: '[Title]auto [Input]1fr [Actions]auto',
-            width: '100vw',
+            gridTemplateRows: '[Title]auto [Input]1fr',
+            width: '35vw',
             height: 'fit-content',
             background: theme.palette.background.paper,
             padding: '8px'
@@ -32,58 +36,39 @@ class TextInputDialog extends Component {
         const inputContainer = {
             gridRow: 'Input',
             placeSelf: 'center stretch',
-            width: '100%',
-        }
-
-        const actionsContainer = {
-            gridRow: 'Actions',
-            placeSelf: 'center stretch',
-            display: 'flex',
-            flexDirection: 'row-reverse',
-            justifyContent: 'flex-start',
-            alignItems: 'center'
-        }
-
-        let textFieldStyle = {
-            width: '100%',
         }
 
         return (
-            <React.Fragment>
-                <Modal 
+                <Dialog
                 open={this.props.isOpen}
-                onClick={() => { this.textInputRef.current.focus() }}
-                >
-                    <Collapse in={this.props.isOpen} collapsedHeight="0px" >
-                        <div style={gridStyle}>
-                            <div style={titleContainer}>
-                                <Typography style={{marginBottom: '16px'}} color="textSecondary"> {this.props.title} </Typography>
-                            </div>
-                            <div style={inputContainer}>
-                                <TextField
-                                    inputRef={this.textInputRef}
-                                    autoFocus
-                                    style={textFieldStyle}
-                                    multiline
-                                    label={this.props.label}
-                                    defaultValue={this.props.text}
-                                    onKeyPress={this.handleInputKeyPress}
-                                    />
-                            </div>
-
-                            <div style={actionsContainer}>
-                                <DialogActions>
-                                    <Button variant="text" color="default" 
-                                    onTouchStart={() => { this.props.onCancel()}}> Cancel </Button>
-                                    <Button variant="text" color="secondary"
-                                    onTouchStart={() => { this.props.onOkay(this.textInputRef.current.value)}}> Okay </Button>
-                                </DialogActions>
-                            </div>
+                TransitionComponent={Transition}>
+                <DialogContent>
+                    <div style={gridStyle}>
+                        <div style={titleContainer}>
+                            <Typography style={{ marginBottom: '16px' }} color="textSecondary"> {this.props.title} </Typography>
                         </div>
-                    </Collapse>
+                        <div style={inputContainer}>
+                            <TextField
+                                fullWidth
+                                inputRef={this.textInputRef}
+                                autoFocus
+                                multiline
+                                label={this.props.label}
+                                defaultValue={this.props.text}
+                                onKeyPress={this.handleInputKeyPress}
+                            />
+                        </div>
+                    </div>
+                </DialogContent>
 
-                </Modal>
-            </React.Fragment>
+                        <DialogActions>
+                        <Button variant="text" color="default" 
+                        onClick={() => { this.props.onCancel()}}> Cancel </Button>
+                        <Button variant="text" color="secondary"
+                        onClick={() => { this.props.onOkay(this.textInputRef.current.value)}}> Okay </Button>
+                        </DialogActions>
+
+                </Dialog>
         );
     }
 

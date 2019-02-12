@@ -19,11 +19,8 @@ let containerStyle = {
 const styles = theme => {
     
     let basePaperStyle = {
-        width: `calc(100% - ${theme.spacing.unit}px)`,
+        width: '100%',
         height: '100%',
-        marginLeft: `${theme.spacing.unit / 2}px`,
-        marginRight: `${theme.spacing.unit / 2}px`,
-        marginTop: `${theme.spacing.unit / 2}px`,
     }
 
     return {

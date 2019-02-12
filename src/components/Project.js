@@ -6,13 +6,13 @@ import IndicatorPanel from './Task/IndicatorPanel';
 import PriorityIndicator from './Task/PriorityIndicator';
 import TaskCheckbox from './Task/TaskCheckbox';
 import TaskText from './Task/TaskText';
-import AddNewTaskListButton from './AddNewTaskListButton';
 import SwipeableListItem from './SwipeableListItem/SwipeableListItem';
 import RenewChecklistButton from './RenewChecklistButton'
 import MoveTaskIcon from '../icons/MoveTaskIcon';
 import AddNewTaskButton from './AddNewTaskButton.js';
 import ProjectMenu from './ProjectMenu';
 import ListItemTransition from './TransitionList/ListItemTransition';
+import ProjectOverlay from './ProjectOverlay';
 
 import {
     GetDisplayNameFromLookup, TaskDueDateSorter, TaskCompletedSorter, TaskDateAddedSorter, TaskAssigneeSorter,
@@ -33,61 +33,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 import TaskListGrid from './TaskListGrid';
 
 let styles = theme => {
-    let primaryFabBase = {
-        margin: 0,
-        top: 'auto',
-        right: 20,
-        bottom: 20,
-        left: 'auto',
-        position: 'fixed',
-    }
-
-    let secondaryFabBase = {
-        margin: 0,
-        top: 'auto',
-        right: 20,
-        bottom: 90,
-        left: 'auto',
-        position: 'fixed',
-    }
-
     return {
-        primaryFabMoveUp: {
-            ...primaryFabBase,
-            transform: 'translate3d(0, -46px, 0)',
-            transition: theme.transitions.create(['transform', 'bottom'], {
-                duration: theme.transitions.duration.enteringScreen,
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-    
-        primaryFabMoveDown: {
-            ...primaryFabBase,
-            transform: 'translate3d(0, 0, 0)',
-            transition: theme.transitions.create(['transform', 'bottom'], {
-                duration: theme.transitions.duration.leavingScreen,
-                easing: theme.transitions.easing.sharp,
-            }),
-        },
-
-        secondaryFabMoveUp: {
-            ...secondaryFabBase,
-            transform: 'translate3d(0, -46px, 0)',
-            transition: theme.transitions.create(['transform', 'bottom'], {
-                duration: theme.transitions.duration.enteringScreen,
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-
-        secondaryFabMoveDown: {
-            ...secondaryFabBase,
-            transform: 'translate3d(0, 0, 0)',
-            transition: theme.transitions.create(['transform', 'bottom'], {
-                duration: theme.transitions.duration.leavingScreen,
-                easing: theme.transitions.easing.sharp,
-            }),
-        },
-
         projectGrid: {
             display: 'grid',
             width: '100%',
@@ -109,7 +55,6 @@ let styles = theme => {
             flexDirection: 'column',
             justifyContent: 'flex-start',
             alignItems: 'center',
-            paddingBottom: '160px' // Clear the Fabs
         }
     }
 };
@@ -128,6 +73,7 @@ const projectLeftButtonsContainer = {
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
+    paddingLeft: '8px',
 }
 
 class Project extends React.Component {
@@ -137,112 +83,92 @@ class Project extends React.Component {
         // Method Bindings.
         this.getTaskListsJSX = this.getTaskListsJSX.bind(this);
         this.getTasksJSX = this.getTasksJSX.bind(this);
-        this.getFabClassNames = this.getFabClassNames.bind(this);
         this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
     }
 
     render() {
         let { classes } = this.props;
-        const { primaryFabClassName, secondaryFabClassName } = this.getFabClassNames();
 
         // Extract correct Layouts array from ProjectLayouts wrapper.
         var selectedLayouts = this.extractSelectedProjectLayouts();
         var layouts = JSON.parse(JSON.stringify(selectedLayouts)); // Hacky way to get RGL to update it's Layout more reliably.
-        
+
+        let contents = null;
+
+        if (this.props.projectOverlayComponent === null) {
+            contents = (
+                <TaskListGrid
+                    layout={layouts}
+                    onLayoutChange={this.handleLayoutChange}
+                    rglDragEnabled={this.props.rglDragEnabled}>
+                    {this.getTaskListsJSX(layouts)}
+                </TaskListGrid>
+            )
+        }
+
+        else {
+            contents = this.props.projectOverlayComponent;
+        }
+
         return (
             <React.Fragment>
                 <div
                     className={classes['projectGrid']}>
                     <div
                         className={classes['toolbarContainer']}>
-                            <Toolbar
-                                disableGutters={true}>
+                        <Toolbar
+                            disableGutters={true}>
 
-                                <div style={projectLeftButtonsContainer}>
-                                    <IconButton>
-                                        <AddIcon/>
+                            <div style={projectLeftButtonsContainer}>
+                                <Zoom
+                                    unmountOnExit={true}
+                                    mountOnEnter={true}
+                                    in={this.props.enableStates.newTaskFab}>
+                                    <IconButton
+                                        onClick={() => { this.props.onAddNewTaskButtonClick() }}>
+                                        <AddIcon />
                                     </IconButton>
-                                    <IconButton>
-                                        <RemoveIcon/>
-                                    </IconButton>
+                                </Zoom>
 
-                                    <div style={{width: '32px'}}/>
-
-                                    <IconButton>
+                                <Zoom
+                                    unmountOnExit={true}
+                                    mountOnEnter={true}
+                                    in={this.props.enableStates.newTaskListFab}>
+                                    <IconButton
+                                        onClick={() => { this.props.onAddNewTaskListButtonClick() }}>
                                         <AddTaskListIcon
-                                        />
+                                            color="secondary" />
                                     </IconButton>
-                                    <IconButton>
-                                        <RemoveTaskListIcon 
-                                        />
-                                    </IconButton>
-                                </div>
-                                
-                                <div style={projectRightButtonsContainer}>
+                                </Zoom>
+                            </div>
+
+                            <div style={projectRightButtonsContainer}>
+                                <Zoom
+                                unmountOnExit={true}
+                                mountOnEnter={true}
+                                in={this.props.enableStates.projectMenu}>
                                     <ProjectMenu
-                                        onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId)}}
+                                        onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId) }}
                                         onRenameProjectButtonClick={() => { this.props.onRenameProjectButtonClick(this.props.projectId, this.props.projectName) }}
                                         onCompletedTasksButtonClick={this.props.onCompletedTasksButtonClick}
                                         showCompletedTasks={this.props.showCompletedTasks}
                                         onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
                                         showOnlySelfTasks={this.props.showOnlySelfTasks}
                                         onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }} />
-                                </div>
-                            </Toolbar>
-                            <Divider/>
+                                </Zoom>
+                            </div>
+                        </Toolbar>
+                        <Divider />
                     </div>
-
 
                     <div
                         className={classes['contentContainer']}>
-                        <TaskListGrid 
-                        layout={layouts}
-                        onLayoutChange={this.handleLayoutChange}
-                        rglDragEnabled={this.props.rglDragEnabled}>
-                            {this.getTaskListsJSX(layouts)}
-                        </TaskListGrid>
-                        
-                        <AddNewTaskListButton onClick={this.props.onAddNewTaskListButtonClick} />
+                        { contents }
                     </div>
-
                 </div>
-
-                <Zoom
-                    in={this.props.enableStates.newTaskFab}>
-                    <Fab
-                        className={primaryFabClassName}
-                        color="primary"
-                        onClick={this.props.onAddNewTaskButtonClick}>
-                        <AddIcon />
-                    </Fab>
-                </Zoom>
-
-                <Fab
-                    className={secondaryFabClassName}
-                    color="secondary"
-                    onClick={this.props.onAddNewTaskListButtonClick}>
-                    <AddTaskListIcon />
-                </Fab>
             </React.Fragment>
-            
         )
-    }
-
-    getFabClassNames() {
-        let { classes } = this.props;
-        const primaryFabClassName = this.props.isASnackbarOpen ? classes['primaryFabMoveUp'] : classes['primaryFabMoveDown'];
-        let secondaryFabClassName = this.props.isASnackbarOpen ? classes['secondaryFabMoveUp'] : classes['secondaryFabMoveDown'];
-
-        // Override if the Primary button is going to be hidden so the secondary will 'take it's place'.
-        if (this.props.enableStates.newTaskFab === false ) {
-            secondaryFabClassName = primaryFabClassName;
-        }
-
-        return {
-            primaryFabClassName,
-            secondaryFabClassName,
-        }
     }
 
     getTaskListsJSX(layouts) {
@@ -273,8 +199,8 @@ class Project extends React.Component {
             return (
                 /* TaskLists must be wrapped in a div for RGL to work properly */
                 <div
-                key={item.uid}
-                data-grid={layoutEntry}>
+                    key={item.uid}
+                    data-grid={layoutEntry}>
                     <TaskList
                         scrollTargetId={item.uid}
                         name={item.taskListName}
@@ -309,7 +235,7 @@ class Project extends React.Component {
                 if (isChecklist && this.props.showOnlySelfTasks === false) {
                     return (
                         <ListItemTransition
-                        key="renewchecklistbutton">
+                            key="renewchecklistbutton">
                             <RenewChecklistButton
                                 disabled={this.props.movingTaskId !== -1}
                                 onClick={() => { this.props.onRenewChecklistButtonClick(taskListId) }} />
@@ -320,7 +246,7 @@ class Project extends React.Component {
                 else {
                     return (
                         <ListItemTransition
-                        key="addtaskbutton">
+                            key="addtaskbutton">
                             <AddNewTaskButton
                                 disabled={this.props.movingTaskId !== -1}
                                 onClick={() => { this.props.onAddNewTaskButtonClick(taskListId) }} />
@@ -337,10 +263,10 @@ class Project extends React.Component {
                 let isTaskSelected = item.uid === this.props.selectedTaskId;
                 let isTaskMoving = item.uid === this.props.movingTaskId;
                 let hasUnseenComments = item.unseenTaskCommentMembers !== undefined &&
-                 item.unseenTaskCommentMembers[getUserUid()] !== undefined;
+                    item.unseenTaskCommentMembers[getUserUid()] !== undefined;
 
-                let metadata = item.metadata === undefined ?  { ...new TaskMetadataStore("", "", "", "", "") }
-                : item.metadata; 
+                let metadata = item.metadata === undefined ? { ...new TaskMetadataStore("", "", "", "", "") }
+                    : item.metadata;
 
                 let assignedToDisplayName = GetDisplayNameFromLookup(item.assignedTo, this.props.memberLookup);
 
@@ -360,7 +286,7 @@ class Project extends React.Component {
                 />
 
                 let dueDate = <DueDate
-                    {...this.getDueDateProps(item.isComplete, item.dueDate, this.props.theme)}/>
+                    {...this.getDueDateProps(item.isComplete, item.dueDate, this.props.theme)} />
 
                 let indicatorPanel = <IndicatorPanel
                     hasUnseenComments={hasUnseenComments}
@@ -370,17 +296,17 @@ class Project extends React.Component {
                 />
 
                 let leftActions = [
-                    { value: 'moveTask', background: this.props.theme.palette.primary.light, icon: <MoveTaskIcon/> },
+                    { value: 'moveTask', background: this.props.theme.palette.primary.light, icon: <MoveTaskIcon /> },
                 ]
 
                 let rightActions = [
-                    { value: 'deleteTask', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/>},
+                    { value: 'deleteTask', background: this.props.theme.palette.error.dark, icon: <DeleteIcon /> },
                 ]
 
                 return (
                     <ListItemTransition
-                    key={item.uid}>
-                    <SwipeableListItem
+                        key={item.uid}>
+                        <SwipeableListItem
                             leftActions={leftActions}
                             rightActions={rightActions}
                             onActionClick={(value) => { this.props.onTaskActionClick(value, item.uid, item.taskList, item.project) }}>
@@ -397,14 +323,14 @@ class Project extends React.Component {
                                 onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
                                 showDivider={showDivider}
                             />
-                        </SwipeableListItem>                        
+                        </SwipeableListItem>
                     </ListItemTransition>
-                    
+
                 )
             })
 
             return builtTasks;
-        }        
+        }
     }
 
     getFilteredTaskLists() {
@@ -420,31 +346,31 @@ class Project extends React.Component {
     extractSelectedProjectLayouts() {
         // Extract correct Layouts array from ProjectLayouts wrapper.
         return this.props.projectLayout === undefined || this.props.projectLayout.layouts === undefined ?
-         [] : [...this.props.projectLayout.layouts];
+            [] : [...this.props.projectLayout.layouts];
     }
 
     getTaskSorter(sortBy) {
-        switch(sortBy) {
+        switch (sortBy) {
             case 'completed':
-            return TaskCompletedSorter;
+                return TaskCompletedSorter;
 
             case 'due date':
-            return TaskDueDateSorter;
+                return TaskDueDateSorter;
 
             case 'date added':
-            return TaskDateAddedSorter;
+                return TaskDateAddedSorter;
 
             case 'priority':
-            return TaskPrioritySorter;
+                return TaskPrioritySorter;
 
             case 'assignee':
-            return TaskAssigneeSorter;
+                return TaskAssigneeSorter;
 
             case 'alphabetical':
-            return TaskAlphabeticalSorter;
+                return TaskAlphabeticalSorter;
 
             default:
-            return TaskPrioritySorter;
+                return TaskPrioritySorter;
         }
     }
 
@@ -454,7 +380,7 @@ class Project extends React.Component {
         if (result.type === 'unset') {
             return {
                 type: 'unset'
-            } 
+            }
         }
 
         if (result.type === 'complete') {

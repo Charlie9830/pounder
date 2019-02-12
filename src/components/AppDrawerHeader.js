@@ -11,7 +11,7 @@ const AppDrawerHeader = (props) => {
     let grid = {
         width: '100%',
         display: 'grid',
-        gridTemplateRows: '[Toolbar]auto [Account]auto [Buttons]auto [Fab]auto',
+        gridTemplateRows: '[Toolbar]auto [Account]auto [Buttons]auto [NewProjectButton]auto',
         background: theme.palette.primary.main,
         paddingLeft: '8px',
     }
@@ -54,11 +54,10 @@ const AppDrawerHeader = (props) => {
 
             <div style={{gridRow: 'Account'}}>
                 <Typography variant="caption"> {props.displayName} </Typography>
-                <Typography variant="caption"> {props.userEmail} </Typography>
             </div>
 
             <div style={buttonsContainer}>
-                <IconButton onClick={() => { this.props.dispatch(setIsAppSettingsOpen(true)) }}>
+                <IconButton onClick={props.onSettingsButtonClick}>
                     <SettingsIcon
                         fontSize="small" />
                 </IconButton>
@@ -77,7 +76,7 @@ const AppDrawerHeader = (props) => {
 
             </div>
             
-            <div style={{gridRow: 'Fab', paddingBottom: '8px' }}>
+            <div style={{gridRow: 'NewProjectButton', paddingBottom: '8px' }}>
                 <Button
                 variant="outlined"
                 color="secondary">

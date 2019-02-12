@@ -52,7 +52,7 @@ class AppDrawer extends Component {
 
                 <AppDrawerHeader
                 displayName={this.props.displayName}
-                userEmail={this.props.userEmail}
+                onSettingsButtonClick={() => {this.props.dispatch(setIsAppSettingsOpen(true))}}
                 />
                 
                 <TransitionList >
