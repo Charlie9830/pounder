@@ -13,7 +13,7 @@ import {
     moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync,
-    openJumpMenu, closeJumpMenu, removeProjectAsync, removeTaskAsync,
+    removeProjectAsync, removeTaskAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme } from '@material-ui/core';
@@ -28,6 +28,17 @@ import ItemSelectDialog from './dialogs/ItemSelectDialog';
 import QuickItemSelectDialog from './dialogs/QuickItemSelectDialog';
 import VisibleOnboarder from './Onboarder/Onboarder';
 import VisibleInductionSplash from './Induction/InductionSplash';
+import VisibleStatusBar from './StatusBar';
+
+let appGrid = {
+    display: 'grid',
+    height: '100%',
+    width: '100%',
+    gridTemplateRows: '[StatusBar]auto [Content]1fr',
+    gridTemplateColumns: '[AppDrawer]240px [Project]1fr',
+    gridTemplateAreas: `' AppDrawer StatusBar '
+                        ' AppDrawer Project '`
+}
 
 class App extends React.Component {
     constructor(props) {
@@ -36,7 +47,6 @@ class App extends React.Component {
         // Method Bindings.
         this.handleTaskCheckboxChange = this.handleTaskCheckboxChange.bind(this);
         this.handleTaskActionClick = this.handleTaskActionClick.bind(this);
-        this.handleProjectMenuButtonClick = this.handleProjectMenuButtonClick.bind(this);
         this.handleTaskListClick = this.handleTaskListClick.bind(this);
         this.handleTaskTextContainerTap = this.handleTaskTextContainerTap.bind(this);
         this.handleAddNewTaskButtonClick = this.handleAddNewTaskButtonClick.bind(this);
@@ -55,10 +65,8 @@ class App extends React.Component {
         this.handleChecklistSettingsButtonClick = this.handleChecklistSettingsButtonClick.bind(this);
         this.handleRenewChecklistButtonClick = this.handleRenewChecklistButtonClick.bind(this);
         this.handleMoveTaskListButtonClick = this.handleMoveTaskListButtonClick.bind(this);
-        this.handleJumpMenuOpen = this.handleJumpMenuOpen.bind(this);
-        this.handleJumpMenuClose = this.handleJumpMenuClose.bind(this);
         this.handleDeleteProjectButtonClick = this.handleDeleteProjectButtonClick.bind(this);
-        
+
     }
 
     componentDidMount() {
@@ -74,105 +82,110 @@ class App extends React.Component {
 
     render() {
         return (
-                <React.Fragment>
-                    <CssBaseline />
+            <React.Fragment>
+                <CssBaseline />
 
-                    <Drawer
-                        open={this.props.openShareMenuId !== -1}
-                        anchor="left">
-                        <VisibleShareMenu />
-                    </Drawer>
+                <div style={appGrid}>
 
-                    <Drawer
-                        open={this.props.openTaskInspectorId !== -1 && this.props.openTaskInspectorEntity !== null}
-                        anchor="left">
-                        <TaskInspector />
-                    </Drawer>
+                    <div style={{ gridArea: 'StatusBar' }}>
+                        <VisibleStatusBar />
+                    </div>
 
-                    <Drawer
-                    open={this.props.isAppDrawerOpen}
-                    anchor="left"
-                    keepMounted={true}>
-                        <VisibleAppDrawer />
-                    </Drawer>
+                    <div style={{ gridArea: 'AppDrawer' }}>
 
-                    <Drawer open={this.props.isAppSettingsOpen} anchor="left">
-                        <VisibleAppSettingsMenu />
-                    </Drawer>
+                            <VisibleAppDrawer />
+                    </div>
 
-                    <Drawer open={this.props.openChecklistSettingsId !== -1} anchor="left">
-                        <VisibleChecklistSettingsMenu />
-                    </Drawer>
+                    <div style={{ gridArea: 'Project' }}>
+                        <Project
+                            projectId={this.props.selectedProjectId}
+                            projectName={this.getProjectName(this.props.projects, this.props.selectedProjectId)}
+                            tasks={this.props.filteredTasks}
+                            taskLists={this.props.filteredTaskLists}
+                            focusedTaskListId={this.props.focusedTaskListId}
+                            onTaskCheckboxChange={this.handleTaskCheckboxChange}
+                            onTaskActionClick={this.handleTaskActionClick}
+                            onTaskListClick={this.handleTaskListClick}
+                            onTaskTextContainerTap={this.handleTaskTextContainerTap}
+                            onTaskPress={this.handleTaskPress}
+                            onAddNewTaskButtonClick={this.handleAddNewTaskButtonClick}
+                            onAddNewTaskListButtonClick={this.handleAddNewTaskListButtonClick}
+                            onDueDateContainerTap={this.handleDueDateContainerTap}
+                            onShareMenuButtonClick={this.handleShareMenuButtonClick}
+                            isASnackbarOpen={this.props.isASnackbarOpen}
+                            onRenameProjectButtonClick={this.handleRenameProjectButtonClick}
+                            onCompletedTasksButtonClick={this.handleCompletedTasksButtonClick}
+                            showCompletedTasks={this.props.showCompletedTasks}
+                            memberLookup={this.props.memberLookup}
+                            onShowOnlySelfTasksButtonClick={this.handleShowOnlySelfTasksButtonClick}
+                            showOnlySelfTasks={this.props.showOnlySelfTasks}
+                            movingTaskId={this.props.movingTaskId}
+                            onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
+                            openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
+                            onTaskListSettingsMenuOpen={this.handleTaskListSettingsMenuOpen}
+                            onTaskListSettingsMenuClose={this.handleTaskListSettingsMenuClose}
+                            onRenameTaskListButtonClick={this.handleRenameTaskListButtonClick}
+                            onDeleteTaskListButtonClick={this.handleDeleteTaskListButtonClick}
+                            onChecklistSettingsButtonClick={this.handleChecklistSettingsButtonClick}
+                            onRenewChecklistButtonClick={this.handleRenewChecklistButtonClick}
+                            onMoveTaskListButtonClick={this.handleMoveTaskListButtonClick}
+                            onDeleteProjectButtonClick={this.handleDeleteProjectButtonClick}
+                            enableStates={this.props.enableStates}
+                        />
+                    </div>
 
-                    <Project
-                        projectId={this.props.selectedProjectId}
-                        projectName={this.getProjectName(this.props.projects, this.props.selectedProjectId)}
-                        tasks={this.props.filteredTasks}
-                        taskLists={this.props.filteredTaskLists}
-                        focusedTaskListId={this.props.focusedTaskListId}
-                        onTaskCheckboxChange={this.handleTaskCheckboxChange}
-                        onTaskActionClick={this.handleTaskActionClick}
-                        onMenuButtonClick={this.handleProjectMenuButtonClick}
-                        onTaskListClick={this.handleTaskListClick}
-                        onTaskTextContainerTap={this.handleTaskTextContainerTap}
-                        onTaskPress={this.handleTaskPress}
-                        onAddNewTaskButtonClick={this.handleAddNewTaskButtonClick}
-                        onAddNewTaskListButtonClick={this.handleAddNewTaskListButtonClick}
-                        onDueDateContainerTap={this.handleDueDateContainerTap}
-                        onShareMenuButtonClick={this.handleShareMenuButtonClick}
-                        isASnackbarOpen={this.props.isASnackbarOpen}
-                        onRenameProjectButtonClick={this.handleRenameProjectButtonClick}
-                        onCompletedTasksButtonClick={this.handleCompletedTasksButtonClick}
-                        showCompletedTasks={this.props.showCompletedTasks}
-                        memberLookup={this.props.memberLookup}
-                        onShowOnlySelfTasksButtonClick={this.handleShowOnlySelfTasksButtonClick}
-                        showOnlySelfTasks={this.props.showOnlySelfTasks}
-                        movingTaskId={this.props.movingTaskId}
-                        onTaskListSettingsChanged={this.handleTaskListSettingsChanged}
-                        openTaskListSettingsMenuId={this.props.openTaskListSettingsMenuId}
-                        onTaskListSettingsMenuOpen={this.handleTaskListSettingsMenuOpen}
-                        onTaskListSettingsMenuClose={this.handleTaskListSettingsMenuClose}
-                        onRenameTaskListButtonClick={this.handleRenameTaskListButtonClick}
-                        onDeleteTaskListButtonClick={this.handleDeleteTaskListButtonClick}
-                        onChecklistSettingsButtonClick={this.handleChecklistSettingsButtonClick}
-                        onRenewChecklistButtonClick={this.handleRenewChecklistButtonClick}
-                        onMoveTaskListButtonClick={this.handleMoveTaskListButtonClick}
-                        onJumpMenuOpen={this.handleJumpMenuOpen}
-                        onJumpMenuClose={this.handleJumpMenuClose}
-                        isJumpMenuOpen={this.props.isJumpMenuOpen}
-                        onDeleteProjectButtonClick={this.handleDeleteProjectButtonClick}
-                        enableStates={this.props.enableStates}
-                    />
+                </div>
+                <Drawer
+                    open={this.props.openShareMenuId !== -1}
+                    anchor="top">
+                    <VisibleShareMenu />
+                </Drawer>
 
-                    <Drawer anchor="left" open={this.props.isOnboarding}>
-                        <VisibleOnboarder />
-                    </Drawer>
+                <Drawer
+                    open={this.props.openTaskInspectorId !== -1 && this.props.openTaskInspectorEntity !== null}
+                    anchor="right">
+                    <TaskInspector />
+                </Drawer>
 
-                    <TextInputDialog
-                        isOpen={this.props.textInputDialog.isOpen}
-                        title={this.props.textInputDialog.title}
-                        text={this.props.textInputDialog.text}
-                        label={this.props.textInputDialog.label}
-                        onCancel={this.props.textInputDialog.onCancel}
-                        onOkay={this.props.textInputDialog.onOkay}
-                    />
+                <Drawer open={this.props.isAppSettingsOpen} anchor="top">
+                    <VisibleAppSettingsMenu />
+                </Drawer>
 
-                    <InformationDialog
-                        isOpen={this.props.informationDialog.isOpen}
-                        title={this.props.informationDialog.title}
-                        text={this.props.informationDialog.text}
-                        onOkay={this.props.informationDialog.onOkay}
-                    />
+                <Drawer open={this.props.openChecklistSettingsId !== -1} anchor="right">
+                    <VisibleChecklistSettingsMenu />
+                </Drawer>
 
-                    <ConfirmationDialog
-                        isOpen={this.props.confirmationDialog.isOpen}
-                        title={this.props.confirmationDialog.title}
-                        text={this.props.confirmationDialog.text}
-                        affirmativeButtonText={this.props.confirmationDialog.affirmativeButtonText}
-                        negativeButtonText={this.props.confirmationDialog.negativeButtonText}
-                        onAffirmative={this.props.confirmationDialog.onAffirmative}
-                        onNegative={this.props.confirmationDialog.onNegative}
-                    />
+
+
+                <Drawer anchor="top" open={this.props.isOnboarding}>
+                    <VisibleOnboarder />
+                </Drawer>
+
+                <TextInputDialog
+                    isOpen={this.props.textInputDialog.isOpen}
+                    title={this.props.textInputDialog.title}
+                    text={this.props.textInputDialog.text}
+                    label={this.props.textInputDialog.label}
+                    onCancel={this.props.textInputDialog.onCancel}
+                    onOkay={this.props.textInputDialog.onOkay}
+                />
+
+                <InformationDialog
+                    isOpen={this.props.informationDialog.isOpen}
+                    title={this.props.informationDialog.title}
+                    text={this.props.informationDialog.text}
+                    onOkay={this.props.informationDialog.onOkay}
+                />
+
+                <ConfirmationDialog
+                    isOpen={this.props.confirmationDialog.isOpen}
+                    title={this.props.confirmationDialog.title}
+                    text={this.props.confirmationDialog.text}
+                    affirmativeButtonText={this.props.confirmationDialog.affirmativeButtonText}
+                    negativeButtonText={this.props.confirmationDialog.negativeButtonText}
+                    onAffirmative={this.props.confirmationDialog.onAffirmative}
+                    onNegative={this.props.confirmationDialog.onNegative}
+                />
 
                 <ItemSelectDialog
                     isOpen={this.props.itemSelectDialog.isOpen}
@@ -185,37 +198,29 @@ class App extends React.Component {
                     onNegative={this.props.itemSelectDialog.onNegative} />
 
                 <QuickItemSelectDialog
-                isOpen={this.props.quickItemSelectDialog.isOpen}
-                title={this.props.quickItemSelectDialog.title}
-                text={this.props.quickItemSelectDialog.text}
-                items={this.props.quickItemSelectDialog.items}
-                negativeButtonText={this.props.quickItemSelectDialog.negativeButtonText}
-                onSelect={this.props.quickItemSelectDialog.onSelect}
-                onNegative={this.props.quickItemSelectDialog.onNegative}/>
+                    isOpen={this.props.quickItemSelectDialog.isOpen}
+                    title={this.props.quickItemSelectDialog.title}
+                    text={this.props.quickItemSelectDialog.text}
+                    items={this.props.quickItemSelectDialog.items}
+                    negativeButtonText={this.props.quickItemSelectDialog.negativeButtonText}
+                    onSelect={this.props.quickItemSelectDialog.onSelect}
+                    onNegative={this.props.quickItemSelectDialog.onNegative} />
 
-                <VisibleInductionSplash/>
+                <VisibleInductionSplash />
 
-                    <GeneralSnackbar
-                        isOpen={this.props.generalSnackbar.isOpen}
-                        type={this.props.generalSnackbar.type}
-                        text={this.props.generalSnackbar.text}
-                        actionButtonText={this.props.generalSnackbar.actionOptions.actionButtonText}
-                        onAction={this.props.generalSnackbar.actionOptions.onAction}
-                    />
-                </React.Fragment>
+                <GeneralSnackbar
+                    isOpen={this.props.generalSnackbar.isOpen}
+                    type={this.props.generalSnackbar.type}
+                    text={this.props.generalSnackbar.text}
+                    actionButtonText={this.props.generalSnackbar.actionOptions.actionButtonText}
+                    onAction={this.props.generalSnackbar.actionOptions.onAction}
+                />
+            </React.Fragment>
         )
     }
 
     handleDeleteProjectButtonClick(projectId) {
         this.props.dispatch(removeProjectAsync(projectId));
-    }
-
-    handleJumpMenuOpen() {
-        this.props.dispatch(openJumpMenu())
-    }
-
-    handleJumpMenuClose() {
-        this.props.dispatch(closeJumpMenu());
     }
 
     handleMoveTaskListButtonClick(taskListId, projectId) {
@@ -266,7 +271,7 @@ class App extends React.Component {
     handleRenameProjectButtonClick(selectedProjectId) {
         this.props.dispatch(updateProjectNameAsync(selectedProjectId))
     }
-    
+
     handleShareMenuButtonClick(projectId) {
         this.props.dispatch(openShareMenu(projectId));
     }
@@ -290,7 +295,7 @@ class App extends React.Component {
             this.props.dispatch(setFocusedTaskListId(taskListId));
             this.props.dispatch(addNewTaskAsync());
         }
-        
+
     }
 
     handleTaskTextContainerTap(taskId) {
@@ -313,7 +318,7 @@ class App extends React.Component {
             return "";
         }
 
-        let selectedProject = projects.find( item => {
+        let selectedProject = projects.find(item => {
             return item.uid === projectId;
         })
 
@@ -324,10 +329,6 @@ class App extends React.Component {
         else {
             return "";
         }
-    }
-
-    handleProjectMenuButtonClick() {
-        this.props.dispatch(setIsAppDrawerOpen(true));
     }
 
     handleTaskActionClick(type, taskId, taskListId, projectId) {
@@ -372,7 +373,6 @@ const mapStateToProps = state => {
         openChecklistSettingsId: state.openChecklistSettingsId,
         itemSelectDialog: state.itemSelectDialog,
         quickItemSelectDialog: state.quickItemSelectDialog,
-        isJumpMenuOpen: state.isJumpMenuOpen,
         enableStates: state.enableStates,
         isOnboarding: state.isOnboarding,
     }

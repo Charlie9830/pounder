@@ -5,10 +5,10 @@ import InviteListItem from './InviteListItem';
 import SwipeableListItem from './SwipeableListItem/SwipeableListItem';
 import AddNewProjectButton from './AddNewProjectButton';
 
-import { AppBar, Toolbar, Typography, Grid, IconButton, withTheme, ListSubheader, Divider, Fab, Zoom } from '@material-ui/core';
+import { withTheme, ListSubheader, Divider, Fab, Zoom, Typography, Toolbar, IconButton, Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
-import SettingsIcon from '@material-ui/icons/Settings';
+
 import AddIcon from '@material-ui/icons/Add';
 import ShareIcon from '@material-ui/icons/Share';
 import DeleteIcon from '@material-ui/icons/Delete';
@@ -17,38 +17,19 @@ import {
     acceptProjectInviteAsync, denyProjectInviteAsync, addNewProjectAsync,
     setIsAppSettingsOpen, selectProject, openShareMenu, removeProjectAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
-import FullScreenView from '../layout-components/FullScreenView';
+
 import TransitionList from './TransitionList/TransitionList';
 import ListItemTransition from './TransitionList/ListItemTransition';
+import SettingsIcon from '@material-ui/icons/Settings';
+import AppDrawerHeader from './AppDrawerHeader';
 
 let styles = theme => {
-    let fabBase = {
-        margin: 0,
-        top: 'auto',
-        right: 20,
-        bottom: 20,
-        left: 'auto',
-        position: 'fixed',
-    }
-
     return {
-        fabMoveUp: {
-            ...fabBase,
-            transform: 'translate3d(0, -46px, 0)',
-            transition: theme.transitions.create('transform', {
-                duration: theme.transitions.duration.enteringScreen,
-                easing: theme.transitions.easing.easeOut,
-            }),
-        },
-    
-        fabMoveDown: {
-            ...fabBase,
-            transform: 'translate3d(0, 0, 0)',
-            transition: theme.transitions.create('transform', {
-                duration: theme.transitions.duration.leavingScreen,
-                easing: theme.transitions.easing.sharp,
-            }),
-        },
+        appDrawer: {
+            height: '100%',
+            width: '100%',
+            background: theme.palette.background.paper,
+        }
     }
 };
 
@@ -65,68 +46,50 @@ class AppDrawer extends Component {
 
     render() {
         let { classes } = this.props;
-        let fabClassName = this.props.isASnackbarOpen ? 'fabMoveUp' : 'fabMoveDown';
 
         return (
-            <FullScreenView>
-                <AppBar>
-                    <Toolbar>
-                        <Typography
-                        variant="h6"> Handball </Typography>
-                        <Grid container
-                        direction="row-reverse"
-                        justify="flex-start"
-                        alignItems="center">
-                            <IconButton onClick={() => { this.props.dispatch(setIsAppSettingsOpen(true))}}>
-                                <SettingsIcon />
-                            </IconButton>
-                        </Grid>
-                    </Toolbar>
-                </AppBar>
+            <div className={classes['appDrawer']}>
 
-                <TransitionList 
-                style={{marginTop: '56px', marginBottom: '72px'}}>
-                    { this.getAddProjectHintButtonJSX() }
+                <AppDrawerHeader
+                displayName={this.props.displayName}
+                userEmail={this.props.userEmail}
+                />
+                
+                <TransitionList >
+                    {this.getAddProjectHintButtonJSX()}
 
-                    {/* Invites  */} 
-                    { this.getInvitesSubheading(this.props.invites.length > 0) }
-                    { this.props.invites.length > 0 && this.getInvitesJSX() }
+                    {/* Invites  */}
+                    {this.getInvitesSubheading(this.props.invites.length > 0)}
+                    {this.props.invites.length > 0 && this.getInvitesJSX()}
 
-                    {/* Local Projects  */} 
-                    { this.getLocalProjectsSubheading(this.props.localProjects.length > 0) }
-                    { this.props.localProjects.length > 0 && this.getLocalProjectsSubheading() && this.projectMapper(this.props.localProjects) }
+                    {/* Local Projects  */}
+                    {this.getLocalProjectsSubheading(this.props.localProjects.length > 0)}
+                    {this.props.localProjects.length > 0 && this.getLocalProjectsSubheading() && this.projectMapper(this.props.localProjects)}
 
-                    {/* Remote Projects  */} 
-                    { this.getRemoteProjectsSubheading(this.props.remoteProjects.length > 0) }
-                    { this.props.remoteProjects.length > 0 && this.getRemoteProjectsSubheading() && this.projectMapper(this.props.remoteProjects) }
+                    {/* Remote Projects  */}
+                    {this.getRemoteProjectsSubheading(this.props.remoteProjects.length > 0)}
+                    {this.props.remoteProjects.length > 0 && this.getRemoteProjectsSubheading() && this.projectMapper(this.props.remoteProjects)}
                 </TransitionList>
-
-                <Zoom in={this.props.enableStates.newProject}>
-                    <Fab className={classes[fabClassName]}
-                        onClick={() => { this.props.dispatch(addNewProjectAsync()) }}>
-                        <AddIcon />
-                    </Fab>
-                </Zoom>
-            </FullScreenView>
+            </div>
         );
     }
 
     getAddProjectHintButtonJSX() {
-        if (this.props.enableStates.newProject === false ) {
+        if (this.props.enableStates.newProject === false) {
             return null;
         }
 
         if (this.props.invites.length === 0 &&
-        this.props.localProjects.length === 0 &&
-        this.props.remoteProjects.length === 0 ) {
+            this.props.localProjects.length === 0 &&
+            this.props.remoteProjects.length === 0) {
             return (
                 <ListItemTransition key="addnewhintbutton">
-                    <AddNewProjectButton onClick={() => {this.props.dispatch(addNewProjectAsync())}}/>
+                    <AddNewProjectButton onClick={() => { this.props.dispatch(addNewProjectAsync()) }} />
                 </ListItemTransition>
-                
+
             )
         }
-        
+
         else {
             return undefined;
         }
@@ -143,7 +106,7 @@ class AppDrawer extends Component {
                 <ListSubheader key="invites"> Invites </ListSubheader>,
             <Divider key="invitesdivider" />
             </ListItemTransition>
-        ] 
+        ]
     }
 
     getLocalProjectsSubheading(show) {
@@ -157,7 +120,7 @@ class AppDrawer extends Component {
                 <ListSubheader key="localprojects"> Personal Projects </ListSubheader>,
             <Divider key="localprojectsdivider" />
             </ListItemTransition>
-        ] 
+        ]
     }
 
     getRemoteProjectsSubheading(show) {
@@ -167,16 +130,16 @@ class AppDrawer extends Component {
 
         return [
             <ListItemTransition
-            key="remoteprojects">
+                key="remoteprojects">
                 <ListSubheader> Shared Projects </ListSubheader>,
             <Divider />
             </ListItemTransition>
-            
-        ] 
+
+        ]
     }
 
     getInvitesJSX() {
-        let jsx = this.props.invites.map( item => {
+        let jsx = this.props.invites.map(item => {
             return (
                 <ListItemTransition
                     key={item.projectId}>
@@ -196,17 +159,17 @@ class AppDrawer extends Component {
 
     projectMapper(projects) {
         let favouriteProjectId = this.props.accountConfig.favouriteProjectId === undefined ? '-1' : this.props.accountConfig.favouriteProjectId;
-        let jsx = projects.map( item => {
-            let leftActions = [ { value: 'share', background: this.props.theme.palette.primary.main, icon: <ShareIcon/> }];
-            let rightActions = [ {value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/> }]
+        let jsx = projects.map(item => {
+            let leftActions = [{ value: 'share', background: this.props.theme.palette.primary.main, icon: <ShareIcon /> }];
+            let rightActions = [{ value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon /> }]
 
             return (
                 <ListItemTransition
                     key={item.uid}>
                     <SwipeableListItem
-                    leftActions={leftActions}
-                    rightActions={rightActions}
-                    onActionClick={(action) => { this.handleProjectActionClick(item.uid, action) }}>
+                        leftActions={leftActions}
+                        rightActions={rightActions}
+                        onActionClick={(action) => { this.handleProjectActionClick(item.uid, action) }}>
                         <ProjectListItem
                             onClick={() => { this.props.dispatch(selectProject(item.uid)) }}
                             name={item.projectName}
@@ -246,6 +209,8 @@ let mapStateToProps = (state) => {
         updatingInviteIds: state.updatingInviteIds,
         isASnackbarOpen: state.isASnackbarOpen,
         enableStates: state.enableStates,
+        displayName: state.displayName,
+        userEmail: state.userEmail,
     }
 }
 

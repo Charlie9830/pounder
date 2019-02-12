@@ -22,14 +22,14 @@ import { getUserUid } from 'handball-libs/libs/pounder-firebase';
 import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { ParseDueDate } from 'handball-libs/libs/pounder-utilities';
 
-import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom, Divider } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import AddIcon from '@material-ui/icons/Add';
+import RemoveIcon from '@material-ui/icons/Remove';
 import AddTaskListIcon from '@material-ui/icons/PlaylistAdd';
+import RemoveTaskListIcon from '../icons/RemoveTaskListIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
-import MenuIcon from '@material-ui/icons/Menu';
-import JumpMenu from './JumpMenu';
 
 let styles = theme => {
     let primaryFabBase = {
@@ -96,7 +96,7 @@ let styles = theme => {
 
         toolbarContainer: {
             gridRow: 'Toolbar',
-            placeSelf: 'stretch'
+            placeSelf: 'stretch',
         },
 
         contentContainer: {
@@ -114,23 +114,28 @@ let styles = theme => {
 };
 
 const projectRightButtonsContainer = {
+    flexShrink: '1',
     display: 'flex',
     flexDirection: 'row-reverse',
     justifyContent: 'flex-start',
     alignItems: 'center'
 }
 
+const projectLeftButtonsContainer = {
+    flexGrow: '1',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+}
+
 class Project extends React.Component {
     constructor(props) {
         super(props);
 
-        // Refs.
-        this.contentContainerRef = React.createRef();
-
         // Method Bindings.
         this.getTaskListsJSX = this.getTaskListsJSX.bind(this);
         this.getTasksJSX = this.getTasksJSX.bind(this);
-        this.handleJumpMenuItemClick = this.handleJumpMenuItemClick.bind(this);
         this.getFabClassNames = this.getFabClassNames.bind(this);
     }
 
@@ -144,15 +149,29 @@ class Project extends React.Component {
                     className={classes['projectGrid']}>
                     <div
                         className={classes['toolbarContainer']}>
-                        <AppBar
-                            position="static">
                             <Toolbar
                                 disableGutters={true}>
-                                <IconButton
-                                    onClick={this.props.onMenuButtonClick}>
-                                    <MenuIcon />
-                                </IconButton>
-                                <Typography variant="h6" style={{ flexGrow: 1 }}> {this.props.projectName} </Typography>
+
+                                <div style={projectLeftButtonsContainer}>
+                                    <IconButton>
+                                        <AddIcon/>
+                                    </IconButton>
+                                    <IconButton>
+                                        <RemoveIcon/>
+                                    </IconButton>
+
+                                    <div style={{width: '32px'}}/>
+
+                                    <IconButton>
+                                        <AddTaskListIcon
+                                        />
+                                    </IconButton>
+                                    <IconButton>
+                                        <RemoveTaskListIcon 
+                                        />
+                                    </IconButton>
+                                </div>
+                                
                                 <div style={projectRightButtonsContainer}>
                                     <ProjectMenu
                                         onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId)}}
@@ -162,22 +181,14 @@ class Project extends React.Component {
                                         onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
                                         showOnlySelfTasks={this.props.showOnlySelfTasks}
                                         onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }} />
-                                    <JumpMenu
-                                        isOpen={this.props.isJumpMenuOpen}
-                                        onOpen={this.props.onJumpMenuOpen}
-                                        onClose={this.props.onJumpMenuClose}
-                                        taskLists={this.props.taskLists}
-                                        onItemClick={this.handleJumpMenuItemClick} />
                                 </div>
-
                             </Toolbar>
-                        </AppBar>
+                            <Divider/>
                     </div>
 
 
                     <div
-                        className={classes['contentContainer']}
-                        ref={this.contentContainerRef}>
+                        className={classes['contentContainer']}>
                         {this.getTaskListsJSX()}
                         <AddNewTaskListButton onClick={this.props.onAddNewTaskListButtonClick} />
                     </div>
@@ -219,18 +230,6 @@ class Project extends React.Component {
             primaryFabClassName,
             secondaryFabClassName,
         }
-    }
-
-    handleJumpMenuItemClick(id) {
-        this.props.onJumpMenuClose();
-        this.props.onTaskListClick(id);
-        
-        let targetElement = document.getElementById(id);
-        if (targetElement === undefined) {
-            return;
-        }
-
-        this.contentContainerRef.current.scrollTop = targetElement.offsetTop - (56 + 8); // Toolbar Height + List top margin.
     }
 
     getTaskListsJSX(taskLists) {
