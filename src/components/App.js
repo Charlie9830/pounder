@@ -13,7 +13,7 @@ import {
     moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync,
-    removeProjectAsync, removeTaskAsync,
+    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme } from '@material-ui/core';
@@ -66,6 +66,7 @@ class App extends React.Component {
         this.handleRenewChecklistButtonClick = this.handleRenewChecklistButtonClick.bind(this);
         this.handleMoveTaskListButtonClick = this.handleMoveTaskListButtonClick.bind(this);
         this.handleDeleteProjectButtonClick = this.handleDeleteProjectButtonClick.bind(this);
+        this.handleLayoutChange = this.handleLayoutChange.bind(this);
 
     }
 
@@ -81,6 +82,8 @@ class App extends React.Component {
     }
 
     render() {
+        let rglDragEnabled = this.props.openTaskInspectorId === -1;
+
         return (
             <React.Fragment>
                 <CssBaseline />
@@ -96,7 +99,7 @@ class App extends React.Component {
                             <VisibleAppDrawer />
                     </div>
 
-                    <div style={{ gridArea: 'Project' }}>
+                    <div style={{ gridArea: 'Project', placeSelf: 'stretch' }}>
                         <Project
                             projectId={this.props.selectedProjectId}
                             projectName={this.getProjectName(this.props.projects, this.props.selectedProjectId)}
@@ -131,6 +134,10 @@ class App extends React.Component {
                             onMoveTaskListButtonClick={this.handleMoveTaskListButtonClick}
                             onDeleteProjectButtonClick={this.handleDeleteProjectButtonClick}
                             enableStates={this.props.enableStates}
+                            projectLayout={this.props.selectedProjectLayout}
+                            projectLayoutType={this.props.projectLayoutType}
+                            rglDragEnabled={rglDragEnabled}
+                            onLayoutChange={this.handleLayoutChange}
                         />
                     </div>
 
@@ -218,6 +225,12 @@ class App extends React.Component {
             </React.Fragment>
         )
     }
+
+    
+    handleLayoutChange(layouts, oldLayouts, projectId) {
+        this.props.dispatch(updateProjectLayoutAsync(layouts, oldLayouts, projectId));
+    }
+
 
     handleDeleteProjectButtonClick(projectId) {
         this.props.dispatch(removeProjectAsync(projectId));
@@ -375,6 +388,8 @@ const mapStateToProps = state => {
         quickItemSelectDialog: state.quickItemSelectDialog,
         enableStates: state.enableStates,
         isOnboarding: state.isOnboarding,
+        selectedProjectLayout: state.selectedProjectLayout,
+        selectedProjectLayoutType: state.selectedProjectLayoutType,
     }
 }
 

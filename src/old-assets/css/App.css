@@ -102,12 +102,3 @@ body {
   grid-row: AppContent;
   height: 100%;
 }
-
-::-webkit-scrollbar {
-  background: var(--scrollbar-track-color);
-  width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--scrollbar-thumb-color);
-}

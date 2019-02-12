@@ -5,25 +5,27 @@ import { withStyles } from '@material-ui/core';
 import Color from 'color';
 import colorString from 'color-string';
 import TransitionList from './TransitionList/TransitionList';
+import ResizeBottomRightIcon from '../icons/ResizeBottomRightIcon';
 
 let containerStyle = {
+    position: 'relative',
     width: '100%',
-    flexGrow: '1',
+    height: '100%',
     display: 'grid',
     gridTemplateRows: '[Toolbar]auto [Tasks]1fr',
-    overflowX: 'hidden',
 }
-
 
 
 const styles = theme => {
     
     let basePaperStyle = {
-        width: `calc(100% - ${theme.spacing.unit * 2}px)`,
-        marginLeft: `${theme.spacing.unit}px`,
-        marginRight: `${theme.spacing.unit}px`,
-        marginTop: `${theme.spacing.unit}px`,
+        width: `calc(100% - ${theme.spacing.unit}px)`,
+        height: '100%',
+        marginLeft: `${theme.spacing.unit / 2}px`,
+        marginRight: `${theme.spacing.unit / 2}px`,
+        marginTop: `${theme.spacing.unit / 2}px`,
     }
+
     return {
         unFocused: {
             ...basePaperStyle,
@@ -64,16 +66,24 @@ class TaskList extends Component {
                         onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick}/>
                     </div>
 
-                    <div style={{ gridRow: 'Tasks' }}>
+                    <div style={{ gridRow: 'Tasks', overflowY: 'scroll' }}>
                         <TransitionList>
                             { this.props.children }
                         </TransitionList>
                         
                     </div>
 
+                    <div style={{
+                        position: 'absolute',
+                        bottom: '0px',
+                        right: '4px'
+                    }}>
+                        <ResizeBottomRightIcon
+                        color="disabled"/>
+                    </div>
+
                 </div>
             </Paper>
-            
         );
     }
 }

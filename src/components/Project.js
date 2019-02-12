@@ -30,6 +30,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import AddTaskListIcon from '@material-ui/icons/PlaylistAdd';
 import RemoveTaskListIcon from '../icons/RemoveTaskListIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
+import TaskListGrid from './TaskListGrid';
 
 let styles = theme => {
     let primaryFabBase = {
@@ -137,11 +138,17 @@ class Project extends React.Component {
         this.getTaskListsJSX = this.getTaskListsJSX.bind(this);
         this.getTasksJSX = this.getTasksJSX.bind(this);
         this.getFabClassNames = this.getFabClassNames.bind(this);
+        this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
+        this.handleLayoutChange = this.handleLayoutChange.bind(this);
     }
 
     render() {
         let { classes } = this.props;
         const { primaryFabClassName, secondaryFabClassName } = this.getFabClassNames();
+
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        var selectedLayouts = this.extractSelectedProjectLayouts();
+        var layouts = JSON.parse(JSON.stringify(selectedLayouts)); // Hacky way to get RGL to update it's Layout more reliably.
         
         return (
             <React.Fragment>
@@ -189,7 +196,13 @@ class Project extends React.Component {
 
                     <div
                         className={classes['contentContainer']}>
-                        {this.getTaskListsJSX()}
+                        <TaskListGrid 
+                        layout={layouts}
+                        onLayoutChange={this.handleLayoutChange}
+                        rglDragEnabled={this.props.rglDragEnabled}>
+                            {this.getTaskListsJSX(layouts)}
+                        </TaskListGrid>
+                        
                         <AddNewTaskListButton onClick={this.props.onAddNewTaskListButtonClick} />
                     </div>
 
@@ -232,30 +245,53 @@ class Project extends React.Component {
         }
     }
 
-    getTaskListsJSX(taskLists) {
+    getTaskListsJSX(layouts) {
+        // Turn layouts array into a Lookup by taskListId to avoid an O[^n] operation when building the Task List Widgets.
+        var layoutsMap = {};
+        layouts.forEach(layout => {
+            layoutsMap[layout.i] = layout;
+        })
+
         let taskListsJSX = this.props.taskLists.map(item => {
             // Widget Layer.
             let isFocused = this.props.focusedTaskListId === item.uid;
             let isSettingsMenuOpen = this.props.openTaskListSettingsMenuId === item.uid;
 
+            // We give the Layouts to RGL via the 'data-grid' property as well as using the 'layouts' prop.
+            // using Data-grid means that New Task Lists will render at a sane size initally, but only using data-grid means
+            // that updates to the Layout once established won't cause RGL to render. This is because RGL only looks at it's
+            // children's keys to decide if it should recalculate the layout when children change.
+            // Therefore we also provide provide the layouts via the RGL 'layouts' prop further down. This covers us for
+            // layout mutations.
+            var layoutEntry = {
+                x: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].x,
+                y: layoutsMap[item.uid] === undefined ? 0 : layoutsMap[item.uid].y,
+                w: layoutsMap[item.uid] === undefined ? 6 : layoutsMap[item.uid].w,
+                h: layoutsMap[item.uid] === undefined ? 4 : layoutsMap[item.uid].h,
+            }
+
             return (
-                <TaskList 
-                scrollTargetId={item.uid}
+                /* TaskLists must be wrapped in a div for RGL to work properly */
+                <div
                 key={item.uid}
-                name={item.taskListName}
-                isFocused={isFocused}
-                onClick={ () => { this.props.onTaskListClick(item.uid) }}
-                onTaskListSettingsChanged={(newValue) => { this.props.onTaskListSettingsChanged(item.uid, newValue) }}
-                taskListSettings={item.settings}
-                isSettingsMenuOpen={isSettingsMenuOpen}
-                onSettingsMenuOpen={() => { this.props.onTaskListSettingsMenuOpen(item.uid) }}
-                onSettingsMenuClose={this.props.onTaskListSettingsMenuClose}
-                onRenameTaskListButtonClick={() => { this.props.onRenameTaskListButtonClick(item.uid, item.taskListName) }}
-                onDeleteButtonClick={() => { this.props.onDeleteTaskListButtonClick(item.uid) }}
-                onChecklistSettingsButtonClick={() => { this.props.onChecklistSettingsButtonClick(item.uid, item.settings.checklistSettings)}}
-                onMoveTaskListButtonClick={() => { this.props.onMoveTaskListButtonClick(item.uid, item.project)}}>
-                    { this.getTasksJSX(item.uid, item.settings.sortBy, item.settings.checklistSettings.isChecklist) }
-                </TaskList>
+                data-grid={layoutEntry}>
+                    <TaskList
+                        scrollTargetId={item.uid}
+                        name={item.taskListName}
+                        isFocused={isFocused}
+                        onClick={() => { this.props.onTaskListClick(item.uid) }}
+                        onTaskListSettingsChanged={(newValue) => { this.props.onTaskListSettingsChanged(item.uid, newValue) }}
+                        taskListSettings={item.settings}
+                        isSettingsMenuOpen={isSettingsMenuOpen}
+                        onSettingsMenuOpen={() => { this.props.onTaskListSettingsMenuOpen(item.uid) }}
+                        onSettingsMenuClose={this.props.onTaskListSettingsMenuClose}
+                        onRenameTaskListButtonClick={() => { this.props.onRenameTaskListButtonClick(item.uid, item.taskListName) }}
+                        onDeleteButtonClick={() => { this.props.onDeleteTaskListButtonClick(item.uid) }}
+                        onChecklistSettingsButtonClick={() => { this.props.onChecklistSettingsButtonClick(item.uid, item.settings.checklistSettings) }}
+                        onMoveTaskListButtonClick={() => { this.props.onMoveTaskListButtonClick(item.uid, item.project) }}>
+                        {this.getTasksJSX(item.uid, item.settings.sortBy, item.settings.checklistSettings.isChecklist)}
+                    </TaskList>
+                </div>
             )
         })
 
@@ -375,6 +411,16 @@ class Project extends React.Component {
         return this.props.taskLists.filter(item => {
             return item.project === this.props.projectId
         })
+    }
+
+    handleLayoutChange(layouts, oldItem, newItem, e, element) {
+        this.props.onLayoutChange(layouts, this.extractSelectedProjectLayouts(), this.props.projectId);
+    }
+
+    extractSelectedProjectLayouts() {
+        // Extract correct Layouts array from ProjectLayouts wrapper.
+        return this.props.projectLayout === undefined || this.props.projectLayout.layouts === undefined ?
+         [] : [...this.props.projectLayout.layouts];
     }
 
     getTaskSorter(sortBy) {

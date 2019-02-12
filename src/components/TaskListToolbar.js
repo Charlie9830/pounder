@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton, Typography, withTheme } from '@material-ui/core';
 import ChecklistIcon from '@material-ui/icons/PlaylistAddCheck';
 import TaskListSettingsMenu from './TaskListSettingsMenu';
+import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
 
 
 const TaskListToolbar = (props) => {
@@ -9,7 +10,7 @@ const TaskListToolbar = (props) => {
 
     let toolbarStyle = {
         display: 'grid',
-        gridTemplateColumns: '[Menu]auto [Title]1fr [ChecklistIndicator]auto',
+        gridTemplateColumns: '[Menu]auto [Title]1fr [ChecklistIndicator]auto [DragHandle]auto',
         background: props.isFocused ? theme.palette.secondary.main : 'unset',
     }
 
@@ -46,6 +47,14 @@ const TaskListToolbar = (props) => {
             <div
             style={{gridColumn: 'ChecklistIndicator', placeSelf: 'center flex-end'}}>
                 { isChecklist  && checklistIndicator }
+            </div>
+
+            <div
+            style={{gridColumn: 'DragHandle', placeSelf: 'center flex-end'}}>
+                <div className="rgl-drag-handle">
+                    <DragIndicatorIcon
+                        color="action" />
+                </div>
             </div>
 
         </div>
