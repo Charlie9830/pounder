@@ -1,3 +1,5 @@
+import React, { Component } from 'react';
+
 function withMouseOver (WrappedComponent) {
     return class HoverableComponent extends Component {
       constructor (props) {

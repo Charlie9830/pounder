@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import Hammer from 'hammerjs';
 import Divider from './Divider';
 import { withTheme } from '@material-ui/core';
+import withMouseOver from '../Hocs/withMouseOver';
+import TaskSecondaryActions from './TaskSecondaryActions';
 
 class TaskBase extends Component {
     constructor(props) {
@@ -43,10 +45,10 @@ class TaskBase extends Component {
             height: 'fit-content',
             display: 'grid',
             gridTemplateRows: '[Content]1fr [IndicatorPanel]auto [Divider]auto',
-            gridTemplateColumns: '[PriorityIndicator]auto [Checkbox]auto [Text]1fr [DueDate]auto',
-            gridTemplateAreas: `'PriorityIndicator Checkbox       Text           DueDate'
-                                'PriorityIndicator IndicatorPanel IndicatorPanel IndicatorPanel'
-                                '       .               .         Divider        Divider        '`,
+            gridTemplateColumns: '[PriorityIndicator]auto [Checkbox]auto [Text]1fr [SecondaryActions]auto [DueDate]auto',
+            gridTemplateAreas: `'PriorityIndicator Checkbox       Text           SecondaryActions   DueDate'
+                                'PriorityIndicator IndicatorPanel IndicatorPanel IndicatorPanel     IndicatorPanel'
+                                '       .               .         Divider        Divider            Divider'`,
             background: this.props.isSelected ? theme.palette.action.selected : 'unset',
         }
 
@@ -89,6 +91,14 @@ class TaskBase extends Component {
                     { this.props.taskText }
                 </div> 
 
+                {/* Secondary Actions  */} 
+                <div
+                style={{gridArea: 'SecondaryActions', placeSelf: 'center flex-end'}}>
+                    { this.props.mouseOver && 
+                        <TaskSecondaryActions
+                        onDeleteTaskButtonClick={this.props.onDeleteTaskButtonClick}/> }
+                </div>
+
                 {/* DueDate  */}
                 <div 
                 ref={this.dueDateContainerRef}
@@ -112,4 +122,4 @@ class TaskBase extends Component {
     }
 }
 
-export default withTheme()(TaskBase);
+export default withMouseOver(withTheme()(TaskBase));

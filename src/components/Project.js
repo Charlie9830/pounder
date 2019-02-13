@@ -360,21 +360,9 @@ class Project extends React.Component {
                     assignedToDisplayName={assignedToDisplayName}
                 />
 
-                let leftActions = [
-                    { value: 'moveTask', background: this.props.theme.palette.primary.light, icon: <MoveTaskIcon /> },
-                ]
-
-                let rightActions = [
-                    { value: 'deleteTask', background: this.props.theme.palette.error.dark, icon: <DeleteIcon /> },
-                ]
-
                 return (
                     <ListItemTransition
                         key={item.uid}>
-                        <SwipeableListItem
-                            leftActions={leftActions}
-                            rightActions={rightActions}
-                            onActionClick={(value) => { this.props.onTaskActionClick(value, item.uid, item.taskList, item.project) }}>
                             <TaskBase
                                 onClick={() => { this.props.onTaskClick(item.uid, item.taskList)}}
                                 isSelected={isTaskSelected}
@@ -388,8 +376,8 @@ class Project extends React.Component {
                                 onPress={() => { this.props.onTaskPress(item.uid, item.taskList, item.taskName, item.metadata) }}
                                 onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
                                 showDivider={showDivider}
+                                onDeleteTaskButtonClick={() => { this.props.onDeleteTaskButtonClick(item.uid) }}
                             />
-                        </SwipeableListItem>
                     </ListItemTransition>
 
                 )

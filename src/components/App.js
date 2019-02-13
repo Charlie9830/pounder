@@ -58,7 +58,6 @@ class App extends React.Component {
 
         // Method Bindings.
         this.handleTaskCheckboxChange = this.handleTaskCheckboxChange.bind(this);
-        this.handleTaskActionClick = this.handleTaskActionClick.bind(this);
         this.handleTaskListClick = this.handleTaskListClick.bind(this);
         this.handleTaskTextContainerTap = this.handleTaskTextContainerTap.bind(this);
         this.handleAddNewTaskButtonClick = this.handleAddNewTaskButtonClick.bind(this);
@@ -93,6 +92,7 @@ class App extends React.Component {
         this.handleKeyboardShortcut = this.handleKeyboardShortcut.bind(this);
         this.isAppLocked = this.isAppLocked.bind(this);
         this.handleArrowSelectTask = this.handleArrowSelectTask.bind(this);
+        this.handleDeleteTaskButtonClick = this.handleDeleteTaskButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -157,7 +157,6 @@ class App extends React.Component {
                             selectedTaskId={this.props.selectedTask.taskId}
                             onFocusedTaskListChange={this.handleFocusedTaskListChange}
                             onTaskCheckboxChange={this.handleTaskCheckboxChange}
-                            onTaskActionClick={this.handleTaskActionClick}
                             onTaskListClick={this.handleTaskListClick}
                             onTaskTextContainerTap={this.handleTaskTextContainerTap}
                             onTaskPress={this.handleTaskPress}
@@ -191,6 +190,7 @@ class App extends React.Component {
                             projectOverlayComponent={projectOverlayComponent}
                             onTaskClick={this.handleTaskClick}
                             onArrowSelectTask={this.handleArrowSelectTask}
+                            onDeleteTaskButtonClick={this.handleDeleteTaskButtonClick}
                         />
                     </div>
 
@@ -560,14 +560,8 @@ class App extends React.Component {
         }
     }
 
-    handleTaskActionClick(type, taskId, taskListId, projectId) {
-        if (type === 'moveTask') {
-            this.props.dispatch(moveTaskViaDialogAsync(taskId, taskListId, projectId));
-        }
-
-        if (type === 'deleteTask') {
-            this.props.dispatch(removeTaskAsync(taskId));
-        }
+    handleDeleteTaskButtonClick(taskId) {
+        this.props.dispatch(removeTaskAsync(taskId));
     }
 
     handleTaskCheckboxChange(taskId, newValue, oldValue, currentMetadata) {
