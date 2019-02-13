@@ -37,6 +37,37 @@ const styles = theme => {
 }
 
 class TaskList extends Component {
+    constructor(props) {
+        super(props);
+        
+        // Method Bindings.
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
+    }
+    
+
+
+    componentDidMount(){
+        if (this.props.isFocused) {
+            document.addEventListener('keydown', this.handleDocumentKeyDown);
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (prevProps.isFocused !== this.props.isFocused) {
+            if (this.props.isFocused) {
+                document.addEventListener('keydown', this.handleDocumentKeyDown);
+            }
+
+            else {
+                document.removeEventListener('keydown', this.handleDocumentKeyDown);
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleDocumentKeyDown);
+    }
+
     render() {
         let { classes } = this.props;
         let paperClassName = this.props.isFocused ? classes['focused'] : classes['unFocused'];
@@ -63,7 +94,7 @@ class TaskList extends Component {
                         onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick}/>
                     </div>
 
-                    <div style={{ gridRow: 'Tasks', overflowY: 'scroll' }}>
+                    <div style={{ gridRow: 'Tasks', overflowY: 'auto' }}>
                         <TransitionList>
                             { this.props.children }
                         </TransitionList>
@@ -82,6 +113,18 @@ class TaskList extends Component {
                 </div>
             </Paper>
         );
+    }
+
+    handleDocumentKeyDown(e) {
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            this.props.onArrowKeyDown('down');
+        }
+
+        if (e.key === "ArrowUp") {
+            e.preventDefault();
+           this.props.onArrowKeyDown('up');
+        }
     }
 }
 

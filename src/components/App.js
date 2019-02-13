@@ -2,19 +2,21 @@ import React from 'react';
 import Project from './Project';
 import TextInputDialog from './dialogs/TextInputDialog';
 import TaskInspector from './TaskInspector/TaskInspector';
-import ProjectOverlay from './ProjectOverlay';
+import MouseTrap from 'mousetrap';
+import { remote } from 'electron';
+require('later/later.js');
 
 import '../assets/css/App.css';
 
 import { connect } from 'react-redux';
 import {
     updateTaskCompleteAsync, setIsAppDrawerOpen, attachAuthListenerAsync, setFocusedTaskListId,
-    addNewTaskAsync, addNewTaskListAsync, openTaskInspector,
+    addNewTaskAsync, addNewTaskListAsync, openTaskInspector, updateTaskNameWithDialogAsync,
     openShareMenu, updateProjectNameAsync, setShowCompletedTasksAsync, setShowOnlySelfTasks,
     moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
-    getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync,
-    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage
+    getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
+    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage, selectTask
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -31,6 +33,14 @@ import VisibleOnboarder from './Onboarder/Onboarder';
 import VisibleInductionSplash from './Induction/InductionSplash';
 import VisibleStatusBar from './StatusBar';
 import AddNewTaskListButton from './AddNewTaskListButton';
+
+const KEYBOARD_COMBOS = {
+    MOD_N: 'mod+n',
+    MOD_SHIFT_N: 'mod+shift+n',
+    SHIFT_ESC: 'shift+esc',
+    MOD_SHIFT_I: 'mod+shift+i',
+    MOD_F: 'mod+f',
+};
 
 let appGrid = {
     display: 'grid',
@@ -71,10 +81,24 @@ class App extends React.Component {
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
         this.getProjectOverlayComponent = this.getProjectOverlayComponent.bind(this);
         this.handleLogInButtonClick = this.handleLogInButtonClick.bind(this);
-
+        this.bindMouseTrap = this.bindMouseTrap.bind(this);
+        this.unBindMouseTrap = this.unBindMouseTrap.bind(this);
+        this.performOvernightJobs = this.performOvernightJobs.bind(this);
+        this.registerLaterJobs = this.registerLaterJobs.bind(this);
+        this.handleEscapeKeyPress = this.handleEscapeKeyPress.bind(this);
+        this.handleDeleteKeyPress = this.handleDeleteKeyPress.bind(this);
+        this.handleTaskOpenKeyPress = this.handleTaskOpenKeyPress.bind(this);
+        this.handleFocusedTaskListChange = this.handleFocusedTaskListChange.bind(this);
+        this.handleTaskClick = this.handleTaskClick.bind(this);
+        this.handleKeyboardShortcut = this.handleKeyboardShortcut.bind(this);
+        this.isAppLocked = this.isAppLocked.bind(this);
+        this.handleArrowSelectTask = this.handleArrowSelectTask.bind(this);
     }
 
     componentDidMount() {
+        // Mousetrap.
+        this.bindMouseTrap();
+
         // Attach an Authentication state listener. Will pull down database when Logged in.
         this.props.dispatch(attachAuthListenerAsync());
 
@@ -83,6 +107,27 @@ class App extends React.Component {
 
         // Get Mui Themes.
         this.props.dispatch(getLocalMuiThemes());
+
+        // Register Jobs for Later.
+        this.registerLaterJobs();
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        // If Locking or Unlocking. Set Mousetrap Bindings.
+        if (prevProps.isLockScreenDisplayed !== this.props.isLockScreenDisplayed) {
+            if (this.props.isLockScreenDisplayed === true) {
+                this.unBindMouseTrap();
+            }
+
+            else {
+                this.bindMouseTrap();
+            }
+        }
+    }
+
+    componentWillUnmount() {
+        // Mousetrap
+        this.unBindMouseTrap();
     }
 
     render() {
@@ -92,9 +137,7 @@ class App extends React.Component {
         return (
             <React.Fragment>
                 <CssBaseline />
-
                 <div style={appGrid}>
-
                     <div style={{ gridArea: 'StatusBar' }}>
                         <VisibleStatusBar />
                     </div>
@@ -111,6 +154,8 @@ class App extends React.Component {
                             tasks={this.props.filteredTasks}
                             taskLists={this.props.filteredTaskLists}
                             focusedTaskListId={this.props.focusedTaskListId}
+                            selectedTaskId={this.props.selectedTask.taskId}
+                            onFocusedTaskListChange={this.handleFocusedTaskListChange}
                             onTaskCheckboxChange={this.handleTaskCheckboxChange}
                             onTaskActionClick={this.handleTaskActionClick}
                             onTaskListClick={this.handleTaskListClick}
@@ -144,6 +189,8 @@ class App extends React.Component {
                             rglDragEnabled={rglDragEnabled}
                             onLayoutChange={this.handleLayoutChange}
                             projectOverlayComponent={projectOverlayComponent}
+                            onTaskClick={this.handleTaskClick}
+                            onArrowSelectTask={this.handleArrowSelectTask}
                         />
                     </div>
 
@@ -230,6 +277,115 @@ class App extends React.Component {
                 />
             </React.Fragment>
         )
+    }
+
+    handleArrowSelectTask(taskListId, taskId) {
+        this.props.dispatch(selectTask(taskListId, taskId));
+    }
+
+    handleTaskClick(taskId, taskListId) {
+        this.props.dispatch(selectTask(taskListId, taskId, false));
+    }
+
+    handleFocusedTaskListChange(taskListId) {
+        this.props.dispatch(setFocusedTaskListId(taskListId));
+    }
+
+    registerLaterJobs() {
+        later.date.localTime();
+        var overnightJobsSchedule = later.parse.text('at 02:05 every day');
+
+        // Set First Run then set Subsequent Calls.
+        later.setTimeout(this.performOvernightJobs, overnightJobsSchedule);
+        later.setInterval(this.performOvernightJobs, overnightJobsSchedule);
+    }
+
+    performOvernightJobs() {
+        this.props.dispatch(postSnackbarMessage("Performing overnight jobs", true, 'infomation'));
+    
+        // Update Due date Displays.
+        this.props.dispatch(calculateProjectSelectorIndicators());
+        this.forceUpdate(); // Forces recalculation of Task Due date displays.
+    
+        // Renew any checklists requiring renewal.
+        this.renewChecklists();
+      }
+
+    bindMouseTrap() {
+        MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
+        MouseTrap.bind("del", this.handleDeleteKeyPress);
+        MouseTrap.bind("enter", this.handleTaskOpenKeyPress);
+        MouseTrap.bind("f2", this.handleTaskOpenKeyPress );
+        MouseTrap.bind("esc", this.handleEscapeKeyPress);
+      }
+    
+      unBindMouseTrap() {
+        MouseTrap.unbind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
+        MouseTrap.unbind("del", this.handleDeleteKeyPress);
+        MouseTrap.unbind("enter", this.handleTaskOpenKeyPress);
+        MouseTrap.unbind("f2", this.handleTaskOpenKeyPress);
+        MouseTrap.unbind("esc", this.handleEscapeKeyPress);
+      }
+
+      handleKeyboardShortcut(mouseTrap, combo){
+        // Mod + n
+        if (combo === KEYBOARD_COMBOS.MOD_N) {
+          this.props.dispatch(addNewTaskAsync());
+        }
+    
+        // Ctrl + Shift + N
+        if (combo === KEYBOARD_COMBOS.MOD_SHIFT_N) {
+          // Add a new TaskList.
+          this.props.dispatch(addNewTaskListAsync());
+        }
+    
+        // Shift + Escape
+        if (combo === KEYBOARD_COMBOS.SHIFT_ESC) {
+          // this.lockApp();
+        }
+    
+        // Ctrl + Shift + I
+        if (combo === KEYBOARD_COMBOS.MOD_SHIFT_I) {
+            // Open Dev Tools.
+            remote.getCurrentWindow().openDevTools();
+        }
+    
+        // Ctrl + F
+        if (combo === KEYBOARD_COMBOS.MOD_F) {
+            // this.setFullscreenFlag(false);
+        }
+      }
+
+    isAppLocked() {
+        return this.props.isLockScreenDisplayed;
+    }
+
+    handleDeleteKeyPress(mouseTrap) {
+        if (this.isAppLocked()) { return }
+
+        this.props.dispatch(removeSelectedTaskAsync());
+    }
+
+    handleTaskOpenKeyPress(e) {
+        if (this.isAppLocked()) { return }
+
+        if (this.props.selectedTask.taskId !== -1 && this.props.selectedTask.isInputOpen === false) {
+            e.preventDefault();
+            let task = this.props.filteredTasks.find( item => {
+                return item.uid === this.props.selectedTask.taskId;
+            })
+
+            if (task !== undefined) {
+                this.props.dispatch(updateTaskNameWithDialogAsync(task.uid, task.name, task.metadata));
+            }
+            
+        }
+    }
+
+    handleEscapeKeyPress(mousetrap) {
+        if (this.props.openTaskInspectorId !== -1) {
+            this.props.dispatch(closeTaskInspectorAsync());
+        }
     }
 
     getProjectOverlayComponent() {
@@ -421,6 +577,7 @@ class App extends React.Component {
 
 const mapStateToProps = state => {
     return {
+        selectedTask: state.selectedTask,
         filteredTasks: state.filteredTasks,
         filteredTaskLists: state.filteredTaskLists,
         projects: state.projects,

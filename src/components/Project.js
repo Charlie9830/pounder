@@ -12,7 +12,7 @@ import MoveTaskIcon from '../icons/MoveTaskIcon';
 import AddNewTaskButton from './AddNewTaskButton.js';
 import ProjectMenu from './ProjectMenu';
 import ListItemTransition from './TransitionList/ListItemTransition';
-import ProjectOverlay from './ProjectOverlay';
+import Mousetrap from 'mousetrap';
 
 import {
     GetDisplayNameFromLookup, TaskDueDateSorter, TaskCompletedSorter, TaskDateAddedSorter, TaskAssigneeSorter,
@@ -80,11 +80,28 @@ class Project extends React.Component {
     constructor(props) {
         super(props);
 
+        // Class Storage.
+        this.arrowKeyTrackingMap = {};
+
         // Method Bindings.
         this.getTaskListsJSX = this.getTaskListsJSX.bind(this);
         this.getTasksJSX = this.getTasksJSX.bind(this);
         this.extractSelectedProjectLayouts = this.extractSelectedProjectLayouts.bind(this);
         this.handleLayoutChange = this.handleLayoutChange.bind(this);
+        this.focusNextTaskList = this.focusNextTaskList.bind(this);
+        this.focusPreviousTaskList = this.focusPreviousTaskList.bind(this);
+        this.handleKeyCombo = this.handleKeyCombo.bind(this);
+        this.getGridSortedTaskListIds = this.getGridSortedTaskListIds.bind(this);
+        this.stepFocusedTaskListBackward = this.stepFocusedTaskListBackward.bind(this);
+        this.handleArrowKeyDown = this.handleArrowKeyDown.bind(this);
+    }
+
+    componentDidMount() {
+        Mousetrap.bind(['tab', 'shift+tab'], this.handleKeyCombo);
+    }
+
+    componentWillUnmount() {
+        Mousetrap.unbind(['tab', 'shift+tab'], this.handleKeyCombo);
     }
 
     render() {
@@ -207,6 +224,7 @@ class Project extends React.Component {
                         isFocused={isFocused}
                         onClick={() => { this.props.onTaskListClick(item.uid) }}
                         onTaskListSettingsChanged={(newValue) => { this.props.onTaskListSettingsChanged(item.uid, newValue) }}
+                        onArrowKeyDown={(key) => { this.handleArrowKeyDown(item.uid, key) }}
                         taskListSettings={item.settings}
                         isSettingsMenuOpen={isSettingsMenuOpen}
                         onSettingsMenuOpen={() => { this.props.onTaskListSettingsMenuOpen(item.uid) }}
@@ -222,6 +240,50 @@ class Project extends React.Component {
         })
 
         return taskListsJSX;
+    }
+
+    handleArrowKeyDown(taskListId, key) {
+        let currentArrowKeyTracking = this.arrowKeyTrackingMap[taskListId];
+
+        let selectedTaskIndex = currentArrowKeyTracking.findIndex( item => { 
+            return item.uid === this.props.selectedTaskId
+        })
+
+        if (key === "down") {
+            if (selectedTaskIndex === -1) {
+                // No Task currently selected. Force select first task.
+                var nextTask = currentArrowKeyTracking[0];
+                if (nextTask !== undefined) {
+                    this.props.onArrowSelectTask(taskListId, nextTask.uid);
+                }
+            }
+
+            else if (selectedTaskIndex !== -1 && selectedTaskIndex !== currentArrowKeyTracking - 1) {
+                // Task already selected. Select next task.
+                var nextTask = currentArrowKeyTracking[selectedTaskIndex + 1];
+                if (nextTask !== undefined) {
+                    this.props.onArrowSelectTask(taskListId, nextTask.uid);
+                }
+            }
+        }
+
+        if (key === "up") {
+            if (selectedTaskIndex === -1) {
+                // No task currently selected. Force select last Task.
+                var nextTask = currentArrowKeyTracking[currentArrowKeyTracking.length - 1];
+                if (nextTask !== undefined) {
+                    this.props.onArrowSelectTask(taskListId, nextTask.uid);
+                }
+            }
+
+            else if (selectedTaskIndex !== -1 && selectedTaskIndex !== 0) {
+                // Task already selected. Select previous Task.
+                var previousTask = currentArrowKeyTracking[selectedTaskIndex - 1];
+                if (previousTask !== undefined) {
+                    this.props.onArrowSelectTask(taskListId, previousTask.uid);
+                }
+            }
+        }
     }
 
     getTasksJSX(taskListId, sortBy, isChecklist) {
@@ -257,6 +319,9 @@ class Project extends React.Component {
 
             // Sort.
             let sortedTasks = [...filteredTasks].sort(this.getTaskSorter(sortBy));
+
+            // Add to arrowKeyTrackingMap.
+            this.arrowKeyTrackingMap[taskListId] = sortedTasks;
 
             let builtTasks = sortedTasks.map((item, index, array) => {
                 // Render Element.
@@ -311,7 +376,8 @@ class Project extends React.Component {
                             rightActions={rightActions}
                             onActionClick={(value) => { this.props.onTaskActionClick(value, item.uid, item.taskList, item.project) }}>
                             <TaskBase
-                                selected={isTaskSelected}
+                                onClick={() => { this.props.onTaskClick(item.uid, item.taskList)}}
+                                isSelected={isTaskSelected}
                                 isMoving={isTaskMoving}
                                 priorityIndicator={priorityIndicator}
                                 checkbox={checkbox}
@@ -333,10 +399,134 @@ class Project extends React.Component {
         }
     }
 
-    getFilteredTaskLists() {
-        return this.props.taskLists.filter(item => {
-            return item.project === this.props.projectId
+    handleKeyCombo(mousetrap) {
+        mousetrap.preventDefault();
+        // Tab.
+        if (mousetrap.key === "Tab" && mousetrap.shiftKey === false) {
+            this.focusNextTaskList();
+        }
+
+        // Shift + Tab.
+        if (mousetrap.key === "Tab" && mousetrap.shiftKey === true) {
+            this.focusPreviousTaskList();
+        }
+        
+    }
+
+    getGridSortedTaskListIds() {
+        var sortedLayouts = this.extractSelectedProjectLayouts().sort(this.layoutGridSorter);
+
+        var sortedTaskListIds = sortedLayouts.map(item => {
+            return item.i;
         })
+
+        return sortedTaskListIds;
+    }
+
+    focusNextTaskList() {
+        var sortedTaskListIds = this.getGridSortedTaskListIds();
+
+        if (sortedTaskListIds.length === 0) {
+            return;
+        }
+
+        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
+            return item === this.props.focusedTaskListId;
+        })
+
+        var filteredTaskListWidgets = this.props.taskLists.filter(item => {
+            return item.project === this.props.projectId;
+        })
+
+        if (currentFocusedTaskListIndex === -1) {
+            // No Tasklist in Focus. Force Focus to first Task List.
+            this.props.onFocusedTaskListChange(sortedTaskListIds[0]);
+        }
+
+        else {
+            if (currentFocusedTaskListIndex < filteredTaskListWidgets.length - 1) {
+                // Step to next Tasklist.
+                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
+            }
+
+            else {
+                // Wrap around to First tasklist.
+                this.stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
+            }
+        }
+    }
+
+    focusPreviousTaskList() {
+        var sortedTaskListIds = this.getGridSortedTaskListIds();
+
+        if (sortedTaskListIds.length === 0) {
+            return;
+        }
+
+        var currentFocusedTaskListIndex = sortedTaskListIds.findIndex(item => {
+            return item === this.props.focusedTaskListId;
+        })
+
+        if (currentFocusedTaskListIndex === -1) {
+            // No Tasklist in Focus. Force Focus to Last Task List.
+            var lastTaskListId = sortedTaskListIds[sortedTaskListIds.length - 1];
+            this.props.onTaskListWidgetFocusChanged(lastTaskListId, false);
+        }
+
+        else {
+            if (currentFocusedTaskListIndex !== 0) {
+                // Step to Previous Tasklist.
+                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'step');
+            }
+
+            else {
+                // Wrap around to First tasklist.
+                this.stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, 'wrap');
+            }
+        }
+    }
+
+    stepFocusedTaskListForward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
+        if (type === 'step') {
+            this.props.onFocusedTaskListChange(sortedTaskListIds[currentFocusedTaskListIndex + 1], false);
+        }
+
+        if (type === 'wrap') {
+            this.props.onFocusedTaskListChange(sortedTaskListIds[0]);
+        }
+    }
+
+    stepFocusedTaskListBackward(currentFocusedTaskListIndex, sortedTaskListIds, type) {
+        if (type === 'step') {
+            this.props.onFocusedTaskListChange(sortedTaskListIds[currentFocusedTaskListIndex - 1], false);
+        }
+
+        if (type === 'wrap') {
+            this.props.onFocusedTaskListChange(sortedTaskListIds[sortedTaskListIds.length - 1]);
+        }
+    }
+
+    layoutGridSorter(a, b) {
+        // Sort by Left to Right, Top to bottom.
+        if (a.y > b.y) {
+            return 1;
+        }
+
+        else if (a.y < b.y) {
+            return -1;
+        }
+
+        if (a.x > b.x) {
+            return 1;
+        }
+
+        else if (a.x < b.x) {
+            return -1;
+        }
+
+        else {
+            return 0;
+        }
     }
 
     handleLayoutChange(layouts, oldItem, newItem, e, element) {

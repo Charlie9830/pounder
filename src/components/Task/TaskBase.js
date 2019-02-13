@@ -38,7 +38,6 @@ class TaskBase extends Component {
     
     render() {
         let { theme } = this.props;
-
         let ContainerGridStyle = {
             width: '100%',
             height: 'fit-content',
@@ -48,8 +47,11 @@ class TaskBase extends Component {
             gridTemplateAreas: `'PriorityIndicator Checkbox       Text           DueDate'
                                 'PriorityIndicator IndicatorPanel IndicatorPanel IndicatorPanel'
                                 '       .               .         Divider        Divider        '`,
-            background: this.props.isMoving ? theme.palette.primary.dark : 'unset',
+            background: this.props.isSelected ? theme.palette.action.selected : 'unset',
         }
+
+        // Override if moving.
+        ContainerGridStyle.background = this.props.isMoving ? theme.palette.primary.dark : ContainerGridStyle.background;
         
         let TextContainerStyle = {
             gridArea: 'Text',
@@ -66,7 +68,8 @@ class TaskBase extends Component {
         return (
             <div
             style={ContainerGridStyle}
-            ref={this.taskContainerRef}>
+            ref={this.taskContainerRef}
+            onClick={this.props.onClick}>
                 {/* Priority Indicator  */} 
                 <div 
                 style={{gridArea: 'PriorityIndicator'}}>

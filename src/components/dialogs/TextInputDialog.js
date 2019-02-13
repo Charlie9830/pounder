@@ -14,8 +14,17 @@ class TextInputDialog extends Component {
 
         // Method Bindings.
         this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+        this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
     }    
     
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleDocumentKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleDocumentKeyDown);
+    }
+
     render() {
         let { theme } = this.props;
 
@@ -70,6 +79,12 @@ class TextInputDialog extends Component {
 
                 </Dialog>
         );
+    }
+
+    handleDocumentKeyDown(e) {
+        if (e.key === 'Escape') {
+            this.props.onCancel();
+        }
     }
 
     handleInputKeyPress(e) {

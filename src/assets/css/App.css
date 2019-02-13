@@ -16,11 +16,11 @@ body {
 }
 
 ::-webkit-scrollbar {
-    background: '#272727';
+    background: #272727;
     width: 8px;
   }
   
   ::-webkit-scrollbar-thumb {
-    background: '#474747';
-    width: 5px;
+    background: #474747;
+    width: 8px;
   }
