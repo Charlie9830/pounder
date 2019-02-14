@@ -172,7 +172,10 @@ class Project extends React.Component {
                                         showCompletedTasks={this.props.showCompletedTasks}
                                         onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
                                         showOnlySelfTasks={this.props.showOnlySelfTasks}
-                                        onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }} />
+                                        onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }}
+                                        projectLayoutType={this.props.projectLayoutType}
+                                        showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}
+                                        onLayoutTypeChange={this.props.onProjectLayoutTypeChange} />
                                 </Zoom>
                             </div>
                         </Toolbar>

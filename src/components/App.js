@@ -16,7 +16,8 @@ import {
     moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId, moveTaskAsync,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
-    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage, selectTask
+    removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
+    selectTask, updateProjectLayoutTypeAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -92,6 +93,7 @@ class App extends React.Component {
         this.handleArrowSelectTask = this.handleArrowSelectTask.bind(this);
         this.handleDeleteTaskButtonClick = this.handleDeleteTaskButtonClick.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
+        this.handleProjectLayoutTypeChange = this.handleProjectLayoutTypeChange.bind(this);
     }
 
     componentDidMount() {
@@ -189,6 +191,9 @@ class App extends React.Component {
                             onArrowSelectTask={this.handleArrowSelectTask}
                             onDeleteTaskButtonClick={this.handleDeleteTaskButtonClick}
                             onTaskDragDrop={this.handleTaskDragDrop}
+                            projectLayoutType={this.props.selectedProjectLayoutType}
+                            showProjectLayoutTypeSelector={this.props.isSelectedProjectRemote}
+                            onProjectLayoutTypeChange={this.handleProjectLayoutTypeChange}
                         />
                     </div>
 
@@ -282,6 +287,10 @@ class App extends React.Component {
                 />
             </React.Fragment>
         )
+    }
+
+    handleProjectLayoutTypeChange(type) {
+        this.props.dispatch(updateProjectLayoutTypeAsync(type));
     }
 
     handleTaskDragDrop(taskId, taskListId) {
@@ -608,6 +617,7 @@ const mapStateToProps = state => {
         isOnboarding: state.isOnboarding,
         selectedProjectLayout: state.selectedProjectLayout,
         selectedProjectLayoutType: state.selectedProjectLayoutType,
+        isSelectedProjectRemote: state.isSelectedProjectRemote,
     }
 }
 

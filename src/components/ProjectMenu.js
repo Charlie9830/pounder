@@ -18,11 +18,20 @@ class ProjectMenu extends Component {
 
         // Method Bindings.
         this.handleMenuSelection = this.handleMenuSelection.bind(this);
+        this.handleLayoutTypeChange = this.handleLayoutTypeChange.bind(this);
     }
 
     render() {
         let completedTasksText = this.props.showCompletedTasks ? 'Hide completed tasks' : 'Show completed tasks';
         
+        let layoutTypeSelector = (
+            <MenuItem>
+                <Typography> Use my own Layout </Typography>
+                <Switch checked={this.props.projectLayoutType === 'local'}
+                onChange={this.handleLayoutTypeChange} />
+            </MenuItem>
+        )
+
         return (
             <React.Fragment>
                 <IconButton
@@ -44,6 +53,9 @@ class ProjectMenu extends Component {
                         <Switch checked={this.props.showOnlySelfTasks}/>
                     </MenuItem>
 
+                    { this.props.showProjectLayoutTypeSelector && layoutTypeSelector }
+                    
+
                     <MenuItem onClick={() => { this.handleMenuSelection('renameProject')}}> Rename project </MenuItem>
 
                     <Divider/>
@@ -58,6 +70,12 @@ class ProjectMenu extends Component {
                 </Menu>
             </React.Fragment>
         );
+    }
+
+    handleLayoutTypeChange(e) {
+        let value = e.target.checked;
+        let type = value === true ? 'local' : 'global';
+        this.props.onLayoutTypeChange(type);
     }
 
     handleMenuSelection(selection) {
