@@ -13,7 +13,7 @@ import {
     updateTaskCompleteAsync, setIsAppDrawerOpen, attachAuthListenerAsync, setFocusedTaskListId,
     addNewTaskAsync, addNewTaskListAsync, openTaskInspector, updateTaskNameWithDialogAsync,
     openShareMenu, updateProjectNameAsync, setShowCompletedTasksAsync, setShowOnlySelfTasks,
-    moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId,
+    moveTaskViaDialogAsync, updateTaskListSettingsAsync, setOpenTaskListSettingsMenuId, moveTaskAsync,
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage, selectTask
@@ -93,6 +93,7 @@ class App extends React.Component {
         this.isAppLocked = this.isAppLocked.bind(this);
         this.handleArrowSelectTask = this.handleArrowSelectTask.bind(this);
         this.handleDeleteTaskButtonClick = this.handleDeleteTaskButtonClick.bind(this);
+        this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
     }
 
     componentDidMount() {
@@ -191,6 +192,7 @@ class App extends React.Component {
                             onTaskClick={this.handleTaskClick}
                             onArrowSelectTask={this.handleArrowSelectTask}
                             onDeleteTaskButtonClick={this.handleDeleteTaskButtonClick}
+                            onTaskDragDrop={this.handleTaskDragDrop}
                         />
                     </div>
 
@@ -277,6 +279,10 @@ class App extends React.Component {
                 />
             </React.Fragment>
         )
+    }
+
+    handleTaskDragDrop(taskId, taskListId) {
+        this.props.dispatch(moveTaskAsync(taskId, taskListId));
     }
 
     handleArrowSelectTask(taskListId, taskId) {

@@ -35,13 +35,7 @@ class TaskBase extends Component {
             padding: `${theme.spacing.unit}px 0px ${theme.spacing.unit}px 0px`,
         }
 
-        return (
-            <div
-            style={{width: '100%', height: '48px', background: 'gray', borderBottom: '1px solid red'}}>
-            </div>
-        )
-
-        return (
+        return this.props.connectDragSource(
             <div
             style={ContainerGridStyle}
             onClick={this.props.onClick}>
@@ -97,19 +91,16 @@ let type = 'task';
 
 let spec = {
     canDrag: (props, monitor) => {
-        console.log('canDrag');
         return true;
     },
 
     beginDrag: (props, monitor, component) => {
-        console.log('beginDrag');
         return {
             taskId: props.taskId,
         }
     },
 
     endDrag: (props, monitor, component) => {
-        console.log("endDrag")
         if (monitor.didDrop()) {
             props.onDragDrop(props.taskId, monitor.getDropResult().targetTaskListId);
         }

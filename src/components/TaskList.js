@@ -71,46 +71,48 @@ class TaskList extends Component {
         let { classes } = this.props;
         let paperClassName = this.props.isFocused ? classes['focused'] : classes['unFocused'];
 
-        return (
-            <Paper 
-            className={paperClassName}
-            onClick={this.props.onClick}>
-                <div
-                id={this.props.scrollTargetId} 
-                style={containerStyle}>
-                    <div style={{ gridRow: 'Toolbar' }}>
-                        <TaskListToolbar
-                        onSettingsMenuOpen={this.props.onSettingsMenuOpen}
-                        onSettingsMenuClose={this.props.onSettingsMenuClose}
-                        name={this.props.name}
-                        isFocused={this.props.isFocused}
-                        taskListSettings={this.props.taskListSettings}
-                        onTaskListSettingsChanged={this.props.onTaskListSettingsChanged} 
-                        isSettingsMenuOpen={this.props.isSettingsMenuOpen}
-                        onRenameButtonClick={this.props.onRenameTaskListButtonClick}
-                        onDeleteButtonClick={this.props.onDeleteButtonClick}
-                        onChecklistSettingsButtonClick={this.props.onChecklistSettingsButtonClick}
-                        onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick}/>
-                    </div>
+        return this.props.connectDropTarget(
+            <div style={{ width: '100%', height: '100%' }}> {/* React-dnd requires a Native element as it's Child  */} 
+                <Paper
+                    className={paperClassName}
+                    onClick={this.props.onClick}>
+                    <div
+                        id={this.props.scrollTargetId}
+                        style={containerStyle}>
+                        <div style={{ gridRow: 'Toolbar' }}>
+                            <TaskListToolbar
+                                onSettingsMenuOpen={this.props.onSettingsMenuOpen}
+                                onSettingsMenuClose={this.props.onSettingsMenuClose}
+                                name={this.props.name}
+                                isFocused={this.props.isFocused}
+                                taskListSettings={this.props.taskListSettings}
+                                onTaskListSettingsChanged={this.props.onTaskListSettingsChanged}
+                                isSettingsMenuOpen={this.props.isSettingsMenuOpen}
+                                onRenameButtonClick={this.props.onRenameTaskListButtonClick}
+                                onDeleteButtonClick={this.props.onDeleteButtonClick}
+                                onChecklistSettingsButtonClick={this.props.onChecklistSettingsButtonClick}
+                                onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick} />
+                        </div>
 
-                    <div style={{ gridRow: 'Tasks', overflowY: 'auto' }}>
-                        <TransitionList>
-                            { this.props.children }
-                        </TransitionList>
-                        
-                    </div>
+                        <div style={{ gridRow: 'Tasks', overflowY: 'auto' }}>
+                            <TransitionList>
+                                {this.props.children}
+                            </TransitionList>
 
-                    <div style={{
-                        position: 'absolute',
-                        bottom: '0px',
-                        right: '4px'
-                    }}>
-                        <ResizeBottomRightIcon
-                        color="disabled"/>
-                    </div>
+                        </div>
 
-                </div>
-            </Paper>
+                        <div style={{
+                            position: 'absolute',
+                            bottom: '0px',
+                            right: '4px'
+                        }}>
+                            <ResizeBottomRightIcon
+                                color="disabled" />
+                        </div>
+
+                    </div>
+                </Paper>
+            </div>
         );
     }
 

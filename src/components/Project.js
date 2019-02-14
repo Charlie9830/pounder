@@ -379,6 +379,7 @@ class Project extends React.Component {
                                 onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
                                 showDivider={showDivider}
                                 onDeleteTaskButtonClick={() => { this.props.onDeleteTaskButtonClick(item.uid) }}
+                                onDragDrop={this.props.onTaskDragDrop}
                             />
                     </ListItemTransition>
 
