@@ -200,7 +200,14 @@ class App extends React.Component {
                 </Drawer>
 
                 <Drawer
+                    PaperProps={{
+                            style: {
+                                width: '360px'
+                            }
+                        }
+                    }
                     open={this.props.openTaskInspectorId !== -1 && this.props.openTaskInspectorEntity !== null}
+                    onBackdropClick={() => { this.props.dispatch(closeTaskInspectorAsync())}}
                     anchor="right">
                     <TaskInspector />
                 </Drawer>

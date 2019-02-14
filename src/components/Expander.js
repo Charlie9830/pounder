@@ -17,9 +17,9 @@ const Expander = (props) => {
     let { classes } = props;
 
     let gridStyle = {
-        width: '100vw',
-        height: '99.8vh',
-        maxHeight: '99.8vh',
+        width: '360px',
+        height: '40vh',
+        maxHeight: '40vh',
         display: 'grid',
         gridTemplateRows: '[Toolbar]56px [Children]1fr',
     }

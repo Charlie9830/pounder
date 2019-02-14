@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Toolbar, IconButton, List, Paper} from '@material-ui/core';
+import { Toolbar, IconButton, List, Paper, Grid} from '@material-ui/core';
 import FullScreenView from '../../layout-components/FullScreenView';
 import PriorityToggle from './PriorityToggle';
 import { connect } from 'react-redux';
@@ -10,7 +10,7 @@ import { updateTaskDueDateAsync, updateTaskPriorityAsync, updateTaskAssignedToAs
 
 import { GetProjectMembers } from 'handball-libs/libs/pounder-utilities';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CloseIcon from '@material-ui/icons/Close';
 import DateInputListItem from '../DateInputListItem';
 import ExpandingNoteInputListItem from './ExpandingNoteInputListItem';
 import ExpandingCommentPanel from '../CommentPanel/ExpandingCommentPanel';
@@ -19,6 +19,10 @@ import ExpandingAssignmentSelectorListItem from './ExpandingAssignmentSelectorLi
 import { GetDisplayNameFromLookup } from 'handball-libs/libs/pounder-utilities';
 import EditableTextInput from '../EditableTextInput';
 
+let containerStyle = {
+    height: '100%',
+    width: '100%',
+}
 
 let toolbarStyle = {
     width: '100%',
@@ -39,8 +43,8 @@ let NoTaskEntityFallback = (props) => {
         <FullScreenView>
             <Toolbar>
                 <div style={toolbarStyle}>
-                    <IconButton onClick={props.onBackArrowClick}>
-                        <ArrowBackIcon />
+                    <IconButton onClick={props.onCloseButtonClick}>
+                        <CloseIcon />
                     </IconButton>
                 </div>
             </Toolbar>
@@ -55,7 +59,7 @@ class TaskInspector extends Component {
         if (task === null || task === undefined) {
             return (
                 <NoTaskEntityFallback
-                onBackArrowClick={ () => {this.props.dispatch(closeTaskInspectorAsync())}}/>
+                onCloseButtonClick={ () => {this.props.dispatch(closeTaskInspectorAsync())}}/>
             )
         }
 
@@ -68,15 +72,20 @@ class TaskInspector extends Component {
         )
 
         return (
-            <FullScreenView>
+            <div
+            style={containerStyle}>
                 <Toolbar>
                     <div style={toolbarStyle}>
-                        <IconButton onClick={ () => { this.props.dispatch(closeTaskInspectorAsync())}}>
-                            <ArrowBackIcon />
-                        </IconButton>
-                        <PriorityToggle 
-                        isHighPriority={task.isHighPriority}
-                        onToggle={ (newValue) => { this.props.dispatch(updateTaskPriorityAsync(task.uid, newValue, task.isHighPriority))}} />
+                        <Grid
+                            container
+                            direction="row-reverse"
+                            justify="flex-start"
+                            alignItems="center">
+                            <PriorityToggle
+                                isHighPriority={task.isHighPriority}
+                                onToggle={(newValue) => { this.props.dispatch(updateTaskPriorityAsync(task.uid, newValue, task.isHighPriority)) }} 
+                                />
+                        </Grid>
                     </div>
                 </Toolbar>
 
@@ -128,7 +137,7 @@ class TaskInspector extends Component {
                         <ExpandingMetadataListItem metadata={task.metadata}/>
                     </List>
                 </Paper>
-            </FullScreenView>
+            </div>
         );
     }
 }
