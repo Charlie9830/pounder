@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, ListItem, Select, ListItemText, ListItemSecondaryAction, Paper, Typography } from '@material-ui/core';
+import { List, ListItem, Select, ListItemText, ListItemSecondaryAction, Paper, Typography, MenuItem, } from '@material-ui/core';
 import VisibleThemeSettings from './ThemeControls/ThemeSettings';
 
 
@@ -65,12 +65,12 @@ class GeneralSettingsPage extends React.Component {
         // Build Projects into HTML Option Elements.
         var optionsJSX = this.props.projects.map((project, index) => {
             return (
-                <option key={index + 1} value={project.uid}> {project.projectName} </option>
+                <MenuItem key={index + 1} value={project.uid}> {project.projectName} </MenuItem>
             )
         })
 
         // Append a "None" option.
-        optionsJSX.unshift((<option key={0} value="-1"> None </option>))
+        optionsJSX.unshift((<MenuItem key={0} value="-1"> None </MenuItem>))
 
         let favouriteProjectId = this.props.accountConfig.favouriteProjectId === undefined ?
          "-1" : this.props.accountConfig.favouriteProjectId;
@@ -78,7 +78,6 @@ class GeneralSettingsPage extends React.Component {
         // Build options into HTML select Element.
         return (
             <Select
-            native
             value={favouriteProjectId}
             onChange={this.handleFavouriteProjectSelectChange}>
                 {optionsJSX}
@@ -91,12 +90,11 @@ class GeneralSettingsPage extends React.Component {
 
         return (
             <Select 
-            native
             value={sortProjectsBy}
             onChange={this.handleSortProjectsBySelectorChange}>
-                <option key={0} value='alphabetically'> Alphabetically </option>
-                <option key={1} value='created'> Date created </option>
-                <option key={2} value='updated'> Updated </option>
+                <MenuItem key={0} value='alphabetically'> Alphabetically </MenuItem>
+                <MenuItem key={1} value='created'> Date created </MenuItem>
+                <MenuItem key={2} value='updated'> Updated </MenuItem>
             </Select>
         )
     }
