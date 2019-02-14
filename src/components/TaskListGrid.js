@@ -24,7 +24,7 @@ class RGLWrapper extends React.Component {
 
     render() {
         let { classes } = this.props;
-
+        
         return (
             <ReactGridLayout
             className={classes['rgl']}
@@ -51,7 +51,7 @@ class RGLWrapper extends React.Component {
 }
 
 // Set refreshMode to debounce otherwise Sidebar animations dont trigger width changes correctly.
-const sizeMeHOC = sizeMe({ refreshMode: "debounce", noPlaceholder: true});
+const sizeMeHOC = sizeMe({ refreshMode: "debounce"});
 const TaskListGrid = sizeMeHOC(RGLWrapper);
 
 export default withStyles(styles)(TaskListGrid);
