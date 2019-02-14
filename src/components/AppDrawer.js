@@ -166,18 +166,14 @@ class AppDrawer extends Component {
             return (
                 <ListItemTransition
                     key={item.uid}>
-                    <SwipeableListItem
-                        leftActions={leftActions}
-                        rightActions={rightActions}
-                        onActionClick={(action) => { this.handleProjectActionClick(item.uid, action) }}>
                         <ProjectListItem
                             onClick={() => { this.props.dispatch(selectProject(item.uid)) }}
                             name={item.projectName}
                             isFavourite={favouriteProjectId === item.uid}
                             isSelected={this.props.selectedProjectId === item.uid}
                             indicators={this.props.projectSelectorIndicators[item.uid]}
+                            onDeleteButtonClick={() => { this.props.dispatch(removeProjectAsync(item.uid)) }}
                         />
-                    </SwipeableListItem>
                 </ListItemTransition>
             )
         })

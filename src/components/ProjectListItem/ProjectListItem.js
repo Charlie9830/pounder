@@ -2,9 +2,10 @@ import React from 'react';
 import DueDateChit from './DueDateChit';
 import UnseenCommentsChit from './UnseenCommentsChit';
 import { ListItem, ListItemText, ListItemSecondaryAction, ListItemIcon, withTheme, Grid } from '@material-ui/core';
+import withMouseOver from '../Hocs/withMouseOver';
+import ProjectSecondaryActions from './DeleteButton';
 
 import FavouriteIcon from '@material-ui/icons/Favorite';
-
 
 const ProjectListItem = (props) => {
     let { theme, name, isFavourite, indicators, isSelected, onClick } = props;
@@ -21,7 +22,8 @@ const ProjectListItem = (props) => {
                         direction="row-reverse"
                         justify="flex-start"
                         alignItems="center">
-                        {getDueDateChits(indicators, theme.palette.custom)}
+                        { props.mouseOver ? <ProjectSecondaryActions onClick={props.onDeleteButtonClick}/> :
+                         getDueDateChits(indicators, theme.palette.custom) }
                     </Grid>
                 </ListItemSecondaryAction>
             </ListItem>
@@ -63,4 +65,4 @@ let getDueDateChits = (indicators, customColors) => {
     return jsx;
 }
 
-export default withTheme()(ProjectListItem);
+export default withMouseOver(withTheme()(ProjectListItem));
