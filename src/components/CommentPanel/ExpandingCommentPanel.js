@@ -5,10 +5,6 @@ import Expander from '../Expander';
 class ExpandingCommentPanel extends Component {
     constructor(props) {
         super(props);
-        
-        // Refs
-        this.anchorRef = React.createRef();
-
         // State
         this.state = {
             isOpen: false,
@@ -20,13 +16,9 @@ class ExpandingCommentPanel extends Component {
     
 
     render() {
-        return (
-            <div 
-            ref={this.anchorRef}
-            style={{padding: '8px'}}
-            onClick={this.handleContainerClick}>
-                {/* Preview Comment */} 
-                <CommentPanel
+        // Comment Preview
+        let closedComponent = (
+            <CommentPanel
                 onCommentPost={ () => {} }
                 disableInteraction={true}
                 disableSyncStatus={true}
@@ -35,16 +27,23 @@ class ExpandingCommentPanel extends Component {
                 isPaginating={false}
                 disableShowMoreButton={true}
                 disableCommentDelete={true}/>
+        )
 
+        let openComponent = (
+            <CommentPanel
+                autoFocus={true}
+                {...this.props} />
+        )
+
+        return (
+            <div
+            style={{padding: '8px'}}
+            onClick={this.handleContainerClick}>
                 <Expander
                     open={this.state.isOpen}
-                    anchorEl={this.anchorRef.current}
-                    onClose={() => { this.setState({ isOpen: false }) }}>
-                    {/* Full Comments  */} 
-                    <CommentPanel 
-                    autoFocus={true}
-                    {...this.props} />
-                </Expander>
+                    onClose={() => { this.setState({ isOpen: false }) }}
+                    closedComponent={closedComponent}
+                    openComponent={openComponent}/>
             </div>
         );
     }

@@ -58,7 +58,7 @@
   },
   "dependencies": {
     "@babel/polyfill": "^7.2.5",
-    "@date-io/moment": "^0.0.2",
+    "@date-io/moment": "^1.1.0",
     "@material-ui/core": "^3.9.0",
     "@material-ui/icons": "^3.0.2",
     "@material-ui/lab": "3.0.0-alpha.27",
@@ -70,7 +70,7 @@
     "fs-jetpack": "^1.3.0",
     "hammerjs": "^2.0.8",
     "later": "^1.2.0",
-    "material-ui-pickers": "^2.0.5",
+    "material-ui-pickers": "^2.2.1",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.2",
     "open": "0.0.5",

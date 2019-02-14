@@ -15,7 +15,6 @@ class ExpandingTextInput extends Component {
         
         // Refs.
         this.inputRef = React.createRef();
-        this.anchorRef = React.createRef();
 
         // State.
         this.state = {
@@ -34,33 +33,33 @@ class ExpandingTextInput extends Component {
         let closedValue = hasValue ?  this.props.value : this.props.placeholder || "";
         let typographyColor = hasValue ? "textPrimary" : "textSecondary";
         
+        let closedComponent = (
+                <Typography
+                    style={{ width: '100%', minHeight: '1em' }}
+                    color={typographyColor}
+                    onClick={() => { this.setState({ isOpen: true }) }}>
+                    {closedValue}
+                </Typography>
+        )
+
+        let openComponent = (
+            <TextField
+                variant="outlined"
+                inputRef={this.inputRef}
+                autoFocus
+                style={textFieldStyle}
+                multiline
+                defaultValue={this.props.value}
+                onBlur={this.handleInputBlur} />
+        )
+
         return (
-            <React.Fragment>
-                <div ref={this.anchorRef}>
-                    <Typography
-                        style={{ width: '100%', minHeight: '1em' }}
-                        color={typographyColor}
-                        onClick={() => { this.setState({ isOpen: true }) }}>
-                        {closedValue}
-                    </Typography>
-                </div>
-                    
+            <React.Fragment>    
                 <Expander
-                    anchorEl={this.anchorRef.current}
                     open={isExpanded}
-                    onClose={this.handleInputBlur}>
-                    <TextField
-                        variant="outlined"
-                        inputRef={this.inputRef}
-                        autoFocus
-                        style={textFieldStyle}
-                        multiline
-                        defaultValue={this.props.value}
-                        onBlur={this.handleInputBlur} />
-                </Expander>
-               
-                    
-                
+                    onClose={this.handleInputBlur}
+                    openComponent={openComponent}
+                    closedComponent={closedComponent}/>
             </React.Fragment>
         );
     }

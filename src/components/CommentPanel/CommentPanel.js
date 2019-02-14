@@ -7,9 +7,10 @@ import SwipeableListItem from '../SwipeableListItem/SwipeableListItem';
 import TransitionList from '../TransitionList/TransitionList';
 import ListItemTransition from '../TransitionList/ListItemTransition';
 import { getUserUid } from 'handball-libs/libs/pounder-firebase';
-import { withTheme } from '@material-ui/core';
+import { withTheme, Typography } from '@material-ui/core';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Panel from './Panel';
+import NoCommentsMessage from './NoCommentsMessage';
 
 
 let gridStyle = {
@@ -23,6 +24,7 @@ let gridStyle = {
 
 let commentContainerStyle = {
     gridRow: 'Panel',
+    minHeight: '48px',
     placeSelf: 'stretch stretch',
     overflowY: 'scroll',
     padding: '0px 8px 0px 8px',
@@ -50,6 +52,14 @@ class CommentPanel extends Component {
     }
 
     render() {
+        let input = (
+            <div style={{gridRow: 'Input', placeSelf: 'stretch stretch'}}>
+                    <CommentInput 
+                    autoFocus={this.props.autoFocus}
+                    onPost={this.props.onCommentPost}/>
+                </div>
+        )
+
         return (
             <div style={gridStyle}>
                 <Panel 
@@ -60,18 +70,22 @@ class CommentPanel extends Component {
                         {this.getCommentsJSX()}
                     </TransitionList>
                 </Panel>
-                    
-
-                <div style={{gridRow: 'Input', placeSelf: 'stretch stretch'}}>
-                    <CommentInput 
-                    autoFocus={this.props.autoFocus}
-                    onPost={this.props.onCommentPost}/>
-                </div>
+                
+                { this.props.disableInteraction !== true && input }
             </div>
         );
     }
 
     getCommentsJSX() {
+        if (this.props.comments !== undefined && this.props.comments.length === 0) {
+            return (
+                <ListItemTransition
+                key="nocommentsmessage">
+                    <NoCommentsMessage/>
+                </ListItemTransition>
+            )
+        }
+
         let sortedComments = this.props.comments.slice().sort(this.commentSorter);
 
         let jsx = sortedComments.map( item => {

@@ -32,9 +32,6 @@ const MetadataItem = (props) => {
 class ExpandingMetadataListItem extends Component {
     constructor(props) {
         super(props);
-        
-        // Refs.
-        this.anchorRef = React.createRef();
 
         // State.
         this.state = {
@@ -46,24 +43,29 @@ class ExpandingMetadataListItem extends Component {
     render() {
         let { metadata } = this.props;
 
-        return (
-            <ListItem onClick={() => { this.setState({ isOpen: true })}}>
-            
-                <div ref={this.anchorRef}>
-                    <Typography color="textSecondary"> Created {metadata.createdOn} </Typography>
-                    <Typography color="textSecondary"> by {metadata.createdBy} </Typography>
-                </div>
+        let closedComponent = (
+            <div>
+                <Typography color="textSecondary"> Created {metadata.createdOn} </Typography>
+                <Typography color="textSecondary"> by {metadata.createdBy} </Typography>
+            </div>
+        )
 
+        let openComponent = (
+            <List>
+                <MetadataItem title="Created" on={metadata.createdOn} by={metadata.createdBy} />
+                <MetadataItem title="Updated" on={metadata.updatedOn} by={metadata.updatedBy} />
+                <MetadataItem title="Completed" on={metadata.completedOn} by={metadata.completedBy} />
+            </List>
+        )
+
+        return (
+            <ListItem 
+            onClick={() => { this.setState({ isOpen: true })}}>    
                 <Expander
                     open={this.state.isOpen}
-                    anchorEl={this.anchorRef.current}
-                    onClose={() => { this.setState({ isOpen: false }) }}>
-                    <List>
-                        <MetadataItem title="Created" on={metadata.createdOn} by={metadata.createdBy} />
-                        <MetadataItem title="Updated" on={metadata.updatedOn} by={metadata.updatedBy} />
-                        <MetadataItem title="Completed" on={metadata.completedOn} by={metadata.completedBy} />
-                    </List>
-                </Expander>
+                    onClose={() => { this.setState({ isOpen: false }) }}
+                    closedComponent={closedComponent}
+                    openComponent={openComponent}/>
             </ListItem>
         );
     }
