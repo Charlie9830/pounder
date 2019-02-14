@@ -8,9 +8,9 @@ import {
     setIsAppSettingsOpen,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
-import { AppBar, IconButton, Typography, Toolbar, Tabs, Tab } from '@material-ui/core';
+import { AppBar, IconButton, Typography, Toolbar, Tabs, Tab, Grid } from '@material-ui/core';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CloseIcon from '@material-ui/icons/Close';
 import FullScreenView from '../../layout-components/FullScreenView';
 
 const issuesURL = "https://www.github.com/Charlie9830/Pounder/issues";
@@ -53,16 +53,20 @@ class AppSettingsMenu extends React.Component {
         return (
             <FullScreenView>
                 <AppBar position="sticky">
-                    <Toolbar
-                        disableGutters={true}>
-                        <IconButton
-                            onClick={() => { this.props.dispatch(setIsAppSettingsOpen(false)) }}>
-                            <ArrowBackIcon />
-                        </IconButton>
-
+                    <Toolbar>
                         <Typography variant="h6">
                             Settings
                             </Typography>
+                        <Grid
+                            container
+                            direction="row-reverse"
+                            justify="flex-start"
+                            alignItems="center">
+                            <IconButton
+                                onClick={() => { this.props.dispatch(setIsAppSettingsOpen(false)) }}>
+                                <CloseIcon />
+                            </IconButton>
+                        </Grid>
                     </Toolbar>
                     <Tabs
                         variant="fullWidth"
