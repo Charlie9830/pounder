@@ -1,43 +1,11 @@
 import React, { Component } from 'react';
-import Hammer from 'hammerjs';
 import Divider from './Divider';
 import { withTheme } from '@material-ui/core';
 import withMouseOver from '../Hocs/withMouseOver';
 import TaskSecondaryActions from './TaskSecondaryActions';
+import { DragSource } from 'react-dnd';
 
-class TaskBase extends Component {
-    constructor(props) {
-        super(props);
-        
-        // Refs.
-        this.taskContainerRef = React.createRef();
-        this.textContainerRef = React.createRef();
-        this.dueDateContainerRef = React.createRef();
-    }
-
-    componentDidMount() {
-        let taskContainerHammer = new Hammer(this.taskContainerRef.current);
-        taskContainerHammer.on('press', event => {
-            this.props.onPress();
-        })
-
-        let textContainerHammer = new Hammer(this.textContainerRef.current);
-        textContainerHammer.on('tap', event => {
-            this.props.onTextContainerTap();
-        })
-
-        let dueDateContainerHammer = new Hammer(this.dueDateContainerRef.current);
-        dueDateContainerHammer.on('tap', event => {
-            this.props.onDueDateContainerTap();
-        })
-    }
-
-    componentWillUnmount() {
-        Hammer.off(this.taskContainerRef.current, 'press');
-        Hammer.off(this.textContainerRef.current, 'tap');
-        Hammer.off(this.dueDateContainerRef.current, 'tap');
-    }
-    
+class TaskBase extends Component { 
     render() {
         let { theme } = this.props;
         let ContainerGridStyle = {
@@ -69,8 +37,13 @@ class TaskBase extends Component {
 
         return (
             <div
+            style={{width: '100%', height: '48px', background: 'gray', borderBottom: '1px solid red'}}>
+            </div>
+        )
+
+        return (
+            <div
             style={ContainerGridStyle}
-            ref={this.taskContainerRef}
             onClick={this.props.onClick}>
                 {/* Priority Indicator  */} 
                 <div 
@@ -86,7 +59,6 @@ class TaskBase extends Component {
 
                 {/* Text  */}
                 <div 
-                ref={this.textContainerRef}
                  style={TextContainerStyle}>
                     { this.props.taskText }
                 </div> 
@@ -101,7 +73,6 @@ class TaskBase extends Component {
 
                 {/* DueDate  */}
                 <div 
-                ref={this.dueDateContainerRef}
                 style={{gridArea: 'DueDate', placeSelf: 'center'}}>
                     { this.props.dueDate }
                 </div>
@@ -122,4 +93,34 @@ class TaskBase extends Component {
     }
 }
 
-export default withMouseOver(withTheme()(TaskBase));
+let type = 'task';
+
+let spec = {
+    canDrag: (props, monitor) => {
+        console.log('canDrag');
+        return true;
+    },
+
+    beginDrag: (props, monitor, component) => {
+        console.log('beginDrag');
+        return {
+            taskId: props.taskId,
+        }
+    },
+
+    endDrag: (props, monitor, component) => {
+        console.log("endDrag")
+        if (monitor.didDrop()) {
+            props.onDragDrop(props.taskId, monitor.getDropResult().targetTaskListId);
+        }
+    }
+}
+
+let collect = (connect, monitor) => {
+    return {
+        connectDragSource: connect.dragSource(),
+        isDragging: monitor.isDragging(),
+    }
+}
+
+export default DragSource(type, spec, collect)(withMouseOver(withTheme()(TaskBase)));

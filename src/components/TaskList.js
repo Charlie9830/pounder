@@ -6,6 +6,7 @@ import Color from 'color';
 import colorString from 'color-string';
 import TransitionList from './TransitionList/TransitionList';
 import ResizeBottomRightIcon from '../icons/ResizeBottomRightIcon';
+import { DropTarget } from 'react-dnd';
 
 let containerStyle = {
     position: 'relative',
@@ -43,8 +44,6 @@ class TaskList extends Component {
         // Method Bindings.
         this.handleDocumentKeyDown = this.handleDocumentKeyDown.bind(this);
     }
-    
-
 
     componentDidMount(){
         if (this.props.isFocused) {
@@ -134,4 +133,20 @@ let getFocusedBackgroundColor = (startingColor) => {
     return Color.rgb(color.value).lighten(0.35).hex();
 }
 
-export default withStyles(styles)(TaskList);
+let types = "task";
+
+let spec = {
+    drop: (props, monitor, component) => {
+        return {
+            targetTaskListId: props.taskListId,
+        }
+    }
+}
+
+let collect = (connect, monitor) => {
+    return {
+        connectDropTarget: connect.dropTarget()
+    }
+}
+
+export default DropTarget(types, spec, collect)(withStyles(styles)(TaskList));

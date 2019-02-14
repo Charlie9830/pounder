@@ -219,6 +219,7 @@ class Project extends React.Component {
                     key={item.uid}
                     data-grid={layoutEntry}>
                     <TaskList
+                        taskListId={item.uid}
                         scrollTargetId={item.uid}
                         name={item.taskListName}
                         isFocused={isFocused}
@@ -364,6 +365,7 @@ class Project extends React.Component {
                     <ListItemTransition
                         key={item.uid}>
                             <TaskBase
+                                taskId={item.uid}
                                 onClick={() => { this.props.onTaskClick(item.uid, item.taskList)}}
                                 isSelected={isTaskSelected}
                                 isMoving={isTaskMoving}

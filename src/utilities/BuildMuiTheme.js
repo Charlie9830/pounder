@@ -42,6 +42,12 @@ export function BuildMuiTheme(storedTheme) {
                 root: {
                     'padding': getMuiIconButtonPadding(storedTheme.isDense)
                 }
+            },
+            'MuiTypography': {
+                root: {
+                    userSelect: 'none',
+                    cursor: 'default',
+                }
             }
         }
     })

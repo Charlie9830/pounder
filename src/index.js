@@ -6,6 +6,8 @@ import { setupBackend ,appStore } from 'handball-libs/libs/pounder-redux';
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import MomentUtils from '@date-io/moment';
 import VisibleAppThemeInjector from './components/AppThemeInjector';
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContext } from 'react-dnd'
 // require('typeface-roboto');
 
 if (process.env.NODE_ENV === 'production') {
@@ -42,10 +44,12 @@ document.body.appendChild( root );
 
 setupBackend("development", "desktop");
 
+let DragSourcedApp = DragDropContext(HTML5Backend)(VisibleAppThemeInjector);
+
 ReactDOM.render(
     <MuiPickersUtilsProvider utils={MomentUtils}>
         <Provider store={appStore}>
-                <VisibleAppThemeInjector />
+                <DragSourcedApp/>
         </Provider>
     </MuiPickersUtilsProvider>,
     document.getElementById('root'));
