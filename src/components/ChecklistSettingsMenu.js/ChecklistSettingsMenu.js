@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { updateChecklistSettingsAsync, manuallyRenewChecklistAsync, closeChecklistSettings } from 'handball-libs/libs/pounder-redux/action-creators';
 import {
     Toolbar, IconButton, Typography, FormControlLabel, Switch, Button, List, ListItem, ListItemIcon,
-    Input, FormControl, InputLabel, InputAdornment, Paper
+    Input, FormControl, InputLabel, InputAdornment, Paper, Grid
 } from '@material-ui/core';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CloseIcon from '@material-ui/icons/Close';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import DateInputListItem from '../DateInputListItem';
 
@@ -50,10 +50,17 @@ class ChecklistSettingsMenu extends Component {
         return (
             <FullScreenView>
                 <Toolbar>
+                    <Grid
+                    container
+                    direction="row-reverse"
+                    justify="flex-start"
+                    alignItems="center">
                     <IconButton
                     onClick={() => { this.props.dispatch(closeChecklistSettings()) }}>
-                        <ArrowBackIcon/>
+                        <CloseIcon/>
                     </IconButton>
+                    </Grid>
+                    
                 </Toolbar>
                 <Paper
                 style={{padding: '8px', margin: '8px'}}>
