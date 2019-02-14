@@ -38,7 +38,7 @@ class TaskBase extends Component {
         return this.props.connectDragSource(
             <div
             style={ContainerGridStyle}
-            onClick={this.props.onClick}>
+            onClick={() => { this.props.onClick('container')}}>
                 {/* Priority Indicator  */} 
                 <div 
                 style={{gridArea: 'PriorityIndicator'}}>
@@ -67,6 +67,7 @@ class TaskBase extends Component {
 
                 {/* DueDate  */}
                 <div 
+                onClick={() => { this.props.onClick('dueDate')}}
                 style={{gridArea: 'DueDate', placeSelf: 'center'}}>
                     { this.props.dueDate }
                 </div>

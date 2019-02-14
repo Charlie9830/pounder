@@ -59,10 +59,8 @@ class App extends React.Component {
         // Method Bindings.
         this.handleTaskCheckboxChange = this.handleTaskCheckboxChange.bind(this);
         this.handleTaskListClick = this.handleTaskListClick.bind(this);
-        this.handleTaskTextContainerTap = this.handleTaskTextContainerTap.bind(this);
         this.handleAddNewTaskButtonClick = this.handleAddNewTaskButtonClick.bind(this);
         this.handleAddNewTaskListButtonClick = this.handleAddNewTaskListButtonClick.bind(this);
-        this.handleDueDateContainerTap = this.handleDueDateContainerTap.bind(this);
         this.handleShareMenuButtonClick = this.handleShareMenuButtonClick.bind(this);
         this.handleRenameProjectButtonClick = this.handleRenameProjectButtonClick.bind(this);
         this.handleCompletedTasksButtonClick = this.handleCompletedTasksButtonClick.bind(this);
@@ -159,11 +157,9 @@ class App extends React.Component {
                             onFocusedTaskListChange={this.handleFocusedTaskListChange}
                             onTaskCheckboxChange={this.handleTaskCheckboxChange}
                             onTaskListClick={this.handleTaskListClick}
-                            onTaskTextContainerTap={this.handleTaskTextContainerTap}
                             onTaskPress={this.handleTaskPress}
                             onAddNewTaskButtonClick={this.handleAddNewTaskButtonClick}
                             onAddNewTaskListButtonClick={this.handleAddNewTaskListButtonClick}
-                            onDueDateContainerTap={this.handleDueDateContainerTap}
                             onShareMenuButtonClick={this.handleShareMenuButtonClick}
                             isASnackbarOpen={this.props.isASnackbarOpen}
                             onRenameProjectButtonClick={this.handleRenameProjectButtonClick}
@@ -289,8 +285,15 @@ class App extends React.Component {
         this.props.dispatch(selectTask(taskListId, taskId));
     }
 
-    handleTaskClick(taskId, taskListId) {
-        this.props.dispatch(selectTask(taskListId, taskId, false));
+    handleTaskClick(area, taskId, taskListId) {
+        switch(area) {
+            case 'container':
+                this.props.dispatch(selectTask(taskListId, taskId, false));
+                return;
+            
+            case 'dueDate': 
+                this.props.dispatch(openTaskInspector(taskId));
+        }
     }
 
     handleFocusedTaskListChange(taskListId) {
@@ -511,9 +514,6 @@ class App extends React.Component {
         this.props.dispatch(openShareMenu(projectId));
     }
 
-    handleDueDateContainerTap(taskId) {
-        this.props.dispatch(openTaskInspector(taskId));
-    }
 
     handleAddNewTaskListButtonClick() {
         this.props.dispatch(addNewTaskListAsync());
@@ -531,12 +531,6 @@ class App extends React.Component {
             this.props.dispatch(addNewTaskAsync());
         }
 
-    }
-
-    handleTaskTextContainerTap(taskId) {
-        // Reserved. Whatever you put here has to be compatiable with the user wanting to focus the Task List.
-        // for example opening the task Inspector or the Text Input Dialog would interfere with the user just
-        // trying to focus the Task list.
     }
 
     handleTaskPress(taskId, taskListId, currentValue, currentMetadata) {
