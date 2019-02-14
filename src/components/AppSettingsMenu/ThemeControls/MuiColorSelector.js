@@ -2,8 +2,8 @@ import React from 'react';
 import MuiColorChit from './MuiColorChit';
 
 import Slider from 'rc-slider';
-import { GetNumberFromIndex } from '../../utilities/MuiColors';
-import '../../assets/css/rc-slider/index.css';
+import { GetNumberFromIndex } from '../../../utilities/MuiColors';
+import '../../../assets/css/rc-slider/index.css';
 import { FormControlLabel } from '@material-ui/core';
 
 let container = {

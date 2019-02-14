@@ -1,6 +1,6 @@
 import React from 'react';
 import { IconButton } from '@material-ui/core';
-import ColorChit from './AppSettingsMenu/ColorChit';
+import ColorChit from './AppSettingsMenu/ThemeControls/ColorChit';
 
 let nativeColorInputStyle = {
     visibility: 'hidden', // Dont use display: none. Doing so will stop the onChange event from firing.

@@ -1,6 +1,6 @@
 import React from 'react';
 import { List, ListItem, Select, ListItemText, ListItemSecondaryAction, Paper, Typography } from '@material-ui/core';
-import VisibleThemeSettings from './ThemeSettings';
+import VisibleThemeSettings from './ThemeControls/ThemeSettings';
 
 
 let paperStyle = {

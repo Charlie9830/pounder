@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
 import { withTheme } from '@material-ui/core';
-import { GetMuiColorArray, GetColor } from '../../utilities/MuiColors';
+import { GetMuiColorArray, GetColor } from '../../../utilities/MuiColors';
 import { connect } from 'react-redux';
 import {
     createNewMuiThemeAsync, updateMuiThemeAsync, selectMuiTheme, renameMuiThemeAsync,
     removeMuiThemeAsync,
     persistMuiThemeSelection
 } from 'handball-libs/libs/pounder-redux/action-creators';
-import TransitionList from '../TransitionList/TransitionList';
-import ListItemTransition from '../TransitionList/ListItemTransition';
-import SwipeableListItem from '../SwipeableListItem/SwipeableListItem';
+import TransitionList from '../../TransitionList/TransitionList';
+import ListItemTransition from '../../TransitionList/ListItemTransition';
+import SwipeableListItem from '../../SwipeableListItem/SwipeableListItem';
 
 import DeleteIcon from '@material-ui/icons/Delete';
 
@@ -68,17 +68,9 @@ class ThemeSettings extends Component {
         })
 
         let jsx = muiThemes.map( item => {
-            let rightActions = [];
-            if (item.isInbuilt === false) {
-                rightActions.push({value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/>})
-            }
-
             return (
                 <ListItemTransition
                 key={item.id}>
-                    <SwipeableListItem
-                    rightActions={rightActions}
-                    onActionClick={(action) => { this.props.dispatch(removeMuiThemeAsync(item.id))}}>
                         <ThemeListItem
                             name={item.name}
                             isSelected={item.id === this.props.selectedMuiThemeId}
@@ -86,8 +78,9 @@ class ThemeSettings extends Component {
                             secondaryColor={GetColor(item.theme.palette.secondaryColor.id, item.theme.palette.secondaryColor.shadeIndex)}
                             backgroundColor={GetColor(item.theme.palette.backgroundColor.id, item.theme.palette.backgroundColor.shadeIndex)}
                             onClick={() => { this.props.dispatch(selectMuiTheme(item.id)) }}
-                            onPress={() => { this.props.dispatch(renameMuiThemeAsync(item.id)) }}/>
-                    </SwipeableListItem>
+                            onPress={() => { this.props.dispatch(renameMuiThemeAsync(item.id)) }}
+                            onDeleteButtonClick={() => { this.props.dispatch(removeMuiThemeAsync(item.id))}}
+                            canDelete={item.isInbuilt === false}/>
                 </ListItemTransition>
             )
         })
