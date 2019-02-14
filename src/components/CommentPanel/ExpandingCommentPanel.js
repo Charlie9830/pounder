@@ -33,7 +33,8 @@ class ExpandingCommentPanel extends Component {
                 comments={this.props.previewComments}
                 isLoadingComments={false}
                 isPaginating={false}
-                disableShowMoreButton={true}/>
+                disableShowMoreButton={true}
+                disableCommentDelete={true}/>
 
                 <Expander
                     open={this.state.isOpen}

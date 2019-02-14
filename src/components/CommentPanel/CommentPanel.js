@@ -75,20 +75,13 @@ class CommentPanel extends Component {
         let sortedComments = this.props.comments.slice().sort(this.commentSorter);
 
         let jsx = sortedComments.map( item => {
-            let canDelete = item.createdBy === getUserUid();
+            let canDelete = item.createdBy === getUserUid() && this.props.disableCommentDelete !== true;
             let timeAgo = Moment(item.created).fromNow();
             let isUnread = !item.seenBy.some(item => { return item === getUserUid() })
-
-            let rightActions = canDelete === true && !this.props.disableInteraction ?
-            [ { value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon/> }] :
-            null;
 
             return (
                 <ListItemTransition
                 key={item.uid}>
-                    <SwipeableListItem
-                        rightActions={rightActions}
-                        onActionClick={(action) => { this.props.onCommentDelete(item.uid) }}>
                         <Comment
                             disableSyncStatus={this.props.disableSyncStatus}
                             text={item.text}
@@ -96,8 +89,9 @@ class CommentPanel extends Component {
                             displayName={item.displayName}
                             isUnread={isUnread}
                             isSynced={item.isSynced}
+                            canDelete={canDelete}
+                            onDeleteButtonClick={() => { this.props.onCommentDelete(item.uid) }}
                         />
-                    </SwipeableListItem>
                 </ListItemTransition>
             )
         })
