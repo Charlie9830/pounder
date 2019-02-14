@@ -5,6 +5,7 @@ import MemberListItem from './MemberListItem';
 
 let grid = {
     height: '100%',
+    width: '100%',
     padding: '8px',
     display: 'grid',
     gridTemplateRows: '[Members]1fr [ClearButton]auto'
@@ -13,10 +14,7 @@ let grid = {
 class ExpandingAssignmentSelector extends Component {
     constructor(props) {
         super(props);
-        
-        // Refs.
-        this.anchorRef = React.createRef();
-
+    
         // State.
         this.state = {
             isOpen: false,
@@ -36,35 +34,38 @@ class ExpandingAssignmentSelector extends Component {
         let closedValue = hasValue ?  this.props.value : this.props.placeholder || "";
         let typographyColor = hasValue ? "textPrimary" : "textSecondary";
         
-        return (
-            <React.Fragment>
-                <div ref={this.anchorRef}>
-                    <Typography
-                        style={{ width: '100%', minHeight: '1em' }}
-                        color={typographyColor}
-                        onClick={() => { this.setState({ isOpen: true }) }}>
-                        {closedValue}
-                    </Typography>
-                </div>
-                    
-                <Expander
-                    anchorEl={this.anchorRef.current}
-                    open={isExpanded}
-                    onClose={this.handleClose}>
-                    <div style={grid}>
-                        <div style={{ gridRow: 'Members', placeSelf: 'flex-start center' }}>
-                            <List style={{overflowY: 'scroll'}}>
-                                {this.getMembersJSX()}
-                            </List>                            
-                        </div>
+        let closedComponent = (
+            <Typography
+                style={{ width: '100%', minHeight: '1em' }}
+                color={typographyColor}
+                onClick={() => { this.setState({ isOpen: true }) }}>
+                {closedValue}
+            </Typography>
+        )
 
-                        <div style={{ gridRow: 'ClearButton', placeSelf: 'flex-end flex-start' }}>
-                            <Button variant="text" color="primary" onClick={() => { this.handleMemberSelect(-1) }}>
-                                Clear
+        let openComponent = (
+            <div style={grid}>
+                <div style={{ gridRow: 'Members', placeSelf: 'flex-start center' }}>
+                    <List style={{ overflowY: 'scroll' }}>
+                        {this.getMembersJSX()}
+                    </List>
+                </div>
+
+                <div style={{ gridRow: 'ClearButton', placeSelf: 'flex-end flex-start' }}>
+                    <Button variant="text" color="primary" onClick={() => { this.handleMemberSelect(-1) }}>
+                        Clear
                          </Button>
-                    </div>
-                    </div>
-                </Expander>
+                </div>
+            </div>
+        )
+
+        return (
+            <React.Fragment>                    
+                <Expander
+                    open={isExpanded}
+                    onClose={this.handleClose}
+                    closedComponent={closedComponent}
+                    openComponent={openComponent}/>
             </React.Fragment>
         );
     }
