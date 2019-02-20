@@ -592,7 +592,6 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => {
-    console.log(state.lastUndoAction);
     return {
         selectedTask: state.selectedTask,
         filteredTasks: state.filteredTasks,
