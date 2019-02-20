@@ -8,6 +8,7 @@ const SnackbarActionButton = (props) => {
 
     return (
         <Button
+            color={props.color}
             variant="text"
             onClick={props.onClick}>
             {props.text}

@@ -17,7 +17,7 @@ import {
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
-    selectTask, updateProjectLayoutTypeAsync,
+    selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -34,6 +34,7 @@ import VisibleOnboarder from './Onboarder/Onboarder';
 import VisibleInductionSplash from './Induction/InductionSplash';
 import VisibleStatusBar from './StatusBar';
 import AddNewTaskListButton from './AddNewTaskListButton';
+import UndoSnackbar from './Snackbars/UndoSnackbar';
 
 const KEYBOARD_COMBOS = {
     MOD_N: 'mod+n',
@@ -285,6 +286,11 @@ class App extends React.Component {
                     actionButtonText={this.props.generalSnackbar.actionOptions.actionButtonText}
                     onAction={this.props.generalSnackbar.actionOptions.onAction}
                 />
+
+                <UndoSnackbar
+                    isOpen={this.props.undoSnackbar.isOpen}
+                    text={this.props.undoSnackbar.text}
+                    onUndo={this.props.undoSnackbar.onUndo}/>
             </React.Fragment>
         )
     }
@@ -586,6 +592,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => {
+    console.log(state.lastUndoAction);
     return {
         selectedTask: state.selectedTask,
         filteredTasks: state.filteredTasks,
@@ -618,6 +625,7 @@ const mapStateToProps = state => {
         selectedProjectLayout: state.selectedProjectLayout,
         selectedProjectLayoutType: state.selectedProjectLayoutType,
         isSelectedProjectRemote: state.isSelectedProjectRemote,
+        undoSnackbar: state.undoSnackbar,
     }
 }
 
