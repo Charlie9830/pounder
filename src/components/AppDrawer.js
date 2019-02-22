@@ -53,6 +53,7 @@ class AppDrawer extends Component {
                 <AppDrawerHeader
                 displayName={this.props.displayName}
                 onSettingsButtonClick={() => {this.props.dispatch(setIsAppSettingsOpen(true))}}
+                onAddProjectButtonClick={ () => {this.props.dispatch(addNewProjectAsync())}}
                 />
                 
                 <TransitionList >

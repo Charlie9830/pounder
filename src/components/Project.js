@@ -161,10 +161,6 @@ class Project extends React.Component {
                             </div>
 
                             <div style={projectRightButtonsContainer}>
-                                <Zoom
-                                unmountOnExit={true}
-                                mountOnEnter={true}
-                                in={this.props.enableStates.projectMenu}>
                                     <ProjectMenu
                                         onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId) }}
                                         onRenameProjectButtonClick={() => { this.props.onRenameProjectButtonClick(this.props.projectId, this.props.projectName) }}
@@ -175,8 +171,11 @@ class Project extends React.Component {
                                         onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }}
                                         projectLayoutType={this.props.projectLayoutType}
                                         showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}
-                                        onLayoutTypeChange={this.props.onProjectLayoutTypeChange} />
-                                </Zoom>
+                                        onLayoutTypeChange={this.props.onProjectLayoutTypeChange} 
+                                        onUndoButtonClick={this.props.onUndoButtonClick}
+                                        canUndo={this.props.canUndo}
+                                        undoButtonText={this.props.undoButtonText}
+                                        projectActionsEnabled={this.props.enableStates.projectMenu}/>
                             </div>
                         </Toolbar>
                         <Divider />

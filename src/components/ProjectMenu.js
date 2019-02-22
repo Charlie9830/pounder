@@ -23,47 +23,69 @@ class ProjectMenu extends Component {
 
     render() {
         let completedTasksText = this.props.showCompletedTasks ? 'Hide completed tasks' : 'Show completed tasks';
-        
+
         let layoutTypeSelector = (
             <MenuItem>
                 <Typography> Use my own Layout </Typography>
                 <Switch checked={this.props.projectLayoutType === 'local'}
-                onChange={this.handleLayoutTypeChange} />
+                    onChange={this.handleLayoutTypeChange} />
             </MenuItem>
         )
 
         return (
             <React.Fragment>
                 <IconButton
-                onClick={() => { this.setState({ isOpen: true })}}
-                buttonRef={this.anchorRef}>
-                    <MenuIcon/>
+                    onClick={() => { this.setState({ isOpen: true }) }}
+                    buttonRef={this.anchorRef}>
+                    <MenuIcon />
                 </IconButton>
 
                 <Menu
-                open={this.state.isOpen}
-                anchorEl={this.anchorRef.current}
-                onClose={ () => { this.setState({ isOpen: false })}}>
-                    <MenuItem onClick={() => { this.handleMenuSelection('share') }}> Share </MenuItem>
-
-                    <MenuItem onClick={() => { this.handleMenuSelection('completedTasks') }}> {completedTasksText} </MenuItem>
-
-                    <MenuItem onClick={() => { this.handleMenuSelection('assignedTasks')}}>
-                        <Typography> Show only my tasks </Typography>
-                        <Switch checked={this.props.showOnlySelfTasks}/>
+                    open={this.state.isOpen}
+                    anchorEl={this.anchorRef.current}
+                    onClose={() => { this.setState({ isOpen: false }) }}>
+                    <MenuItem
+                        disabled={!this.props.canUndo}
+                        onClick={() => { this.handleMenuSelection('undo') }}>
+                        Undo {this.props.undoButtonText}
                     </MenuItem>
 
-                    { this.props.showProjectLayoutTypeSelector && layoutTypeSelector }
-                    
-
-                    <MenuItem onClick={() => { this.handleMenuSelection('renameProject')}}> Rename project </MenuItem>
-
-                    <Divider/>
 
                     <MenuItem
-                    onClick={() => { this.handleMenuSelection('deleteProject')}}>
+                        disabled={!this.props.projectActionsEnabled}
+                        onClick={() => { this.handleMenuSelection('share') }}>
+                        Share
+                     </MenuItem>
+
+                    <MenuItem
+                        disabled={!this.props.projectActionsEnabled}
+                        onClick={() => { this.handleMenuSelection('completedTasks') }}>
+                        {completedTasksText}
+                    </MenuItem>
+
+                    <MenuItem
+                        disabled={!this.props.projectActionsEnabled}
+                        onClick={() => { this.handleMenuSelection('assignedTasks') }}>
+                        <Typography> Show only my tasks </Typography>
+                        <Switch checked={this.props.showOnlySelfTasks} />
+                    </MenuItem>
+
+                    {this.props.showProjectLayoutTypeSelector && layoutTypeSelector}
+
+
+                    <MenuItem
+                        disabled={!this.props.projectActionsEnabled}
+                        onClick={() => { this.handleMenuSelection('renameProject') }}>
+                        Rename project
+                     </MenuItem>
+
+                    <Divider />
+
+                    <MenuItem
+                        disabled={!this.props.projectActionsEnabled}
+                        onClick={() => { this.handleMenuSelection('deleteProject') }}>
                         <ListItemIcon>
-                            <DeleteIcon/>
+                            <DeleteIcon />
                         </ListItemIcon>
                         Delete Project
                     </MenuItem>
@@ -100,7 +122,10 @@ class ProjectMenu extends Component {
         if (selection === 'deleteProject') {
             this.props.onDeleteProjectButtonClick();
         }
-        
+
+        if (selection === 'undo') {
+            this.props.onUndoButtonClick();
+        }
     }
 }
 

@@ -79,7 +79,8 @@ const AppDrawerHeader = (props) => {
             <div style={{gridRow: 'NewProjectButton', paddingBottom: '8px' }}>
                 <Button
                 variant="outlined"
-                color="secondary">
+                color="secondary"
+                onClick={props.onAddProjectButtonClick}>
                     <AddIcon/>
                     Create Project
                 </Button>

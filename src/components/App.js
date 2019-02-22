@@ -17,7 +17,7 @@ import {
     updateTaskListNameAsync, removeTaskListAsync, openChecklistSettings, manuallyRenewChecklistAsync,
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
-    selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync,
+    selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync, undoLastActionAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -95,6 +95,7 @@ class App extends React.Component {
         this.handleDeleteTaskButtonClick = this.handleDeleteTaskButtonClick.bind(this);
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
         this.handleProjectLayoutTypeChange = this.handleProjectLayoutTypeChange.bind(this);
+        this.handleUndoButtonClick = this.handleUndoButtonClick.bind(this);
     }
 
     componentDidMount() {
@@ -135,6 +136,7 @@ class App extends React.Component {
     render() {
         let rglDragEnabled = this.props.openTaskInspectorId === -1;
         let projectOverlayComponent = this.getProjectOverlayComponent();
+        let undoButtonText = this.props.lastUndoAction === null ? '' : this.props.lastUndoAction.friendlyText;
 
         return (
             <React.Fragment>
@@ -195,6 +197,9 @@ class App extends React.Component {
                             projectLayoutType={this.props.selectedProjectLayoutType}
                             showProjectLayoutTypeSelector={this.props.isSelectedProjectRemote}
                             onProjectLayoutTypeChange={this.handleProjectLayoutTypeChange}
+                            onUndoButtonClick={this.handleUndoButtonClick}
+                            canUndo={this.props.canUndo}
+                            undoButtonText={undoButtonText}
                         />
                     </div>
 
@@ -293,6 +298,10 @@ class App extends React.Component {
                     onUndo={this.props.undoSnackbar.onUndo}/>
             </React.Fragment>
         )
+    }
+
+    handleUndoButtonClick() {
+        this.props.dispatch(undoLastActionAsync())
     }
 
     handleProjectLayoutTypeChange(type) {
@@ -625,6 +634,8 @@ const mapStateToProps = state => {
         selectedProjectLayoutType: state.selectedProjectLayoutType,
         isSelectedProjectRemote: state.isSelectedProjectRemote,
         undoSnackbar: state.undoSnackbar,
+        lastUndoAction: state.lastUndoAction,
+        canUndo: state.canUndo,
     }
 }
 
