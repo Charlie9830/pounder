@@ -1,9 +1,10 @@
 import React from 'react';
 import { Toolbar, Typography, Grid, IconButton, withTheme, Button } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
-import SyncIcon from '@material-ui/icons/DoneAll';
+
 import LockIcon from '@material-ui/icons/Lock';
 import AddIcon from '@material-ui/icons/Add';
+import VisibleSyncMenu from './SyncMenu';
 
 const AppDrawerHeader = (props) => {
     let { theme } = props;
@@ -26,14 +27,6 @@ const AppDrawerHeader = (props) => {
         alignItems: 'center',
         paddingTop: '8px',
         paddingBottom: '8px',
-    }
-
-    let lockIconContainer = {
-        flexGrow: '1',
-        display: 'flex',
-        flexDirection: 'row-reverse',
-        justifyContent: 'flex-start',
-        alignItems: 'center',
     }
 
     return (
@@ -62,18 +55,8 @@ const AppDrawerHeader = (props) => {
                         fontSize="small" />
                 </IconButton>
 
-                <IconButton>
-                    <SyncIcon
-                    fontSize="small"/>
-                </IconButton>
-
-                <div style={lockIconContainer}>
-                    <IconButton>
-                        <LockIcon
-                            fontSize="small" />
-                    </IconButton>
-                </div>
-
+                <VisibleSyncMenu/>
+ 
             </div>
             
             <div style={{gridRow: 'NewProjectButton', paddingBottom: '8px' }}>
