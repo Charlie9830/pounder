@@ -78,17 +78,6 @@ class ThemeEditor extends Component {
                         } />
                 </ListItem>
 
-                <ListItem>
-                
-                <FormControlLabel
-                    label="Hide Task edit icon"
-                    control={
-                        <Switch
-                            checked={this.props.muiTheme.hideTaskEditIcon}
-                            onChange={(e) => { this.handleHideTaskEditIconChange(e.target.checked) }} />
-                    } />
-                </ListItem>
-
                 <ListSubheader disableSticky={true}> Indicator Colours </ListSubheader>
                 <ListItem>
                     <FormControlLabel
