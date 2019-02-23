@@ -137,7 +137,7 @@ class App extends React.Component {
         let rglDragEnabled = this.props.openTaskInspectorId === -1;
         let projectOverlayComponent = this.getProjectOverlayComponent();
         let undoButtonText = this.props.lastUndoAction === null ? '' : this.props.lastUndoAction.friendlyText;
-
+        
         return (
             <React.Fragment>
                 <CssBaseline />

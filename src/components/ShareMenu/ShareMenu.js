@@ -10,10 +10,10 @@ import WaitingOverlay from './WaitingOverlay';
 
 
 import {
-    Toolbar, IconButton, ListSubheader, Paper, Divider, Typography
+    Toolbar, IconButton, ListSubheader, Paper, Divider, Typography, Grid
 } from '@material-ui/core';
 
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
+import CloseIcon from '@material-ui/icons/Close';
 
 import FullScreenView from '../../layout-components/FullScreenView';
 import ActionButton from './ActionButton';
@@ -98,10 +98,17 @@ class ShareMenu extends React.Component {
         let toolbarJSX = (
             <Toolbar
                 disableGutters={true}>
-                <IconButton
-                    onClick={() => { this.props.dispatch(closeShareMenu()) }}>
-                    <ArrowBackIcon />
-                </IconButton>
+                <Grid
+                    container
+                    direction="row-reverse"
+                    justify="flex-start"
+                    alignItems="center">
+
+                    <IconButton
+                        onClick={() => { this.props.dispatch(closeShareMenu()) }}>
+                        <CloseIcon />
+                    </IconButton>
+                </Grid>
             </Toolbar>
         )
 

@@ -41,7 +41,6 @@ class AppDrawer extends Component {
         this.projectMapper = this.projectMapper.bind(this);
         this.getInvitesJSX = this.getInvitesJSX.bind(this);
         this.handleProjectActionClick = this.handleProjectActionClick.bind(this);
-        this.getAddProjectHintButtonJSX = this.getAddProjectHintButtonJSX.bind(this);
     }
 
     render() {
@@ -57,8 +56,6 @@ class AppDrawer extends Component {
                 />
                 
                 <TransitionList >
-                    {this.getAddProjectHintButtonJSX()}
-
                     {/* Invites  */}
                     {this.getInvitesSubheading(this.props.invites.length > 0)}
                     {this.props.invites.length > 0 && this.getInvitesJSX()}
@@ -73,27 +70,6 @@ class AppDrawer extends Component {
                 </TransitionList>
             </div>
         );
-    }
-
-    getAddProjectHintButtonJSX() {
-        if (this.props.enableStates.newProject === false) {
-            return null;
-        }
-
-        if (this.props.invites.length === 0 &&
-            this.props.localProjects.length === 0 &&
-            this.props.remoteProjects.length === 0) {
-            return (
-                <ListItemTransition key="addnewhintbutton">
-                    <AddNewProjectButton onClick={() => { this.props.dispatch(addNewProjectAsync()) }} />
-                </ListItemTransition>
-
-            )
-        }
-
-        else {
-            return undefined;
-        }
     }
 
     getInvitesSubheading(show) {
