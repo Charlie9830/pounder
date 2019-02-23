@@ -81,7 +81,7 @@ const AppDrawerHeader = (props) => {
             </div>
 
             <div style={{gridRow: 'Account'}}>
-                <Typography variant="caption"> {props.displayName} </Typography>
+                <Typography variant="caption" color="textSecondary"> {props.displayName} </Typography>
             </div>
 
             <div style={buttonsContainer}>
