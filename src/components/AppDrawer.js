@@ -150,6 +150,7 @@ class AppDrawer extends Component {
                             isSelected={this.props.selectedProjectId === item.uid}
                             indicators={this.props.projectSelectorIndicators[item.uid]}
                             onDeleteButtonClick={() => { this.props.dispatch(removeProjectAsync(item.uid)) }}
+                            onShareButtonClick={() => { this.props.dispatch(openShareMenu(item.uid))}}
                         />
                 </ListItemTransition>
             )

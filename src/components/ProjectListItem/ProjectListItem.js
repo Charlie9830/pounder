@@ -3,7 +3,7 @@ import DueDateChit from './DueDateChit';
 import UnseenCommentsChit from './UnseenCommentsChit';
 import { ListItem, ListItemText, ListItemSecondaryAction, ListItemIcon, withTheme, Grid } from '@material-ui/core';
 import withMouseOver from '../Hocs/withMouseOver';
-import ProjectSecondaryActions from './DeleteButton';
+import ProjectSecondaryActions from './ProjectListItemSecondaryActions';
 
 import FavouriteIcon from '@material-ui/icons/Favorite';
 
@@ -22,7 +22,10 @@ const ProjectListItem = (props) => {
                         direction="row-reverse"
                         justify="flex-start"
                         alignItems="center">
-                        { props.mouseOver ? <ProjectSecondaryActions onClick={props.onDeleteButtonClick}/> :
+                        { props.mouseOver ?
+                            <ProjectSecondaryActions
+                             onDeleteButtonClick={props.onDeleteButtonClick}
+                             onShareButtonClick={props.onShareButtonClick}/> :
                          getDueDateChits(indicators, theme.palette.custom) }
                     </Grid>
                 </ListItemSecondaryAction>

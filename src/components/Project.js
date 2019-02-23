@@ -22,7 +22,7 @@ import { getUserUid } from 'handball-libs/libs/pounder-firebase';
 import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { ParseDueDate } from 'handball-libs/libs/pounder-utilities';
 
-import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom, Divider } from '@material-ui/core';
+import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom, Divider, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import AddIcon from '@material-ui/icons/Add';
@@ -31,6 +31,7 @@ import AddTaskListIcon from '@material-ui/icons/PlaylistAdd';
 import RemoveTaskListIcon from '../icons/RemoveTaskListIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import TaskListGrid from './TaskListGrid';
+import ExpandingButton from './ExpandingButton';
 
 let styles = theme => {
     return {
@@ -142,40 +143,43 @@ class Project extends React.Component {
                                     unmountOnExit={true}
                                     mountOnEnter={true}
                                     in={this.props.enableStates.newTaskFab}>
-                                    <IconButton
-                                        onClick={() => { this.props.onAddNewTaskButtonClick() }}>
-                                        <AddIcon />
-                                    </IconButton>
+                                    <ExpandingButton
+                                        color="default"
+                                        iconComponent={<AddIcon/>}
+                                        text="Create Task"
+                                        onClick={() => { this.props.onAddNewTaskButtonClick() }} />
                                 </Zoom>
+
+                                <div style={{ width: '24px' }} />
 
                                 <Zoom
                                     unmountOnExit={true}
                                     mountOnEnter={true}
                                     in={this.props.enableStates.newTaskListFab}>
-                                    <IconButton
-                                        onClick={() => { this.props.onAddNewTaskListButtonClick() }}>
-                                        <AddTaskListIcon
-                                            color="secondary" />
-                                    </IconButton>
+                                    <ExpandingButton
+                                        iconComponent={<AddTaskListIcon/>}
+                                        color="secondary"
+                                        text="Create List"
+                                        onClick={() => { this.props.onAddNewTaskListButtonClick() }} />
                                 </Zoom>
                             </div>
 
                             <div style={projectRightButtonsContainer}>
-                                    <ProjectMenu
-                                        onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId) }}
-                                        onRenameProjectButtonClick={() => { this.props.onRenameProjectButtonClick(this.props.projectId, this.props.projectName) }}
-                                        onCompletedTasksButtonClick={this.props.onCompletedTasksButtonClick}
-                                        showCompletedTasks={this.props.showCompletedTasks}
-                                        onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
-                                        showOnlySelfTasks={this.props.showOnlySelfTasks}
-                                        onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }}
-                                        projectLayoutType={this.props.projectLayoutType}
-                                        showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}
-                                        onLayoutTypeChange={this.props.onProjectLayoutTypeChange} 
-                                        onUndoButtonClick={this.props.onUndoButtonClick}
-                                        canUndo={this.props.canUndo}
-                                        undoButtonText={this.props.undoButtonText}
-                                        projectActionsEnabled={this.props.enableStates.projectMenu}/>
+                                <ProjectMenu
+                                    onShareMenuButtonClick={() => { this.props.onShareMenuButtonClick(this.props.projectId) }}
+                                    onRenameProjectButtonClick={() => { this.props.onRenameProjectButtonClick(this.props.projectId, this.props.projectName) }}
+                                    onCompletedTasksButtonClick={this.props.onCompletedTasksButtonClick}
+                                    showCompletedTasks={this.props.showCompletedTasks}
+                                    onShowOnlySelfTasksButtonClick={this.props.onShowOnlySelfTasksButtonClick}
+                                    showOnlySelfTasks={this.props.showOnlySelfTasks}
+                                    onDeleteProjectButtonClick={() => { this.props.onDeleteProjectButtonClick(this.props.projectId) }}
+                                    projectLayoutType={this.props.projectLayoutType}
+                                    showProjectLayoutTypeSelector={this.props.showProjectLayoutTypeSelector}
+                                    onLayoutTypeChange={this.props.onProjectLayoutTypeChange}
+                                    onUndoButtonClick={this.props.onUndoButtonClick}
+                                    canUndo={this.props.canUndo}
+                                    undoButtonText={this.props.undoButtonText}
+                                    projectActionsEnabled={this.props.enableStates.projectMenu} />
                             </div>
                         </Toolbar>
                         <Divider />
@@ -183,7 +187,7 @@ class Project extends React.Component {
 
                     <div
                         className={classes['contentContainer']}>
-                        { contents }
+                        {contents}
                     </div>
                 </div>
             </React.Fragment>
@@ -248,7 +252,7 @@ class Project extends React.Component {
     handleArrowKeyDown(taskListId, key) {
         let currentArrowKeyTracking = this.arrowKeyTrackingMap[taskListId];
 
-        let selectedTaskIndex = currentArrowKeyTracking.findIndex( item => { 
+        let selectedTaskIndex = currentArrowKeyTracking.findIndex(item => {
             return item.uid === this.props.selectedTaskId
         })
 
@@ -366,24 +370,24 @@ class Project extends React.Component {
                 return (
                     <ListItemTransition
                         key={item.uid}>
-                            <TaskBase
-                                taskId={item.uid}
-                                onClick={(area) => { this.props.onTaskClick(area, item.uid, item.taskList)}}
-                                onDueDateContainerClick={() => { this.props.onTaskDueDateContainerClick(item.uid)}}
-                                isSelected={isTaskSelected}
-                                isMoving={isTaskMoving}
-                                priorityIndicator={priorityIndicator}
-                                checkbox={checkbox}
-                                taskText={taskText}
-                                dueDate={dueDate}
-                                indicatorPanel={indicatorPanel}
-                                onTextContainerTap={() => { this.props.onTaskTextContainerTap(item.uid) }}
-                                onPress={() => { this.props.onTaskPress(item.uid, item.taskList, item.taskName, item.metadata) }}
-                                onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
-                                showDivider={showDivider}
-                                onDeleteTaskButtonClick={() => { this.props.onDeleteTaskButtonClick(item.uid) }}
-                                onDragDrop={this.props.onTaskDragDrop}
-                            />
+                        <TaskBase
+                            taskId={item.uid}
+                            onClick={(area) => { this.props.onTaskClick(area, item.uid, item.taskList) }}
+                            onDueDateContainerClick={() => { this.props.onTaskDueDateContainerClick(item.uid) }}
+                            isSelected={isTaskSelected}
+                            isMoving={isTaskMoving}
+                            priorityIndicator={priorityIndicator}
+                            checkbox={checkbox}
+                            taskText={taskText}
+                            dueDate={dueDate}
+                            indicatorPanel={indicatorPanel}
+                            onTextContainerTap={() => { this.props.onTaskTextContainerTap(item.uid) }}
+                            onPress={() => { this.props.onTaskPress(item.uid, item.taskList, item.taskName, item.metadata) }}
+                            onDueDateContainerTap={() => { this.props.onDueDateContainerTap(item.uid) }}
+                            showDivider={showDivider}
+                            onDeleteTaskButtonClick={() => { this.props.onDeleteTaskButtonClick(item.uid) }}
+                            onDragDrop={this.props.onTaskDragDrop}
+                        />
                     </ListItemTransition>
 
                 )
@@ -404,7 +408,7 @@ class Project extends React.Component {
         if (mousetrap.key === "Tab" && mousetrap.shiftKey === true) {
             this.focusPreviousTaskList();
         }
-        
+
     }
 
     getGridSortedTaskListIds() {

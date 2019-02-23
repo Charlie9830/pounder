@@ -15,7 +15,7 @@ const TaskSecondaryActions = (props) => {
         <div style={container}>
             <IconButton
             onClick={props.onDeleteTaskButtonClick}>
-                <DeleteIcon/>
+                <DeleteIcon fontSize="small"/>
             </IconButton>
         </div>
     );

@@ -6,7 +6,7 @@ const DeleteButton = (props) => {
     return (
         <IconButton
         onClick={props.onClick}>
-            <DeleteIcon/>
+            <DeleteIcon fontSize="small"/>
         </IconButton>
     );
 };
