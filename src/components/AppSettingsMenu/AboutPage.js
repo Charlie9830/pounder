@@ -1,5 +1,6 @@
 import React from 'react';
 import AppIcon from '../../assets/icons/Handball-Icon-Desktop-Draft.svg';
+import electron from 'electron';
 
 import { Grid, Typography } from '@material-ui/core';
 
@@ -34,6 +35,7 @@ class AboutPage extends React.Component {
         // Method Bindings.
         this.getDependencyJSX = this.getDependencyJSX.bind(this);
     }
+
     render() {
         var dependencyJSX = this.getDependencyJSX();
 
@@ -62,7 +64,6 @@ class AboutPage extends React.Component {
                     <Typography color="textSecondary"> To report bugs or suggest features visit </Typography>
                     <Typography color="textPrimary"> {this.props.issuesURL} </Typography>
                 </Grid>
-
             </Grid>
         )
     }

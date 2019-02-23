@@ -3,7 +3,7 @@ import Project from './Project';
 import TextInputDialog from './dialogs/TextInputDialog';
 import TaskInspector from './TaskInspector/TaskInspector';
 import MouseTrap from 'mousetrap';
-import { remote } from 'electron';
+import electron, { remote } from 'electron';
 require('later/later.js');
 
 import '../assets/css/App.css';
@@ -35,6 +35,8 @@ import VisibleInductionSplash from './Induction/InductionSplash';
 import VisibleStatusBar from './StatusBar';
 import AddNewTaskListButton from './AddNewTaskListButton';
 import UndoSnackbar from './Snackbars/UndoSnackbar';
+import UpdateAvailableIcon from '../icons/UpdateAvailableIcon';
+import UpdateAvailableSnackbar from './Snackbars/UpdateAvailableSnackbar';
 
 const KEYBOARD_COMBOS = {
     MOD_N: 'mod+n',
@@ -57,6 +59,11 @@ let appGrid = {
 class App extends React.Component {
     constructor(props) {
         super(props);
+
+        // State.
+        this.state = {
+            isUpdateSnackbarOpen: false,
+        }
 
         // Method Bindings.
         this.handleTaskCheckboxChange = this.handleTaskCheckboxChange.bind(this);
@@ -97,6 +104,7 @@ class App extends React.Component {
         this.handleProjectLayoutTypeChange = this.handleProjectLayoutTypeChange.bind(this);
         this.handleUndoButtonClick = this.handleUndoButtonClick.bind(this);
         this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
+        this.handleInstallUpdateButtonClick = this.handleInstallUpdateButtonClick.bind(this);
 
     }
 
@@ -115,6 +123,11 @@ class App extends React.Component {
 
         // Register Jobs for Later.
         this.registerLaterJobs();
+
+        // Electron
+        electron.ipcRenderer.on('update-downloaded', () => {
+            this.setState({ isUpdateSnackbarOpen: true })
+        })
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -296,12 +309,20 @@ class App extends React.Component {
                     onAction={this.props.generalSnackbar.actionOptions.onAction}
                 />
 
+                <UpdateAvailableSnackbar
+                isOpen={this.state.isUpdateAvailableSnackbarOpen}
+                onInstall={this.handleInstallUpdateButtonClick}/>
+
                 <UndoSnackbar
                     isOpen={this.props.undoSnackbar.isOpen}
                     text={this.props.undoSnackbar.text}
                     onUndo={this.props.undoSnackbar.onUndo}/>
             </React.Fragment>
         )
+    }
+
+    handleInstallUpdateButtonClick() {
+        electron.ipcRenderer.send('install-update');
     }
 
     handleUndoButtonClick() {
