@@ -373,6 +373,7 @@ class Project extends React.Component {
                         <TaskBase
                             taskId={item.uid}
                             onClick={(area) => { this.props.onTaskClick(area, item.uid, item.taskList) }}
+                            onDoubleClick={(area) => { this.props.onTaskDoubleClick(area, item.uid, item.taskList)}}
                             onDueDateContainerClick={() => { this.props.onTaskDueDateContainerClick(item.uid) }}
                             isSelected={isTaskSelected}
                             isMoving={isTaskMoving}

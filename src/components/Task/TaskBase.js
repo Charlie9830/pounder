@@ -38,7 +38,8 @@ class TaskBase extends Component {
         return this.props.connectDragSource(
             <div
             style={ContainerGridStyle}
-            onClick={() => { this.props.onClick('container')}}>
+            onClick={() => { this.props.onClick('container')}}
+            onDoubleClick={() => { this.props.onDoubleClick('container')}}>
                 {/* Priority Indicator  */} 
                 <div 
                 style={{gridArea: 'PriorityIndicator'}}>

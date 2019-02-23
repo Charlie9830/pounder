@@ -96,6 +96,7 @@ class App extends React.Component {
         this.handleTaskDragDrop = this.handleTaskDragDrop.bind(this);
         this.handleProjectLayoutTypeChange = this.handleProjectLayoutTypeChange.bind(this);
         this.handleUndoButtonClick = this.handleUndoButtonClick.bind(this);
+        this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
     }
 
     componentDidMount() {
@@ -191,6 +192,7 @@ class App extends React.Component {
                             onLayoutChange={this.handleLayoutChange}
                             projectOverlayComponent={projectOverlayComponent}
                             onTaskClick={this.handleTaskClick}
+                            onTaskDoubleClick={this.handleTaskDoubleClick}
                             onArrowSelectTask={this.handleArrowSelectTask}
                             onDeleteTaskButtonClick={this.handleDeleteTaskButtonClick}
                             onTaskDragDrop={this.handleTaskDragDrop}
@@ -324,6 +326,14 @@ class App extends React.Component {
             
             case 'dueDate': 
                 this.props.dispatch(openTaskInspector(taskId));
+        }
+    }
+    
+    handleTaskDoubleClick(area, taskId, taskListId) {
+        switch (area) {
+            case 'container':
+                this.props.dispatch(openTaskInspector(taskId));
+                return;
         }
     }
 

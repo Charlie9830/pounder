@@ -91,6 +91,7 @@ class TaskInspector extends Component {
 
                 <div style={{padding: '8px 8px 16px 8px '}}>
                     <EditableTextInput
+                    autoOpen={true}
                     typographyVariant="body1"
                     defaultValue={task.taskName}
                     onChange={(newValue) => { this.props.dispatch(updateTaskNameAsync(task.uid, newValue, task.taskName, task.metadata))}}/>

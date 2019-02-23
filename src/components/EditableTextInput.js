@@ -18,6 +18,12 @@ class EditableTextInput extends Component {
         this.handleClick = this.handleClick.bind(this);
     }
 
+    componentDidMount() {
+        if (this.props.autoOpen === true) {
+            this.setState({ isInputOpen: true });
+        }
+    }
+
     render() {
         let isInputOpen = this.props.isInputOpen === undefined ? this.state.isInputOpen : this.props.isInputOpen;
         let variant = this.props.typographyVariant === undefined ? 'body1' : this.props.typographyVariant;
@@ -37,11 +43,12 @@ class EditableTextInput extends Component {
 
         else {
             return (
-                    <Typography
+                <Typography
+                    style={{ lineHeight: '2.0' }}
                     variant={variant}
                     onClick={this.handleClick}>
-                        { this.props.defaultValue }
-                    </Typography>
+                    {this.props.defaultValue}
+                </Typography>
             );
         }
     }

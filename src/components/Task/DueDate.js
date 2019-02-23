@@ -14,13 +14,17 @@ const DueDate = (props) => {
         }
         
         else {
-            return (
-                <div style={{ margin: `${theme.spacing.unit}px` }}>
-                    <IconButton>
-                        <EditIcon color="disabled" fontSize="small" />
-                    </IconButton>
-                </div>
-            )
+            return null;
+            
+            // Disabled until Touchscreen optimizations are implemented
+
+            // return (
+            //     <div style={{ margin: `${theme.spacing.unit}px` }}>
+            //         <IconButton>
+            //             <EditIcon color="disabled" fontSize="small" />
+            //         </IconButton>
+            //     </div>
+            // )
         }
     }
 
