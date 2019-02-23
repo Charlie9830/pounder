@@ -4,6 +4,7 @@ import TextInputDialog from './dialogs/TextInputDialog';
 import TaskInspector from './TaskInspector/TaskInspector';
 import MouseTrap from 'mousetrap';
 import electron, { remote } from 'electron';
+import { isChecklistDueForRenew } from 'handball-libs/libs/pounder-utilities';
 require('later/later.js');
 
 import '../assets/css/App.css';
@@ -18,6 +19,7 @@ import {
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
     selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync, undoLastActionAsync,
+    calculateProjectSelectorIndicators
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -35,7 +37,6 @@ import VisibleInductionSplash from './Induction/InductionSplash';
 import VisibleStatusBar from './StatusBar';
 import AddNewTaskListButton from './AddNewTaskListButton';
 import UndoSnackbar from './Snackbars/UndoSnackbar';
-import UpdateAvailableIcon from '../icons/UpdateAvailableIcon';
 import UpdateAvailableSnackbar from './Snackbars/UpdateAvailableSnackbar';
 
 const KEYBOARD_COMBOS = {
@@ -105,6 +106,7 @@ class App extends React.Component {
         this.handleUndoButtonClick = this.handleUndoButtonClick.bind(this);
         this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
         this.handleInstallUpdateButtonClick = this.handleInstallUpdateButtonClick.bind(this);
+        this.renewChecklists = this.renewChecklists.bind(this);
 
     }
 
@@ -127,6 +129,10 @@ class App extends React.Component {
         // Electron
         electron.ipcRenderer.on('update-downloaded', () => {
             this.setState({ isUpdateSnackbarOpen: true })
+        })
+
+        electron.ipcRenderer.on('resume', () => {
+            this.performOvernightJobs();
         })
     }
 
@@ -373,9 +379,7 @@ class App extends React.Component {
         later.setInterval(this.performOvernightJobs, overnightJobsSchedule);
     }
 
-    performOvernightJobs() {
-        this.props.dispatch(postSnackbarMessage("Performing overnight jobs", true, 'infomation'));
-    
+    performOvernightJobs() {    
         // Update Due date Displays.
         this.props.dispatch(calculateProjectSelectorIndicators());
         this.forceUpdate(); // Forces recalculation of Task Due date displays.
@@ -383,6 +387,18 @@ class App extends React.Component {
         // Renew any checklists requiring renewal.
         this.renewChecklists();
       }
+
+    renewChecklists() {
+        var checklists = this.props.taskLists.filter(item => {
+            return item.settings.checklistSettings.isChecklist === true;
+        })
+
+        checklists.forEach(item => {
+            if (isChecklistDueForRenew(item.settings.checklistSettings)) {
+                this.props.dispatch(manuallyRenewChecklistAsync(item.uid));
+            }
+        })
+    }
 
     bindMouseTrap() {
         MouseTrap.bind(Object.values(KEYBOARD_COMBOS), this.handleKeyboardShortcut);
@@ -639,6 +655,7 @@ const mapStateToProps = state => {
         selectedTask: state.selectedTask,
         filteredTasks: state.filteredTasks,
         filteredTaskLists: state.filteredTaskLists,
+        taskLists: state.taskLists,
         projects: state.projects,
         selectedProjectId: state.selectedProjectId,
         isAppDrawerOpen: state.isAppDrawerOpen,
