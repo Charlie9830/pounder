@@ -47,6 +47,10 @@ export function BuildMuiTheme(storedTheme) {
                 root: {
                     userSelect: 'none',
                     cursor: 'default',
+                },
+
+                noWrap: {
+                    textOverflow: 'clip',
                 }
             }
         }

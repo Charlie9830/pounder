@@ -1,24 +1,66 @@
 import React from 'react';
-import { Button, Grow, Typography } from '@material-ui/core';
+import { Button, Grow, Typography, withStyles } from '@material-ui/core';
 
 import withMouseOver from './Hocs/withMouseOver';
 
+let styles = theme => {
+    let base = {
+        flexShrink: 1,
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'flex-start',
+        alignItems: 'center'
+    }
+
+    return {
+        collapsed: {
+            ...base,
+            width: '64px',
+            transition: theme.transitions.create('width'),
+        },
+
+        expanded: {
+            ...base,
+            width: '100%',
+            transition: theme.transitions.create('width'),
+        },
+
+        textCollapsed: {
+            ...base,
+            width: '0%',
+            overflowX: 'hidden',
+        },
+
+        textExpanded: {
+            ...base,
+            width: '100%',
+            overflowX: 'hidden',
+        }
+    }
+}
+
 const ExpandingButton = (props) => {
+    let { classes } = props;
+
     return (
-        <Button
-            color={props.color}
-            onClick={props.onClick}>
-            { props.iconComponent }
-            <Grow
-            style={{transformOrigin: 'left center'}}
-            in={props.mouseOver}
-            mountOnEnter={true}
-            unmountOnExit={true}>
-                <Typography
-                color={props.color}> { props.text } </Typography>
-            </Grow>
-        </Button>
+        <div
+        className={classes[ props.mouseOver ? 'expanded' : 'collapsed']}>
+            <Button
+                color={props.color}
+                onClick={props.onClick}>
+                {props.iconComponent}
+ 
+                <div
+                className={classes[ props.mouseOver ? 'textExpanded' : 'textCollapsed']}>
+                    <Typography
+                        color={props.color}
+                        noWrap={true}>
+                        {props.text}
+                    </Typography>
+                </div>
+            </Button>
+        </div>
     );
 };
 
-export default withMouseOver(ExpandingButton);
+export default withStyles(styles)(withMouseOver(ExpandingButton));
