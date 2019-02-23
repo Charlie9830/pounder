@@ -15,7 +15,7 @@ import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
     acceptProjectInviteAsync, denyProjectInviteAsync, addNewProjectAsync, setIsAppDrawerCollapsed,
-    setIsAppSettingsOpen, selectProject, openShareMenu, removeProjectAsync,
+    setIsAppSettingsOpen, selectProject, openShareMenu, removeProjectAsync, updateProjectNameAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import TransitionList from './TransitionList/TransitionList';
@@ -174,6 +174,7 @@ class AppDrawer extends Component {
                     key={item.uid}>
                         <ProjectListItem
                             onClick={() => { this.props.dispatch(selectProject(item.uid)) }}
+                            onDoubleClick={() => { this.props.dispatch(updateProjectNameAsync(item.uid))}}
                             name={item.projectName}
                             isFavourite={favouriteProjectId === item.uid}
                             isSelected={this.props.selectedProjectId === item.uid}

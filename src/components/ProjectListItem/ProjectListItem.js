@@ -8,10 +8,11 @@ import ProjectSecondaryActions from './ProjectListItemSecondaryActions';
 import FavouriteIcon from '@material-ui/icons/Favorite';
 
 const ProjectListItem = (props) => {
-    let { theme, name, isFavourite, indicators, isSelected, onClick } = props;
+    let { theme, name, isFavourite, indicators, isSelected, onClick, onDoubleClick } = props;
     return (
             <ListItem
                 onClick={onClick}
+                onDoubleClick={onDoubleClick}
                 selected={isSelected}>
                 {isFavourite && <ListItemIcon style={{ marginRight: '0px' }}><FavouriteIcon fontSize="small" color='disabled' /></ListItemIcon>}
 

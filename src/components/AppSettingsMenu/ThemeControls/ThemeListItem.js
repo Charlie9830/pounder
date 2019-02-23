@@ -23,29 +23,6 @@ let chitContainer = {
 }
 
 class ThemeListItem extends Component {
-    constructor(props) {
-        super(props);
-        
-        // Refs.
-        this.containerRef = React.createRef();
-    }
-    
-    componentDidMount() {
-        let containerHammer = new Hammer(this.containerRef.current);
-        containerHammer.on('press', (e) => {
-            this.props.onPress();
-        })
-
-        containerHammer.on('tap', (e) => {
-            this.props.onClick();
-        })
-    }
-
-    componentWillUnmount() {
-        Hammer.off(this.containerRef.current, 'press');
-        Hammer.off(this.containerRef.current, 'tap');
-    }
-
     render() {
         let colorPreview = (
             <div style={chitContainer}>
@@ -65,6 +42,8 @@ class ThemeListItem extends Component {
             <div
                 ref={this.containerRef}>
                 <ListItem
+                    onClick={this.props.onClick}
+                    onDoubleClick={this.props.onDoubleClick}
                     selected={this.props.isSelected}>
                     <div
                         style={grid}>

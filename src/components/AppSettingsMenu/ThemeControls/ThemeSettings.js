@@ -78,7 +78,7 @@ class ThemeSettings extends Component {
                             secondaryColor={GetColor(item.theme.palette.secondaryColor.id, item.theme.palette.secondaryColor.shadeIndex)}
                             backgroundColor={GetColor(item.theme.palette.backgroundColor.id, item.theme.palette.backgroundColor.shadeIndex)}
                             onClick={() => { this.props.dispatch(selectMuiTheme(item.id)) }}
-                            onPress={() => { this.props.dispatch(renameMuiThemeAsync(item.id)) }}
+                            onDoubleClick={() => { this.props.dispatch(renameMuiThemeAsync(item.id)) }}
                             onDeleteButtonClick={() => { this.props.dispatch(removeMuiThemeAsync(item.id))}}
                             canDelete={item.isInbuilt === false}/>
                 </ListItemTransition>
