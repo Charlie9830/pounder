@@ -22,7 +22,7 @@ import { getUserUid } from 'handball-libs/libs/pounder-firebase';
 import { TaskMetadataStore } from 'handball-libs/libs/pounder-stores';
 import { ParseDueDate } from 'handball-libs/libs/pounder-utilities';
 
-import { AppBar, Toolbar, Typography, withTheme, IconButton, Fab, Zoom, Divider, Button } from '@material-ui/core';
+import { AppBar, Toolbar, Grow, withTheme, IconButton, Fab, Zoom, Divider, Button } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 
 import AddIcon from '@material-ui/icons/Add';
@@ -32,6 +32,7 @@ import RemoveTaskListIcon from '../icons/RemoveTaskListIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import TaskListGrid from './TaskListGrid';
 import ExpandingButton from './ExpandingButton';
+import ProjectName from './ProjectName';
 
 let styles = theme => {
     return {
@@ -137,6 +138,14 @@ class Project extends React.Component {
                         className={classes['toolbarContainer']}>
                         <Toolbar
                             disableGutters={true}>
+                            <Grow
+                            style={{transformOrigin: 'left center'}}
+                            in={this.props.showProjectName}
+                            mountOnEnter={true}
+                            unmountOnExit={true}>
+                                <ProjectName
+                                name={this.props.projectName}/>
+                            </Grow>
 
                             <div style={projectLeftButtonsContainer}>
                                 <Zoom
@@ -150,7 +159,7 @@ class Project extends React.Component {
                                         onClick={() => { this.props.onAddNewTaskButtonClick() }} />
                                 </Zoom>
 
-                                <div style={{ width: '24px' }} />
+                                <div style={{ width: '16px' }} />
 
                                 <Zoom
                                     unmountOnExit={true}

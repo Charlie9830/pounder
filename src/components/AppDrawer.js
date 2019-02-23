@@ -14,21 +14,29 @@ import ShareIcon from '@material-ui/icons/Share';
 import DeleteIcon from '@material-ui/icons/Delete';
 
 import {
-    acceptProjectInviteAsync, denyProjectInviteAsync, addNewProjectAsync,
+    acceptProjectInviteAsync, denyProjectInviteAsync, addNewProjectAsync, setIsAppDrawerCollapsed,
     setIsAppSettingsOpen, selectProject, openShareMenu, removeProjectAsync,
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import TransitionList from './TransitionList/TransitionList';
 import ListItemTransition from './TransitionList/ListItemTransition';
-import SettingsIcon from '@material-ui/icons/Settings';
 import AppDrawerHeader from './AppDrawerHeader';
 
 let styles = theme => {
-    return {
-        appDrawer: {
+    let appDrawerOpen = {
             height: '100%',
-            width: '100%',
+            width: '240px',
             background: theme.palette.background.paper,
+            transition: theme.transitions.create('width'),
+            display: 'grid',
+            gridTemplateRows: '[Header]auto [Items]1fr', 
+    }
+
+    return {
+        appDrawerOpen,
+        appDrawerCollapsed: {
+            ...appDrawerOpen,
+            width: '48px',
         }
     }
 };
@@ -41,35 +49,59 @@ class AppDrawer extends Component {
         this.projectMapper = this.projectMapper.bind(this);
         this.getInvitesJSX = this.getInvitesJSX.bind(this);
         this.handleProjectActionClick = this.handleProjectActionClick.bind(this);
+        this.getCollapsedItemsJSX = this.getCollapsedItemsJSX.bind(this);
     }
 
     render() {
-        let { classes } = this.props;
+        let { classes, isAppDrawerCollapsed } = this.props;
+        let openJSX = (
+            <TransitionList>
+                {/* Invites  */}
+                {this.getInvitesSubheading(this.props.invites.length > 0)}
+                {this.props.invites.length > 0 && this.getInvitesJSX()}
+
+                {/* Local Projects  */}
+                {this.getLocalProjectsSubheading(this.props.localProjects.length > 0)}
+                {this.props.localProjects.length > 0 && this.getLocalProjectsSubheading() && this.projectMapper(this.props.localProjects)}
+
+                {/* Remote Projects  */}
+                {this.getRemoteProjectsSubheading(this.props.remoteProjects.length > 0)}
+                {this.props.remoteProjects.length > 0 && this.getRemoteProjectsSubheading() && this.projectMapper(this.props.remoteProjects)}
+            </TransitionList>
+        )
 
         return (
-            <div className={classes['appDrawer']}>
+            <div className={classes[isAppDrawerCollapsed ? 'appDrawerCollapsed' : 'appDrawerOpen']}>
+                <div
+                style={{gridRow: 'Header'}}>
+                    <AppDrawerHeader
+                        displayName={this.props.displayName}
+                        onSettingsButtonClick={() => { this.props.dispatch(setIsAppSettingsOpen(true)) }}
+                        onAddProjectButtonClick={() => { this.props.dispatch(addNewProjectAsync()) }}
+                        onCollapseButtonClick={() => { this.props.dispatch(setIsAppDrawerCollapsed(!isAppDrawerCollapsed))}}
+                        isCollapsed={isAppDrawerCollapsed}
+                    />
 
-                <AppDrawerHeader
-                displayName={this.props.displayName}
-                onSettingsButtonClick={() => {this.props.dispatch(setIsAppSettingsOpen(true))}}
-                onAddProjectButtonClick={ () => {this.props.dispatch(addNewProjectAsync())}}
-                />
+                </div>
                 
-                <TransitionList >
-                    {/* Invites  */}
-                    {this.getInvitesSubheading(this.props.invites.length > 0)}
-                    {this.props.invites.length > 0 && this.getInvitesJSX()}
+                <div
+                style={{gridRow: 'Items'}}>
+                    { isAppDrawerCollapsed === false &&  openJSX }
+                </div>
 
-                    {/* Local Projects  */}
-                    {this.getLocalProjectsSubheading(this.props.localProjects.length > 0)}
-                    {this.props.localProjects.length > 0 && this.getLocalProjectsSubheading() && this.projectMapper(this.props.localProjects)}
-
-                    {/* Remote Projects  */}
-                    {this.getRemoteProjectsSubheading(this.props.remoteProjects.length > 0)}
-                    {this.props.remoteProjects.length > 0 && this.getRemoteProjectsSubheading() && this.projectMapper(this.props.remoteProjects)}
-                </TransitionList>
             </div>
         );
+    }
+
+    getCollapsedItemsJSX() {
+        let projects = [...this.props.localProjects, ...this.props.remoteProjects];
+        let selectedProject = projects.find(item => { return item.uid === this.props.selectedProjectId});
+
+        if (selectedProject === undefined) {
+            return null;
+        }
+
+        return this.projectMapper([selectedProject]);
     }
 
     getInvitesSubheading(show) {
@@ -137,9 +169,6 @@ class AppDrawer extends Component {
     projectMapper(projects) {
         let favouriteProjectId = this.props.accountConfig.favouriteProjectId === undefined ? '-1' : this.props.accountConfig.favouriteProjectId;
         let jsx = projects.map(item => {
-            let leftActions = [{ value: 'share', background: this.props.theme.palette.primary.main, icon: <ShareIcon /> }];
-            let rightActions = [{ value: 'delete', background: this.props.theme.palette.error.dark, icon: <DeleteIcon /> }]
-
             return (
                 <ListItemTransition
                     key={item.uid}>
@@ -185,6 +214,7 @@ let mapStateToProps = (state) => {
         enableStates: state.enableStates,
         displayName: state.displayName,
         userEmail: state.userEmail,
+        isAppDrawerCollapsed: state.isAppDrawerCollapsed,
     }
 }
 

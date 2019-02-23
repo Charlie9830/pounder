@@ -49,7 +49,7 @@ let appGrid = {
     height: '100%',
     width: '100%',
     gridTemplateRows: '[StatusBar]auto [Content]1fr',
-    gridTemplateColumns: '[AppDrawer]240px [Project]1fr',
+    gridTemplateColumns: '[AppDrawer]auto [Project]1fr',
     gridTemplateAreas: `' AppDrawer StatusBar '
                         ' AppDrawer Project '`
 }
@@ -97,6 +97,7 @@ class App extends React.Component {
         this.handleProjectLayoutTypeChange = this.handleProjectLayoutTypeChange.bind(this);
         this.handleUndoButtonClick = this.handleUndoButtonClick.bind(this);
         this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
+
     }
 
     componentDidMount() {
@@ -138,7 +139,7 @@ class App extends React.Component {
         let rglDragEnabled = this.props.openTaskInspectorId === -1;
         let projectOverlayComponent = this.getProjectOverlayComponent();
         let undoButtonText = this.props.lastUndoAction === null ? '' : this.props.lastUndoAction.friendlyText;
-        
+
         return (
             <React.Fragment>
                 <CssBaseline />
@@ -202,6 +203,7 @@ class App extends React.Component {
                             onUndoButtonClick={this.handleUndoButtonClick}
                             canUndo={this.props.canUndo}
                             undoButtonText={undoButtonText}
+                            showProjectName={this.props.isAppDrawerCollapsed}
                         />
                     </div>
 
@@ -646,6 +648,7 @@ const mapStateToProps = state => {
         undoSnackbar: state.undoSnackbar,
         lastUndoAction: state.lastUndoAction,
         canUndo: state.canUndo,
+        isAppDrawerCollapsed: state.isAppDrawerCollapsed,
     }
 }
 
