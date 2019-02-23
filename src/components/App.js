@@ -425,7 +425,8 @@ class App extends React.Component {
     
         // Ctrl + F
         if (combo === KEYBOARD_COMBOS.MOD_F) {
-            // this.setFullscreenFlag(false);
+            let isFullScreen = remote.getCurrentWindow().isFullScreen();
+            remote.getCurrentWindow().setFullScreen(!isFullScreen);
         }
       }
 

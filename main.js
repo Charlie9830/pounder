@@ -89,18 +89,6 @@ function createWindow() {
 
     // Window Closing Event Listener.
     mainWindow.addListener('close', event => {
-      // Check that we won't fire this code multiple times.
-      if (readyToClose === false && isClosing === false) {
-        event.preventDefault();
-        isClosing = true; // Set this flag incase the user smashes the Exit button multiple times, stops us triggering multiple backups.
-        mainWindow.webContents.send('window-closing');
-      }
-    })
-
-    // Window 'ready-to-close' Listener.
-    electron.ipcMain.on('ready-to-close', event => {
-      // Pounder Process is ready to close.
-      readyToClose = true;
       app.quit();
     })
 
