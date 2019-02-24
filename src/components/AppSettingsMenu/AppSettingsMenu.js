@@ -12,6 +12,7 @@ import { AppBar, IconButton, Typography, Toolbar, Tabs, Tab, Grid } from '@mater
 
 import CloseIcon from '@material-ui/icons/Close';
 import FullScreenView from '../../layout-components/FullScreenView';
+import ReleaseNotesPage from './ReleaseNotesPage';
 
 const issuesURL = "https://www.github.com/Charlie9830/Pounder/issues";
 
@@ -75,6 +76,7 @@ class AppSettingsMenu extends React.Component {
                         <Tab label="General" value="general" />
                         <Tab label="Account" value="account" />
                         <Tab label="About" value="about" />
+                        <Tab label="Release Notes" value="release-notes"/>
                     </Tabs>
                 </AppBar>
 
@@ -106,6 +108,11 @@ class AppSettingsMenu extends React.Component {
             return (
                 <AboutPage issuesURL={issuesURL}/>
             )
+
+            case "release-notes":
+                return (
+                    <ReleaseNotesPage/>
+                )
 
             default: 
                 return (<div/>)

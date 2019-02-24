@@ -19,7 +19,7 @@ import {
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
     selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync, undoLastActionAsync,
-    calculateProjectSelectorIndicators
+    calculateProjectSelectorIndicators, setIsAppSettingsOpen
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -111,6 +111,9 @@ class App extends React.Component {
     }
 
     componentDidMount() {
+        this.props.dispatch(setIsAppSettingsOpen(true));
+        this.props.dispatch(setAppSettingsMenuPage('release-notes'));
+
         // Mousetrap.
         this.bindMouseTrap();
 
