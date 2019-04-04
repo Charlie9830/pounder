@@ -1,7 +1,7 @@
 let ReleaseNotes = [
     {
         version: '2.2.0',
-        name: 'Steamed Corn',
+        name: 'User Interface Refresh',
         markdown: require('./2.2.0.md'),
     },
     {

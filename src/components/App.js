@@ -112,7 +112,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.props.dispatch(setIsAppSettingsOpen(true));
-        this.props.dispatch(setAppSettingsMenuPage('release-notes'));
+        this.props.dispatch(setAppSettingsMenuPage('shortcuts'));
 
         // Mousetrap.
         this.bindMouseTrap();
