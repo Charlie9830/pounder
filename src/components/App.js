@@ -45,6 +45,7 @@ const KEYBOARD_COMBOS = {
     SHIFT_ESC: 'shift+esc',
     MOD_SHIFT_I: 'mod+shift+i',
     MOD_F: 'mod+f',
+    UNDO: 'mod+z'
 };
 
 let appGrid = {
@@ -436,6 +437,11 @@ class App extends React.Component {
         if (combo === KEYBOARD_COMBOS.MOD_F) {
             let isFullScreen = remote.getCurrentWindow().isFullScreen();
             remote.getCurrentWindow().setFullScreen(!isFullScreen);
+        }
+
+        // Mod + Z
+        if (combo === KEYBOARD_COMBOS.UNDO) {
+            this.props.dispatch(undoLastActionAsync());
         }
       }
 
