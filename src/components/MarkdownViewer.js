@@ -13,6 +13,7 @@ let TableCell = (props) => {
     return (
         <td style={{
             ...theme.typography.body1,
+            background: theme.palette.background.paper,
             border: `1px solid ${theme.palette.divider}`,
             padding: '16px'
         }}>
@@ -89,6 +90,27 @@ let Credit = (props) => {
     )
 }
 
+let ExampleContainer = (props) => {
+    let { theme } = props;
+
+    let style = {
+        ...theme.typography.body1,
+        background: theme.palette.background.paper,
+        color: theme.palette.text.primary,
+        border: theme.palette.divider,
+        width: 'fit-content',
+        height: 'fit-content',
+        padding: '8px',
+        marginBottom: '8px',
+    }
+    return (
+        <div
+        style={style}>
+            {props.value}
+        </div>
+    )
+}
+
 let renderers = {
     root: Root,
     heading: Heading,
@@ -98,6 +120,7 @@ let renderers = {
     strong: withTheme()(Strong),
     tableHead: TableHead,
     tableCell: withTheme()(TableCell),
+    code: withTheme()(ExampleContainer),
 }
 
 const MarkdownViewer = (props) => {
