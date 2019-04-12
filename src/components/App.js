@@ -107,13 +107,9 @@ class App extends React.Component {
         this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
         this.handleInstallUpdateButtonClick = this.handleInstallUpdateButtonClick.bind(this);
         this.renewChecklists = this.renewChecklists.bind(this);
-
     }
 
     componentDidMount() {
-        this.props.dispatch(setIsAppSettingsOpen(true));
-        this.props.dispatch(setAppSettingsMenuPage('shortcuts'));
-
         // Mousetrap.
         this.bindMouseTrap();
 
@@ -255,12 +251,6 @@ class App extends React.Component {
 
                 <Drawer open={this.props.openChecklistSettingsId !== -1} anchor="right">
                     <VisibleChecklistSettingsMenu />
-                </Drawer>
-
-
-
-                <Drawer anchor="top" open={this.props.isOnboarding}>
-                    <VisibleOnboarder />
                 </Drawer>
 
                 <TextInputDialog

@@ -40,7 +40,7 @@ class InductionSplash extends Component {
                         <div
                             style={{ gridRow: 'Message', placeSelf: 'flex-start stretch' }}>
                             <Typography variant="h5" color="secondary">
-                                Welcome to the new look Handball
+                                Welcome to the new look Handball for Desktop
                             </Typography>
     
                             <p />
@@ -52,15 +52,13 @@ class InductionSplash extends Component {
                             <p />
     
                             <Typography variant="body1">
-                                Everything you see has been redesigned to feel more intuitive and familiar.
+                                Everything you see has been redesigned to feel more intuitive and familiar. Especially if you are used to the Mobile App.
                             </Typography>
     
                             <p />
 
                             <Typography variant="body1">
-                                Common actions can now be initiated from the Floating Action Buttons in the bottom right hand corner.
-                                Actions specific to items can now be accessed by swiping left or right on that item. Many other features
-                                have been rolled into the Project and List menus.
+                                We have also added the ability to Undo certain actions. For more, check out the release notes in the Settings.
                             </Typography>
                             
                             <p />
