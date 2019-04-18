@@ -174,7 +174,7 @@ class AppDrawer extends Component {
                     key={item.uid}>
                         <ProjectListItem
                             onClick={() => { this.props.dispatch(selectProject(item.uid)) }}
-                            onDoubleClick={() => { this.props.dispatch(updateProjectNameAsync(item.uid))}}
+                            onDoubleClick={() => { this.props.dispatch(updateProjectNameAsync(item.uid, item.projectName))}}
                             name={item.projectName}
                             isFavourite={favouriteProjectId === item.uid}
                             isSelected={this.props.selectedProjectId === item.uid}

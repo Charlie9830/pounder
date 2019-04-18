@@ -32,6 +32,15 @@ class ProjectMenu extends Component {
             </MenuItem>
         )
 
+        let showOnlySelfTasksSelector = (
+            <MenuItem
+                disabled={!this.props.projectActionsEnabled}
+                onClick={() => { this.handleMenuSelection('assignedTasks') }}>
+                <Typography> Show only my tasks </Typography>
+                <Switch checked={this.props.showOnlySelfTasks} />
+            </MenuItem>
+        )
+
         return (
             <React.Fragment>
                 <IconButton
@@ -63,12 +72,7 @@ class ProjectMenu extends Component {
                         {completedTasksText}
                     </MenuItem>
 
-                    <MenuItem
-                        disabled={!this.props.projectActionsEnabled}
-                        onClick={() => { this.handleMenuSelection('assignedTasks') }}>
-                        <Typography> Show only my tasks </Typography>
-                        <Switch checked={this.props.showOnlySelfTasks} />
-                    </MenuItem>
+                    {this.props.allowShowOnlySelfTasks && showOnlySelfTasksSelector}                    
 
                     {this.props.showProjectLayoutTypeSelector && layoutTypeSelector}
 

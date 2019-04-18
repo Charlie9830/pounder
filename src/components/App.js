@@ -218,6 +218,7 @@ class App extends React.Component {
                             onTaskDragDrop={this.handleTaskDragDrop}
                             projectLayoutType={this.props.selectedProjectLayoutType}
                             showProjectLayoutTypeSelector={this.props.isSelectedProjectRemote}
+                            allowShowOnlySelfTasks={this.props.isSelectedProjectRemote}
                             onProjectLayoutTypeChange={this.handleProjectLayoutTypeChange}
                             onUndoButtonClick={this.handleUndoButtonClick}
                             canUndo={this.props.canUndo}
@@ -587,7 +588,15 @@ class App extends React.Component {
     }
 
     handleRenameProjectButtonClick(selectedProjectId) {
-        this.props.dispatch(updateProjectNameAsync(selectedProjectId))
+        let selectedProject = this.props.projects.find( item => {
+            return item.uid === selectedProjectId;
+        })
+
+        if (selectedProject === undefined) {
+            return;
+        }
+
+        this.props.dispatch(updateProjectNameAsync(selectedProjectId, selectedProject.projectName));
     }
 
     handleShareMenuButtonClick(projectId) {

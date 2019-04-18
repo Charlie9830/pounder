@@ -188,7 +188,8 @@ class Project extends React.Component {
                                     onUndoButtonClick={this.props.onUndoButtonClick}
                                     canUndo={this.props.canUndo}
                                     undoButtonText={this.props.undoButtonText}
-                                    projectActionsEnabled={this.props.enableStates.projectMenu} />
+                                    projectActionsEnabled={this.props.enableStates.projectMenu}
+                                    allowShowOnlySelfTasks={this.props.allowShowOnlySelfTasks} />
                             </div>
                         </Toolbar>
                         <Divider />
