@@ -25,7 +25,7 @@ import AppDrawerHeader from './AppDrawerHeader';
 let styles = theme => {
     let appDrawerOpen = {
             height: '100%',
-            width: '240px',
+            width: '280px',
             background: theme.palette.background.paper,
             transition: theme.transitions.create('width'),
             display: 'grid',
