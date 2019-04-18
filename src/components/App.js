@@ -465,7 +465,7 @@ class App extends React.Component {
             })
 
             if (task !== undefined) {
-                this.props.dispatch(updateTaskNameWithDialogAsync(task.uid, task.name, task.metadata));
+                this.props.dispatch(updateTaskNameWithDialogAsync(task.uid, task.taskName, task.metadata));
             }
             
         }
