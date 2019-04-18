@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, Typography, withTheme } from '@material-ui/core';
+import { IconButton, Typography, withTheme, Tooltip } from '@material-ui/core';
 import ChecklistIcon from '@material-ui/icons/PlaylistAddCheck';
 import TaskListSettingsMenu from './TaskListSettingsMenu';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
@@ -50,7 +50,7 @@ const TaskListToolbar = (props) => {
             </div>
 
             <div
-            style={{gridColumn: 'DragHandle', placeSelf: 'center flex-end'}}>
+            style={{gridColumn: 'DragHandle', placeSelf: 'center flex-end', cursor: 'move'}}>
                 <div className="rgl-drag-handle">
                     <DragIndicatorIcon
                         color="action" />
