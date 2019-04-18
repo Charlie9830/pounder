@@ -48,8 +48,8 @@ const DueDate = (props) => {
     let textStyle = {
         flexShrink: '1',
         fontFamily: theme.typography.caption.fontFamily,
-        fontSize: '7pt',
-        fontWeight: '700',
+        fontSize: '8pt',
+        fontWeight: '600',
         color: textColor,
     }
 
