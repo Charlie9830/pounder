@@ -1,7 +1,0 @@
-.TaskArea {
-  height: 100%;
-  margin: 0px;
-  padding: 0px;
-  background: var(--surface-color);
-  overflow: auto;
-}
