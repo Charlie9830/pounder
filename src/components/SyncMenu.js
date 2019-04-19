@@ -43,7 +43,7 @@ class SyncMenu extends Component {
             !this.props.taskListsHavePendingWrites &&
             !this.props.tasksHavePendingWrites
 
-        let statusText = everythingSynced ? 'Synced' : 'Syncing';
+        let statusText = everythingSynced ? 'Everything is synced' : 'Syncing';
 
         return (
             <React.Fragment>

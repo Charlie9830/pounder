@@ -21,7 +21,7 @@ let styles = theme => {
 
         expanded: {
             ...base,
-            width: '100%',
+            width: '132px', // Using Percents here causes objects next door to Snap into the smaller footprint instead of Sliding.
             transition: theme.transitions.create('width'),
         },
 
