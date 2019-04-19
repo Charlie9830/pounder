@@ -21,8 +21,8 @@
 }
 
 .react-grid-item.react-grid-placeholder {
-  background: red;
-  opacity: 0.2;
+  background: rgb(57, 73, 171);
+  opacity: 0.4;
   transition-duration: 100ms;
   z-index: 2;
   -webkit-user-select: none;
