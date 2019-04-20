@@ -13,10 +13,6 @@ import { DragDropContext } from 'react-dnd'
 if (process.env.NODE_ENV === 'production') {
     // eslint-disable-next-line
     const handballVersion = HANDBALL_VERSION;
-    const { detect } = require('detect-browser');
-    const browser = detect();
-    var browserName = "Unknown";
-    if (browser) { browserName = browser.name + " " + browser.version; }
 
     var Rollbar = require("rollbar");
     var rollbar = new Rollbar({
@@ -30,7 +26,7 @@ if (process.env.NODE_ENV === 'production') {
         captureIp: false,
         payload: {
             environment: "production",
-            platform: browserName,
+            platform: 'desktop',
         }
     })
 }
