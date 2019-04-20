@@ -85,7 +85,7 @@ class AppDrawer extends Component {
                 </div>
                 
                 <div
-                style={{gridRow: 'Items'}}>
+                style={{gridRow: 'Items', overflowY: 'auto'}}>
                     { isAppDrawerCollapsed === false &&  openJSX }
                 </div>
 
