@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, Typography, withTheme, Tooltip } from '@material-ui/core';
+import { IconButton, Typography, withTheme, Tooltip, Divider } from '@material-ui/core';
 import ChecklistIcon from '@material-ui/icons/PlaylistAddCheck';
 import TaskListSettingsMenu from './TaskListSettingsMenu';
 import DragIndicatorIcon from '@material-ui/icons/DragIndicator';
@@ -22,7 +22,8 @@ const TaskListToolbar = (props) => {
     let toolbarStyle = {
         display: 'grid',
         gridTemplateColumns: '[Menu]auto [AddTaskButton]auto [Title]1fr [ChecklistIndicator]auto [DragHandle]auto',
-        background: props.isFocused ? theme.palette.secondary.main : 'unset',
+        background: props.isFocused ? theme.palette.secondary.main : 
+        theme.palette.type === 'dark' ? 'rgba(255,255,255,0.075)' : 'rgba(255,255,255,0.25)',
     }
 
     let checklistIndicator = (
@@ -73,7 +74,6 @@ const TaskListToolbar = (props) => {
                         color="action" />
                 </div>
             </div>
-
         </div>
     );
 };
