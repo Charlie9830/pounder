@@ -40,38 +40,16 @@ class InductionSplash extends Component {
                         <div
                             style={{ gridRow: 'Message', placeSelf: 'flex-start stretch' }}>
                             <Typography variant="h5" color="secondary">
-                                Welcome to the new look Handball for Desktop
+                                Version 2.2.1
                             </Typography>
     
                             <p />
     
                             <Typography variant="body1">
-                                A lot has changed!
+                                Minor bug fixes and small features update. Check out the Release notes in the Settings Menu for more information.
                             </Typography>
     
                             <p />
-    
-                            <Typography variant="body1">
-                                Everything you see has been redesigned to feel more intuitive and familiar. Especially if you are used to the Mobile App.
-                            </Typography>
-    
-                            <p />
-
-                            <Typography variant="body1">
-                                We have also added the ability to Undo certain actions. For more, check out the release notes in the Settings.
-                            </Typography>
-                            
-                            <p />
-
-                            <Typography variant="body1">
-                                We hope you enjoy the changes.
-                            </Typography>
-    
-                            <p />
-    
-                            <Typography variant="body1">
-                                As always feedback is greatly appreciated.
-                            </Typography>
                         </div>
                         <div
                             style={buttonContainer}>
