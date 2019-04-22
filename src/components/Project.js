@@ -32,7 +32,6 @@ import RemoveTaskListIcon from '../icons/RemoveTaskListIcon';
 import DeleteIcon from '@material-ui/icons/Delete';
 import TaskListGrid from './TaskListGrid';
 import ExpandingButton from './ExpandingButton';
-import ProjectName from './ProjectName';
 
 let styles = theme => {
     return {
@@ -143,8 +142,7 @@ class Project extends React.Component {
                             in={this.props.showProjectName}
                             mountOnEnter={true}
                             unmountOnExit={true}>
-                                <ProjectName
-                                name={this.props.projectName}/>
+                                {this.props.projectNameComponent}
                             </Grow>
 
                             <div style={projectLeftButtonsContainer}>

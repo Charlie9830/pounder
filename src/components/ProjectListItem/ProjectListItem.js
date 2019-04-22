@@ -23,7 +23,7 @@ const ProjectListItem = (props) => {
                         direction="row-reverse"
                         justify="flex-start"
                         alignItems="center">
-                        { props.mouseOver ?
+                        { props.mouseOver && props.disableSecondaryActions !== true ?
                             <ProjectSecondaryActions
                              onDeleteButtonClick={props.onDeleteButtonClick}
                              onShareButtonClick={props.onShareButtonClick}/> :

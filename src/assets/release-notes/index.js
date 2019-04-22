@@ -1,5 +1,10 @@
 let ReleaseNotes = [
     {
+        version: '2.2.1',
+        name: '',
+        markdown: require('./2.2.1.md')
+    },
+    {
         version: '2.2.0',
         name: 'User Interface Refresh',
         markdown: require('./2.2.0.md'),

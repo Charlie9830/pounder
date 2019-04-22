@@ -19,7 +19,7 @@ import {
     getLocalMuiThemes, getGeneralConfigAsync, moveTaskListToProjectAsync, openTask, closeTaskInspectorAsync,
     removeProjectAsync, removeTaskAsync, updateProjectLayoutAsync, addNewProjectAsync, setAppSettingsMenuPage,
     selectTask, updateProjectLayoutTypeAsync, removeSelectedTaskAsync, undoLastActionAsync,
-    calculateProjectSelectorIndicators, setIsAppSettingsOpen
+    calculateProjectSelectorIndicators, setIsAppSettingsOpen, selectProject
 } from 'handball-libs/libs/pounder-redux/action-creators';
 
 import { Drawer, CssBaseline, withTheme, Button, Typography } from '@material-ui/core';
@@ -38,6 +38,7 @@ import VisibleStatusBar from './StatusBar';
 import AddNewTaskListButton from './AddNewTaskListButton';
 import UndoSnackbar from './Snackbars/UndoSnackbar';
 import UpdateAvailableSnackbar from './Snackbars/UpdateAvailableSnackbar';
+import ProjectNameDropdown from './ProjectNameDropdown';
 
 const KEYBOARD_COMBOS = {
     MOD_N: 'mod+n',
@@ -108,6 +109,7 @@ class App extends React.Component {
         this.handleTaskDoubleClick = this.handleTaskDoubleClick.bind(this);
         this.handleInstallUpdateButtonClick = this.handleInstallUpdateButtonClick.bind(this);
         this.renewChecklists = this.renewChecklists.bind(this);
+        this.getProjectNameComponent = this.getProjectNameComponent.bind(this);
     }
 
     componentDidMount() {
@@ -158,6 +160,8 @@ class App extends React.Component {
         let rglDragEnabled = this.props.openTaskInspectorId === -1;
         let projectOverlayComponent = this.getProjectOverlayComponent();
         let undoButtonText = this.props.lastUndoAction === null ? '' : this.props.lastUndoAction.friendlyText;
+        let selectedProjectName = this.getProjectName(this.props.projects, this.props.selectedProjectId);
+        let projectNameComponent = this.getProjectNameComponent(selectedProjectName);
 
         return (
             <React.Fragment>
@@ -175,7 +179,8 @@ class App extends React.Component {
                     <div style={{ gridArea: 'Project', placeSelf: 'stretch' }}>
                         <Project
                             projectId={this.props.selectedProjectId}
-                            projectName={this.getProjectName(this.props.projects, this.props.selectedProjectId)}
+                            projectName={selectedProjectName}
+                            projectNameComponent={projectNameComponent}
                             tasks={this.props.filteredTasks}
                             taskLists={this.props.filteredTaskLists}
                             focusedTaskListId={this.props.focusedTaskListId}
@@ -320,6 +325,21 @@ class App extends React.Component {
                     onUndo={this.props.undoSnackbar.onUndo}/>
             </React.Fragment>
         )
+    }
+
+    getProjectNameComponent(projectName) {
+            let favouriteProjectId = this.props.accountConfig.favouriteProjectId === undefined ? '-1' : this.props.accountConfig.favouriteProjectId;
+
+            return (
+                <ProjectNameDropdown
+                projects={this.props.projects}
+                name={projectName}
+                selectedProjectId={this.props.selectedProjectId}
+                projectSelectorIndicators={this.props.projectSelectorIndicators}
+                favouriteProjectId={favouriteProjectId}
+                onProjectSelect={(projectId) => { this.props.dispatch(selectProject(projectId))}}
+                />
+            )
     }
 
     handleInstallUpdateButtonClick() {
@@ -696,6 +716,8 @@ const mapStateToProps = state => {
         lastUndoAction: state.lastUndoAction,
         canUndo: state.canUndo,
         isAppDrawerCollapsed: state.isAppDrawerCollapsed,
+        projectSelectorIndicators: state.projectSelectorIndicators,
+        accountConfig: state.accountConfig,
     }
 }
 
