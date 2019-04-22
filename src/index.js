@@ -38,7 +38,7 @@ let root = document.createElement('div');
 root.id = "root";
 document.body.appendChild( root );
 
-setupBackend("production", "desktop");
+setupBackend("development", "desktop");
 
 let DragSourcedApp = DragDropContext(HTML5Backend)(VisibleAppThemeInjector);
 
