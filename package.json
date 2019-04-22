@@ -40,7 +40,7 @@
     "babili-webpack-plugin": "^0.0.11",
     "css-loader": "^0.28.11",
     "devtron": "^1.4.0",
-    "electron": "2.0.6",
+    "electron": "^4.1.4",
     "electron-builder": "^20.26.1",
     "electron-devtools-installer": "^2.2.4",
     "electron-installer-dmg": "^2.0.0",
