@@ -31,7 +31,7 @@ class TextInputDialog extends Component {
         const gridStyle = {
             display: 'grid',
             gridTemplateRows: '[Title]auto [Input]1fr',
-            width: '35vw',
+            width: '65vw',
             height: 'fit-content',
             background: theme.palette.background.paper,
             padding: '8px'
@@ -49,6 +49,7 @@ class TextInputDialog extends Component {
 
         return (
                 <Dialog
+                maxWidth="xl"
                 open={this.props.isOpen}
                 TransitionComponent={Transition}>
                 <DialogContent>
