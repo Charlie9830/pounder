@@ -91,7 +91,8 @@ class TaskList extends Component {
                                 onRenameButtonClick={this.props.onRenameTaskListButtonClick}
                                 onDeleteButtonClick={this.props.onDeleteButtonClick}
                                 onChecklistSettingsButtonClick={this.props.onChecklistSettingsButtonClick}
-                                onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick} />
+                                onMoveTaskListButtonClick={this.props.onMoveTaskListButtonClick}
+                                onAddTaskButtonClick={this.props.onAddTaskButtonClick} />
                         </div>
 
                         <div style={{ gridRow: 'Tasks', overflowY: 'auto' }}>

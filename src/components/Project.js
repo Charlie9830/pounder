@@ -247,7 +247,8 @@ class Project extends React.Component {
                         onRenameTaskListButtonClick={() => { this.props.onRenameTaskListButtonClick(item.uid, item.taskListName) }}
                         onDeleteButtonClick={() => { this.props.onDeleteTaskListButtonClick(item.uid) }}
                         onChecklistSettingsButtonClick={() => { this.props.onChecklistSettingsButtonClick(item.uid, item.settings.checklistSettings) }}
-                        onMoveTaskListButtonClick={() => { this.props.onMoveTaskListButtonClick(item.uid, item.project) }}>
+                        onMoveTaskListButtonClick={() => { this.props.onMoveTaskListButtonClick(item.uid, item.project) }}
+                        onAddTaskButtonClick={() => {this.props.onAddNewTaskButtonClick(item.uid)}}>
                         {this.getTasksJSX(item.uid, item.settings.sortBy, item.settings.checklistSettings.isChecklist)}
                     </TaskList>
                 </div>

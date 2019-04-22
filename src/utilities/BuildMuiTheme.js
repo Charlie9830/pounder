@@ -32,6 +32,7 @@ export function BuildMuiTheme(storedTheme) {
         'hideTaskEditIcon': mergeValues(false, storedTheme.hideTaskEditIcon), // Disabled for Desktop.
         'spacing': {
             'unit': getSpacingUnit(storedTheme.isDense),
+            'isDense': storedTheme.isDense,
         },
         'typography': {
             useNextVariants: true,
