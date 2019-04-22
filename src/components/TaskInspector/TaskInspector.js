@@ -94,7 +94,8 @@ class TaskInspector extends Component {
                     autoOpen={true}
                     typographyVariant="body1"
                     defaultValue={task.taskName}
-                    onChange={(newValue) => { this.props.dispatch(updateTaskNameAsync(task.uid, newValue, task.taskName, task.metadata))}}/>
+                    onChange={(newValue) => { this.props.dispatch(updateTaskNameAsync(task.uid, newValue, task.taskName, task.metadata))}}
+                    onEscapeKeyPress={() => { this.props.dispatch(closeTaskInspectorAsync())}}/>
                 </div>
 
                 <Paper style={paperStyle}>

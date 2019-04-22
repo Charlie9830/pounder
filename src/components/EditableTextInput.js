@@ -16,6 +16,7 @@ class EditableTextInput extends Component {
         // Method Bindings.
         this.handleInputAccept = this.handleInputAccept.bind(this);
         this.handleClick = this.handleClick.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     componentDidMount() {
@@ -36,7 +37,7 @@ class EditableTextInput extends Component {
                 autoFocus
                 inputRef={this.textInputRef}
                 defaultValue={this.props.defaultValue}
-                onKeyDown={(e) => { if (e.key === "Enter") { this.handleInputAccept() }}}
+                onKeyDown={this.handleKeyDown}
                 onBlur={this.handleInputAccept}/>
             );
         }
@@ -50,6 +51,16 @@ class EditableTextInput extends Component {
                     {this.props.defaultValue}
                 </Typography>
             );
+        }
+    }
+
+    handleKeyDown(e) {
+        if (e.key === "Enter") {
+            this.handleInputAccept();
+        }
+
+        if (e.key === "Escape") {
+            this.props.onEscapeKeyPress();
         }
     }
 
