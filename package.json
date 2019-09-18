@@ -75,7 +75,7 @@
     "material-ui-pickers": "^2.2.1",
     "moment": "^2.20.1",
     "mousetrap": "^1.6.2",
-    "open": "0.0.5",
+    "open": "6.0.0",
     "rc-slider": "^8.6.5",
     "react-autosize-textarea": "^3.0.3",
     "react-color": "^2.14.1",
